@@ -16,7 +16,7 @@ class Debug_Page
 
         /** de bugs go here **/
         global $wpdb;
-        print_r($wpdb->get_results("DB_NAME"));
+        
     }
 
 }

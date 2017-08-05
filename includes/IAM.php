@@ -131,7 +131,8 @@ class IAM {
 	 */
 	private function load_dependencies() {
 
-		include_files_in('admin/pages');
+		include_files_in('admin/render');
+		include_files_in('public/render');
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-sec.php';
 
@@ -265,58 +266,56 @@ class IAM {
 
 		$plugin_public = new IAM_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_shortcode( 'imrc-reservations', $plugin_public, 'render_reservation_page' );
-		$this->loader->add_shortcode( 'imrc-certifications', $plugin_public, 'render_certification_page' );
-		$this->loader->add_shortcode( 'imrc-faq', $plugin_public, 'render_faq_page' );
-		$this->loader->add_shortcode( 'imrc-account-balances', $plugin_public, 'render_account_balances_page' );
-		$this->loader->add_shortcode( 'imrc-training', $plugin_public, 'render_training_page' );
-		$this->loader->add_shortcode( 'imrc-checkout', $plugin_public, 'render_checkout_page' );
+		$this->loader->add_shortcode( 'imrc-reservations', 'Public_Content', 'render_reservation_page' );
+		$this->loader->add_shortcode( 'imrc-certifications', 'Public_Content', 'render_certification_page' );
+		$this->loader->add_shortcode( 'imrc-faq', 'Public_Content', 'render_faq_page' );
+		$this->loader->add_shortcode( 'imrc-account-balances', 'Public_Content', 'render_account_balances_page' );
+		$this->loader->add_shortcode( 'imrc-training', 'Public_Content', 'render_training_page' );
+		$this->loader->add_shortcode( 'imrc-checkout', 'Public_Content', 'render_checkout_page' );
 
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action('wp_ajax_nopriv_iam_register_user', $plugin_public, 'register_user_callback');
-		$this->loader->add_action('wp_ajax_reservation_popup', $plugin_public, 'reservation_popup_callback');
-		$this->loader->add_action('wp_ajax_nopriv_reservation_popup', $plugin_public, 'reservation_popup_callback');
-		$this->loader->add_action('wp_ajax_nopriv_get_equipment_calendar', $plugin_public, 'get_equipment_calendar_callback');
-		$this->loader->add_action('wp_ajax_get_equipment_calendar', $plugin_public, 'get_equipment_calendar_callback');
-		$this->loader->add_action('wp_ajax_nopriv_get_irregular_hours_calendar', $plugin_public, 'get_irregular_hours_calendar_callback');
-		$this->loader->add_action('wp_ajax_get_irregular_hours_calendar', $plugin_public, 'get_irregular_hours_calendar_callback');
 
-		$this->loader->add_action('wp_ajax_nopriv_submit_reservation', $plugin_public, 'submit_reservation_callback');
-		$this->loader->add_action('wp_ajax_submit_reservation', $plugin_public, 'submit_reservation_callback');
-		$this->loader->add_action('wp_ajax_get_child_tags', $plugin_public, 'get_child_tags_callback');
-		$this->loader->add_action('wp_ajax_get_equipment_for_tags', $plugin_public, 'get_equipment_for_tags_callback');
-		$this->loader->add_action('wp_ajax_get_child_tags', $plugin_public, 'get_child_tags_callback');
-		$this->loader->add_action('wp_ajax_get_user_reservations', $plugin_public, 'get_user_reservations_callback');
-		$this->loader->add_action('wp_ajax_delete_user_reservation', $plugin_public, 'delete_user_reservation_callback');
-		$this->loader->add_action('wp_ajax_get_rooms', $plugin_public, 'get_rooms');
-		$this->loader->add_action('wp_ajax_report_bug', $plugin_public, 'report_bug_callback');
-		$this->loader->add_action('wp_ajax_training_email', $plugin_public, 'training_email_callback');
-		//do not need to be logged in for checkout stuff
-		$this->loader->add_action('wp_ajax_nopriv_update_checkout_table', $plugin_public, 'update_checkout_table_callback');
-		$this->loader->add_action('wp_ajax_nopriv_get_checkout_popup', $plugin_public, 'get_checkout_popup_callback');
-		$this->loader->add_action('wp_ajax_nopriv_update_appointment', $plugin_public, 'update_appointment_callback');
-		$this->loader->add_action('wp_ajax_nopriv_checkout_submit', $plugin_public, 'checkout_submit_callback');
-		$this->loader->add_action('wp_ajax_nopriv_public_login', $plugin_public, 'public_login_callback');
-		$this->loader->add_action('wp_ajax_nopriv_checkout_unlock', $plugin_public, 'checkout_unlock_callback');
-		$this->loader->add_action('wp_ajax_nopriv_checkout_content', $plugin_public, 'checkout_content_callback');
+		$this->loader->add_action('wp_ajax_nopriv_iam_register_user', 'Utils_Public', 'register_user_callback');
+		$this->loader->add_action('wp_ajax_report_bug', 'Utils_Public', 'report_bug_callback');
+		$this->loader->add_action('wp_ajax_nopriv_public_login', 'Utils_Public', 'public_login_callback');
+		$this->loader->add_action('wp_ajax_public_login', 'Utils_Public', 'public_login_callback');
+		$this->loader->add_action('wp_ajax_nopriv_iam_login', 'Utils_Public', 'iam_login_callback');
+		$this->loader->add_filter('show_admin_bar', 'Utils_Public', 'allow_admin_bar');
 
-		$this->loader->add_action('wp_ajax_update_checkout_table', $plugin_public, 'update_checkout_table_callback');
-		$this->loader->add_action('wp_ajax_get_checkout_popup', $plugin_public, 'get_checkout_popup_callback');
-		$this->loader->add_action('wp_ajax_update_appointment', $plugin_public, 'update_appointment_callback');
-		$this->loader->add_action('wp_ajax_checkout_submit', $plugin_public, 'checkout_submit_callback');
-		$this->loader->add_action('wp_ajax_public_login', $plugin_public, 'public_login_callback');
-		$this->loader->add_action('wp_ajax_checkout_unlock', $plugin_public, 'checkout_unlock_callback');
-		$this->loader->add_action('wp_ajax_checkout_content', $plugin_public, 'checkout_content_callback');
-		$this->loader->add_action('wp_ajax_get_approval_hours', $plugin_public, 'get_approval_hours');
+		$this->loader->add_action('wp_ajax_reservation_popup', 'Reservation_Public', 'reservation_popup_callback');
+		$this->loader->add_action('wp_ajax_nopriv_reservation_popup', 'Reservation_Public', 'reservation_popup_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_equipment_calendar', 'Reservation_Public', 'get_equipment_calendar_callback');
+		$this->loader->add_action('wp_ajax_get_equipment_calendar', 'Reservation_Public', 'get_equipment_calendar_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_irregular_hours_calendar', 'Reservation_Public', 'get_irregular_hours_calendar_callback');
+		$this->loader->add_action('wp_ajax_get_irregular_hours_calendar', 'Reservation_Public', 'get_irregular_hours_calendar_callback');
+		$this->loader->add_action('wp_ajax_nopriv_submit_reservation', 'Reservation_Public', 'submit_reservation_callback');
+		$this->loader->add_action('wp_ajax_submit_reservation', 'Reservation_Public', 'submit_reservation_callback');
+		$this->loader->add_action('wp_ajax_get_child_tags', 'Reservation_Public', 'get_child_tags_callback');
+		$this->loader->add_action('wp_ajax_get_equipment_for_tags', 'Reservation_Public', 'get_equipment_for_tags_callback');
+		$this->loader->add_action('wp_ajax_get_child_tags', 'Reservation_Public', 'get_child_tags_callback');
+		$this->loader->add_action('wp_ajax_get_user_reservations', 'Reservation_Public', 'get_user_reservations_callback');
+		$this->loader->add_action('wp_ajax_delete_user_reservation', 'Reservation_Public', 'delete_user_reservation_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_business_hours', 'Reservation_Public', 'get_business_hours_callback');
+		$this->loader->add_action('wp_ajax_get_business_hours', 'Reservation_Public', 'get_business_hours_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_equipment_for_tag', 'Reservation_Public', 'get_equipment_for_tag_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_approval_hours', 'Reservation_Public', 'get_approval_hours');
 
-		$this->loader->add_action('wp_ajax_nopriv_get_business_hours', $plugin_public, 'get_business_hours_callback');
-		$this->loader->add_action('wp_ajax_get_business_hours', $plugin_public, 'get_business_hours_callback');
-		$this->loader->add_action('wp_ajax_nopriv_iam_login', $plugin_public, 'iam_login_callback');
-		$this->loader->add_action('wp_ajax_nopriv_get_equipment_for_tag', $plugin_public, 'get_equipment_for_tag_callback');
-		$this->loader->add_action('wp_ajax_nopriv_get_approval_hours', $plugin_public, 'get_approval_hours');
+		$this->loader->add_action('wp_ajax_training_email', 'Training_Public', 'training_email_callback');
 
-		$this->loader->add_filter('show_admin_bar', $plugin_public, 'allow_admin_bar');
+		$this->loader->add_action('wp_ajax_nopriv_update_checkout_table', 'Checkout_Public', 'update_checkout_table_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_checkout_popup', 'Checkout_Public', 'get_checkout_popup_callback');
+		$this->loader->add_action('wp_ajax_nopriv_update_appointment', 'Checkout_Public', 'update_appointment_callback');
+		$this->loader->add_action('wp_ajax_nopriv_checkout_submit', 'Checkout_Public', 'checkout_submit_callback');
+		$this->loader->add_action('wp_ajax_nopriv_checkout_unlock', 'Checkout_Public', 'checkout_unlock_callback');
+		$this->loader->add_action('wp_ajax_nopriv_checkout_content', 'Checkout_Public', 'checkout_content_callback');
+		$this->loader->add_action('wp_ajax_update_checkout_table', 'Checkout_Public', 'update_checkout_table_callback');
+		$this->loader->add_action('wp_ajax_get_checkout_popup', 'Checkout_Public', 'get_checkout_popup_callback');
+		$this->loader->add_action('wp_ajax_update_appointment', 'Checkout_Public', 'update_appointment_callback');
+		$this->loader->add_action('wp_ajax_checkout_submit', 'Checkout_Public', 'checkout_submit_callback');
+		$this->loader->add_action('wp_ajax_checkout_unlock', 'Checkout_Public', 'checkout_unlock_callback');
+		$this->loader->add_action('wp_ajax_checkout_content', 'Checkout_Public', 'checkout_content_callback');
+		$this->loader->add_action('wp_ajax_get_approval_hours', 'Reservation_Public', 'get_approval_hours');
 
 	}
 
