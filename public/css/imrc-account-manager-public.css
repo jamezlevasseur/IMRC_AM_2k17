@@ -1,0 +1,1011 @@
+/**
+ * All of the CSS for your public-facing functionality should be
+ * included in this file.
+ * my name is james and i like coffee.
+ */
+
+ /*************************************** GENERAL *************************************************/
+
+
+/* ONLY FOR DISPLAYING BANNER ON RES PAGE, REMOVE AFTERWARDS */
+.page-id-11 #main {
+	padding-top: 0px!important;
+
+}
+
+.page-id-11 .entry-header {
+	margin: 0!important;
+}
+
+.iam-no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;          /* Likely future */    
+}
+
+.iam-res-banner {
+	text-align: center;
+	width: 100%;
+	background-color: #248cc8;
+	text-transform: uppercase;
+	font-size: 20px;
+	color: white;
+	padding: 22px 0;
+	margin-bottom: 20px;
+}
+
+.iam-res-comment {
+	resize:none;
+	width: 650px;
+	margin-left: 200px;
+}
+
+.iam-room-note {
+	width: 650px;
+	margin: 0;
+	margin-left: 200px;
+}
+
+.home .entry-header {
+	margin: 0;
+}
+
+.entry-title {
+	display: none !important;
+}
+
+.iam-res-note {
+	position: absolute;
+	top: -30px;
+	left: 190px;
+	width: 500px;
+}
+
+.iam-secondary-button {
+	background-color:#599bb3;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #29668f;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+}
+.iam-secondary-button:hover {
+	background-color:#067e91;
+}
+.iam-secondary-button:active {
+	position:relative;
+	top:1px;
+}
+
+.iam-report-bug {
+	color:white;
+	margin-right:15px;
+	cursor:pointer;
+}
+
+.iam-report-bug:hover {
+	color:#ddd;
+}
+
+.iam-report-bug-box {
+	position: fixed;
+	top: 30px;
+	right: 100px;
+	background-color: white;
+	color: black;
+	padding: 10px;
+	border-radius: 8px;
+	border: 1px solid black;
+}
+
+.iam-x {
+	position: absolute;
+	top: 10px;
+	right: 20px;
+	cursor: pointer;
+	font-size: 20px;
+}
+
+.iam-x:hover {
+	color: #333;
+}
+
+.iam-server-title {
+	font-size: 32px;
+	color:bfbfbf;
+	text-align: center;
+	margin: 20px;
+}
+
+.iam-server-message {
+	font-size: 18px;
+	color:bfbfbf;
+	text-align: center;
+	margin: 20px;
+}
+
+.iam-ninja {
+	display: none;
+}
+.menu-item a:active {
+	color:white;
+}
+
+#iam-user-logout-bar {
+	position: fixed;
+	width: 100%;
+	height: 20px;
+	background-color: #000;
+	top: 0;
+	left: 0;
+	text-align: right;
+	padding: 5px;
+}
+#iam-user-logout-bar a::before{
+	content:"Logout";
+}
+#iam-user-logout-bar a{
+	margin-right: 15px;
+}
+#iam-user-logout-bar a:active {
+	color:white;
+}
+#iam-user-logout-bar a:link {
+	color:white;
+}
+#iam-user-logout-bar a:visited{
+	color:white;
+}
+
+.iam-page-header {
+	font-family: inherit;
+	font-weight: 200;
+	color: rgb(47, 48, 51);
+	font-size: 2em;
+	margin-top: 0px !important;
+}
+
+
+/***************************************RESERVATION PAGE*************************************************/
+
+.iam-reservations-search {
+	/*margin-left: 10px;*/
+	float: left;
+	margin-top: 15px;
+}
+
+.iam-equipment-not-certified {
+	color: red;
+	font-size: 10px;
+	font-family: sans-serif;
+}
+
+.iam-out-of-order-bg {
+	background-color: grey;
+	width: 100%;
+	height: 100%;
+	opacity: .7;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.iam-out-of-order {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	line-height: 200px;
+	font-weight: bold;
+	font-family: Helvetica;
+	font-size: 50px;
+	z-index: 100;
+}
+
+.iam-out-of-order h2 {
+	position: relative;
+	color: white !important;
+	z-index: 101;
+}
+
+.iam-equipment-block {
+	/* change later for mobile optimization */
+	min-width: 800px;
+	min-height:150px;
+	padding: 25px;
+	border-bottom: 1px solid grey;
+	position: relative;
+}
+
+.iam-equipment-block:nth-child(1) {
+	margin-top: 20px;
+	border-top: 1px solid grey;
+}
+
+.iam-equipment-block-left {
+	padding: 25px;
+	display: inline-block;
+	vertical-align: middle;
+	max-width:40%;
+}
+
+.iam-equipment-title {
+	font-size: 20px;
+	margin-bottom: 20px;
+}
+
+.iam-equipment-photo {
+
+}
+
+.iam-equipment-block-right {
+	display: inline-block;
+	vertical-align: middle;
+	padding: 25px;
+	font-size: 15px;
+	max-width: 35%;
+}
+
+.iam-equipment-block-right .iam-equipment-sub-block {
+	padding: 5px;
+}
+
+.iam-equipment-block-button {
+	display: inline-block;
+	float: right;
+	padding-top: 125px;
+}
+
+.iam-ref-left {
+	display: inline-block;
+	max-width: 75%;
+	float: left;
+}
+
+.iam-ref-left-top {
+	display: inline-block;
+	width: 65.5%;
+	min-width: 850px;
+	float: left;
+}
+
+#iam-ref-right {
+	display: inline-block;
+	min-width: 100px;
+	max-width: 15%;
+	float: right;
+}
+
+
+/*************************************** RESERVATION PAGE EXISTING *************************************************/
+
+.iam-existing-res {
+	margin-bottom: 20px;
+}
+
+.iam-existing-res-equip-name {
+	font-style: italic;
+}
+
+.iam-existing-res-date {
+
+}
+
+.iam-existing-res-del-button::before {
+	content:"Delete";
+}
+
+.iam-existing-res-del-button{
+	margin-top: 10px;
+}
+
+#iam-ref-right-title {
+	font-size: 20px;
+	line-height: 1.1em;
+	margin-bottom: 20px;
+	margin-top: 20px;
+	background-color:#2F3033;
+	padding:10px;
+	color: white;
+	min-width: 120px;
+}
+/*********************** SMALL SCREEN ***********************/
+@media screen and (max-width: 1090px) {
+    #iam-ref-right {
+    	clear:both;
+    	float:left;
+    }
+}
+
+@media screen and (max-width: 860px) {
+	.iam-equipment-block-right {
+    	display:none;
+    }
+    .iam-equipment-block {
+    	min-width:210px;
+    	width: 125%;
+    	min-height: 300px;
+    }
+    .iam-ref-left-top {
+    	min-width:210px;
+    	width:100%;
+    }
+    .entry-content h2 {
+    	font-size:.8em !important;
+    	line-height: 2em;
+    	padding-top: 50px;
+    }
+    .iam-equipment-block-left {
+    	min-width: 210px;
+
+    }
+    .iam-equipment-block-button {
+    	padding-top: 10px;
+    	float:center;
+    	margin-top: 115px;
+    }
+    .entry-content img {
+    	max-height: 150px;
+    	width: auto;
+    }
+    #iam-existing-res-container {
+    	padding-top: 30px;
+    }
+    #iam-user-logout-bar {
+    	z-index: 72;
+    }
+    .iam-res-popup {
+    	top: -10px !important;
+    	left: 0px !important;
+    	min-width: 350px !important;
+    }
+}
+
+@media screen and (max-width: 430px) {
+	.iam-equipment-block-button {
+		margin-top: 0px;
+		margin: 0 auto;
+		float: none;
+	}
+	.iam-equipment-block-left {
+		padding-left: 5px;
+	}
+}
+
+
+
+/***************************************RESERVATION PAGE CRUMBS*************************************************/
+
+#iam-crumb-root::before {
+	content:">Top";
+}
+
+#iam-crumb-root {
+	margin-right: 10px;
+	display: inline-block;
+	/*float: right;
+	clear: right;*/
+	cursor:pointer;
+	margin-left: 10px;
+}
+
+.iam-crumb-container {
+	display: inline-block;
+	float: right;
+	clear: right;
+}
+#iam-ref-crumb {
+	display: inline-block;
+}
+
+#iam-ref-crumb-buttons {
+	float: right;
+	display: inline-block;
+	max-width: 680px;
+	text-align: right;
+}
+
+.iam-crumb-button {
+	display: inline-block;
+	padding: 5px;
+	margin: 10px;
+}
+
+.iam-crumb-button:hover {
+
+}
+
+.iam-crumb::before {
+	content:"> ";
+}
+
+.iam-crumb {
+	cursor: pointer;
+	color: lightblue;
+	display: inline-block;
+	padding-left: 5px;
+}
+
+.iam-crumb:hover {
+	color:grey;
+}
+
+#iam-rooms-button::before {
+	content: "Rooms";
+}
+
+#iam-rooms-button {
+	display: inline-block;
+	padding: 5px;
+	margin: 10px;
+}
+
+@media screen and (max-width: 700px) {
+	.iam-ref-left-top {
+		margin-left: 0px;
+	}
+	#iam-ref-crumb-buttons {
+		float: none !important;
+		clear: both !important;
+		margin-left: -10px;
+		text-align: initial;
+	}
+	.iam-crumb-container{
+		float: none;
+	}
+	#iam-crumb-root {
+		margin-left: 2px;
+	}
+	.iam-reservations-search {
+		float: none !important;
+	}
+}
+
+/*************************************** RESERVATION PAGE POPUP *************************************************/
+
+.iam-res-popup, .iam-popup {
+	background-color: white;
+	position: fixed;
+	top: 100px;
+	left: 15%;
+	border: 1px solid lightgrey;
+	border-radius: 4px;
+	padding: 20px;
+	z-index: 999999999;
+	width: 70%;
+ 	min-width: 500px;
+}
+
+.iam-res-popup {
+	top:50px;
+}
+
+.iam-res-popup-header, .iam-popup-header {
+	background-color: white;
+	padding: 5px;
+	border-bottom: 1px grey solid;
+	font-size: 20px;
+}
+
+.iam-res-popup-body, .iam-popup-body {
+ 	background-color: white;
+ 	padding: 5px;
+ 	margin: 0 auto;
+}
+
+.iam-events {
+	float:left;
+	display: inline-block;
+	width: 15%;
+	padding-left: 5px;
+	text-align: center;
+	white-space: nowrap;
+}
+
+.iam-events .fc-event{
+	cursor: pointer;
+	white-space: nowrap;
+}
+
+.iam-events .fc-event:hover{
+	box-shadow: 3px 3px 5px #888888;
+	margin-top: 2px;
+}
+
+.iam-res-cal, .iam-cal {
+	float:right;
+	display: inline-block;
+	width:80%;
+}
+
+.iam-facility-info h1, .iam-facility-info p {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.iam-facility-info {
+	margin-top: 20px;
+}
+
+.iam-popup-submit {
+	margin-top: 0;
+	display: block;
+}
+
+.iam-res-popup .iam-popup-submit {
+	margin-top: 20px;
+	position: relative;
+}
+
+/*************************************** CERTIFICATION PAGE *************************************************/
+
+
+.iam-phase-level {
+	display: inline-block;
+	margin-top: 20px;
+	border-bottom: 1px #888 solid;
+	width: 100%;
+}
+
+.iam-level-photo {
+	display: inline-block;
+	padding: 10px;
+	width: 150px;
+}
+
+.iam-level-attributes {
+	display: inline-block;
+	max-width: 50%;
+	vertical-align: top;
+	padding: 10px;
+	padding-top: 0px;
+}
+
+.iam-level-attributes-label {
+	display:inline-block;
+	font-weight: bold;
+}
+
+.iam-level-attributes p {
+	line-height: 1.5em;
+}
+
+.iam-phase-title {
+	font-size: 2em;
+	margin: 20px 0;
+}
+
+.iam-no-cert {
+	color: #aaa;
+}
+
+.iam-no-cert img {
+	-webkit-filter: grayscale(1); /* Webkit */
+    filter: gray; /* IE6-9 */
+    filter: grayscale(1); /* W3C */
+}
+
+.iam-phase-divider {
+	margin-bottom: 50px;
+	margin-top: 30px;
+}
+
+/*************************************** ACCOUNT BALANCE PAGE *************************************************/
+
+.iam-account-balance-table {
+	display: inline-block;
+}
+
+#iam-total-bal-left {
+	display: inline-block;
+	vertical-align: top;
+	width: 200px;
+	text-align: center;
+}
+
+#iam-total-bal-right {
+	display: inline-block;
+	vertical-align: middle;
+	width: 70%;
+	min-height: 200px;
+}
+
+#iam-total-bal-right tr td:nth-child(1) {
+	white-space: nowrap;
+}
+
+#iam-total-bal-right td {
+	padding-left: 10px;
+}
+
+#iam-total-bal-right th {
+	padding-left: 10px;
+	vertical-align: top;
+	background-color: #ddd;
+	border: none;
+}
+
+.iam-total-bal-amount {
+	font-size: 35px;
+	min-width: 200px;
+	padding: 80px;
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+#iam-account-balance {
+	width:100%;
+}
+
+#iam-available-bal-title {
+	font-size: 1.5em;
+	margin-top: 0px;
+}
+
+.iam-account-activity-title {
+	margin-top: 0px !important;
+	font-size: 1.5em !important;
+}
+
+@media screen and (max-width: 700px) {
+	#iam-total-bal-right {
+
+		margin-top:25px;
+	}
+	#iam-total-bal-left {
+		margin:0 auto !important;
+		text-align:center;
+	}
+	#iam-account-balance {
+		display:inline-block;
+		margin:0 auto;
+	}
+}
+
+/*************************************** FAQ PAGE *************************************************/
+
+.iam-faq-container {
+	width: 80%;
+}
+
+
+/*************************************** CHECKOUT PAGE *************************************************/
+
+
+.iam-old-reservations:hover {
+	cursor: pointer;
+	color:#ccc;
+}
+
+.iam-check-in-button::before {
+	content:'CHECK IN';
+}
+
+.iam-check-out-button::before {
+	content:'CHECK OUT';
+}
+
+.iam-check-in-button:disabled {
+	background:#bbb;
+	border:1px solid #888;
+}
+
+button.iam-green-button, .iam-check-in-button, .iam-checkout-submit {
+	background:#44c767 !important;
+	outline: none;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	-webkit-box-shadow:none;
+	border-radius:28px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+	text-shadow: none;
+	margin-bottom: 5px;
+}
+
+button.iam-red-button {
+	background:#d4483b !important;
+	outline: none;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	-webkit-box-shadow:none;
+	border-radius:28px;
+	border:1px solid #d4483b;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+	text-shadow: none;
+	margin-bottom: 5px;
+}
+
+.iam-check-in-button:hover {
+	background:#2abd4c;
+}
+.iam-check-inbutton:active {
+	position:relative;
+}
+
+/*
+.iam-check-in-button:hover, .iam-checkout-submit:hover {
+	background-color:#2abd4c;
+}
+.iam-check-in-button:active, .iam-checkout-submit:active {
+	position:relative;
+	top:1px;
+}*/
+
+.iam-check-out-button, button.iam-blue-button {
+	background:#599bb3 !important;
+	outline: none;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	-webkit-box-shadow:none;
+	border-radius:28px;
+	border:1px solid #29668f;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+	text-shadow: none;
+	margin-bottom: 5px;
+
+
+	/*outline: none;
+	background:#4141e0;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #6060f2;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;*/
+}
+.iam-check-out-button:hover {
+	background-color:#067e91;
+}
+.iam-check-out-button:active {
+	position:relative;
+	top:1px;
+}
+
+.iam-popup {
+	width: 60%;
+	left: 20%;
+	font-size: 15px;
+}
+
+.iam-popup-body div{
+	padding-top: 20px;
+}
+
+.iam-checkout-name {
+	padding-right: 70px;
+	padding-left: 0;
+}
+
+.iam-checkout {
+	height: 500px;
+}
+
+.menu-item {
+	-webkit-user-select: none;  /* Chrome all / Safari all */
+	-moz-user-select: none;     /* Firefox all */
+	-ms-user-select: none;      /* IE 10+ */
+	user-select: none;          /* Likely future */   
+	cursor: pointer; 
+}
+
+.iam-equipment-schedule-list {
+	border-radius: 8px;
+	margin-left: 0;
+	height: 500px;
+	width: 42%;
+	display: inline-block;
+	overflow-x:hidden;
+	overflow-y:scroll; 
+}
+
+.iam-equipment-schedule-list li {
+	text-align: center;
+	list-style: none;
+	text-decoration: none;
+	background-color: #ddd;
+	width: 90%;
+	cursor: pointer;
+	font-size: 20px;
+	vertical-align: middle;
+	padding: 10px;
+}
+
+.iam-equipment-schedule-list li:hover {
+	background-color: #eee;
+}
+
+.iam-cal {
+	display: inline-block;
+	width: 42%;
+}
+
+.iam-make-res-container {
+	width: 15%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.iam-make-res-container input, .iam-make-res-container button {
+	display: block;
+	width: 100%;
+	margin: 10px auto;
+}
+
+.iam-equipment-schedule-list li.currently-selected {
+	background-color: lightgreen;
+}
+
+.iam-to-reserve {
+	font-weight: bold;
+}
+
+.fc-right h2 {
+	margin: 0!important;
+}
+
+.fc-nonbusiness {
+	z-index: 0!important;
+	opacity: .6!important;
+}
+
+.fc-business-container {
+	position: relative;
+}
+
+input.iam-username:disabled {
+   color: black;
+}
+
+.iam-events {
+	white-space: normal;
+}
+
+.iam-events h1 {
+	font-weight:bold;
+	text-decoration:underline;
+}
+
+.iam-events p {
+	text-align: left;
+}
+
+.iam-checkout-amount {
+	width: 75px;
+}
+
+/*************************************** RESET PASSWORD PAGE *************************************************/
+
+.login .message {
+	border-left: 4px solid #F13D39 !important;
+}
+
+.login h1 a {
+	display: none;
+}
+
+.wp-core-ui .button-primary {
+	background: #F13D39 !important;
+	border: none !important;
+	box-shadow: none !important;
+	text-shadow: none !important;
+}
+
+.wp-core-ui .button-primary:hover {
+	background: #c62a27 !important;
+
+}
+
+.iam-discover-button-container {
+	text-align: center;
+}
+
+.iam-discover-button-container .iam-discover-button {
+	margin: 5px 5px;
+	border-radius: 0;
+
+}
+
+.iam-discover-container {
+	position: relative;
+}
+
+.iam-discover-button-container {
+	margin-bottom: 50px;
+}
+
+.iam-discover-list-container, .iam-discover-display {
+	position: relative;
+	vertical-align: top;
+	display: inline-block;
+}
+
+.iam-discover-link {
+	font-size: 20px;
+	text-decoration: none;
+}
+.iam-discover-link:link, .iam-discover-link:visited, .iam-discover-link:hover,.iam-discover-link:active {
+	color:#F13D39;
+}
+
+.iam-discover-display {
+	width: 50%;
+	text-align: left;
+	padding: 0 5%;
+}
+.iam-discover-display img {
+	text-align: center;
+}
+.iam-discover-list-container{
+	width: 29%;
+}
+.iam-discover-list {
+	border: 1px solid #CCCCCC;
+	min-height: 200px;
+	min-width: 100px;
+	max-height: 600px;
+	overflow-y: scroll;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+.iam-discover-list li {
+	background-color: #e5e5e5;
+	cursor: pointer;
+	border-bottom: 2px solid #f1f1f1;
+	padding: 3px;
+	list-style: none;
+	margin-bottom: 0;
+	margin-left: 0!important;
+}
+
+.iam-discover-list li:hover {
+	background-color: lightblue;
+}
+
+.iam-no-pad-top {
+	padding-top: 0!important;
+}
+
+.iam-checkout-add-mat, .iam-checkout-del-mat {
+	display: inline-block;
+}

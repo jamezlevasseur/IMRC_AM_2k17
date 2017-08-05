@@ -1,0 +1,363 @@
+<?php
+
+/**
+ * The file that defines the core plugin class
+ *
+ * A class definition that includes attributes and functions used across both the
+ * public-facing side of the site and the admin area.
+ *
+ * @link       http://example.com
+ * @since      1.0.0
+ *
+ * @package    IAM
+ * @subpackage IAM/includes
+ */
+
+/**
+ * The core plugin class.
+ *
+ * This is used to define internationalization, admin-specific hooks, and
+ * public-facing site hooks.
+ *
+ * Also maintains the unique identifier of this plugin as well as the current
+ * version of the plugin.
+ *
+ * @since      1.0.0
+ * @package    IAM
+ * @subpackage IAM/includes
+ * @author     Your Name <email@example.com>
+ */
+class IAM {
+
+	/**
+	 * The loader that's responsible for maintaining and registering all hooks that power
+	 * the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      IAM_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 */
+	protected $loader;
+
+	/**
+	 * The unique identifier of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      string    $iam    The string used to uniquely identify this plugin.
+	 */
+	protected $iam;
+
+	/**
+	 * The current version of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   protected
+	 * @var      string    $version    The current version of the plugin.
+	 */
+	protected $version;
+
+	public static $status_message = '';
+
+	/**
+	 * Define the core functionality of the plugin.
+	 *
+	 * Set the plugin name and the plugin version that can be used throughout the plugin.
+	 * Load the dependencies, define the locale, and set the hooks for the admin area and
+	 * the public-facing side of the site.
+	 *
+	 * @since    1.0.0
+	 */
+	public function __construct() {
+
+		$this->iam = 'plugin-name';
+		$this->version = '1.0.0';
+
+		$this->load_dependencies();
+		$this->set_locale();
+		$this->define_admin_hooks();
+		$this->define_public_hooks();
+
+		//register hooks for non-specific parts
+		$this->loader->add_action( 'delete_user', $this, 'on_delete_user' );
+		$this->loader->add_action( 'wp_mail_failed', $this, 'on_mail_failed' );
+
+		$plugin_login = new IAM_Login();
+
+		$this->loader->add_shortcode( 'imrc-login', $plugin_login, 'render_login_form' );
+     	$this->loader->add_shortcode( 'imrc-register', $plugin_login, 'render_register_form' );
+     	
+	}
+
+	public function on_mail_failed($error)
+	{
+
+		add_user_meta(1, 'failed_email_'.uniqid(), $error);
+		print_r($error);exit;
+	}
+
+	/**
+	 * Function deletes users in the iam table if also deleted from wp_users
+	 *
+	 * @since 	1.0.0
+	 *
+	 * @return void
+	 */
+	public function on_delete_user($user_id)
+	{
+		global $wpdb;
+		//res, charge, user certs
+		$iam_id = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$user_id))[0]->IAM_ID;
+		$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE IAM_ID=%d",$iam_id));
+		$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_USER_CERTIFICATIONS_TABLE." WHERE IAM_ID=%d",$iam_id));
+		$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$user_id));
+	}
+
+	/**
+	 * Load the required dependencies for this plugin.
+	 *
+	 * Include the following files that make up the plugin:
+	 *
+	 * - IAM_Loader. Orchestrates the hooks of the plugin.
+	 * - IAM_i18n. Defines internationalization functionality.
+	 * - IAM_Admin. Defines all hooks for the admin area.
+	 * - IAM_Public. Defines all hooks for the public side of the site.
+	 *
+	 * Create an instance of the loader which will be used to register the hooks
+	 * with WordPress.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function load_dependencies() {
+
+		include_files_in('admin/pages');
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-sec.php';
+
+		/**
+		 * The class responsible for orchestrating the actions and filters of the
+		 * core plugin.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-loader.php';
+
+		/**
+		 * The class responsible for defining internationalization functionality
+		 * of the plugin.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-i18n.php';
+
+		/**
+		 * The class responsible for defining all actions that occur in the admin area.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/IAM-admin.php';
+
+		/**
+		 * The class responsible for defining all actions that occur in the public-facing
+		 * side of the site.
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/IAM-public.php';
+
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-login.php';
+
+		$this->loader = new IAM_Loader();
+
+	}
+
+	/**
+	 * Define the locale for this plugin for internationalization.
+	 *
+	 * Uses the IAM_i18n class in order to set the domain and to register the hook
+	 * with WordPress.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function set_locale() {
+
+		$plugin_i18n = new IAM_i18n();
+		$plugin_i18n->set_domain( $this->get_plugin_name() );
+
+		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
+
+	}
+
+	/**
+	 * Register all of the hooks related to the admin area functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_admin_hooks() {
+
+		$plugin_admin = new IAM_Admin( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
+		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_setup_menu');
+
+		$this->loader->add_action('wp_ajax_admin_balances_action', 'Balances_Page', 'admin_balances_callback');
+
+		$this->loader->add_action('wp_ajax_admin_delete_supporting_file', 'Certifications_Page', 'admin_delete_supporting_file');
+		$this->loader->add_action('wp_ajax_admin_update_existing_file_list', 'Certifications_Page', 'admin_update_existing_file_list');
+		$this->loader->add_action('wp_ajax_admin_certification_action', 'Certifications_Page', 'admin_certification_callback');
+
+		$this->loader->add_action('wp_ajax_admin_get_charge_table_json', 'Charge_Sheet_Page', 'admin_get_charge_table_json');
+		$this->loader->add_action('wp_ajax_admin_update_charge_row', 'Charge_Sheet_Page', 'admin_update_charge_row');
+		$this->loader->add_action('wp_ajax_admin_get_pagination_max', 'Charge_Sheet_Page', 'admin_get_pagination_max');
+		$this->loader->add_action('wp_ajax_admin_switch_charge_status', 'Charge_Sheet_Page', 'admin_switch_charge_status');
+		$this->loader->add_action('wp_ajax_admin_get_charge_table', 'Charge_Sheet_Page', 'admin_get_charge_table');
+		$this->loader->add_action('wp_ajax_approve_charge', 'Charge_Sheet_Page', 'approve_charge_callback');
+		$this->loader->add_action('wp_ajax_admin_get_charge_table_json', 'Charge_Sheet_Page', 'admin_get_charge_table_json');
+		$this->loader->add_action('wp_ajax_admin_update_charge_row', 'Charge_Sheet_Page', 'admin_update_charge_row');
+		$this->loader->add_action('wp_ajax_admin_get_pagination_max', 'Charge_Sheet_Page', 'admin_get_pagination_max');
+
+		$this->loader->add_action('wp_ajax_admin_equipment_action', 'Equipment_Page', 'admin_equipment_callback');
+		$this->loader->add_action('wp_ajax_admin_get_tags', 'Equipment_Page', 'admin_get_tags_callback');
+
+		$this->loader->add_action('wp_ajax_admin_pricing', 'Pricing_Page', 'admin_pricing_callback');
+		$this->loader->add_action('wp_ajax_admin_get_pricing_dropdowns', 'Pricing_Page', 'admin_get_pricing_dropdowns_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_material', 'Pricing_Page', 'admin_delete_material_callback');
+		$this->loader->add_action('wp_ajax_admin_get_new_mat_row', 'Pricing_Page', 'admin_get_new_mat_row_callback');
+
+		$this->loader->add_action('wp_ajax_admin_approve_new_user', 'Registration_Page', 'admin_approve_new_user_callback');
+		$this->loader->add_action('wp_ajax_admin_deny_new_user', 'Registration_Page', 'admin_deny_new_user_callback');
+		$this->loader->add_action('wp_ajax_admin_make_registration_key', 'Registration_Page', 'admin_make_registration_key_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_registration_key', 'Registration_Page', 'admin_delete_registration_key_callback');
+
+		$this->loader->add_action('wp_ajax_admin_update_reservations', 'Reservations_Page', 'admin_update_reservations_callback');
+
+		$this->loader->add_action('wp_ajax_admin_get_appointment_info_template', 'Scheduling_Page', 'admin_get_appointment_info_template_callback');
+		$this->loader->add_action('wp_ajax_admin_get_rental_info_template', 'Scheduling_Page', 'admin_get_rental_info_template_callback');
+		$this->loader->add_action('wp_ajax_admin_facility_schedule', 'Scheduling_Page', 'admin_facility_schedule_callback');
+		$this->loader->add_action('wp_ajax_admin_get_irregular_hours', 'Scheduling_Page', 'admin_get_irregular_hours_callback');
+		$this->loader->add_action('wp_ajax_admin_update_irregular_hours', 'Scheduling_Page', 'admin_update_irregular_hours_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_irregular_hours', 'Scheduling_Page', 'admin_delete_irregular_hours_callback');
+		$this->loader->add_action('wp_ajax_admin_update_approval_hours', 'Scheduling_Page', 'admin_update_approval_hours');
+		$this->loader->add_action('wp_ajax_admin_get_approval_hours', 'Scheduling_Page', 'admin_get_approval_hours');
+
+		$this->loader->add_action('wp_ajax_get_admin_forms', 'Settings_Page', 'get_admin_forms_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_form', 'Settings_Page', 'admin_delete_form');
+		$this->loader->add_action('wp_ajax_admin_report_bug', 'Settings_Page', 'admin_report_bug_callback');
+		$this->loader->add_action('wp_ajax_admin_update_settings', 'Settings_Page', 'admin_update_settings_callback');
+		$this->loader->add_action('wp_ajax_admin_update_account_type', 'Settings_Page', 'admin_update_account_type_callback');
+		
+		$this->loader->add_action('wp_ajax_admin_get_user_certifications', 'User_Certifications_Page', 'admin_get_user_certifications_callback');
+		$this->loader->add_action('wp_ajax_admin_add_certifications_to_users', 'User_Certifications_Page', 'admin_add_certifications_to_users_callback');
+		$this->loader->add_action('wp_ajax_admin_remove_certifications_to_users', 'User_Certifications_Page', 'admin_remove_certifications_to_users_callback');
+
+		$this->loader->add_action('wp_ajax_admin_user_privileges', 'User_Privileges_Page', 'admin_user_privileges_callback');
+
+
+		//$this->loader->add_action('wp_ajax_admin_get_equipment_calendar', 'Reservations_Page', 'admin_get_equipment_calendar_callback');
+		//$this->loader->add_action('wp_ajax_admin_room_action', $plugin_admin, 'admin_room_callback');
+	}
+
+	/**
+	 * Register all of the hooks related to the public-facing functionality
+	 * of the plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 */
+	private function define_public_hooks() {
+
+		$plugin_public = new IAM_Public( $this->get_plugin_name(), $this->get_version() );
+
+		$this->loader->add_shortcode( 'imrc-reservations', $plugin_public, 'render_reservation_page' );
+		$this->loader->add_shortcode( 'imrc-certifications', $plugin_public, 'render_certification_page' );
+		$this->loader->add_shortcode( 'imrc-faq', $plugin_public, 'render_faq_page' );
+		$this->loader->add_shortcode( 'imrc-account-balances', $plugin_public, 'render_account_balances_page' );
+		$this->loader->add_shortcode( 'imrc-training', $plugin_public, 'render_training_page' );
+		$this->loader->add_shortcode( 'imrc-checkout', $plugin_public, 'render_checkout_page' );
+
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+		$this->loader->add_action('wp_ajax_nopriv_iam_register_user', $plugin_public, 'register_user_callback');
+		$this->loader->add_action('wp_ajax_reservation_popup', $plugin_public, 'reservation_popup_callback');
+		$this->loader->add_action('wp_ajax_nopriv_reservation_popup', $plugin_public, 'reservation_popup_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_equipment_calendar', $plugin_public, 'get_equipment_calendar_callback');
+		$this->loader->add_action('wp_ajax_get_equipment_calendar', $plugin_public, 'get_equipment_calendar_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_irregular_hours_calendar', $plugin_public, 'get_irregular_hours_calendar_callback');
+		$this->loader->add_action('wp_ajax_get_irregular_hours_calendar', $plugin_public, 'get_irregular_hours_calendar_callback');
+
+		$this->loader->add_action('wp_ajax_nopriv_submit_reservation', $plugin_public, 'submit_reservation_callback');
+		$this->loader->add_action('wp_ajax_submit_reservation', $plugin_public, 'submit_reservation_callback');
+		$this->loader->add_action('wp_ajax_get_child_tags', $plugin_public, 'get_child_tags_callback');
+		$this->loader->add_action('wp_ajax_get_equipment_for_tags', $plugin_public, 'get_equipment_for_tags_callback');
+		$this->loader->add_action('wp_ajax_get_child_tags', $plugin_public, 'get_child_tags_callback');
+		$this->loader->add_action('wp_ajax_get_user_reservations', $plugin_public, 'get_user_reservations_callback');
+		$this->loader->add_action('wp_ajax_delete_user_reservation', $plugin_public, 'delete_user_reservation_callback');
+		$this->loader->add_action('wp_ajax_get_rooms', $plugin_public, 'get_rooms');
+		$this->loader->add_action('wp_ajax_report_bug', $plugin_public, 'report_bug_callback');
+		$this->loader->add_action('wp_ajax_training_email', $plugin_public, 'training_email_callback');
+		//do not need to be logged in for checkout stuff
+		$this->loader->add_action('wp_ajax_nopriv_update_checkout_table', $plugin_public, 'update_checkout_table_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_checkout_popup', $plugin_public, 'get_checkout_popup_callback');
+		$this->loader->add_action('wp_ajax_nopriv_update_appointment', $plugin_public, 'update_appointment_callback');
+		$this->loader->add_action('wp_ajax_nopriv_checkout_submit', $plugin_public, 'checkout_submit_callback');
+		$this->loader->add_action('wp_ajax_nopriv_public_login', $plugin_public, 'public_login_callback');
+		$this->loader->add_action('wp_ajax_nopriv_checkout_unlock', $plugin_public, 'checkout_unlock_callback');
+		$this->loader->add_action('wp_ajax_nopriv_checkout_content', $plugin_public, 'checkout_content_callback');
+
+		$this->loader->add_action('wp_ajax_update_checkout_table', $plugin_public, 'update_checkout_table_callback');
+		$this->loader->add_action('wp_ajax_get_checkout_popup', $plugin_public, 'get_checkout_popup_callback');
+		$this->loader->add_action('wp_ajax_update_appointment', $plugin_public, 'update_appointment_callback');
+		$this->loader->add_action('wp_ajax_checkout_submit', $plugin_public, 'checkout_submit_callback');
+		$this->loader->add_action('wp_ajax_public_login', $plugin_public, 'public_login_callback');
+		$this->loader->add_action('wp_ajax_checkout_unlock', $plugin_public, 'checkout_unlock_callback');
+		$this->loader->add_action('wp_ajax_checkout_content', $plugin_public, 'checkout_content_callback');
+		$this->loader->add_action('wp_ajax_get_approval_hours', $plugin_public, 'get_approval_hours');
+
+		$this->loader->add_action('wp_ajax_nopriv_get_business_hours', $plugin_public, 'get_business_hours_callback');
+		$this->loader->add_action('wp_ajax_get_business_hours', $plugin_public, 'get_business_hours_callback');
+		$this->loader->add_action('wp_ajax_nopriv_iam_login', $plugin_public, 'iam_login_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_equipment_for_tag', $plugin_public, 'get_equipment_for_tag_callback');
+		$this->loader->add_action('wp_ajax_nopriv_get_approval_hours', $plugin_public, 'get_approval_hours');
+
+		$this->loader->add_filter('show_admin_bar', $plugin_public, 'allow_admin_bar');
+
+	}
+
+	/**
+	 * Run the loader to execute all of the hooks with WordPress.
+	 *
+	 * @since    1.0.0
+	 */
+	public function run() {
+		$this->loader->run();
+	}
+
+	/**
+	 * The name of the plugin used to uniquely identify it within the context of
+	 * WordPress and to define internationalization functionality.
+	 *
+	 * @since     1.0.0
+	 * @return    string    The name of the plugin.
+	 */
+	public function get_plugin_name() {
+		return $this->iam;
+	}
+
+	/**
+	 * The reference to the class that orchestrates the hooks with the plugin.
+	 *
+	 * @since     1.0.0
+	 * @return    IAM_Loader    Orchestrates the hooks of the plugin.
+	 */
+	public function get_loader() {
+		return $this->loader;
+	}
+
+	/**
+	 * Retrieve the version number of the plugin.
+	 *
+	 * @since     1.0.0
+	 * @return    string    The version number of the plugin.
+	 */
+	public function get_version() {
+		return $this->version;
+	}
+
+}

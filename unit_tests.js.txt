@@ -1,0 +1,114 @@
+
+//-START UNIT TEST
+
+//assumes 9-5 business hours
+var reserveNewEquipmentAuthCallback_UNIT_TEST = function (dateString,makeEvents) {
+	var test_user = 'test.student';
+
+	var test_events = [{start: dateString+' 10:00:00', end:dateString+' 11:00:00', user:test_user},
+						{start: dateString+' 14:00:00', end:dateString+' 16:00:00', user:test_user}];
+
+	if (!makeEvents) {
+		test_events = [];
+	}
+
+	lastSource = ajaxurl+"?action=get_equipment_calendar&name=Bandsaw";
+	$.ajax({
+		url: ajaxurl,
+		type: 'POST',
+		data: {action: 'submit_reservation',
+			   equipment: 'Bandsaw',
+			   events: test_events,
+			   room: 0},
+		success: function (data) {
+			console.log(data);
+			
+			var time_test_fail = [
+			//before before business hours
+			{start: dateString+' 5:00:00', end: dateString+' 7:00:00', unit_test: true},
+			//before during business hours
+			{start: dateString+' 5:00:00', end: dateString+' 10:00:00', unit_test: true},
+			//during after business hours
+			{start: dateString+' 16:30:00', end: dateString+' 19:00:00', unit_test: true},
+			//after after business hours
+			{start: dateString+' 18:00:00', end: dateString+' 20:00:00', unit_test: true},
+						//before cusp-event business hours
+			{start: dateString+' 7:00:00', end: dateString+' 10:00:00', unit_test: true},
+			//cusp-event after business hours
+			{start: dateString+' 16:00:00', end: dateString+' 19:00:00', unit_test: true},
+			//before during-event bh
+			{start: dateString+' 7:00:00', end: dateString+' 11:00:00', unit_test: true},
+			//during-event after bh
+			{start: dateString+' 15:00:00', end: dateString+' 19:00:00', unit_test: true},
+			//during during-event
+			{start: dateString+' 9:30:00', end: dateString+' 11:00:00', unit_test: true},
+			//during-event during
+			{start: dateString+' 15:00:00', end: dateString+' 16:30:00', unit_test: true},
+			//same time as event
+			{start: dateString+' 10:00:00', end: dateString+' 11:00:00', unit_test: true},
+			//encompassing event
+			{start: dateString+' 9:30:00', end: dateString+' 12:00:00', unit_test: true},
+			//within event
+			{start: dateString+' 14:30:00', end: dateString+' 15:30:00',unit_test: true},
+			];
+
+			var time_test_not_fail = [
+			//during during business hours
+			{start: dateString+' 12:00:00', end: dateString+' 13:00:00', unit_test: true},
+			//cusp during business hours
+			{start: dateString+' 9:00:00', end: dateString+' 9:30:00', unit_test: true},
+			//during cusp business hours
+			{start: dateString+' 16:30:00', end: dateString+' 17:00:00', unit_test: true},
+			//cusp cusp business hours
+			//{start: dateString+' 9:00:00', end: dateString+' 17:00:00', unit_test: true},
+			//during cusp-event
+			{start: dateString+' 9:30:00', end: dateString+' 10:00:00', unit_test: true},
+			//cusp-event during
+			{start: dateString+' 11:00:00', end: dateString+' 12:00:00', unit_test: true},	
+			//completely before event AND completely after event
+			{start: dateString+' 11:30:00', end: dateString+' 12:30:00', unit_test: true},
+			//cusp event cusp event
+			{start: dateString+' 11:00:00', end: dateString+' 14:00:00', unit_test: true},
+			];
+
+			var results_should_fail = [];
+			var results_should_not_fail = [];
+
+			$.ajax({
+				url: lastSource+'&get_irregular_hours=y',
+				type: 'GET',
+				success: function (data) {
+					selected_equip_schedule = handleServerResponse(data);
+					for (var i = 0; i < time_test_fail.length; i++) {
+						results_should_fail.push(canMakeReservation(time_test_fail[i],dateString));
+					}
+					for (var i = 0; i < time_test_not_fail.length; i++) {
+						results_should_not_fail.push(canMakeReservation(time_test_not_fail[i],dateString));
+					}
+					console.log('SHOULD FAIL');
+					for (var i = 0; i < results_should_fail.length; i++) {
+						console.log(i);
+						console.log(results_should_fail[i]);
+					}
+					console.log('SHOULD NOT FAIL');
+					for (var i = 0; i < results_should_not_fail.length; i++) {
+						console.log(i);
+						console.log(results_should_not_fail[i]);
+					}
+						
+				},
+				error: function (data) {
+					handleServerError(data);
+				}
+			});
+
+		}
+	});
+
+}
+
+$(document).ready(function() {
+	//reserveNewEquipmentAuthCallback_UNIT_TEST('2016-08-15', false);
+});
+
+//-END UNIT TEST

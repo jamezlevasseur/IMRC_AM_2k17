@@ -1,0 +1,5 @@
+/* Copyright (C) James LeVasseur - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by James LeVasseur <james.levasseur@maine.edu>,September 2016
+ */

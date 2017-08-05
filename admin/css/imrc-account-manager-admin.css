@@ -1,0 +1,814 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+ .iam-scheduling-block table th {
+ 	background: lightblue;
+ }
+ table td.heading-data {
+ 	background: lightblue;
+ }
+#iam-admin-col-left, .iam-col-left {
+	float: left;
+	width: 350px;
+}
+#iam-admin-col-right, .iam-col-right {
+	display: inline-block;
+	margin-left: 30px;
+}
+.iam-delete-account-type {
+	font-size: 35px;
+}
+.iam-delete-account-type:hover {
+	color: red;
+	cursor: pointer;
+}
+.iam-ninja {
+	display: none!important;
+}
+.iam-highlighted {
+	background-color: lightblue!important;
+}
+.iam-list-selectable {
+	padding-left: 2px;
+	padding-top: 3px;
+}
+.iam-image {
+	cursor: pointer;
+}
+.iam-form-row label {
+	display: block;
+}
+.iam-delete-form {
+	color:white;
+	background-color: #ef4545;
+	border: 1px solid grey;
+	padding: 5px;
+	text-align: center;
+	min-width: 50px;
+	max-width: 150px;
+	white-space: nowrap;
+	cursor: pointer;
+}
+.iam-submit::before {
+	content: "submit";
+}
+
+.iam-save::before {
+	content: "save changes";
+}
+
+/* to push down the footer */
+#iam-new-equipment-button {
+	margin-bottom: 400px;
+	margin-top: 5px;
+}
+
+.iam-existing-list {
+	border: 1px solid #CCCCCC;
+	min-height: 200px;
+	min-width: 100px;
+	max-height: 600px;
+	overflow-y: scroll;
+}
+
+.iam-existing-list li {
+	background-color: #e5e5e5;
+	cursor: pointer;
+	border-bottom: 2px solid #f1f1f1;
+	padding: 3px;
+	margin-bottom: 0;
+}
+
+.iam-existing-upload-x::before {
+	content:"x";
+}
+.iam-existing-upload-x {
+	padding:5px;
+	color:red;
+	cursor: pointer;
+}
+
+.iam-existing-list li:hover {
+	background-color: lightblue;
+}
+
+.iam-settings-submit {
+	margin-top:5px;
+	margin-bottom:10px;
+}
+
+.iam-quipura-logo {
+	vertical-align: middle;
+}
+
+.iam-push-emails-button {
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.iam-account-type-label {
+	margin-top:-5px;
+}
+
+.iam-balances-search {
+	margin-bottom: 15px;
+}
+
+#iam-bal-charges-table-container {
+	width: 50%;
+	display: inline-block;
+}
+@media screen and (max-width: 1400px) {
+	#iam-bal-charges-table-container {
+		max-width: 40%;
+	}
+} 
+
+
+/*//////////////////////////////////Balances////////////////////////////////////*/
+.iam-bal-user-row {
+	cursor: pointer;
+	width:100%;
+}
+
+.iam-bal-user-row:hover {
+	background-color: #599bb3;
+}
+
+.iam-bal-user-row-account-type {
+	text-align:center;
+}
+
+.iam-bal-user-row-balance {
+	text-align:center;
+}
+
+#iam-balances-table {
+	border-collapse: collapse;
+	border-bottom: 2px solid #CCCCCC;
+	width: 388px;
+}
+#iam-title-row {
+	background-color: lightblue !important;
+	text-align: left;
+	font-weight: bold;
+}
+#iam-balances-table td  {
+	padding-top: 13px;
+	padding-bottom: 13px;
+	padding-left: 15px;
+	/*border-top: 2px solid #F1F1F1;
+	text-align: left;
+	background-color: #e5e5e5;*/
+}
+#iam-balances-table tr {
+	border-top: 2px solid #F1F1F1;
+	text-align: left;
+	background-color: #e5e5e5;
+}
+#iam-balances-table tr:hover{
+	background-color: lightgrey;
+}
+#iam-balances-table th {
+	margin: 0px;
+	padding-top: 15px;
+	padding-bottom: 15px;
+	padding-left: 15px;
+}
+.iam-balances-table-col1, .iam-user-certification-table-col1 {
+	width: 150px;
+}
+.iam-balances-table-col2, .iam-user-certification-table-col2 {
+	width: 125px;
+}
+.iam-balances-table-col3 {
+	width: 65px;
+}
+.iam-bal-user-row-username {
+	text-align:left !important;
+	margin-left: 10px;
+}
+.iam-bal-user-row-account-type {
+	margin-left: -10px;
+}
+
+/*//////////////////////////////////User Charges Table////////////////////////////////////*/
+
+#iam-user-charges-table {
+	border-collapse: collapse;
+}
+#iam-user-charges-table tr {
+	border-top: 2px solid #F1F1F1;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	background-color: #e5e5e5;
+}
+#iam-user-charges-table th {
+	margin: 0px;
+	padding: 15px;
+}
+#iam-user-charges-table td {
+	padding-left: 5px;
+}
+
+#iam-user-charges-table tr {
+	cursor: pointer;
+}
+
+#iam-user-charges-table tr:hover {
+	background-color: lightblue !important;
+}
+
+#iam-user-charges-table th {
+	padding-left: 5px;
+	vertical-align: top;
+	background-color: #ddd;
+	border: none;
+}
+.iam-add-funds-button {
+	float:right;
+	vertical-align:middle;
+	padding:5px;
+	margin-top: -10px;
+}
+
+.iam-edit-charge-row {
+	background-color:#d4483b;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #d02718;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+	transform: scale(.7);
+}
+
+/*//////////////////////////////////Charges Table////////////////////////////////////*/
+#iam-charges-table {
+	border-collapse: collapse;
+	text-align: left;
+}
+#iam-charges-table th {
+	margin: 0px;
+	padding:10px;
+	padding-top: 10px;
+}
+#iam-charges-table td {
+	padding: 5px;
+	border-top: 2px solid #F1F1F1;
+	background-color: #e5e5e5;
+}
+
+.iam-charges-table-col7 {
+	width:125px;
+}
+
+
+#iam-charge-table {
+	margin-top: 15px;
+	border-collapse: collapse;
+	text-align: left;
+}
+#iam-charge-table th {
+	background-color: lightblue;
+	text-align: left;
+	margin: 0px;
+	padding:10px;
+	padding-top: 10px;
+}
+#iam-charge-table td {
+	padding: 5px;
+	border-top: 2px solid #F1F1F1;
+	background-color: #e5e5e5;
+}
+
+.iam-charge-table-col7 {
+	width:125px;
+}
+
+
+/*//////////////////////////////////User Privileges Table////////////////////////////////////*/
+#iam-privileges-table {
+	border-collapse: collapse;
+	text-align: left;
+}
+#iam-privileges-table th {
+	margin: 0px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+#iam-privileges-table td {
+	border-top: 2px solid #f1f1f1;
+	background-color: #e5e5e5;
+	padding: 10px;
+}
+.iam-user-privileges-search {
+	margin-bottom: 10px;
+}
+.iam-user-privileges-container {
+	border-bottom: 2px solid #CCCCCC;
+}
+
+/*//////////////////////////////////Registration Table////////////////////////////////////*/
+
+#iam-table {
+	border: 1px solid #000;
+	border-collapse: collapse;
+}
+.iam-registration-table td {
+	padding: 5px;
+	background-color: #e5e5e5;
+	border-top: 2px solid #f1f1f1;
+}
+.iam-registration-table th {
+	margin: 0px;
+	padding:15px;
+}
+.iam-registration-table {
+	margin-bottom:20px;
+}
+.iam-registration-search {
+	margin-bottom: 10px;
+}
+
+/*//////////////////////////////////Certifications////////////////////////////////////*/
+
+#iam-user-certification-table {
+	height:500px;
+	overflow-y: scroll;
+	padding: 15px;
+	padding-left: 0;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+#iam-user-certification-table th {
+	margin: 0px;
+	padding-top:15px;
+	text-align: left;
+}
+
+/*.iam-user-certification-table-col1 {
+	width: 150px;
+}*/
+
+#iam-user-certification-table td {
+	padding: 15px;
+	border-top: 2px solid #F1F1F1;
+	background-color: #e5e5e5;
+}
+
+.iam-see-existing-certifications {
+	font-size:30px;
+
+}
+
+.iam-see-existing-certifications {
+	cursor: pointer;
+}
+
+.iam-see-existing-certifications:hover {
+	color:#aaa;
+}
+
+.iam-tabs {
+	margin: 20px;
+	margin-left: 0;
+}
+
+.iam-tabs span{
+	padding: 10px;
+	margin-right:2px;
+	background-color: white;
+	cursor: pointer;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+}
+
+.iam-tabs span:hover {
+	background-color: #ddd;
+}
+
+.iam-selected-tab {
+	background-color: lightblue!important;
+}
+
+.iam-selected-row {
+	background-color: lightgreen!important;
+}
+
+#iam-balances-table tbody {
+	overflow-y: scroll;
+	max-height: 500px;
+	display: block;
+}
+
+.iam-res-search-container {
+	position: relative;
+	display: block;
+}
+
+.res-col-left {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.iam-reservation-tab-list {
+	width: 400px;
+	height: 500px;
+	overflow-y: scroll;
+	border: 1px solid #CCCCCC;
+	float: left;
+}
+
+.iam-fab-lab-list li {
+	cursor: pointer;
+}
+
+.iam-fab-lab-list li:hover {
+	background-color: #fff;
+}
+
+.iam-select-all {
+	font-weight: bold;
+	margin-bottom: 15px;
+	margin-top: 15px;
+}
+
+.iam-reservations-equipment-list-item, .iam-room-res-list li {
+	background-color: #e5e5e5;
+	border-top: 2px solid #f1f1f1;
+}
+
+.iam-reservation-tab-list div:hover, .iam-room-res-list li:hover {
+	background-color: lightblue;
+	cursor: pointer;
+	-webkit-user-select: none; /* Chrome/Safari */        
+	-moz-user-select: none; /* Firefox */
+	-ms-user-select: none; /* IE10+ */
+}
+
+.iam-res-cal, .iam-cal {
+	width: 600px;
+	display: inline-block;
+}
+
+.iam-res-cal-placeholder, .iam-cal-placeholder {
+	font-size: 30px;
+	text-align: center;
+	line-height: 500px;
+	border: dashed 1px #333;
+	height: 600px;
+	
+}
+
+#iam-res-cal-wrap {
+	width: 600px;
+	display: inline-block;
+	margin-left: 30px;
+}
+
+.iam-res-cal-instructions {
+	display: inline-block;
+	width: 600px;
+	margin-top: 20px;
+}
+
+.iam-res-cal-submit {
+	display: inline-block;
+	float: right;
+	margin-right: 25px;
+}
+
+.iam-res-cal-cancel {
+	display: inline-block;
+	float: right;
+}
+
+.iam-res-cal-reason {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.iam-res-cal-button-wrap {
+	display: inline-block;
+	float: right;
+	width: 300px;
+}
+
+.iam-loading-anim {
+	background-image: url('../../assets/loading.gif');
+	z-index: 999;
+	position: fixed;
+	top: 40%;
+	left: 45%;
+	width: 100px;
+	height: 100px;
+}
+
+.iam-loading-bg {
+	background-color: #fff;
+	opacity: .6;
+	z-index: 998;
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 110%;
+	height: 110%;
+}
+
+.iam-admin-header {
+	margin-bottom: 20px !important;
+	background: #f13d39;
+	color: white;
+	padding: 15px !important;
+}
+.iam-button {
+	background-color:#44c767;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #18ab29;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+}
+.iam-button:hover {
+	background-color:#2abd4c;
+}
+.iam-button:active {
+	position:relative;
+	top:1px;
+}
+
+.iam-secondary-button {
+	background-color:#599bb3;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #29668f;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+}
+.iam-secondary-button:hover {
+	background-color:#067e91;
+}
+.iam-secondary-button:active {
+	position:relative;
+	top:1px;
+}
+
+.iam-delete-button {
+	background-color:#d4483b;
+	-moz-border-radius:28px;
+	-webkit-border-radius:28px;
+	border-radius:28px;
+	border:1px solid #d02718;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	text-transform: uppercase;
+	font-family:Arial;
+	font-size:12px;
+	padding:9px 13px;
+	text-decoration:none;
+}
+.iam-delete-button:hover {
+	background-color:#c23329;
+}
+.iam-delete-button:active {
+	position:relative;
+	top:1px;
+}
+.iam-approve-charge-button {
+	transform:scale(.7);
+}
+.iam-table-delete-button{
+	transform:scale(.7);
+}
+.iam-table-button{
+	transform:scale(.7);
+}
+.iam-pricing-row-delete-button {
+	
+}
+.iam-new-mat-button{
+	margin-bottom:5px;
+}
+.iam-x {
+	position: absolute;
+	top: 20px;
+	right: 30px;
+	cursor: pointer;
+	font-size: 40px;
+}
+
+.iam-x:hover {
+	color: #333;
+}
+
+.iam-popup {
+	background-color: white;
+	position: fixed;
+	top: 100px;
+	left: 15%;
+	border: 1px solid lightgrey;
+	border-radius: 4px;
+	padding: 20px;
+	z-index: 999;
+	width: 70%;
+ 	min-width: 500px;
+}
+
+.iam-popup-header {
+	background-color: white;
+	padding: 5px;
+	border-bottom: 1px grey solid;
+	font-size: 20px;
+}
+
+.iam-popup-body {
+ 	background-color: white;
+ 	padding: 5px;
+ 	margin: 0 auto;
+}
+#iam-pricing-table{
+	width:1100px;
+	margin-bottom:10px;
+}
+.iam-add-pricing-tags-drop-down-button {
+	margin-top: 5px;
+	margin-right:5px;
+	margin-bottom:5px;
+}
+.iam-add-pricing-equipment-drop-down-button {
+	margin-top: 5px;
+	margin-right:5px;
+	margin-bottom:5px;
+}
+.iam-registration-review-wrap {
+	display:inline-block;
+	float:left;
+	width:500px;
+}
+.iam-registration-key-wrap {
+	display:inline-block;
+	float:left;
+	width:500px;
+}
+.i-am-registration-key-expiration {
+	text-align:center;
+}
+.iam-reg-key-button {
+	margin-top:10px;
+}
+.iam-load-res-checkbox-container {
+	margin-top: 10px;
+}
+
+/** pricing table styles **/
+
+#iam-pricing-table th {
+	text-align: left;
+	margin: 0px;
+	padding: 15px;
+	padding-left: 5px!important;
+	padding-right: 0!important;
+}
+
+#iam-pricing-table input[type=number], #iam-pricing-table input[type=text]{
+	width: 100px;
+}
+
+#iam-pricing-table td {
+	width: 200px;
+	padding-top:5px;
+	background-color: #e5e5e5;
+	border-top: 2px solid #f1f1f1;
+}
+
+#iam-pricing-table tr td:nth-child(1),#iam-pricing-table tr td:nth-child(2),#iam-pricing-table tr td:nth-child(3),#iam-pricing-table tr td:nth-child(4) {
+	width: 120px;
+}
+
+#iam-pricing-table .iam-pricing-drop-down > * {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#iam-pricing-table .iam-pricing-drop-down select {
+	width:150px;
+}
+
+.fa-close:hover {
+	cursor: pointer;
+	color: red;
+}
+
+.iam-appointment-table td {
+	text-align: center;
+	width: 150px;
+}
+
+.iam-appointment-table td.heading-data {
+	width: 60px!important;
+}
+
+#external-events, #approval-external-events {
+	display: inline-block;
+	width: 150px;
+	padding: 0 10px;
+	background: #eee;
+	text-align: left;
+}
+
+.fc-event {
+	cursor: pointer;
+}
+
+
+.iam-schedule-submit-button {
+	margin-top: 15px;
+}
+
+.iam-irregular-hours-cal, .iam-approval-hours-cal {
+	display: inline-block;
+	margin: 10px 0;
+}
+
+.iam-irregular-hours-button, .iam-irregular-hours-update-button {
+	display: block;
+	margin-top: 15px;
+	margin-bottom: 15px;
+}
+
+.iam-irregular-hours-instructions, .iam-approval-hours-instructions {
+	padding: 15px 0 0 0;
+}
+
+.iam-currency-field::before {
+	font-size: 16px;
+    float: left;
+    content: "$"; /* £ */
+    padding: 7px 4px 3px 3px;
+}
+
+.iam-overview-wrap .iam-fab-lab-list li {
+	min-height: 20px;
+}
+
+.iam-event-tooltip {
+	display: none;
+}
+
+.fc-event:hover .iam-event-tooltip {
+	display: block;
+	position: absolute;
+	top:0;
+	left:0;
+	width: 300px;
+	min-height: 300px;
+	background: white;
+	z-index: 9999;
+}
+
+.iam-copy-notification {
+	position: fixed;
+	bottom: 100px;
+	left: 40%;
+	background: rgba(255,255,255,.5);
+	font-size: 20px;
+}
+
+.table-editable:hover {
+	cursor: pointer;
+	background: rgba(255,255,255,.6) !important;
+}
+
+.table-active-text {
+	width: 100%;
+	height:100%;
+	overflow: visible;
+}

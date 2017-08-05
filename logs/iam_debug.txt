@@ -1,0 +1,258 @@
+================== Aug-4-17 9:11:54 pm =================
+a string
+================== Aug-4-17 9:11:57 pm =================
+a string
+================== Aug-4-17 9:12:00 pm =================
+a string
+================== Aug-4-17 9:12:02 pm =================
+a string
+================== Aug-4-17 9:13:04 pm =================
+CREATE TABLE IF NOT EXISTS wp_iam_users (
+			IAM_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			WP_ID bigint(20) NOT NULL,
+			WP_Username varchar(60) NOT NULL,
+			Account_Type bigint(20) NOT NULL,
+			Balance decimal(6,2) NOT NULL,
+			PRIMARY KEY(IAM_ID),
+			UNIQUE(NI_ID),
+			UNIQUE(WP_Username)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_equipment (
+			Equipment_ID int(9) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			Certification_ID int(5) DEFAULT 0,
+			Name varchar(100) NOT NULL,
+			Description text DEFAULT NULL,
+			Pricing_Description text DEFAULT NULL,
+			Manufacturer_Info text DEFAULT NULL,
+			Photo text DEFAULT NULL,
+			On_Slide_Show tinyint(1) DEFAULT 0,
+			Out_Of_Order tinyint(1) DEFAULT 0,
+			Root_Tag varchar(120) NOT NULL,
+			PRIMARY KEY(Equipment_ID),
+			UNIQUE(NI_ID),
+			UNIQUE(Name)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_reservation (
+			Reservation_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			IAM_ID bigint(20) NOT NULL,
+			Equipment_ID int(9) NOT NULL,
+			Start_Time datetime NOT NULL,
+			End_Time datetime NOT NULL,
+			Is_Room tinyint(1) DEFAULT 0,
+			Status int(2) DEFAULT 0,
+			Checked_In datetime DEFAULT NULL,
+			Checked_Out datetime DEFAULT NULL,
+			Late_Notification_Sent tinyint(1) DEFAULT 0,
+			Reservation_Status int(2) DEFAULT 0,
+			Comment text DEFAULT '',
+			PRIMARY KEY(Reservation_ID),
+			UNIQUE(NI_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_material (
+			Material_ID int(8) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			Name varchar(120),
+			Price_Per_Unit float(10,2),
+			Base_Price float(10,2) DEFAULT 0,
+			Unit_Name varchar(120),
+			PRIMARY KEY(Material_ID),
+			UNIQUE(NI_ID),
+			UNIQUE(Name)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_charge (
+			Charge_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			Equipment_ID int(9) DEFAULT NULL,
+			WP_Username varchar(60) NOT NULL,
+			Charge_Description text DEFAULT NULL,
+			Status tinyint(2) DEFAULT 0,
+			Comment text DEFAULT '',
+			Date varchar(60) NOT NULL,
+			Approver text DEFAULT NULL,
+			Amount float(10,2) NOT NULL,
+			PRIMARY KEY(Charge_ID),
+			UNIQUE(NI_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_certification (
+			Certification_ID int(5) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			Name varchar(100) NOT NULL,
+			Photo text DEFAULT NULL,
+			Required tinyint(1) DEFAULT 0,
+			Description text DEFAULT NULL,
+			Time varchar(120) DEFAULT NULL,
+			Supporting_Materials text DEFAULT NULL,
+			PRIMARY KEY(Certification_ID),
+			UNIQUE(NI_ID),
+			UNIQUE(Name)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_tags (
+			Tag_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			Tag varchar(120) NOT NULL,
+			Parent varchar(120) DEFAULT NULL,
+			PRIMARY KEY(Tag_ID),
+			UNIQUE(Tag)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_tags_equipment (
+			Tag_ID bigint(20) NOT NULL,
+			Equipment_ID int(9) NOT NULL,
+			Unique_ID bigint(20) NOT NULL,
+			UNIQUE(Unique_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_files (
+			File_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			Name varchar(200) NOT NULL,
+			Path varchar(2048) NOT NULL,
+			URL varchar(2048) NOT NULL,
+			Size bigint(20) NOT NULL,
+			Type varchar(120) NOT NULL,
+			PRIMARY KEY(File_ID),
+			UNIQUE(Name)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_supporting_files (
+			File_ID bigint(20) NOT NULL,
+			Certification_ID int(5) NOT NULL
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_user_certifications (
+			IAM_ID bigint(20) NOT NULL,
+			Certification_ID int(5) NOT NULL
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_room (
+			Room_ID int(10) NOT NULL AUTO_INCREMENT,
+			NI_ID varchar(200) NOT NULL,
+			Name varchar(200) NOT NULL,
+			Description text DEFAULT NULL,
+			Pricing_Description text DEFAULT NULL,
+			Photo text DEFAULT NULL,
+			Out_Of_Order tinyint(1) DEFAULT 0,
+			PRIMARY KEY(Room_ID),
+			UNIQUE(Name)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_facility (
+			Facility_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			Tag_ID bigint(20) NOT NULL,
+			Schedule_Type varchar(60) NOT NULL,
+			Rental_Days int (3) DEFAULT NULL,
+			Rental_Hours_Description text DEFAULT NULL,
+			Appointment_Business_Hours text DEFAULT '',
+			PRIMARY KEY(Facility_ID),
+			UNIQUE(Tag_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_material_equipment (
+			Unique_ID bigint(20) NOT NULL,
+			Material_ID bigint(20) NOT NULL,
+			Equipment_ID bigint(20) NOT NULL,
+			UNIQUE(Unique_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_material_tags (
+			Unique_ID bigint(20) NOT NULL,
+			Material_ID bigint(20) NOT NULL,
+			Tag_ID bigint(20) NOT NULL,
+			UNIQUE(Unique_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_meta (
+			Meta_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			Meta_Key varchar(256) NOT NULL,
+			Meta_Value text DEFAULT '',
+			PRIMARY KEY(Meta_ID)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+CREATE TABLE IF NOT EXISTS wp_iam_account_types (
+			Account_Type_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			Name varchar(120) NOT NULL,
+			Discount int(3) NOT NULL,
+			PRIMARY KEY(Account_Type_ID),
+			UNIQUE(Name)
+			) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci
+
+
+================== Aug-4-17 9:25:16 pm =================
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+Array
+
+
+================== Aug-4-17 9:26:34 pm =================
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+Created table IF
+
+
