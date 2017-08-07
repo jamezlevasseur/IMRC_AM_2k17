@@ -61,26 +61,28 @@ class IAM_Public {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
+		
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-cal.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-reservation-handler.php';
+		require_once iam_dir() . 'includes/IAM-cal.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/reservation_page.php';
+		require_once iam_dir() . 'includes/IAM-reservation-handler.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/reservation_popup.php';
+		require_once iam_dir() . 'templates/reservation_page.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/certification_page.php';
+		require_once iam_dir() . 'templates/reservation_popup.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/training_page.php';
+		require_once iam_dir() . 'templates/certification_page.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/checkout_page.php';
+		require_once iam_dir() . 'templates/training_page.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/faq_page.php';
+		require_once iam_dir() . 'templates/checkout_page.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/account_balance_page.php';
+		require_once iam_dir() . 'templates/faq_page.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/content.php';
+		require_once iam_dir() . 'templates/account_balance_page.php';
+
+		require_once iam_dir() . 'public/content.php';
 	}
 
 

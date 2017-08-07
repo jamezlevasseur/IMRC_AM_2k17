@@ -41,9 +41,6 @@
     </div>
 </div>
 <div class="login-form-container">
-    <div class="iam-banner iam-res-banner">
-        Room and equipment room reservations coming soon. Fab Labs reservations are in beta!
-    </div>
     <?php if ( $attributes['show_title'] ) : ?>
         <h2><?php _e( 'Sign In', 'iam-login' ); ?></h2>
     <?php endif; ?>
@@ -87,7 +84,7 @@
     <a href="#" class="iam-discover-link">Discover What We Have to Offer</a>
     <div id="iam-slide-show">
         <?php
-            IAM_Public::render_login_slide_show();
+            Utils_Public::render_login_slide_show();
          ?>
     </div>
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
-* 
+*
 */
 class Reservation_Public
 {
@@ -97,14 +97,5 @@ class Reservation_Public
     {
         $html = IAM_Reservation_Page::get_rooms();
         iam_respond(SUCCESS,$html);
-    }
-
-    public static function render_login_slide_show()
-    {
-        global $wpdb;
-        $slide_show_results = $wpdb->get_results("SELECT Name,Description,Photo FROM ".IAM_EQUIPMENT_TABLE." WHERE On_Slide_Show=1 ");
-        foreach ($slide_show_results as $row) {
-            echo '<div class="iam-slide-show-img"><img class="iam-slideshow-equip-img" src="'.iam_output($row->Photo).'"><p class="iam-img-name">'.iam_output($row->Name).'</p><p class="iam-img-description">'.iam_output($row->Description).'</p></div>';
-        }
     }
 }

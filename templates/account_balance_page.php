@@ -103,7 +103,7 @@ class IAM_Account_Balance_Page
 				</table>
 			</div>
 		</div>';
-		IAM_Public::render_page_for_login_status($html);
+		Utils_Public::render_page_for_login_status($html);
 	}
 
 }

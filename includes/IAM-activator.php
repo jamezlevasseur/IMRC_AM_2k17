@@ -275,10 +275,10 @@ class IAM_Activator {
 			$timenid = uniqid();
 			$wpdb->query("INSERT INTO ".IAM_MATERIAL_TABLE." (Name,Price_Per_Unit,Unit_Name,NI_ID) VALUES ('Time',0.1,'minutes','$timenid')");
 
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'tables/wp_iam_equipment.php';
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'tables/wp_iam_certification.php';
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'tables/wp_iam_room.php';
-			require_once plugin_dir_path( dirname( __FILE__ ) ) . 'tables/wp_iam_tags_equipment.php';
+			require_once iam_dir() . 'tables/wp_iam_equipment.php';
+			require_once iam_dir() . 'tables/wp_iam_certification.php';
+			require_once iam_dir() . 'tables/wp_iam_room.php';
+			require_once iam_dir() . 'tables/wp_iam_tags_equipment.php';
 			$relational_array = [];
 			$equip_dictionary = [];
 			$cert_dictionary = [];

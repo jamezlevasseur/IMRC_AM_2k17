@@ -25,7 +25,7 @@ class IAM_Login {
 	 
 	    //do_action( 'iam_login_before_' . $template_name );
 	 
-	    require plugin_dir_path( dirname( __FILE__ ) ) .'templates/'.$template_name.'.php';
+	    require iam_dir() .'templates/'.$template_name.'.php';
 	 
 	    //do_action( 'iam_login_after_' . $template_name );
 	 

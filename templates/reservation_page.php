@@ -28,6 +28,8 @@ class IAM_Reservation_Page
 				$unchecked_tags[] = $row->Tag;
 			}
 		}
+		//print_r($all_tags);
+		//exit;
 		return $all_tags;
 	}
 
@@ -258,7 +260,7 @@ class IAM_Reservation_Page
       	get_currentuserinfo();
       	$has_priv = get_user_meta($current_user->ID,IAM_RESERVATIONS_PRIVILEGE_META);
 		if (count($has_priv)>0 && $has_priv!=false) {
-			IAM_Public::render_page_for_login_status('<h1>Your reservation privileges have been removed</h1><p>Please contact an admin for further assistance.</p>');
+			Utils_Public::render_page_for_login_status('<h1>Your reservation privileges have been removed</h1><p>Please contact an admin for further assistance.</p>');
 			return;
 		}
 		$facility_results = $wpdb->get_results("SELECT * FROM ".IAM_FACILITY_TABLE);
@@ -278,7 +280,6 @@ class IAM_Reservation_Page
 		}
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
 		$html = '<div id="iam-ref">
-		'.IAM_Reservation_Page::res_banner().'
 		<p class="iam-page-header">Available Equiment</p>
 		<div class="iam-ninja iam-cal-data" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
 		<div class="iam-ref-left-top">
@@ -292,7 +293,7 @@ class IAM_Reservation_Page
 		</div>
 		<div id="iam-ref-right"><div id="iam-ref-right-title">Existing Reservations</div><div id="iam-existing-res-container">'.IAM_Reservation_Page::get_user_reservations().'</div></div>
 		</div>';
-		IAM_Public::render_page_for_login_status($html);
+		Utils_Public::render_page_for_login_status($html);
 	}
 
 }

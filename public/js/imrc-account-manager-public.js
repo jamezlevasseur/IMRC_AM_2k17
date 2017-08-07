@@ -7,7 +7,7 @@
 		var IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
 		var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 		//global vars
-		var debug=false,softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
+		var debug=true,getcaller=false,softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
 		var daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
 		//misc functions
 
@@ -37,6 +37,11 @@
 				return _r.content;
 			} catch (error) {
 				if (softFail) {
+					if (getcaller) {
+						console.log( arguments.callee.caller.toString() );
+					}
+					if (debug)
+						console.log(error);
 					console.log('error occured');
 				} else {
 					alert('An unknown error occured! :(');
@@ -374,6 +379,8 @@
 				data: {action: 'get_equipment_for_tags',tags:root_tags},
 				success: function (data) {
 					var content = handleServerResponse(data);
+					newDataToRefLeft(content, true);
+					/*
 					$.ajax({
 						url: ajaxurl,
 						type: 'GET',
@@ -386,7 +393,7 @@
 						error: function (data) {
 							handleServerError(data);
 						}
-					});
+					});*/
 				},
 				error: function (data) {
 					handleServerError(data);
@@ -398,7 +405,7 @@
 			for (var i = 0; i < root_tags.length; i++) {
 				$('#iam-ref-crumb-buttons').append('<button class="iam-crumb-button">'+root_tags[i]+'</button>');
 			}
-			$('#iam-ref-crumb-buttons').append('<button id="iam-rooms-button"></button>');
+			//$('#iam-ref-crumb-buttons').append('<button id="iam-rooms-button"></button>');
 			initCrumbListener();
 			initCrumbButtonListener();
 		}

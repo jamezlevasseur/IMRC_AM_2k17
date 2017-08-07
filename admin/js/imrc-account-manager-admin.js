@@ -1392,7 +1392,7 @@
 						data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: $('.iam-res-cal-send-emails').is(':checked'), reason: $('.iam-res-cal-reason').val()},
 						success: function (data) {
 							handleServerResponse(data);
-							makeCalendarReservations(selectedEquipment);
+							makeCalendarReservationsMulti(selectedEquipment);
 							resetEvents();
 							submissionEnd();
 						},
@@ -1404,11 +1404,13 @@
 				$('.iam-res-cal-cancel').click(function(event) {
 					if (typeof selectedEquipment === 'undefined')
 						return;
-					makeCalendarReservations(selectedEquipment);
+					makeCalendarReservationsMulti(selectedEquipment);
 				});
 			}
 
 			var makeCalendarReservations = function (equip_name) {
+				equip_name = equip_name.replace(' ', '_');
+
 				//init calendar
 				$('.fc-event').each(function() {
 
@@ -1435,6 +1437,7 @@
 						lastSource = ajaxurl+"?action=get_equipment_calendar&all=y&is=y&name="+equip_name;
 					else
 						lastSource = ajaxurl+"?action=get_equipment_calendar&is=y&name="+equip_name;
+					console.log(lastSource)
 					$('.iam-res-cal').fullCalendar({
 						header: {
 							left: 'prev,next today',
@@ -1497,6 +1500,119 @@
 					$('.iam-res-cal').fullCalendar( 'addEventSource', lastSource );
 				}
 			}
+
+
+			var makeCalendarReservationsMulti = function (equip_name) {
+				equip_name = equip_name.replace(' ', '_');
+
+				//init calendar
+				$('.fc-event').each(function() {
+
+					// store data so the calendar knows to render an event upon drop
+					$(this).data('event', {
+						title: $.trim($(this).text()), // use the element's text as the event title
+						stick: true, // maintain when user navigates (see docs on the renderEvent method)
+						editable: true,
+						color:'#4cad57',
+						className: 'iam-new-event'
+					});
+
+					// make the event draggable using jQuery UI
+					$(this).draggable({
+						zIndex: 999,
+						revert: true,      // will cause the event to go back to its
+						revertDuration: 0  //  original position after the drag
+					});
+
+				});
+				if ($('.iam-res-cal-placeholder').length) {
+					$('.iam-res-cal-placeholder').remove();
+
+					if (typeof overviewSourcesMap[equip_name]!='undefined') {
+                        overviewSources.splice(overviewSourcesMap[equip_name],1);
+                    } else {
+                        overviewSources.push(equip_name);
+                        overviewSourcesMap[equip_name] = overviewSources.length-1;
+                    }
+                    var equip_names = overviewSources.join('~!~');
+                    lastOverviewResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&names="+equip_names;
+
+					if ($('.iam-load-all-reservations').is(':checked'))
+						lastOverviewResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&all=y&names="+equip_names;
+					else
+						lastOverviewResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
+
+					$('.iam-res-cal').fullCalendar({
+						header: {
+							left: 'prev,next today',
+							center: 'title',
+							right: 'month,agendaWeek,agendaDay'
+						},
+						droppable: true,
+						eventOverlap: false,
+					    weekends:true,
+						height: 600,
+						forceEventDuration: true,
+						defaultView: 'month',
+						editable: true,
+						eventLimit: true, // allow "more" link when too many events
+						eventRender: function (event, element) {
+							eventToolTip(event,element);
+						},
+						eventAfterRender: function (event, element) {
+							if (event.toDelete==1) {
+								$(element).css({
+									'background-color': '#ef4040',
+									'border': '1px solid #ef4040'
+								});
+							}
+						},
+						eventDrop: function (event) {
+							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+						},
+						eventResize: function (event) {
+							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+						},
+						eventClick: function (event, jsEvent, view) {
+							var index = eventsToDelete.indexOf(event.nid);
+							if (index!=-1) {
+								eventsToDelete.splice(index,1);
+								event.toDelete = 0;
+								$(this).css({
+									'background-color': '#3a87ad',
+									'border': '1px solid #3a87ad'
+								});
+							} else {
+								eventsToDelete.push(event.nid);
+								event.toDelete = 1;
+								$(this).css({
+									'background-color': '#ef4040',
+									'border': '1px solid #ef4040'
+								});
+							}
+						},
+						events: lastOverviewResource
+					});
+				} else {
+					$('.iam-res-cal').fullCalendar( 'removeEventSource', lastOverviewResource);
+                    if (typeof overviewSourcesMap[equip_name]!='undefined') {
+                        overviewSources.splice(overviewSourcesMap[equip_name],1);
+                        overviewSourcesMap[equip_name] = undefined;
+                    } else {
+                        overviewSources.push(equip_name);
+                        overviewSourcesMap[equip_name] = overviewSources.length-1;
+                    }
+                    var equip_names = overviewSources.join('~!~');
+
+					if ($('.iam-load-all-reservations').is(':checked'))
+						lastOverviewResource = ajaxurl+"?action=get_equipment_calendar&all=y&is=y&names="+equip_names;
+					else
+						lastOverviewResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
+
+                    $('.iam-res-cal').fullCalendar( 'addEventSource', lastOverviewResource);
+				}
+			}
+
 
 			//schedling wrap functions
 			var initScheduleTypeListeners = function () {
@@ -2122,7 +2238,7 @@
 						header: {
 							left: 'prev,next today',
 							center: 'title',
-							right: 'agendaDay'
+							right: 'agendaDay,agendaWeek,month'
 						},
 						eventOverlap: true,
 					    weekends:true,
@@ -2369,16 +2485,14 @@
 				updateSearchOnLoad();
 				$(document).tooltip();
 			} else if ( $('.iam-reservation-wrap').length>0 ) {
-
-				var selectedEquipment, lastSource;
 				resetEvents();
 
-				initTabLists();
-				initTabs();
+				$('.iam-reservation-list div').click(function(event) {
+					makeCalendarReservationsMulti($(this).text());
+					$(this).toggleClass('iam-highlighted');
+				});
 				initResCalSubmitListener();
-				initSearchListener('.iam-fab-lab-search','.iam-fab-lab-list div',0);
-				initSearchListener('.iam-equipment-room-search','.iam-equipment-room-list div',0);
-				initSearchListener('.iam-rooms-search','.iam-rooms-list div',0);
+				initSearchListener('.iam-search','.iam-reservation-list div',0);
 				$(document).tooltip();
 			} else if ( $('.iam-user-certification-wrap').length>0 ) {
 

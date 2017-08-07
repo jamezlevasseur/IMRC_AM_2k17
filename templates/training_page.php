@@ -16,7 +16,7 @@ class IAM_Training_Page
 			<input type="submit" name="submit">
 		</div>
 		';
-		IAM_Public::render_page_for_login_status($html);
+		Utils_Public::render_page_for_login_status($html);
 	}
 
 }

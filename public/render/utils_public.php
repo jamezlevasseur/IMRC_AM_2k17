@@ -2,7 +2,7 @@
 
 
 /**
-* 
+*
 */
 class Utils_Public
 {
@@ -200,10 +200,10 @@ class Utils_Public
     {
 
         if (is_user_logged_in()) {
-            IAM_Public::render_user_logout_bar();
+            Utils_Public::render_user_logout_bar();
             echo $page_html;
         } else {
-            require plugin_dir_path( dirname( __FILE__ ) ) . 'templates/login_form.php';
+            require iam_dir() . 'templates/login_form.php';
             exit;
         }
         return;
@@ -211,13 +211,22 @@ class Utils_Public
 
     public static function allow_admin_bar()
     {
-        return IAM_Public::iam_is_admin();
+        return Utils_Public::iam_is_admin();
     }
 
     public static function iam_is_admin()
     {
         $current_user = wp_get_current_user();
         return in_array('administrator',  $current_user->roles);
+    }
+
+    public static function render_login_slide_show()
+    {
+        global $wpdb;
+        $slide_show_results = $wpdb->get_results("SELECT Name,Description,Photo FROM ".IAM_EQUIPMENT_TABLE." WHERE On_Slide_Show=1 ");
+        foreach ($slide_show_results as $row) {
+            echo '<div class="iam-slide-show-img"><img class="iam-slideshow-equip-img" src="'.iam_output($row->Photo).'"><p class="iam-img-name">'.iam_output($row->Name).'</p><p class="iam-img-description">'.iam_output($row->Description).'</p></div>';
+        }
     }
 
 }

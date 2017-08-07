@@ -106,7 +106,7 @@ class IAM_Certification_Page
 			'.$phase_blocks.'
 		</div>
 		';
-		IAM_Public::render_page_for_login_status($html);
+		Utils_Public::render_page_for_login_status($html);
 	}
 
 }

@@ -182,10 +182,17 @@ function send_to_debug_file($s)
 
 function include_files_in($dir)
 {
-	$files = glob(plugin_dir_path( dirname( __FILE__ ) ). $dir . '/*.php');
+	$files = glob(iam_dir(). $dir . '/*.php');
 	foreach ($files as $file) {
-	    require($file);
+	    require_once($file);
 	} 
+}
+
+function iam_dir()
+{
+    $dir = plugin_dir_path( dirname( __FILE__ ) );
+    $dir = strpos($dir, 'imrc-account-manager')===false ? $dir.'imrc-account-manager/' : $dir;
+    return $dir;
 }
 
 function iam_make_post($url,$data,$header="Content-type: application/x-www-form-urlencoded\r\n")

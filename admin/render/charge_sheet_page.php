@@ -55,7 +55,7 @@ class Charge_Sheet_Page
 
     public static function admin_get_charge_table()
     {
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/account_balance_page.php';
+        require_once iam_dir(). 'templates/account_balance_page.php';
         global $wpdb;
         if (isset($_GET['nid'])) {
             $iam_id = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE NI_ID=%s",IAM_Sec::textfield_cleaner($_GET['nid'])))[0]->IAM_ID;

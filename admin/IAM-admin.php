@@ -78,19 +78,19 @@ class IAM_Admin {
 		 * core plugin.
 		 */
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-cal.php';
+		require_once iam_dir() . 'includes/IAM-cal.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/IAM-admin-forms.php';
+		require_once iam_dir() . 'admin/IAM-admin-forms.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-funds-handler.php';
+		require_once iam_dir() . 'includes/IAM-funds-handler.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-tags.php';
+		require_once iam_dir() . 'includes/IAM-tags.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-sec.php';
+		require_once iam_dir() . 'includes/IAM-sec.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/content.php';
+		require_once iam_dir() . 'admin/content.php';
 
-        require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/debug.php';
+        require_once iam_dir() . 'admin/debug.php';
 
 	}
 
@@ -134,29 +134,29 @@ class IAM_Admin {
 
         add_menu_page ( 'Fab Labs', 'Fab Labs', 'manage_options', 'imrc-fab-lab', array('Admin_Content','fab_lab_content'), 'http://jameslevasseur.com/imr-icon.png');
         add_submenu_page ('imrc-fab-lab', 'Overview', 'Overview', 'manage_options', 'overview', array('Admin_Content', 'overview_content') );
-        add_submenu_page ('imrc-fab-lab', 'Balances', 'Balances', 'manage_options', 'balances', array('Admin_Content', 'balance_content') );
-        add_submenu_page ('imrc-fab-lab', 'Equipment', 'Equipment', 'manage_options', 'equipment', array('Admin_Content', 'equipment_content') );
-        add_submenu_page ('imrc-fab-lab', 'Certifications', 'Certifications', 'manage_options', 'certifications', array('Admin_Content', 'certification_content') );
-        add_submenu_page ('imrc-fab-lab', 'Reservations', 'Reservations', 'manage_options', 'reservations', array('Admin_Content', 'reservation_content') );
-        add_submenu_page ('imrc-fab-lab', 'User Certifications', 'User Certifications', 'manage_options', 'user_certifications', array('Admin_Content', 'user_certification_content') );
-        add_submenu_page ('imrc-fab-lab', 'Charge Sheet', 'Charge Sheet', 'manage_options', 'charge_sheet', array('Admin_Content', 'charge_sheet_content') );
-        add_submenu_page ('imrc-fab-lab', 'Registration', 'Registration', 'manage_options', 'registration', array('Admin_Content', 'registration_content') );
-        add_submenu_page ('imrc-fab-lab', 'Scheduling', 'Scheduling', 'manage_options', 'scheduling', array('Admin_Content', 'scheduling_content') );
-        add_submenu_page ('imrc-fab-lab', 'User Privileges', 'User Privileges', 'manage_options', 'user_privileges', array('Admin_Content', 'user_privileges_content') );
-        add_submenu_page ('imrc-fab-lab', 'Pricing', 'Pricing', 'manage_options', 'pricing', array('Admin_Content', 'pricing_content') );
+        add_submenu_page ('imrc-fab-lab', 'Balances', 'Balances', 'manage_options', 'fl_balances', array('Admin_Content', 'balance_content') );
+        add_submenu_page ('imrc-fab-lab', 'Equipment', 'Equipment', 'manage_options', 'fl_equipment', array('Admin_Content', 'equipment_content') );
+        add_submenu_page ('imrc-fab-lab', 'Certifications', 'Certifications', 'manage_options', 'fl_certifications', array('Admin_Content', 'certification_content') );
+        add_submenu_page ('imrc-fab-lab', 'Reservations', 'Reservations', 'manage_options', 'fl_reservations', array('Admin_Content', 'fab_lab_reservation_content') );
+        add_submenu_page ('imrc-fab-lab', 'User Certifications', 'User Certifications', 'manage_options', 'fl_user_certifications', array('Admin_Content', 'user_certification_content') );
+        add_submenu_page ('imrc-fab-lab', 'Charge Sheet', 'Charge Sheet', 'manage_options', 'fl_charge_sheet', array('Admin_Content', 'charge_sheet_content') );
+        add_submenu_page ('imrc-fab-lab', 'Registration', 'Registration', 'manage_options', 'fl_registration', array('Admin_Content', 'registration_content') );
+        add_submenu_page ('imrc-fab-lab', 'Scheduling', 'Scheduling', 'manage_options', 'fl_scheduling', array('Admin_Content', 'scheduling_content') );
+        add_submenu_page ('imrc-fab-lab', 'User Privileges', 'User Privileges', 'manage_options', 'fl_user_privileges', array('Admin_Content', 'user_privileges_content') );
+        add_submenu_page ('imrc-fab-lab', 'Pricing', 'Pricing', 'manage_options', 'fl_pricing', array('Admin_Content', 'pricing_content') );
 
 
         add_menu_page ( 'Equipment Room', 'Equipment Room', 'manage_options', 'imrc-equipment-room', array('Admin_Content','equipment_room_content'), 'http://jameslevasseur.com/imr-icon.png');
         add_submenu_page ('imrc-equipment-room', 'Overview', 'Overview', 'manage_options', 'overview', array('Admin_Content', 'overview_content') );
-        add_submenu_page ('imrc-equipment-room', 'Balances', 'Balances', 'manage_options', 'balances', array('Admin_Content', 'balance_content') );
-        add_submenu_page ('imrc-equipment-room', 'Equipment', 'Equipment', 'manage_options', 'equipment', array('Admin_Content', 'equipment_content') );
-        add_submenu_page ('imrc-equipment-room', 'Certifications', 'Certifications', 'manage_options', 'certifications', array('Admin_Content', 'certification_content') );
-        add_submenu_page ('imrc-equipment-room', 'Reservations', 'Reservations', 'manage_options', 'reservations', array('Admin_Content', 'reservation_content') );
-        add_submenu_page ('imrc-equipment-room', 'User Certifications', 'User Certifications', 'manage_options', 'user_certifications', array('Admin_Content', 'user_certification_content') );
-        add_submenu_page ('imrc-equipment-room', 'Charge Sheet', 'Charge Sheet', 'manage_options', 'charge_sheet', array('Admin_Content', 'charge_sheet_content') );
-        add_submenu_page ('imrc-equipment-room', 'Registration', 'Registration', 'manage_options', 'registration', array('Admin_Content', 'registration_content') );
-        add_submenu_page ('imrc-equipment-room', 'Scheduling', 'Scheduling', 'manage_options', 'scheduling', array('Admin_Content', 'scheduling_content') );
-        add_submenu_page ('imrc-equipment-room', 'User Privileges', 'User Privileges', 'manage_options', 'user_privileges', array('Admin_Content', 'user_privileges_content') );
+        add_submenu_page ('imrc-equipment-room', 'Balances', 'Balances', 'manage_options', 'er_balances', array('Admin_Content', 'balance_content') );
+        add_submenu_page ('imrc-equipment-room', 'Equipment', 'Equipment', 'manage_options', 'er_equipment', array('Admin_Content', 'equipment_content') );
+        add_submenu_page ('imrc-equipment-room', 'Certifications', 'Certifications', 'manage_options', 'er_certifications', array('Admin_Content', 'certification_content') );
+        add_submenu_page ('imrc-equipment-room', 'Reservations', 'Reservations', 'manage_options', 'er_reservations', array('Admin_Content', 'equipment_room_reservation_content') );
+        add_submenu_page ('imrc-equipment-room', 'User Certifications', 'User Certifications', 'manage_options', 'er_user_certifications', array('Admin_Content', 'user_certification_content') );
+        add_submenu_page ('imrc-equipment-room', 'Charge Sheet', 'Charge Sheet', 'manage_options', 'er_charge_sheet', array('Admin_Content', 'charge_sheet_content') );
+        add_submenu_page ('imrc-equipment-room', 'Registration', 'Registration', 'manage_options', 'er_registration', array('Admin_Content', 'registration_content') );
+        add_submenu_page ('imrc-equipment-room', 'Scheduling', 'Scheduling', 'manage_options', 'er_scheduling', array('Admin_Content', 'scheduling_content') );
+        add_submenu_page ('imrc-equipment-room', 'User Privileges', 'User Privileges', 'manage_options', 'er_user_privileges', array('Admin_Content', 'user_privileges_content') );
 
         if (DEV_MODE === 1)
             add_menu_page ( 'Debug', 'Debug', 'manage_options', 'imrc-debug', array('Debug_Page','debug_content'), plugins_url( 'assets/bug.png', dirname(__FILE__) ));

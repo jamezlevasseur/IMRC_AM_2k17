@@ -43,7 +43,7 @@
                 <?php 
                 global $wpdb;
                 $account_type_results = $wpdb->get_results("SELECT * FROM ".IAM_ACCOUNT_TYPES_TABLE);
-                require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-sec.php';
+                require_once iam_dir() . 'includes/IAM-sec.php';
                 foreach ($account_type_results as $row) {
                     echo '<option value="'.iam_output(IAM_Sec::iamEncrypt($row->Account_Type_ID)).'">'.iam_output($row->Name).'</option>';
                 }

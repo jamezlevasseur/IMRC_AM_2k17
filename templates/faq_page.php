@@ -59,7 +59,7 @@ class IAM_FAQ_Page
 		<p>Don\'t see your question listed? <a href="mailto:admin@imrc.com" target="_blank">Contact us for more information</a></p>
 		</div>'
 		;
-		IAM_Public::render_page_for_login_status($html);
+		Utils_Public::render_page_for_login_status($html);
 	}
 
 }

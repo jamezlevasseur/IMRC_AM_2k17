@@ -132,34 +132,35 @@ class IAM {
 	private function load_dependencies() {
 
 		include_files_in('admin/render');
+
 		include_files_in('public/render');
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-sec.php';
+		require_once iam_dir() . 'includes/IAM-sec.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-loader.php';
+		require_once iam_dir() . 'includes/IAM-loader.php';
 
 		/**
 		 * The class responsible for defining internationalization functionality
 		 * of the plugin.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-i18n.php';
+		require_once iam_dir() . 'includes/IAM-i18n.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/IAM-admin.php';
+		require_once iam_dir() . 'admin/IAM-admin.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
 		 * side of the site.
 		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/IAM-public.php';
+		require_once iam_dir() . 'public/IAM-public.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/IAM-login.php';
+		require_once iam_dir() . 'includes/IAM-login.php';
 
 		$this->loader = new IAM_Loader();
 
@@ -266,15 +267,15 @@ class IAM {
 
 		$plugin_public = new IAM_Public( $this->get_plugin_name(), $this->get_version() );
 
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
+
 		$this->loader->add_shortcode( 'imrc-reservations', 'Public_Content', 'render_reservation_page' );
 		$this->loader->add_shortcode( 'imrc-certifications', 'Public_Content', 'render_certification_page' );
 		$this->loader->add_shortcode( 'imrc-faq', 'Public_Content', 'render_faq_page' );
 		$this->loader->add_shortcode( 'imrc-account-balances', 'Public_Content', 'render_account_balances_page' );
 		$this->loader->add_shortcode( 'imrc-training', 'Public_Content', 'render_training_page' );
 		$this->loader->add_shortcode( 'imrc-checkout', 'Public_Content', 'render_checkout_page' );
-
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
 
 		$this->loader->add_action('wp_ajax_nopriv_iam_register_user', 'Utils_Public', 'register_user_callback');
 		$this->loader->add_action('wp_ajax_report_bug', 'Utils_Public', 'report_bug_callback');

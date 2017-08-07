@@ -192,7 +192,7 @@ class Admin_Content
 			<div id="iam-bal-charges-table-container">
 				<table id="iam-user-charges-table" cellspacing="0">
 					<?php
-					require_once plugin_dir_path( dirname( __FILE__ ) ) . 'templates/account_balance_page.php';
+					require_once iam_dir() . 'templates/account_balance_page.php';
 					echo IAM_Account_Balance_Page::get_charge_table_head();
 					?>
 					<tbody>
@@ -255,87 +255,52 @@ class Admin_Content
 		<?php
 	}
 
-	public static function reservation_content()
+	public static function equipment_room_reservation_content()
+	{
+		echo Admin_Content::reservation_content('e');
+	}
+
+	public static function fab_lab_reservation_content()
+	{
+		echo Admin_Content::reservation_content('f');
+	}
+
+	public static function reservation_content($dept)
 	{
 		?>
 			<div class="wrap iam-reservation-wrap">
 				<h1 class="iam-admin-header">Reservations</h1>
 				<div class="res-col-left">
-					<h3 style ="margin-top:0 !important;">Equipment</h3>
-					<div class="iam-res-search-container iam-fab-lab-search-container">
-						<input type="search" placeholder="search..." class="iam-search iam-fab-lab-search">
+					<h3 style ="margin-top:0 !important;"> <?php if ($dept=='e') {echo 'Equpment Room';} else if ($dept=='f') {echo 'Fab Labs';} else {echo 'ERROR';} ?></h3>
+					<div class="iam-res-search-container">
+						<input type="search" placeholder="search..." class="iam-search">
 					</div>
-					<div class="iam-res-search-container iam-equipment-room-search-container">
-						<input type="search" placeholder="search..." class="iam-search iam-equipment-room-search">
-					</div>
-					<div class="iam-res-search-container iam-rooms-search-container">
-						<input type="search" placeholder="search..." class="iam-search iam-room-search">
-					</div>
-					<div class="iam-tabs iam-reservation-tabs">
-						<span class="iam-reservation-fab-lab-tab">Fab Lab</span><span class="iam-reservation-equipment-room-tab">Equipment Room</span><span class="iam-reservation-rooms-tab" style="display:none!important;">Rooms</span>
-					</div>
-					<div class="iam-fab-lab-list iam-reservation-tab-list">
+
+					<div class="iam-reservation-list">
 						<?php
-						global $wpdb;
-						$fl_list = [];
-						$fab_lab_tags = [$wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",'Fab Lab'))[0]->Tag_ID];
-						$unchecked_tags = ['Fab Lab'];
-						while (count($unchecked_tags)) {
-							$fab_lab_results = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID,Tag FROM ".IAM_TAGS_TABLE." WHERE Parent=%s",array_shift($unchecked_tags)));
-							foreach ($fab_lab_results as $row) {
-								$unchecked_tags[] = $row->Tag;
-								$fab_lab_tags[] = $row->Tag_ID;
-							}
-						}
-						for ($i=0; $i < count($fab_lab_tags); $i++) {
-							$equipment_tag_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%s",$fab_lab_tags[$i]));
-							foreach ($equipment_tag_results as $row) {
-								$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name,NI_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$row->Equipment_ID))[0];
-								$fl_list[$equip_results->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($equip_results->NI_ID).'">'.iam_output($equip_results->Name).'</div>';
-							}
-						}
-						ksort($fl_list);
-						foreach ($fl_list as $key => $value) {
-							echo $value;
-						}
-						 ?>
-					</div>
-					<div class="iam-equipment-room-list iam-reservation-tab-list">
-						<?php
-						$eq_list = [];
-						$fab_lab_tags = [$wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",'Equipment Room'))[0]->Tag_ID];
-						$unchecked_tags = ['Equipment Room'];
-						while (count($unchecked_tags)) {
-							$fab_lab_results = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID,Tag FROM ".IAM_TAGS_TABLE." WHERE Parent=%s",array_shift($unchecked_tags)));
-							foreach ($fab_lab_results as $row) {
-								$unchecked_tags[] = $row->Tag;
-								$fab_lab_tags[] = $row->Tag_ID;
-							}
-						}
-						for ($i=0; $i < count($fab_lab_tags); $i++) {
-							$equipment_tag_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%s",$fab_lab_tags[$i]));
-							foreach ($equipment_tag_results as $row) {
-								$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name,NI_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$row->Equipment_ID))[0];
-								$eq_list[$equip_results->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($equip_results->NI_ID).'">'.iam_output($equip_results->Name).'</div>';
-							}
-						}
-						ksort($eq_list);
-						foreach ($eq_list as $key => $value) {
-							echo $value;
-						}
-						 ?>
-					</div>
-					<div class="iam-rooms-list iam-reservation-tab-list">
-						<?php
-						$room_list = [];
-						$room_results = $wpdb->get_results("SELECT Name, NI_ID FROM ".IAM_ROOM_TABLE);
-						foreach ($room_results as $row) {
-							$room_list[$row->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($row->NI_ID).'">'.iam_output($row->Name).'</div>';
-						}
-						ksort($room_list);
-						foreach ($room_list as $key => $value) {
-							echo $value;
-						}
+                        global $wpdb;
+                        $dept_tag = $dept == 'e' ? 'Equipment Room' : 'Fab Lab' ;
+                        $dept_list = [];
+                        $dept_tags = [$wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s", $dept_tag))[0]->Tag_ID];
+                        $unchecked_tags = [$dept_tag];
+                        while (count($unchecked_tags)) {
+                            $fab_lab_results = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID,Tag FROM ".IAM_TAGS_TABLE." WHERE Parent=%s",array_shift($unchecked_tags)));
+                            foreach ($fab_lab_results as $row) {
+                                $unchecked_tags[] = $row->Tag;
+                                $dept_tags[] = $row->Tag_ID;
+                            }
+                        }
+                        for ($i=0; $i < count($dept_tags); $i++) {
+                            $equipment_tag_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%s",$dept_tags[$i]));
+                            foreach ($equipment_tag_results as $row) {
+                                $equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name,NI_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$row->Equipment_ID))[0];
+                                $dept_list[$equip_results->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($equip_results->NI_ID).'">'.iam_output($equip_results->Name).'</div>';
+                            }
+                        }
+                        ksort($dept_list);
+                        foreach ($dept_list as $key => $value) {
+                            echo $value;
+                        } 
 						 ?>
 					</div>
 					<div class="iam-load-res-checkbox-container">
