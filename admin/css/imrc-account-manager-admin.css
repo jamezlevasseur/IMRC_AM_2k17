@@ -3,6 +3,31 @@
  * included in this file.
  */
 
+.iam-reservation-list div {
+	cursor: pointer;
+}
+
+.iam-reservation-list div:hover {
+	opacity:.9;
+}
+
+.iam-res-select-all {
+	font-weight: bold;
+	margin-bottom: 15px;
+	margin-top: 15px;
+	padding: 8px;
+	background:lightgrey;
+	cursor: pointer;
+}
+
+.iam-res-select-all:hover {
+	opacity:.9;
+}
+
+.iam-res-select-all.iam-highlighted {
+	background: lightgreen!important;
+}
+
  .iam-scheduling-block table th {
  	background: lightblue;
  }

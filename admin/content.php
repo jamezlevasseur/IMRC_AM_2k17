@@ -275,7 +275,9 @@ class Admin_Content
 					<div class="iam-res-search-container">
 						<input type="search" placeholder="search..." class="iam-search">
 					</div>
-
+					<div class="iam-res-select-all">
+						Select All
+					</div>
 					<div class="iam-reservation-list">
 						<?php
                         global $wpdb;

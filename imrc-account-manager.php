@@ -138,6 +138,8 @@ function get_client_ip() {
 
 function iam_mail($to,$subject,$message,$failure_message="Failed to send email.")
 {
+    if (strpos( $_SERVER['HTTP_HOST'], 'localhost' )!==false)
+        return;
 	try {
 		if (!wp_mail($to, $subject, $message, array('Content-Type: text/html; charset=UTF-8'))) {
 			throw new Exception($failure_message);
