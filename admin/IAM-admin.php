@@ -133,7 +133,6 @@ class IAM_Admin {
 
 
         add_menu_page ( 'Fab Labs', 'Fab Labs', 'manage_options', 'imrc-fab-lab', array('Admin_Content','fab_lab_content'), 'http://jameslevasseur.com/imr-icon.png');
-        add_submenu_page ('imrc-fab-lab', 'Overview', 'Overview', 'manage_options', 'overview', array('Admin_Content', 'overview_content') );
         add_submenu_page ('imrc-fab-lab', 'Balances', 'Balances', 'manage_options', 'fl_balances', array('Admin_Content', 'balance_content') );
         add_submenu_page ('imrc-fab-lab', 'Equipment', 'Equipment', 'manage_options', 'fl_equipment', array('Admin_Content', 'equipment_content') );
         add_submenu_page ('imrc-fab-lab', 'Certifications', 'Certifications', 'manage_options', 'fl_certifications', array('Admin_Content', 'certification_content') );
@@ -147,7 +146,6 @@ class IAM_Admin {
 
 
         add_menu_page ( 'Equipment Room', 'Equipment Room', 'manage_options', 'imrc-equipment-room', array('Admin_Content','equipment_room_content'), 'http://jameslevasseur.com/imr-icon.png');
-        add_submenu_page ('imrc-equipment-room', 'Overview', 'Overview', 'manage_options', 'overview', array('Admin_Content', 'overview_content') );
         add_submenu_page ('imrc-equipment-room', 'Balances', 'Balances', 'manage_options', 'er_balances', array('Admin_Content', 'balance_content') );
         add_submenu_page ('imrc-equipment-room', 'Equipment', 'Equipment', 'manage_options', 'er_equipment', array('Admin_Content', 'equipment_content') );
         add_submenu_page ('imrc-equipment-room', 'Certifications', 'Certifications', 'manage_options', 'er_certifications', array('Admin_Content', 'certification_content') );
