@@ -21,24 +21,6 @@ module.exports = function(grunt) {
         dest: 'dist/<%= pkg.name %>.js'
       }
     },
-  environments: {
-      staging: {
-          options: {
-            local_path: '.',
-            deploy_path: '/var/www/html/deploy_test'
-          },
-          options: {
-              host: '67.251.12.204',
-              username: 'andrewryan',
-              password: 'AbomGoBoom!132',
-              port: '22',
-              debug: true,
-              releases_to_keep: '3',
-              local_path: '.',
-              deploy_path: '/var/www/html/deploy_test'
-          }
-      }
-  },
     uglify: {
       options: {
         banner: '<%= banner %>'
@@ -93,7 +75,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-ssh-deploy');
 
   // Default task.
   grunt.registerTask('default', ['jshint', 'nodeunit', 'concat', 'uglify']);
