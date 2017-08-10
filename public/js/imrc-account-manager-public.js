@@ -7,7 +7,8 @@
 		var IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
 		var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 		//global vars
-		var debug=true,getcaller=false,softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
+		var getcaller=false,softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
+		var debug = window.location.href.indexOf('imrcaccounts')==-1;
 		var daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
 		//misc functions
 

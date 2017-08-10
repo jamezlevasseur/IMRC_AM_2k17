@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         banner: '<%= banner %>'
       },
       dist: {
-        src: '<%= concat.dist.dest %>',
+        src: '',
         dest: 'dist/<%= pkg.name %>.min.js'
       }
     },
@@ -66,6 +66,19 @@ module.exports = function(grunt) {
         files: '<%= jshint.lib_test.src %>',
         tasks: ['jshint:lib_test', 'nodeunit']
       }
+    },
+    shell: {
+      multiple: {
+        command: [
+          'uglifyjs -o admin/js/imrc-account-manager-admin.min.js admin/js/imrc-account-manager-admin.js',
+          'uglifyjs -o public/js/imrc-account-manager-public.min.js public/js/imrc-account-manager-public.js',
+          '> config/operations.json',
+          'echo \'{"dev":0,"small_db":0}\' >> config/operations.json',
+          'shipit staging deploy',
+          '> config/operations.json',
+          'echo \'{"dev":1,"small_db":1}\' >> config/operations.json',
+        ].join('&&')
+      }
     }
   });
 
@@ -75,8 +88,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-nodeunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-shell');
+
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'nodeunit', 'concat', 'uglify']);
+  grunt.registerTask('default', ['shell']);
 
 };

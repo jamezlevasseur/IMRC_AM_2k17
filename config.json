@@ -1,0 +1,7 @@
+{
+    "deploy":{
+        "path":"~/public_html/imrc/wp-content/plugins",
+        "username": "jamekglq",
+        "hostname": "jameslevasseur.com:21098"
+    }
+}

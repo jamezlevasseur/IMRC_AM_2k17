@@ -15,7 +15,7 @@ class Debug_Page
         <?php
 
         /** de bugs go here **/
-        global $wpdb;
+        print_r( json_decode( file_get_contents(iam_dir().'config/operations.json') )->dev );
         
     }
 
