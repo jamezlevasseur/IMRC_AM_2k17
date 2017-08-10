@@ -21,10 +21,9 @@ module.exports = function (shipit) {
       servers: config.deploy.username + '@' + config.deploy.hostname//'jamekglq@jameslevasseur.com:21098'
     }
   });
-  shipit.task('pub', function () {
-    shipit.currentPath = shipit.config.deployTo + 'imrc-account-mngr';
-    console.log(shipit.currentPath);
-    shipit.start('deploy:publish');
+  shipit.task('fin', function () {
+    shipit.remote('mv '+shipit.config.deployTo+'/current '+shipit.config.deployTo+'/imrc-account-mngr');
+    shipit.start('deploy:finish');
   });
-  shipit.task('dep', ['deploy:init','deploy:fetch','deploy:update','pub','deploy:clean','deploy:finish']);
+  shipit.task('dep', ['deploy:init','deploy:fetch','deploy:update','deploy:publish','deploy:clean','fin']);
 };
