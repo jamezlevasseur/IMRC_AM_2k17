@@ -48,7 +48,7 @@ class IAM_Checkout_Page
 			$appointment_lateness = 0;
 
 			if ($row->Status==ACTIVE) {
-				
+				//useless comment
 				$options = '<button type="button" class="iam-check-out-button" data-nid="'.iam_output($row->NI_ID).'"></button>';
 
 			} else if ($row->Status==NO_SHOW) {
