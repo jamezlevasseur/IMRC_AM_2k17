@@ -1,12 +1,12 @@
-<?php 
+<?php
 
 /**
-* 
+*
 */
 class IAM_Checkout_Page
 {
 
-	public static function update_checkout_table () {	
+	public static function update_checkout_table () {
 		global $wpdb;
 		//appointment constants
 		define(APPOINTMENT_EXPIRED, 'expired');
@@ -48,7 +48,7 @@ class IAM_Checkout_Page
 			$appointment_lateness = 0;
 
 			if ($row->Status==ACTIVE) {
-
+//usesless comment
 				$options = '<button type="button" class="iam-check-out-button" data-nid="'.iam_output($row->NI_ID).'"></button>';
 
 			} else if ($row->Status==NO_SHOW) {
@@ -156,7 +156,7 @@ class IAM_Checkout_Page
 			}
 		}
 		$equipment_to_show = [];
-		for ($i=0; $i < count($fab_lab_tags); $i++) { 
+		for ($i=0; $i < count($fab_lab_tags); $i++) {
 			$current_tag = $fab_lab_tags[$i];
 			$equip_id_results = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID='$current_tag'");
 			foreach ($equip_id_results as $row) {
@@ -244,7 +244,7 @@ class IAM_Checkout_Page
 					'. IAM_Checkout_Page::makeEquipmentScheduleList() .'
 				</ul>
 				<div class="iam-cal">
-					
+
 				</div>
 			</div>
 		</div>';
