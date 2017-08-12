@@ -147,6 +147,7 @@ class IAM_Cal
 
 		if ($equip_result) {
 			$equip_id = $equip_result[0]->Equipment_ID;
+			
 			date_default_timezone_set(IMRC_TIME_ZONE);
 			$weekago = date("Y-m-d 00:00:00", strtotime('-1 week'));
 			$date_condition = $get_all_reservations ? "" : "AND Start_Time > '$weekago'";
@@ -168,7 +169,7 @@ class IAM_Cal
 						$title = 'Existing Reservation';
 					}
 					if ($is_admin) {
-						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'comment'=>$row->Comment,'email'=>$email];
+						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name];
 					} else {
 						$formatted_events[] = ['constraint'=> 'businessHours','allDay'=>false, 'nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time];
 					}
@@ -179,34 +180,6 @@ class IAM_Cal
 				}
 				//do not use respond for fullcal
 				return $formatted_events;
-			}
-		} else if ($equip_result==null || count($equip_result)<1) { //if it's a room
-			$room_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_ROOM_TABLE." WHERE Name=%s",$item_name));
-			if ($room_result) {
-				$room_id = $room_result[0]->Room_ID;
-				$res_status = isset($_GET['rstatus']) ? $_GET['rstatus'] : 1;
-				$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room=1 AND Reservation_Status=%d",$room_id,$res_status));
-				$formatted_events = [];
-				if($res_result==null && gettype($res_result)!='array') {
-					iam_throw_error('BAD QUERY');
-				} else {
-					foreach ($res_result as $row) {
-						$email = '';
-						if ($is_admin) {
-							$title = $wpdb->get_results($wpdb->prepare("SELECT WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$row->IAM_ID))[0]->WP_Username;
-							$email = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login=%s",$title))[0]->user_email;
-						} else {
-							$title = 'Existing Reservation';
-						}
-						if ($is_admin) {
-							$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time, 'comment'=>$row->Comment,'email'=>$email];
-						} else {
-							$formatted_events[] = ['nid'=>$row->NI_ID, 'constraint'=> 'businessHours','allDay'=>false, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time];
-						}
-					}
-					//do not use respond for fullcal
-					return $formatted_events;
-				}
 			}
 		}
 	}

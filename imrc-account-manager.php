@@ -80,11 +80,15 @@ define('IAM_RESERVATIONS_PRIVILEGE_META', 'iam_reservations_privilege_denied');
 
 define('IAM_DEFAULT_LARGE_PICTURE',  plugins_url( 'assets/default_large.png', __FILE__ ));
 
-define('NOT_CHECKED_IN', 0);
+define('UPCOMING', 0);
 
-define('CHECKED_IN', 1);
+define('ACTIVE', 1);
 
-define('EXPIRED', 2);
+define('NO_SHOW', 2);
+
+define('COMPLETED', 3);
+
+define('NO_PAY', 4);
 
 define('IAM_DIR', plugin_dir_path(__FILE__));
 

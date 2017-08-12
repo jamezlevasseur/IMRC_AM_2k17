@@ -3,6 +3,10 @@
  * included in this file.
  */
 
+.ui-tooltip {
+    white-space: pre-line;
+}
+
 .iam-reservation-list div {
 	cursor: pointer;
 }
@@ -485,9 +489,22 @@
 }
 
 .iam-res-cal, .iam-cal {
-	width: 600px;
+	min-width: 600px;
+	width: 55vw;
 	display: inline-block;
 }
+
+@media (min-width: 1250px) {
+	.iam-res-cal, .iam-cal {
+		width: 60vw;
+	}
+}
+@media (min-width: 1650px) {
+	.iam-res-cal, .iam-cal {
+		width: 70vw;
+	}
+}
+
 
 .iam-res-cal-placeholder, .iam-cal-placeholder {
 	font-size: 30px;

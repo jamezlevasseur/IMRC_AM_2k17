@@ -22,7 +22,7 @@ class IAM_Checkout_Page
 		$validReservationsEchoed = false;
 		$reservation_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time >= '$today' AND Start_Time <= '$tomorrow' AND Checked_Out IS NULL ");
 		$reservation_not_checked_out_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ");
-		$reservations_to_delete = [];
+		$no_shows = [];
 		$html = '';
 		foreach ($reservation_results as $row) {
 			$iam_id = $row->IAM_ID;
@@ -47,15 +47,15 @@ class IAM_Checkout_Page
 			$appointment_status = APPOINTMENT_EARLY;
 			$appointment_lateness = 0;
 
-			if ($row->Status==CHECKED_IN) {
+			if ($row->Status==ACTIVE) {
 
 				$options = '<button type="button" class="iam-check-out-button" data-nid="'.iam_output($row->NI_ID).'"></button>';
 
-			} else if ($row->Status==EXPIRED) {
+			} else if ($row->Status==NO_SHOW) {
 
 				$appointment_status = APPOINTMENT_EXPIRED;
 
-			} else if ($row->Status==NOT_CHECKED_IN) {
+			} else if ($row->Status==UPCOMING) {
 				$minutes_after_limit = 15;
 
 				if ($rightnow>$time_of_appointment) {
@@ -75,14 +75,15 @@ class IAM_Checkout_Page
 
 			}
 			if ($appointment_status==APPOINTMENT_EXPIRED) {
-				$reservations_to_delete[] = $row->Reservation_ID;
+				$no_shows[] = $row->Reservation_ID;
 			} else {
 				$validReservationsEchoed = true;
 				$html.='<tr><td class="iam-checkout-username">'.iam_output($username).'</td><td>'.iam_output($equip_name).'</td><td>'.iam_output($date).'</td><td>'.iam_output($time).'</td><td>'.$options.'</td></tr>';
 			}
 		}
-		for ($i=0; $i < count($reservations_to_delete); $i++) { 
-			$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$reservations_to_delete[$i]));
+		for ($i=0; $i < count($no_shows); $i++) {
+
+			$wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=".NO_SHOW." WHERE Reservation_ID=%d",$no_shows[$i]));
 		}
 		if (!$validReservationsEchoed) {
 			return '<tr><td>NO</td><td>RESULTS</td><td>WERE</td><td>FOUND</td><td>:(</td></tr>';
@@ -120,7 +121,7 @@ class IAM_Checkout_Page
 			$html.= '<tr><td class="iam-checkout-username">'.iam_output($username).'</td><td>'.iam_output($equip_name).'</td><td>'.iam_output($date).'</td><td>'.iam_output($time).'</td><td>'.$options.'</td></tr>';
 			if ($row->Late_Notification_Sent==0) {
 				$res_id = $row->Reservation_ID;
-				$wpdb->query("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent='1' WHERE Reservation_ID='$res_id'");
+				$wpdb->query("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent='1', Status=".NO_PAY." WHERE Reservation_ID='$res_id'");
 				$user_email = $wpdb->get_results("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login='$username'")[0]->user_email;
 				iam_mail(get_setting_iam('late_reservations_email'),$username.' didn\'t check out','User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to them alerting them of the issue.');
 				iam_mail($user_email,'You didn\'t check out!','Greetings, User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to a lab tech alerting them of the issue. Please resolve this as soon as possible.');
@@ -132,7 +133,7 @@ class IAM_Checkout_Page
 	public function update_appointment()
 	{
 		global $wpdb;
-		if ($_POST['status']==1 && is_numeric($_POST['status'])) {
+		if ($_POST['status']==ACTIVE && is_numeric($_POST['status'])) {
 			date_default_timezone_set(IMRC_TIME_ZONE);
 			$rightnow = date('Y-m-d H:i:s');
 			$q = $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s WHERE NI_ID=%s",$_POST['status'],$rightnow,IAM_Sec::textfield_cleaner($_POST['nid'])));

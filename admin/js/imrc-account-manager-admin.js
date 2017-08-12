@@ -237,9 +237,8 @@
 			}
 
 			var eventToolTip = function (event,element) {
-				var comment = (event.comment=='' || event.comment==null) ? 'none.' : event.comment;
 				var e = $(element);
-				e.attr('title','Name:'+event.title+' Email:'+event.email+' Comment:'+comment);
+				e.attr('title','Name: '+event.title+'\n Email: '+event.email+' \n Equipment: '+event.equipment);
 			}
 
 			var makeSubmitPopup = function (heading,body,callback,a) {
@@ -1519,7 +1518,7 @@
 						eventRender: function (event, element) {
 							eventToolTip(event,element);
 							$(element).data('email', event.email);
-                            $(element).data('comment', event.email);
+							$(element).data('equipment', event.equipment);
                             $(element).data('nid', event.nid);
 						},
 						eventAfterRender: function (event, element) {

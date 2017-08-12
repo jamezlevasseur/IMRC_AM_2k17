@@ -22,6 +22,7 @@ module.exports = function (shipit) {
     }
   });
   shipit.task('fin', function () {
+    shipit.remote('rm -R '+shipit.config.deployTo+'/imrc-account-mngr');
     shipit.remote('mv '+shipit.config.deployTo+'/current '+shipit.config.deployTo+'/imrc-account-mngr');
     shipit.start('deploy:finish');
   });

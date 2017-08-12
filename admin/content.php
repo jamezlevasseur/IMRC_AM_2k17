@@ -305,12 +305,12 @@ class Admin_Content
                         } 
 						 ?>
 					</div>
-					<div class="iam-load-res-checkbox-container">
-						<label>Load more than a week of reservations:</label><input class="iam-load-all-reservations" type="checkbox">
-					</div>
 				</div>
 
 				<div id="iam-res-cal-wrap">
+					<div class="res-toolbar">
+						<label>Load more than a week: <input class="iam-load-all-reservations" type="checkbox"></label>
+					</div>
 					<div class="iam-res-cal"><div class="iam-res-cal-placeholder">Select equipment</div></div>
 					<div class="iam-res-cal-instructions">
 						- Events marked red will be deleted <br />

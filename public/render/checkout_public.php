@@ -32,7 +32,7 @@ class Checkout_Public
         date_default_timezone_set(IMRC_TIME_ZONE);
         $rightnow = date('Y-m-d H:i:s');
         $ni_id = IAM_Sec::textfield_cleaner($_POST['nid']);
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Checked_Out=%s WHERE NI_ID=%s",$rightnow,$ni_id));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Checked_Out=%s, Status=%d WHERE NI_ID=%s",$rightnow,COMPLETED,$ni_id));
         $reservation = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$ni_id));
         $reservation = $reservation[0];
         $charge_ni_id = md5(uniqid());
