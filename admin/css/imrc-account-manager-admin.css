@@ -8,7 +8,7 @@
   width: 55vw;
   padding-bottom: 5px;
   margin-bottom: 10px;
-  border-bottom: 1px solid black;
+
 }
 
 @media (min-width: 1250px) {
@@ -29,28 +29,32 @@
   display: inline-block;
 }
 
-.iam-status-orb {
-  border-radius: 50%;
-  padding: 1px 9px;
+label.iam-status-label {
+  color: white;
+  padding: 4px;
+  border-radius: 4px;
 }
 
-.iam-status-orb.iam-upcoming {
+label.iam-upcoming {
   background-color: #2957a5!important;
 }
 
-.iam-status-orb.iam-active {
+label.iam-upcoming input[type=checkbox]{
+  border: none!important;
+}
+label.iam-active {
   background-color: #08cc1f!important;
 }
 
-.iam-status-orb.iam-no-show {
+label.iam-no-show {
   background-color: #e57e39!important;
 }
 
-.iam-status-orb.iam-completed {
+label.iam-completed {
   background-color: #7c27ad!important;
 }
 
-.iam-status-orb.iam-no-pay {
+label.iam-no-pay {
   background-color: #cc3f3f!important;
 }
 

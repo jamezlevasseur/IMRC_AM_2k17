@@ -311,11 +311,11 @@ class Admin_Content
 					<div class="res-toolbar">
 						<label>Load more than a week: <input class="iam-load-all-reservations" type="checkbox"></label>
 						<div class="res-status-bar">
-							<label >upcoming <span class="iam-upcoming iam-status-orb"></span>: <input type="checkbox" name="upcoming"></label>
-							<label>active <span class="iam-active iam-status-orb"></span>: <input type="checkbox" name="active"></label>
-							<label>completed <span class="iam-completed iam-status-orb"></span>: <input type="checkbox" name="completed"></label>
-							<label>no show <span class="iam-no-show iam-status-orb"></span>: <input type="checkbox" name="no-show"></label>
-							<label>didn't pay <span class="iam-no-pay iam-status-orb"></span>: <input type="checkbox" name="no-pay"></label>
+							<label class="iam-status-label iam-upcoming">upcoming: <input type="checkbox" name="upcoming"></label>
+							<label class="iam-status-label iam-active">active: <input type="checkbox" name="active"></label>
+							<label class="iam-status-label iam-completed">completed: <input type="checkbox" name="completed"></label>
+							<label class="iam-status-label iam-no-show">no show: <input type="checkbox" name="no-show"></label>
+							<label class="iam-status-label iam-no-pay">didn't pay: <input type="checkbox" name="no-pay"></label>
 						</div>
 					</div>
 					<div class="iam-res-cal"><div class="iam-res-cal-placeholder">Select equipment</div></div>
