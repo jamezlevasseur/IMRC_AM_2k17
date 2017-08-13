@@ -20,7 +20,7 @@ class IAM_Checkout_Page
 		$tomorrow = new DateTime('tomorrow');
 		$tomorrow = $tomorrow->format('Y-m-d 00:00:00');
 		$validReservationsEchoed = false;
-		$reservation_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time >= '$today' AND Start_Time <= '$tomorrow' AND Checked_Out IS NULL ");
+		$reservation_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time >= '$today' AND Start_Time <= '$tomorrow' AND Checked_Out IS NULL AND Status IS NOT ".NO_SHOW);
 		$reservation_not_checked_out_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ");
 		$no_shows = [];
 		$html = '';
@@ -48,7 +48,7 @@ class IAM_Checkout_Page
 			$appointment_lateness = 0;
 
 			if ($row->Status==ACTIVE) {
-				//useless comment
+
 				$options = '<button type="button" class="iam-check-out-button" data-nid="'.iam_output($row->NI_ID).'"></button>';
 
 			} else if ($row->Status==NO_SHOW) {

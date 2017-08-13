@@ -1519,7 +1519,8 @@
 							eventToolTip(event,element);
 							$(element).data('email', event.email);
 							$(element).data('equipment', event.equipment);
-                            $(element).data('nid', event.nid);
+              $(element).data('nid', event.nid);
+							$(element).addClass('iam-status-'+event.status);
 						},
 						eventAfterRender: function (event, element) {
 							if (event.toDelete==1) {
@@ -1530,9 +1531,9 @@
 							}
 						},
 						eventAfterAllRender: function () {
-							console.log('AFTER ALL')
-                            initContextMenu();
-                        },
+               initContextMenu();
+							 initStatusHideListeners();
+            },
 						eventDrop: function (event) {
 							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 						},
@@ -1579,6 +1580,50 @@
 				}
 			}
 
+			var initStatusHideListeners = function () {
+				$('.res-toolbar input[name=upcoming]').off();
+				$('.res-toolbar input[name=active]').off();
+				$('.res-toolbar input[name=completed]').off();
+				$('.res-toolbar input[name=no-show]').off();
+				$('.res-toolbar input[name=no-pay]').off();
+
+				$('.res-toolbar input[name=upcoming]').click(function (e) {
+					console.log('RES parade')
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-upcoming').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=active]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-active').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=completed]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-completed').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=no-show]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-no-show').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=no-pay]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-no-pay').toggleClass('iam-ninja');
+				});
+			}
 
 			//schedling wrap functions
 			var initScheduleTypeListeners = function () {
@@ -2240,7 +2285,7 @@
                         });
                         makeCalendarReservationsMulti(lastEquip);
                     } else {
-                        
+
                         $('.iam-reservation-list div.iam-highlighted').each(function(index, el) {
                             $(this).removeClass('iam-highlighted');
                         });

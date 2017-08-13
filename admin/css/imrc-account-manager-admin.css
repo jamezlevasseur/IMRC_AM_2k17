@@ -3,6 +3,82 @@
  * included in this file.
  */
 
+.res-toolbar {
+  position: relative;
+  width: 55vw;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid black;
+}
+
+@media (min-width: 1250px) {
+	.res-toolbar {
+		width: 60vw;
+	}
+}
+@media (min-width: 1650px) {
+	.res-toolbar {
+		width: 70vw;
+	}
+}
+.res-status-bar {
+  float: right;
+}
+
+.res-status-bar > label {
+  display: inline-block;
+}
+
+.iam-status-orb {
+  border-radius: 50%;
+  padding: 1px 9px;
+}
+
+.iam-status-orb.iam-upcoming {
+  background-color: #2957a5!important;
+}
+
+.iam-status-orb.iam-active {
+  background-color: #08cc1f!important;
+}
+
+.iam-status-orb.iam-no-show {
+  background-color: #e57e39!important;
+}
+
+.iam-status-orb.iam-completed {
+  background-color: #7c27ad!important;
+}
+
+.iam-status-orb.iam-no-pay {
+  background-color: #cc3f3f!important;
+}
+
+.iam-status-upcoming {
+  background-color: #2957a5!important;
+  border: 1px solid #2957a5!important;
+}
+
+.iam-status-active {
+  background-color: #08cc1f!important;
+  border: 1px solid #08cc1f!important;
+}
+
+.iam-status-no-show {
+  background-color: #e57e39!important;
+  border: 1px solid #e57e39!important;
+}
+
+.iam-status-completed {
+  background-color: #7c27ad!important;
+  border: 1px solid #7c27ad!important;
+}
+
+.iam-status-no-pay {
+  background-color: #cc3f3f!important;
+  border: 1px solid #cc3f3f!important;
+}
+
 .ui-tooltip {
     white-space: pre-line;
 }
@@ -153,7 +229,7 @@
 	#iam-bal-charges-table-container {
 		max-width: 40%;
 	}
-} 
+}
 
 
 /*//////////////////////////////////Balances////////////////////////////////////*/
@@ -420,7 +496,7 @@
 	margin-right:2px;
 	background-color: white;
 	cursor: pointer;
-	-webkit-user-select: none; /* Chrome/Safari */        
+	-webkit-user-select: none; /* Chrome/Safari */
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+ */
 }
@@ -483,7 +559,7 @@
 .iam-reservation-tab-list div:hover, .iam-room-res-list li:hover {
 	background-color: lightblue;
 	cursor: pointer;
-	-webkit-user-select: none; /* Chrome/Safari */        
+	-webkit-user-select: none; /* Chrome/Safari */
 	-moz-user-select: none; /* Firefox */
 	-ms-user-select: none; /* IE10+ */
 }
@@ -512,7 +588,7 @@
 	line-height: 500px;
 	border: dashed 1px #333;
 	height: 600px;
-	
+
 }
 
 #iam-res-cal-wrap {
@@ -654,7 +730,7 @@
 	transform:scale(.7);
 }
 .iam-pricing-row-delete-button {
-	
+
 }
 .iam-new-mat-button{
 	margin-bottom:5px;

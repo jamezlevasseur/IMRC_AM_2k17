@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 /**
-* 
+*
 */
 class IAM_Cal
 {
@@ -9,7 +9,7 @@ class IAM_Cal
 	{
 		global $wpdb;
 		if (isset($_POST['to_delete'])) {
-			for ($i=0; $i < count($_POST['to_delete']); $i++) { 
+			for ($i=0; $i < count($_POST['to_delete']); $i++) {
 				$ni_id = IAM_Sec::textfield_cleaner($_POST['to_delete'][$i]);
 				$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID, Equipment_ID, Start_Time FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));
 				$iam_id = $reservation_results[0]->IAM_ID;
@@ -17,7 +17,7 @@ class IAM_Cal
 				$wp_id = $wpdb->get_results($wpdb->prepare("SELECT WP_ID FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$iam_id))[0]->WP_ID;
 				$equip_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id))[0]->Name;
 				$start_time = $reservation_results[0]->Start_Time;
-				$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));			
+				$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));
 				if ($_POST['sendEmails']=='true') {
 					$reason = $_POST['reason']=='' ? '' : ' Reason given: '.$_POST['reason'];
 					$old_time = DateTime::createFromFormat('Y-m-d H:i:s',$reservation_results[0]->Start_Time);
@@ -50,7 +50,7 @@ class IAM_Cal
 			}
 		}
 		if (isset($_POST['confirmed'])) {//rooms only
-			for ($i=0; $i < count($_POST['confirmed']); $i++) { 
+			for ($i=0; $i < count($_POST['confirmed']); $i++) {
 				$ni_id = IAM_Sec::textfield_cleaner($_POST['confirmed'][$i]);
 				$current_status = $wpdb->get_results($wpdb->prepare("SELECT Reservation_Status FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$ni_id))[0]->Reservation_Status;
 				if ($current_status==1) {
@@ -142,16 +142,17 @@ class IAM_Cal
 		$equipment_in_title = isset($_GET['descriptive']);
 		$get_all_reservations = isset($_GET['all']);
 		global $wpdb;
-		
+
 		$equip_result = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
 
 		if ($equip_result) {
 			$equip_id = $equip_result[0]->Equipment_ID;
-			
+
 			date_default_timezone_set(IMRC_TIME_ZONE);
 			$weekago = date("Y-m-d 00:00:00", strtotime('-1 week'));
-			$date_condition = $get_all_reservations ? "" : "AND Start_Time > '$weekago'";
-			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition, $equip_id));
+			$date_condition = $get_all_reservations ? " " : "AND Start_Time > '$weekago' ";
+			$noshow_condition = $is_admin ? "" : " AND Status IS NOT ".NO_SHOW;
+			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
 
 			$formatted_events = [];
 			if(res_result==null && gettype($res_result)!='array') {
@@ -169,7 +170,8 @@ class IAM_Cal
 						$title = 'Existing Reservation';
 					}
 					if ($is_admin) {
-						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name];
+						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay'];
+						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name,'status'=>$RES_STATUS_CLASS_DICT[$row->Status]];
 					} else {
 						$formatted_events[] = ['constraint'=> 'businessHours','allDay'=>false, 'nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time];
 					}
@@ -209,7 +211,7 @@ class IAM_Cal
 				iam_throw_error(INVALID_INPUT_EXCEPTION);
 			}
 			$a = [];
-			for ($i=0; $i < count($names); $i++) { 
+			for ($i=0; $i < count($names); $i++) {
 				if ($names[$i]=='') {
 					continue;
 				}

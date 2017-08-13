@@ -118,7 +118,6 @@ define('DEV_MODE', json_decode( file_get_contents(iam_dir().'config/operations.j
 
 define('SMALL_DB_MODE', json_decode( file_get_contents(iam_dir().'config/operations.json') )->small_db);
 
-
 //global functions
 
 function get_client_ip() {
@@ -191,7 +190,7 @@ function include_files_in($dir)
 	$files = glob(iam_dir(). $dir . '/*.php');
 	foreach ($files as $file) {
 	    require_once($file);
-	} 
+	}
 }
 
 function iam_dir()
