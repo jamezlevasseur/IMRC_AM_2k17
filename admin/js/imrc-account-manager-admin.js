@@ -1564,22 +1564,6 @@
 							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 						},
 						eventClick: function (event, jsEvent, view) {
-							var index = eventsToDelete.indexOf(event.nid);
-							if (index!=-1) {
-								eventsToDelete.splice(index,1);
-								event.toDelete = 0;
-								$(this).css({
-									'background-color': '#3a87ad',
-									'border': '1px solid #3a87ad'
-								});
-							} else {
-								eventsToDelete.push(event.nid);
-								event.toDelete = 1;
-								$(this).css({
-									'background-color': '#ef4040',
-									'border': '1px solid #ef4040'
-								});
-							}
 						},
 						events: lastReservationResource
 					});

@@ -8,26 +8,10 @@ class IAM_Cal
 	public static function update_equipment_cal()
 	{
 		global $wpdb;
-		if (isset($_POST['to_delete'])) {
-			for ($i=0; $i < count($_POST['to_delete']); $i++) {
-				$ni_id = IAM_Sec::textfield_cleaner($_POST['to_delete'][$i]);
-				$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID, Equipment_ID, Start_Time FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));
-				$iam_id = $reservation_results[0]->IAM_ID;
-				$equip_id = $reservation_results[0]->Equipment_ID;
-				$wp_id = $wpdb->get_results($wpdb->prepare("SELECT WP_ID FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$iam_id))[0]->WP_ID;
-				$equip_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id))[0]->Name;
-				$start_time = $reservation_results[0]->Start_Time;
-				$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));
-				if ($_POST['sendEmails']=='true') {
-					$reason = $_POST['reason']=='' ? '' : ' Reason given: '.$_POST['reason'];
-					$old_time = DateTime::createFromFormat('Y-m-d H:i:s',$reservation_results[0]->Start_Time);
-					$old_time = $old_time->format('M d, Y \a\t g:i a');
-					iam_mail(get_userdata($wp_id)->user_email, 'Your IMRC reservation', 'Your reservation for '.$equip_name.' at '.$old_time.' has been cancelled by an IMRC administrator.'.$reason,'Failed to send delete appointment email');
-				}
-			}
-		}
 		if (isset($_POST['modified'])) {
 			foreach ($_POST['modified'] as $key => $value) {
+				if (in_array($key, $_POST['to_delete']))
+					continue;
 				$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID, Equipment_ID, Start_Time FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", IAM_Sec::textfield_cleaner($key)));
 				$iam_id = $reservation_results[0]->IAM_ID;
 				$equip_id = $reservation_results[0]->Equipment_ID;
@@ -49,29 +33,21 @@ class IAM_Cal
 				}
 			}
 		}
-		if (isset($_POST['confirmed'])) {//rooms only
-			for ($i=0; $i < count($_POST['confirmed']); $i++) {
-				$ni_id = IAM_Sec::textfield_cleaner($_POST['confirmed'][$i]);
-				$current_status = $wpdb->get_results($wpdb->prepare("SELECT Reservation_Status FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$ni_id))[0]->Reservation_Status;
-				if ($current_status==1) {
-					$wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Reservation_Status='0' WHERE NI_ID=%s", $ni_id));
-				} else {
-					$wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Reservation_Status='1' WHERE NI_ID=%s", $ni_id));
-				}
-				$room_result = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Start_Time,IAM_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$ni_id));
-				$room_id = $room_result[0]->Equipment_ID;
-				$iam_id = $room_result[0]->IAM_ID;
-				$room_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_ROOM_TABLE." WHERE ROOM_ID=%d",$room_id))[0]->Name;
+		if (isset($_POST['to_delete'])) {
+			for ($i=0; $i < count($_POST['to_delete']); $i++) {
+				$ni_id = IAM_Sec::textfield_cleaner($_POST['to_delete'][$i]);
+				$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID, Equipment_ID, Start_Time FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));
+				$iam_id = $reservation_results[0]->IAM_ID;
+				$equip_id = $reservation_results[0]->Equipment_ID;
 				$wp_id = $wpdb->get_results($wpdb->prepare("SELECT WP_ID FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$iam_id))[0]->WP_ID;
+				$equip_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id))[0]->Name;
+				$start_time = $reservation_results[0]->Start_Time;
+				$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", $ni_id));
 				if ($_POST['sendEmails']=='true') {
 					$reason = $_POST['reason']=='' ? '' : ' Reason given: '.$_POST['reason'];
-					$start_time = DateTime::createFromFormat('Y-m-d H:i:s',$room_result[0]->Start_Time);
-					$start_time = $start_time->format('M d, Y \a\t g:i a');
-					if ($current_status==1) {
-						iam_mail(get_userdata($wp_id)->user_email, 'Your IMRC Rooms Reservation', 'Your reservation for '.$room_name.' at '.$start_time.' has been revoked by an IMRC administrator.','Failed to send approve appointment email');
-					} else {
-						iam_mail(get_userdata($wp_id)->user_email, 'Your IMRC Rooms Reservation', 'Your reservation for '.$room_name.' at '.$start_time.' has been approved by an IMRC administrator.','Failed to send approve appointment email');
-					}
+					$old_time = DateTime::createFromFormat('Y-m-d H:i:s',$reservation_results[0]->Start_Time);
+					$old_time = $old_time->format('M d, Y \a\t g:i a');
+					iam_mail(get_userdata($wp_id)->user_email, 'Your IMRC reservation', 'Your reservation for '.$equip_name.' at '.$old_time.' has been cancelled by an IMRC administrator.'.$reason,'Failed to send delete appointment email');
 				}
 			}
 		}
