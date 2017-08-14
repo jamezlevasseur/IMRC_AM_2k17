@@ -10,6 +10,7 @@
 		var getcaller=false,softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
 		var debug = window.location.href.indexOf('imrcaccounts')==-1;
 		var daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
+
 		//misc functions
 
 		function escapeHtml(text) {
@@ -160,7 +161,7 @@
 				} else {
 					if (!event.key.match(/^[0-9]*$/) && event.key!='Backspace' && event.key!='ArrowLeft' && event.key!='ArrowRight') {
 						return false;
-					}				
+					}
 				}
 			});
 		}
@@ -417,7 +418,7 @@
 				if (typeof callback!='undefined') {
 					callback();
 				}
-			});	
+			});
 		}
 
 		var initRootCrumbListener = function () {
@@ -522,7 +523,7 @@
 						});
 
 					});
-					
+
 					var businessHoursConverted = convertBusinessHours(facility_info[current_root_tag]['appointment_business_hours']);
 
 					$('.iam-res-cal').fullCalendar({
@@ -609,7 +610,7 @@
 							handleServerError(data);
 						}
 					});
-					
+
 				}
 
 				$('.iam-popup-submit button').click(function(event) {
@@ -633,7 +634,7 @@
 							});
 						}
 					}
-					
+
 					$.ajax({
 						url: ajaxurl,
 						type: 'POST',
@@ -662,7 +663,7 @@
 					}
 				});
 			}); //equipment button
-			
+
 		}
 
 		var emptyBlockBuffer = function () {
@@ -687,11 +688,11 @@
 
 		var canMakeReservation = function (desired_appointment,dateOf) {
 			var equip_and_business_schedule = selected_equip_schedule.slice(0);
-			
+
 			var dayOfWeek = moment(dateOf).format('ddd').toLowerCase();
 
 			for (var key in checkoutBusinessHours) {
-				
+
 				var day = checkoutBusinessHours[key];
 
 				if (key==dayOfWeek) {
@@ -714,7 +715,7 @@
 
 			for (var i=0; i<equip_and_business_schedule.length; i++) {
 				var obj = equip_and_business_schedule[i];
-				
+
 				//cache conditions
 				/*
 				>[desired]
@@ -804,8 +805,8 @@
 								handleServerError(data);
 							}
 						});
-					} 
-					comparingSchedules = false;		
+					}
+					comparingSchedules = false;
 				},
 				error: function (data) {
 					handleServerError(data);
@@ -987,7 +988,7 @@
 			} else {
 				$('.iam-password').focus();
 			}
-			
+
 		}
 
 		var initAuthenticationListeners = function (callback, req) {
@@ -1051,7 +1052,7 @@
 					$.each($('.iam-checkout-total'), function(index, val) {
 						checkoutSubmitAmount -= parseFloat($(this).text());
 					});
-					
+
 					matToSend = [];
 					checkoutAmount = [];
 					console.log(456)
@@ -1085,7 +1086,7 @@
 						handleServerError(data);
 					}
 				});
-				
+
 			});
 		}
 		var setupEquipmentSchedule = function () {
@@ -1159,7 +1160,7 @@
 				$('.iam-res-popup-header').append(equip_name);
 				equip_name = equip_name.replace(/ /g, '_');
 				var event_data = [];
-				
+
 				if (isRoom==1) {
 					$('.iam-res-popup-body').after('<p class="iam-room-note" style="color:red;">Reservations in grey have not been approved yet.</p>');
 				}
@@ -1192,7 +1193,7 @@
 					});
 
 				} else if (facility_info[current_root_tag]['schedule_type']=='Appointment') {
-					
+
 					var businessHoursConverted = convertBusinessHours(facility_info[current_root_tag]['appointment_business_hours']);
 					$('.iam-res-cal').fullCalendar({
 						header: {
@@ -1258,7 +1259,7 @@
 				}
 				//listeners
 			});
-			
+
 		}
 
 		var discoverEquipment = [];
@@ -1390,7 +1391,7 @@
 					alert('Please enter a valid email!');
 					return;
 				}
-				if ($('#password').val().length<8 || 
+				if ($('#password').val().length<8 ||
 					!(/[0-9]/.test($('#password').val()) && /[a-z]/.test($('#password').val()) && /[A-Z]/.test($('#password').val()))
 					) {
 					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
@@ -1409,7 +1410,7 @@
 						grecaptcha.reset();
 					}
 				});
-				
+
 			});
 		} else if ($('.login-form-container').length>0) {
 			removeNav();
@@ -1479,7 +1480,7 @@
 							$('.iam-captcha-container').removeClass('iam-ninja');
 						}
 						if (data.status==401) {
-							
+
 							var lockTime = 60000;//1000*Math.pow(2,5+data.statusText);
 							createCookie('iamLoginCookie',lockTime,lockTime,true);
 							loginLockout();
@@ -1511,7 +1512,7 @@
 					}
 				});
 			}
-			$('.iam-checkout-lock-submit').click(function(event) {	
+			$('.iam-checkout-lock-submit').click(function(event) {
 				$.ajax({
 					url: ajaxurl,
 					type: 'GET',
@@ -1537,7 +1538,7 @@
 					error: function (data) {
 						handleServerError(data);
 					}
-				});	
+				});
 			});
 
 		} else if ($('.iam-training-container').length>0) {
@@ -1571,8 +1572,8 @@
 			$('p#nav a').eq(1).attr('href',p+window.location.hostname+'/register');
 			$('input[type=submit]').click(function(event) {
 				var pw = $('#pass1-text').val();
-				
-				if (pw.length<8 || 
+
+				if (pw.length<8 ||
 					!(/[0-9]/.test(pw) && /[a-z]/.test(pw) && /[A-Z]/.test(pw))
 					) {
 					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
@@ -1581,7 +1582,7 @@
 			});
 		} else if ($('.login-action-resetpass').length>0) {
 			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-			
+
 			$('a').attr('href',p+window.location.hostname);
 		} else if ($('.error404').length>0) {
 			$('.entry-content').empty();

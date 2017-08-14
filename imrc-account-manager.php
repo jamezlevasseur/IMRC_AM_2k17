@@ -118,6 +118,9 @@ define('DEV_MODE', json_decode( file_get_contents(iam_dir().'config/operations.j
 
 define('SMALL_DB_MODE', json_decode( file_get_contents(iam_dir().'config/operations.json') )->small_db);
 
+define('DATE_FORMAT', 'Y-m-d H:i:s');
+
+
 //global functions
 
 function get_client_ip() {
@@ -225,6 +228,11 @@ function iam_validate_get_results($results, $location='', $fail_on_empty=false)
 	if ($fail_on_empty && count($results)===0) {
 		iam_throw_error(DATABASE_ERROR.' '.$location);
 	}
+}
+
+function make_nid()
+{
+	return md5(uniqid());
 }
 
 function iam_validate_query($results, $location='', $fail_on_zero=false)

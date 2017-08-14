@@ -43,44 +43,49 @@ label.iam-upcoming input[type=checkbox]{
   border: none!important;
 }
 label.iam-active {
-  background-color: #08cc1f!important;
+  background-color: #08cc1f;
 }
 
 label.iam-no-show {
-  background-color: #e57e39!important;
+  background-color: #e57e39;
 }
 
 label.iam-completed {
-  background-color: #7c27ad!important;
+  background-color: #7c27ad;
 }
 
 label.iam-no-pay {
-  background-color: #cc3f3f!important;
+  background-color: #f6b4f7;
 }
 
 .iam-status-upcoming {
-  background-color: #2957a5!important;
-  border: 1px solid #2957a5!important;
+  background-color: #2957a5;
+  border: 1px solid #2957a5;
 }
 
 .iam-status-active {
-  background-color: #08cc1f!important;
-  border: 1px solid #08cc1f!important;
+  background-color: #08cc1f;
+  border: 1px solid #08cc1f;
 }
 
 .iam-status-no-show {
-  background-color: #e57e39!important;
-  border: 1px solid #e57e39!important;
+  background-color: #e57e39;
+  border: 1px solid #e57e39;
 }
 
 .iam-status-completed {
-  background-color: #7c27ad!important;
-  border: 1px solid #7c27ad!important;
+  background-color: #7c27ad;
+  border: 1px solid #7c27ad;
 }
 
 .iam-status-no-pay {
-  background-color: #cc3f3f!important;
-  border: 1px solid #cc3f3f!important;
+  background-color: #f6b4f7;
+  border: 1px solid #f6b4f7;
+}
+
+.marked-for-delete {
+  background-color: #d60a0a!important;
+  border: 1px solid #d60a0a!important;
 }
 
 .ui-tooltip {

@@ -86,7 +86,7 @@ class IAM {
 
 		$this->loader->add_shortcode( 'imrc-login', $plugin_login, 'render_login_form' );
      	$this->loader->add_shortcode( 'imrc-register', $plugin_login, 'render_register_form' );
-     	
+
 	}
 
 	public function on_mail_failed($error)
@@ -136,6 +136,8 @@ class IAM {
 		include_files_in('public/render');
 
 		require_once iam_dir() . 'includes/IAM-sec.php';
+
+		require_once iam_dir() . 'admin/debug.php';
 
 		/**
 		 * The class responsible for orchestrating the actions and filters of the
@@ -199,6 +201,8 @@ class IAM {
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
 		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_setup_menu');
 
+		$this->loader->add_action('wp_ajax_debug_make_res', 'Debug_Page', 'make_dummy_res');
+
 		$this->loader->add_action('wp_ajax_admin_balances_action', 'Balances_Page', 'admin_balances_callback');
 
 		$this->loader->add_action('wp_ajax_admin_delete_supporting_file', 'Certifications_Page', 'admin_delete_supporting_file');
@@ -244,7 +248,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_report_bug', 'Settings_Page', 'admin_report_bug_callback');
 		$this->loader->add_action('wp_ajax_admin_update_settings', 'Settings_Page', 'admin_update_settings_callback');
 		$this->loader->add_action('wp_ajax_admin_update_account_type', 'Settings_Page', 'admin_update_account_type_callback');
-		
+
 		$this->loader->add_action('wp_ajax_admin_get_user_certifications', 'User_Certifications_Page', 'admin_get_user_certifications_callback');
 		$this->loader->add_action('wp_ajax_admin_add_certifications_to_users', 'User_Certifications_Page', 'admin_add_certifications_to_users_callback');
 		$this->loader->add_action('wp_ajax_admin_remove_certifications_to_users', 'User_Certifications_Page', 'admin_remove_certifications_to_users_callback');

@@ -17,6 +17,35 @@
 
 			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 
+
+			//debug
+
+			var debugSuccess = function() {
+				$('#debug-success').removeClass('iam-ninja');
+				$('#debug-success').fadeOut('slow', function() {
+					$('#debug-success').addClass('iam-ninja');
+				});
+			}
+
+			if ( $('.debug-wrap').length>0 ) {
+				console.log('DEBUG')
+				$('.make-dummy-res input[type=submit]').click(function(event) {
+					console.log('click')
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: {action: 'debug_make_res', mod: $('.make-dummy-res input[name=hour-mod]').val() },
+						success: function (data) {
+							handleServerResponse(data);
+							debugSuccess();
+						},
+						error: function (data) {
+							handleServerError(data);
+						}
+					});
+				});
+			}
+
 			//misc functions
 
 			var initPagination = function (id,t,paginationUpdateCallback) {
@@ -1402,19 +1431,13 @@
 				var index = eventsToDelete.indexOf(event.nid);
 				if (index!=-1) {
 					eventsToDelete.splice(index,1);
-					j.css({
-						'background-color': '#3a87ad',
-						'border': '1px solid #3a87ad'
-					});
+					j.removeClass('marked-for-delete');
 				} else {
 					if (eventsConfirmed.indexOf(event.nid)!=-1) {
 						eventsConfirmed.splice(index,1);
 					}
 					eventsToDelete.push(event.nid);
-					j.css({
-						'background-color': '#ef4040',
-						'border': '1px solid #ef4040'
-					});
+					j.addClass('marked-for-delete');
 				}
 			}
 			var handleEventCopyEmail = function(event) {
@@ -1437,7 +1460,7 @@
 			        	handleEventConfirmed(event,t);
 			        }
 			    }, {
-			        name: 'delete',
+			        name: 'mark for deletion',
 			        title: 'delete button',
 			        fun: function (e) {
 						var t = $(e.trigger);
