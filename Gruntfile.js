@@ -73,10 +73,7 @@ module.exports = function(grunt) {
           'uglifyjs -o admin/js/imrc-account-manager-admin.min.js admin/js/imrc-account-manager-admin.js',
           'uglifyjs -o public/js/imrc-account-manager-public.min.js public/js/imrc-account-manager-public.js',
           '> config/operations.json',
-          'echo \'{"dev":0,"small_db":0}\' >> config/operations.json',
-          'shipit staging deploy',
-          '> config/operations.json',
-          'echo \'{"dev":1,"small_db":1}\' >> config/operations.json',
+          'echo \'{"dev":0,"small_db":0}\' >> config/operations.json'
         ].join('&&')
       }
     }
