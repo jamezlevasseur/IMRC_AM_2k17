@@ -538,10 +538,11 @@ class Admin_Content
 			Scheduling_Page::make_scheduling_block($row);
 		}
 		//rooms has tag id of 0 since it doesn't have a tag
+		/*
 		$row = new StdClass;
 		$row->Tag_ID = 0;
 		$row->Tag = 'Rooms';
-		Scheduling_Page::make_scheduling_block($row);
+		Scheduling_Page::make_scheduling_block($row);*/
 		 ?>
 		</div>
 		<?php
