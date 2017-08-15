@@ -42,14 +42,20 @@ class Admin_Content
 						$equipment_results = $wpdb->get_results($equipment_query);
 						$empty = true;
 						$selected_name = "";
-						foreach ($equipment_results as $row) {
 
+						$sorted = [];
+						foreach ($equipment_results as $row) {
+							$sorted[] = $row->Name;
+						}
+						asort($sorted);
+
+						foreach ($sorted as $row) {
 							if ($empty) { //determines whether there is equipment & sets initial selected item
 								$empty = false;
-								$selected_name = $row->Name;
-								echo "<li selected>".iam_output($row->Name)."</li>";
+								$selected_name = $row;
+								echo "<li selected>".iam_output($row)."</li>";
 							} else {
-								echo "<li>".iam_output($row->Name)."</li>";
+								echo "<li>".iam_output($row)."</li>";
 							}
 						}
 						if ($empty) {
