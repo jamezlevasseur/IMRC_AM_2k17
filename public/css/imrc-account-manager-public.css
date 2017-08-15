@@ -7,22 +7,17 @@
  /*************************************** GENERAL *************************************************/
 
 
-/* ONLY FOR DISPLAYING BANNER ON RES PAGE, REMOVE AFTERWARDS */
-.page-id-11 #main {
-	padding-top: 0px!important;
-
-}
-
-.page-id-11 .entry-header {
-	margin: 0!important;
-}
+ .iam-not-checked-out-container {
+	 overflow-y: scroll;
+	 height: 200px;
+ }
 
 .iam-no-select {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;  /* Chrome all / Safari all */
   -moz-user-select: none;     /* Firefox all */
   -ms-user-select: none;      /* IE 10+ */
-  user-select: none;          /* Likely future */    
+  user-select: none;          /* Likely future */
 }
 
 .iam-res-banner {
@@ -823,8 +818,8 @@ button.iam-red-button {
 	-webkit-user-select: none;  /* Chrome all / Safari all */
 	-moz-user-select: none;     /* Firefox all */
 	-ms-user-select: none;      /* IE 10+ */
-	user-select: none;          /* Likely future */   
-	cursor: pointer; 
+	user-select: none;          /* Likely future */
+	cursor: pointer;
 }
 
 .iam-equipment-schedule-list {
@@ -834,7 +829,7 @@ button.iam-red-button {
 	width: 42%;
 	display: inline-block;
 	overflow-x:hidden;
-	overflow-y:scroll; 
+	overflow-y:scroll;
 }
 
 .iam-equipment-schedule-list li {

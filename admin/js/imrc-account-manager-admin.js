@@ -22,8 +22,10 @@
 
 			var debugSuccess = function() {
 				$('#debug-success').removeClass('iam-ninja');
-				$('#debug-success').fadeOut('slow', function() {
-					$('#debug-success').addClass('iam-ninja');
+				$('#debug-success').fadeOut('500', function() {
+					$(this).remove();
+					$('.debug-wrap').append('<h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>');
+
 				});
 			}
 

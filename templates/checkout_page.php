@@ -20,7 +20,7 @@ class IAM_Checkout_Page
 		$tomorrow = new DateTime('tomorrow');
 		$tomorrow = $tomorrow->format('Y-m-d 00:00:00');
 		$validReservationsEchoed = false;
-		$reservation_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time >= '$today' AND Start_Time <= '$tomorrow' AND Checked_Out IS NULL AND Status IS NOT ".NO_SHOW);
+		$reservation_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time >= '$today' AND Start_Time <= '$tomorrow' AND Checked_Out IS NULL");
 		$reservation_not_checked_out_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ");
 		$no_shows = [];
 		$html = '';
@@ -196,7 +196,7 @@ class IAM_Checkout_Page
 							'. IAM_Checkout_Page::update_checkout_table() .'
 					</tbody>
 				</table>
-				<p style="color:red;">Note: Reservations not checked in after 15 minutes will be DELETED to grant access to others.</p>
+				<p style="color:red;">Note: Reservations not checked in after 15 minutes will be REMOVED to grant access to others.</p>
 				<h1 class="iam-old-reservations">Past Reservations &nbsp; <i class="iam-caret fa fa-caret-right fa-3"></i></h1>
 				<section class="iam-not-checked-out-container">
 					<table>

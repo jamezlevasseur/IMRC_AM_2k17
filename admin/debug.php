@@ -9,13 +9,13 @@ class Debug_Page
     public static function debug_content()
     {
         ?>
-        <h1 class="iam-ninja" id="debug-success" style="font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>
         <div class="debug-wrap">
           <h3>Make Dummy Reservations</h3>
           <div class="make-dummy-res">
             <label>hour mod: <input type="number" name="hour-mod" value="1"></label>
             <input type="submit">
           </div>
+          <h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>
         </div>
         <?php
         /** de bugs go here **/

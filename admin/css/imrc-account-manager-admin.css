@@ -612,15 +612,8 @@ label.iam-no-pay {
 	margin-top: 20px;
 }
 
-.iam-res-cal-submit {
-	display: inline-block;
-	float: right;
-	margin-right: 25px;
-}
-
-.iam-res-cal-cancel {
-	display: inline-block;
-	float: right;
+.iam-res-cal-instructions > * {
+  float: left;
 }
 
 .iam-res-cal-reason {
@@ -630,8 +623,13 @@ label.iam-no-pay {
 
 .iam-res-cal-button-wrap {
 	display: inline-block;
-	float: right;
 	width: 300px;
+}
+
+.iam-res-cal-button-wrap > *{
+  display: inline-block;
+  float: left;
+  margin: 0 4px;
 }
 
 .iam-loading-anim {

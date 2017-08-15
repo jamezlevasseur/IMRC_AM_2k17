@@ -320,12 +320,8 @@ class Admin_Content
 					</div>
 					<div class="iam-res-cal"><div class="iam-res-cal-placeholder">Select equipment</div></div>
 					<div class="iam-res-cal-instructions">
-						- Events marked red will be deleted <br />
-						- Click to mark an item for deletion
-						<br />
-						<br />
 						<label style="color:red;">Send email alerting users of reservation changes: <input type="checkbox" class="iam-res-cal-send-emails" checked></label><br />
-						<textarea rows="8" cols="60" class="iam-res-cal-reason" placeholder="Reason changes were made to users reservation. This will be sent in an email to the users whose reservations have been altered. (Optional)"></textarea>
+						<textarea rows="6" cols="50" class="iam-res-cal-reason" placeholder="Reason changes were made to users reservation. This will be sent in an email to the users whose reservations have been altered. (Optional)"></textarea>
 						<div class="iam-res-cal-button-wrap">
 							<button class="iam-res-cal-cancel iam-delete-button" type="button">Cancel</button>
 							<button class="iam-res-cal-submit iam-button" type="button">Save Changes</button>
