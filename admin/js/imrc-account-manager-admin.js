@@ -1267,6 +1267,7 @@
 									$('#iam-bal-charges-table-container').append(handleServerResponse(data));
 									initEditChargeRowListener();
 									$('.iam-edit-charge-row').data('relational-id', thatId);
+									fetchingChargeTable = false;
 								},
 								error: function (data) {
 									handleServerError(data, new Error());
