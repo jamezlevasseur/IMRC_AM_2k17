@@ -14,7 +14,17 @@ class Admin_Content
 	 * @return string
 	 */
 
-	public static function equipment_content()
+	 public static function er_equipment_content()
+	 {
+	 	Admin_Content::equipment_content('e');
+	 }
+
+	 public static function fl_equipment_content()
+	 {
+	 	Admin_Content::equipment_content('f');
+	 }
+
+	public static function equipment_content($dept)
 	{
 		?>
 		<div class="wrap iam-equipment-wrap">
@@ -27,11 +37,13 @@ class Admin_Content
 				<ul id="iam-equipment-list" class="iam-existing-list">
 					<?php
 						global $wpdb;
-						$equipment_query = "SELECT Name FROM ".IAM_EQUIPMENT_TABLE." ";
+						$dept_cond = $dept=='e' ? "WHERE Root_Tag!='Fab Lab'" : "WHERE Root_Tag!='Equipment Room'" ;
+						$equipment_query = "SELECT Name FROM ".IAM_EQUIPMENT_TABLE." ".$dept_cond;
 						$equipment_results = $wpdb->get_results($equipment_query);
 						$empty = true;
 						$selected_name = "";
 						foreach ($equipment_results as $row) {
+
 							if ($empty) { //determines whether there is equipment & sets initial selected item
 								$empty = false;
 								$selected_name = $row->Name;
@@ -61,6 +73,8 @@ class Admin_Content
 
 		<?php
 	}
+
+
 
 	/**
 	 * Function that creates the manage certications page

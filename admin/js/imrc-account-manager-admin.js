@@ -30,7 +30,6 @@
 			}
 
 			if ( $('.debug-wrap').length>0 ) {
-				console.log('DEBUG')
 				$('.make-dummy-res input[type=submit]').click(function(event) {
 					console.log('click')
 					$.ajax({

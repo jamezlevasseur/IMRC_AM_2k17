@@ -1099,7 +1099,7 @@
 				$(this).addClass('currently-selected');
 				selected_equip_name = $(this).text().replace(' ','_');
 				$('.iam-to-reserve').html($(this).text())
-				var newSource = ajaxurl+"?action=get_equipment_calendar&is=y&name="+selected_equip_name;
+				var newSource = ajaxurl+"?action=get_equipment_calendar&name="+selected_equip_name;
 				$('.iam-cal').fullCalendar( 'removeEventSource', lastSource );
 				$('.iam-cal').fullCalendar( 'addEventSource', newSource );
 				lastSource = newSource;
