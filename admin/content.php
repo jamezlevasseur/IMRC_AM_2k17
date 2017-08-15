@@ -535,13 +535,13 @@ class Admin_Content
 		<?php
 
 		foreach ($root_tags as $row) {
-			$this->make_scheduling_block($row);
+			Scheduling_Page::make_scheduling_block($row);
 		}
 		//rooms has tag id of 0 since it doesn't have a tag
 		$row = new StdClass;
 		$row->Tag_ID = 0;
 		$row->Tag = 'Rooms';
-		$this->make_scheduling_block($row);
+		Scheduling_Page::make_scheduling_block($row);
 		 ?>
 		</div>
 		<?php
@@ -629,16 +629,16 @@ class Admin_Content
 
 							$tag_id = $tag_row->Tag_ID;
 							$tag_name = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
-							$associated_tags.=$this->make_pricing_drop_down($all_tags,$tag_name);
+							$associated_tags.=Pricing_Page::make_pricing_drop_down($all_tags,$tag_name);
 						}
 						foreach ($equip_results as $equip_row) {
 							$equip_id = $equip_row->Equipment_ID;
 							$equip_name = $wpdb->get_results("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID='$equip_id'")[0]->Name;
-							$associated_equipment.=$this->make_pricing_drop_down($all_equip,$equip_name);
+							$associated_equipment.=Pricing_Page::make_pricing_drop_down($all_equip,$equip_name);
 						}
 						$associated_tags = $associated_tags.'<div class="iam-add-pricing-tags-drop-down-button iam-secondary-button">+</div>';
 						$associated_equipment = $associated_equipment.'<div class="iam-add-pricing-equipment-drop-down-button iam-secondary-button">+</div>';
-						echo $this->make_mat_row($row->NI_ID,$name,$price,$base_price,$unit_name,$associated_tags,$associated_equipment);
+						echo Pricing_Page::make_mat_row($row->NI_ID,$name,$price,$base_price,$unit_name,$associated_tags,$associated_equipment);
 					}
 					?>
 				</tbody>

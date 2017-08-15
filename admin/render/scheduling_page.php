@@ -1,7 +1,7 @@
 <?php
 
 /**
-* 
+*
 */
 class Scheduling_Page
 {
@@ -72,7 +72,7 @@ class Scheduling_Page
         iam_respond(SUCCESS);
     }
 
-    private function make_rental_block($period, $hours_description)
+    public static function make_rental_block($period, $hours_description)
     {
         return '<br />
         <label>Rental period (in days): <input class="iam-rental-period" type="number" value="'.iam_output($period).'"></label><br /><br />
@@ -81,19 +81,19 @@ class Scheduling_Page
 
     public static function admin_get_rental_info_template_callback()
     {
-        iam_respond(SUCCESS,$this->make_rental_block('',''));
+        iam_respond(SUCCESS,Scheduling_Page::make_rental_block('',''));
     }
 
     public static function admin_get_appointment_info_template_callback()
     {
-        iam_respond(SUCCESS,$this->make_appointment_info_template());
+        iam_respond(SUCCESS,Scheduling_Page::make_appointment_info_template());
     }
 
     public static function make_appointment_info_template($table_args='')
     {
         $scheduling_info = '<button type="button" class="iam-secondary-button iam-irregular-hours-button">set irregular hours</button><div class="iam-irregular-hours-instructions iam-ninja">Instructions: Drag the event where desired to indicate when you are closed on that date for that time. <b>Shift + Click to delete events</b></div><div class="iam-ninja" id="external-events"><h4>Drag to Calendar</h4><div class="fc-event">closed</div></div><div class="iam-irregular-hours-cal iam-cal iam-ninja"></div><button type="button" class="iam-button iam-irregular-hours-update-button iam-ninja">update irregular hours</button>';
 
-        $td_days = $this->make_appointment_table($table_args);
+        $td_days = Scheduling_Page::make_appointment_table($table_args);
         $scheduling_info.= '<table class="iam-appointment-table">
             <thead>
                 <tr>
@@ -121,7 +121,7 @@ class Scheduling_Page
         return $scheduling_info;
     }
 
-    private function make_appointment_table($json)
+    public static function make_appointment_table($json)
     {
         if ($json=='') {
             $json = '{
@@ -161,14 +161,14 @@ class Scheduling_Page
             $closed = false;
             if ($value->start == $value->end)
                 $closed = true;
-            $html[0] .= $this->make_appointment_schedule_input($value->start,true,$closed);
-            $html[1] .= $this->make_appointment_schedule_input($value->end,false,$closed);
+            $html[0] .= Scheduling_Page::make_appointment_schedule_input($value->start,true,$closed);
+            $html[1] .= Scheduling_Page::make_appointment_schedule_input($value->end,false,$closed);
         }
 
         return $html;
     }
 
-    private function make_appointment_schedule_input($time_obj, $start, $closed)
+    public static function make_appointment_schedule_input($time_obj, $start, $closed)
     {
         $class_type = $start ? 'open' : 'close';
         if ($time_obj=='' && $start || $closed && $start) {
@@ -228,7 +228,7 @@ class Scheduling_Page
         IAM_Cal::get_approval_hours();
     }
 
-    private function make_approval_block()
+    public static function make_approval_block()
     {
         global $wpdb;
         $r = $wpdb->get_results("SELECT Name,NI_ID FROM ".IAM_ROOM_TABLE);
@@ -240,7 +240,7 @@ class Scheduling_Page
         return $scheduling_info;
     }
 
-    private function make_scheduling_block($row)
+    public static function make_scheduling_block($row)
     {
         global $wpdb;
         $facility_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=%d",$row->Tag_ID));
@@ -255,14 +255,14 @@ class Scheduling_Page
                 <option value="Not a Facility">Not a Facility</option>
                 <option value="Rental" selected>Rental</option>
                 <option value="Appointment">Appointment</option>';
-            $scheduling_info = $this->make_rental_block($facility_results[0]->Rental_Days, $facility_results[0]->Rental_Hours_Description);
+            $scheduling_info = Scheduling_Page::make_rental_block($facility_results[0]->Rental_Days, $facility_results[0]->Rental_Hours_Description);
         } else if ($facility_results[0]->Schedule_Type == 'Appointment') {
             $scheduling_options = '
                 <option value="Not a Facility">Not a Facility</option>
                 <option value="Rental">Rental</option>
                 <option value="Appointment" selected>Appointment</option>
             ';
-            $scheduling_info = $this->make_appointment_info_template($facility_results[0]->Appointment_Business_Hours);
+            $scheduling_info = Scheduling_Page::make_appointment_info_template($facility_results[0]->Appointment_Business_Hours);
         } else if ($facility_results[0]->Schedule_Type == 'Approval') {
             $scheduling_options = '
                 <option value="Not a Facility">Not a Facility</option>
@@ -270,7 +270,7 @@ class Scheduling_Page
                 <option value="Appointment">Appointment</option>
                 <option value="Approval" selected>Approval</option>
             ';
-            $scheduling_info = $this->make_approval_block();
+            $scheduling_info = Scheduling_Page::make_approval_block();
         }
         echo '
         <div class="iam-scheduling-block">

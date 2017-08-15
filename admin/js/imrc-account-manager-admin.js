@@ -1,5 +1,5 @@
 (function( $ ) {
-	'use strict';
+		'use strict';
 
 	 $(function () {
 	 		//constants
@@ -19,6 +19,33 @@
 
 
 			//debug
+
+			var handleServerResponse = function (r) {
+				if (debug)
+					console.log(r);
+				try {
+					var _r = JSON.parse(r);
+					if (debug)
+						console.log(_r);
+					if (_r.message!='')
+						alert(_r.status.toUpperCase()+": "+_r.message);
+					if (_r.redirect!='')
+						redirectUrl = _r.redirect;
+					return _r.content;
+				} catch (error) {
+						if (debug)
+							console.log(error);
+						console.log('error occured');
+				}
+			}
+
+			var handleServerError = function (e, err) {
+				if (debug) {
+					console.log(e);
+					console.log( err );
+				}
+				alert(e.statusText+" \n Error Code:"+e.status);
+			}
 
 			var debugSuccess = function() {
 				$('#debug-success').removeClass('iam-ninja');
@@ -41,7 +68,7 @@
 							debugSuccess();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -98,7 +125,7 @@
 
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			}
@@ -124,7 +151,7 @@
 						$('.iam-search-field').change();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			}
@@ -209,7 +236,7 @@
 						submissionEnd();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 						submissionEnd();
 					}
 				});
@@ -284,25 +311,6 @@
 				$('.iam-submit-popup-close').click(function(event) {
 					$('.iam-popup').remove();
 				});
-			}
-
-			var handleServerResponse = function (r) {
-				if (debug)
-					console.log(r);
-				var _r = JSON.parse(r);
-				if (debug)
-					console.log(_r);
-				if (_r.message!='')
-					alert(_r.status.toUpperCase()+": "+_r.message);
-				if (_r.redirect!='')
-					redirectUrl = _r.redirect;
-				return _r.content;
-			}
-
-			var handleServerError = function (e) {
-				if (debug)
-					console.log(e);
-				alert(e.statusText+" \n Error Code:"+e.status);
 			}
 
 			//functions
@@ -443,7 +451,7 @@
 						$('#iam-existing-files').append(data);
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				})
 
@@ -514,7 +522,7 @@
 						}
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 		  	}
@@ -585,7 +593,7 @@
 								window.location.reload();
 							},
 							error: function (data) {
-								handleServerError(data);
+								handleServerError(data, new Error());
 							}
 						});
 				    }
@@ -603,7 +611,7 @@
 							updateExistingFiles();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					})
 				});
@@ -687,7 +695,7 @@
   						a[0].remove();
   					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
   				});
 		  	}
@@ -716,7 +724,7 @@
 		  					submissionEnd();
 		  				},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 		  			});
 		  		});
@@ -737,7 +745,7 @@
 
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -771,7 +779,7 @@
 						submissionEnd();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 					});
 				});
@@ -829,7 +837,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 							submissionEnd();
 						}
 					});
@@ -959,7 +967,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -983,7 +991,7 @@
 							initDeleteFormListener('e');
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -1069,7 +1077,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -1101,7 +1109,7 @@
 							initDeleteFormListener('c');
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1149,7 +1157,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -1173,7 +1181,7 @@
 							initDeleteFormListener('r');
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -1198,7 +1206,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -1261,13 +1269,13 @@
 									$('.iam-edit-charge-row').data('relational-id', thatId);
 								},
 								error: function (data) {
-									handleServerError(data);
+									handleServerError(data, new Error());
 									fetchingChargeTable = false;
 								}
 							});
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1286,7 +1294,7 @@
 							$(that).parent('td').html(handleServerResponse(data));
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -1323,7 +1331,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1350,7 +1358,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1389,7 +1397,7 @@
 							submissionEnd();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1649,7 +1657,7 @@
 								schedulingInfoElement.html(handleServerResponse(data));
 							},
 							error: function (data) {
-								handleServerError(data);
+								handleServerError(data, new Error());
 							}
 						});
 					} else if ($(this).val()=='Appointment') {
@@ -1662,7 +1670,7 @@
 								schedulingInfoElement.html(handleServerResponse(data));
 							},
 							error: function (data) {
-								handleServerError(data);
+								handleServerError(data, new Error());
 							}
 						});
 						initIrregularHoursButtonListener();
@@ -1706,7 +1714,7 @@
 
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1755,7 +1763,7 @@
 						window.location.reload();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 						submissionEnd();
 					}
 				});
@@ -1869,7 +1877,7 @@
 											submissionEnd();
 										},
 										error: function (data) {
-											handleServerError(data);
+											handleServerError(data, new Error());
 										}
 									});
 								}
@@ -1941,7 +1949,7 @@
 									window.location.reload();
 								},
 								error: function (data) {
-									handleServerError(data);
+									handleServerError(data, new Error());
 								}
 							});
 						}
@@ -1962,7 +1970,7 @@
 							submissionEnd();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -1996,7 +2004,7 @@
 						},
 						error: function (data) {
 							submissionEnd();
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -2053,7 +2061,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -2070,7 +2078,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -2091,7 +2099,7 @@
 						});
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			}
@@ -2107,7 +2115,7 @@
 						initAddPricingDropDownListeners();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			}
@@ -2168,7 +2176,7 @@
 							submissionEnd();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -2230,7 +2238,7 @@
 							submissionEnd();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -2400,7 +2408,7 @@
 							fetchingChargeTable = false;
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 							fetchingChargeTable = false;
 						}
 					});
@@ -2421,7 +2429,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -2435,7 +2443,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -2476,7 +2484,7 @@
 							window.location.reload();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});

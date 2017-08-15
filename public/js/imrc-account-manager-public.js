@@ -7,7 +7,7 @@
 		var IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
 		var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
 		//global vars
-		var getcaller=false,softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
+		var softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
 		var debug = window.location.href.indexOf('imrcaccounts')==-1;
 		var daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
 
@@ -39,11 +39,9 @@
 				return _r.content;
 			} catch (error) {
 				if (softFail) {
-					if (getcaller) {
-						console.log( arguments.callee.caller.toString() );
-					}
-					if (debug)
+					if (debug) {
 						console.log(error);
+					}
 					console.log('error occured');
 				} else {
 					alert('An unknown error occured! :(');
@@ -51,9 +49,11 @@
 			}
 		}
 
-		var handleServerError = function (e) {
-			if (debug)
+		var handleServerError = function (e, err) {
+			if (debug) {
 				console.log(e);
+				console.log( err );
+			}
 			alert(e.statusText+" \n Error Code:"+e.status);
 		}
 
@@ -217,7 +217,7 @@
 							$('.iam-report-bug-box').remove();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -239,7 +239,7 @@
 						reload_existing_res();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			});
@@ -257,7 +257,7 @@
 					init_res_delete();
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -322,7 +322,7 @@
 					newDataToRefLeft(content);
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -343,7 +343,7 @@
 					}
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -362,7 +362,7 @@
 					newDataToRefLeft(data);
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -393,12 +393,12 @@
 							newDataToRefLeft(content+roomContent, true);
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});*/
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 			//empty buttons
@@ -607,7 +607,7 @@
 							});
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 
@@ -647,7 +647,7 @@
 							emptyBlockBuffer();
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				});
@@ -802,14 +802,14 @@
 								alert('success');
 							},
 							error: function (data) {
-								handleServerError(data);
+								handleServerError(data, new Error());
 							}
 						});
 					}
 					comparingSchedules = false;
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -917,7 +917,7 @@
 						initCheckoutListeners();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			});
@@ -972,7 +972,7 @@
 					$('.iam-checkout-discount')
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -1008,7 +1008,7 @@
 						callback($('.iam-username').val(), data);
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			});
@@ -1083,7 +1083,7 @@
 						window.location.reload();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 
@@ -1141,7 +1141,7 @@
 					});
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -1253,7 +1253,7 @@
 							});
 						},
 						error: function (data) {
-							handleServerError(data);
+							handleServerError(data, new Error());
 						}
 					});
 				}
@@ -1318,7 +1318,7 @@
 					buildDiscoverBlock(data);
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 		}
@@ -1344,7 +1344,7 @@
 					res_form = handleServerResponse(data);
 				},
 				error: function (data) {
-					handleServerError(data);
+					handleServerError(data, new Error());
 				}
 			});
 			//listeners
@@ -1406,7 +1406,7 @@
 						redir();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 						grecaptcha.reset();
 					}
 				});
@@ -1487,7 +1487,7 @@
 							return;
 						}
 						firstLoginAttempt = 0;
-						handleServerError(data);
+						handleServerError(data, new Error());
 						grecaptcha.reset();
 					}
 				});
@@ -1508,7 +1508,7 @@
 						initCheckout();
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			}
@@ -1531,12 +1531,12 @@
 								initCheckout();
 							},
 							error: function (data) {
-								handleServerError(data);
+								handleServerError(data, new Error());
 							}
 						});
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			});
@@ -1553,7 +1553,7 @@
 						alert('Your message was sent!');
 					},
 					error: function (data) {
-						handleServerError(data);
+						handleServerError(data, new Error());
 					}
 				});
 			});

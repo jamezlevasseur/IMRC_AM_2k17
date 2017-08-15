@@ -1,12 +1,12 @@
 <?php
 
 /**
-* 
+*
 */
 class Pricing_Page
 {
 
-    private function make_pricing_drop_down($query_results, $selected='')
+    public static function make_pricing_drop_down($query_results, $selected='')
     {
         $html = $selected=='' ? '<div class="iam-pricing-drop-down"><select><option disabled selected>Select a value</option>': '<div class="iam-pricing-drop-down"><select><option disabled>Select a value</option>';
         foreach ($query_results as $name) {
@@ -22,7 +22,7 @@ class Pricing_Page
 
     public static function admin_get_new_mat_row_callback()
     {
-        iam_respond(SUCCESS,$this->make_mat_row());
+        iam_respond(SUCCESS,Pricing_Page::make_mat_row());
     }
 
         public static function make_mat_row($id=null,$name,$price,$base_price,$unit_name,$associated_tags,$associated_equipment)
@@ -61,10 +61,10 @@ class Pricing_Page
                 $mat_id = $wpdb->get_results("SELECT Material_ID FROM ".IAM_MATERIAL_TABLE." WHERE NI_ID='$ni_id'")[0]->Material_ID;
 
                 if (isset($pricing_array['equipment'])) {
-                    $this->set_material_equipment_realtions($pricing_array['equipment'],$mat_id);
+                    Pricing_Page::set_material_equipment_realtions($pricing_array['equipment'],$mat_id);
                 }
                 if (isset($pricing_array['tags'])) {
-                    $this->set_material_tag_realtions($pricing_array['tags'],$mat_id);
+                    Pricing_Page::set_material_tag_realtions($pricing_array['tags'],$mat_id);
                 }
             } else {
                 $ni_id = $pricing_array['nid'];
@@ -79,10 +79,10 @@ class Pricing_Page
                 $wpdb->query("DELETE FROM ".IAM_MATERIAL_TAGS_TABLE." WHERE Material_ID='$mat_id'");
 
                 if (isset($pricing_array['equipment'])) {
-                    $this->set_material_equipment_realtions($pricing_array['equipment'],$mat_id);
+                    Pricing_Page::set_material_equipment_realtions($pricing_array['equipment'],$mat_id);
                 }
                 if (isset($pricing_array['tags'])) {
-                    $this->set_material_tag_realtions($pricing_array['tags'],$mat_id);
+                    Pricing_Page::set_material_tag_realtions($pricing_array['tags'],$mat_id);
                 }
             }
         }
@@ -122,7 +122,7 @@ class Pricing_Page
         foreach ($all_equip_results as $equip_row) {
             $all_equip[] = $equip_row->Name;
         }
-        iam_respond(SUCCESS,['tags'=>$this->make_pricing_drop_down($all_tags), 'equip'=>$this->make_pricing_drop_down($all_equip)]);
+        iam_respond(SUCCESS,['tags'=>Pricing_Page::make_pricing_drop_down($all_tags), 'equip'=>Pricing_Page::make_pricing_drop_down($all_equip)]);
     }
 
 }
