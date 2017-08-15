@@ -243,8 +243,8 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_update_approval_hours', 'Scheduling_Page', 'admin_update_approval_hours');
 		$this->loader->add_action('wp_ajax_admin_get_approval_hours', 'Scheduling_Page', 'admin_get_approval_hours');
 
-		$this->loader->add_action('wp_ajax_get_admin_forms', 'Settings_Page', 'get_admin_forms_callback');
-		$this->loader->add_action('wp_ajax_admin_delete_form', 'Settings_Page', 'admin_delete_form');
+		$this->loader->add_action('wp_ajax_get_admin_forms', 'Item_Mgmt', 'get_admin_forms_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_form', 'Item_Mgmt', 'admin_delete_form');
 		$this->loader->add_action('wp_ajax_admin_report_bug', 'Settings_Page', 'admin_report_bug_callback');
 		$this->loader->add_action('wp_ajax_admin_update_settings', 'Settings_Page', 'admin_update_settings_callback');
 		$this->loader->add_action('wp_ajax_admin_update_account_type', 'Settings_Page', 'admin_update_account_type_callback');
