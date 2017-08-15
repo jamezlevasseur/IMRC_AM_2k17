@@ -1,6 +1,6 @@
 <?php
 /**
-* 
+*
 */
 class IAM_Reservation_Page
 {
@@ -95,10 +95,10 @@ class IAM_Reservation_Page
 			$tag_id_results = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",$current_tag));
 			$all_tag_ids[] = $tag_id_results[0]->Tag_ID;
 			$all_tag_ids = array_merge($all_tag_ids, IAM_Reservation_Page::get_all_child_tag_ids($current_tag));
-			for ($k=0; $k < count($all_tag_ids); $k++) { 
+			for ($k=0; $k < count($all_tag_ids); $k++) {
 				$tag_id = $all_tag_ids[$k];
 				$equipment_id_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%d ",$tag_id));
-				
+
 				if ($equipment_id_results===false) {
 					iam_throw_error("Error - Tagging Error");
 				}
@@ -112,14 +112,14 @@ class IAM_Reservation_Page
 						$cert_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID=%d ",$cert_id))[0]->Name;
 						$photo_url = $equip_row->Photo==null ? IAM_DEFAULT_LARGE_PICTURE : $equip_row->Photo;
 						$equipment_blocks[$equip_row->Name] = IAM_Reservation_Page::make_equipment_block(
-							$equip_row->Out_Of_Order, 
-							$equip_row->Name, 
-							$photo_url, 
-							$equip_row->Manufacturer_Info, 
-							$equip_row->Description, 
-							$equip_row->Pricing_Description, 
-							$cert_name, 
-							$cert_id, 
+							$equip_row->Out_Of_Order,
+							$equip_row->Name,
+							$photo_url,
+							$equip_row->Manufacturer_Info,
+							$equip_row->Description,
+							$equip_row->Pricing_Description,
+							$cert_name,
+							$cert_id,
 							$equip_row->Root_Tag);
 					}
 				}
@@ -151,14 +151,14 @@ class IAM_Reservation_Page
 			$cert_name = $wpdb->get_results($cert)[0]->Name;
 			$photo_url = $row->Photo==null ? IAM_DEFAULT_LARGE_PICTURE : $row->Photo;
 			$html .= IAM_Reservation_Page::make_equipment_block(
-				$row->Out_Of_Order, 
-				$row->Name, 
-				$photo_url, 
-				$row->Manufacturer_Info, 
-				$row->Description, 
-				$row->Pricing_Description, 
-				$cert_name, 
-				$cert_id, 
+				$row->Out_Of_Order,
+				$row->Name,
+				$photo_url,
+				$row->Manufacturer_Info,
+				$row->Description,
+				$row->Pricing_Description,
+				$cert_name,
+				$cert_id,
 				$row->Root_Tag);
 		}
 		return $html;
@@ -284,9 +284,9 @@ class IAM_Reservation_Page
 		<div class="iam-ninja iam-cal-data" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
 		<div class="iam-ref-left-top">
 			<div class="iam-search-container">
-				<input type="search" placeholder="search..." class="iam-search iam-reservations-search">	
+				<input type="search" placeholder="search..." class="iam-search iam-reservations-search">
 			</div>
-			<div id="iam-ref-crumb-buttons"><button class="iam-crumb-button">Equipment Room</button><button class="iam-crumb-button">Fab Lab</button> <button id="iam-rooms-button"></button></div><br>
+			<div id="iam-ref-crumb-buttons"><button class="iam-crumb-button">Equipment Room</button><button class="iam-crumb-button">Fab Lab</button></div><br>
 			<div class="iam-crumb-container"><div id="iam-crumb-root"></div><div id="iam-ref-crumb"></div></div>
 		</div>
 		<div class="iam-ref-left">'.IAM_Reservation_Page::get_equipment().IAM_Reservation_Page::get_rooms().'

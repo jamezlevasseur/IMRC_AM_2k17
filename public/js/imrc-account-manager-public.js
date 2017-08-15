@@ -1354,10 +1354,6 @@
 			initRootCrumbListener();
 			initEquipmentButtonListener();
 			initSearchListener('.iam-reservations-search','.iam-equipment-title',2);
-			$.each($('.iam-crumb-button'), function(index, val) {
-				if ($(this).text().indexOf('Fab')!=-1)
-					$(this).click();
-			});
 
 		} else if ($('#signupform').length>0) {
 			removeNav();
