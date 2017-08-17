@@ -708,6 +708,10 @@ class Admin_Content
 					<table>
 						<tbody>
 							<tr>
+								<td><label>iPad Lock Code</label></td>
+								<td><input type="number" class="iam-ipad-code" width="50" value="<?php echo get_setting_iam('ipad_code') ?>"></td>
+							</tr>
+							<tr>
 								<td><h2>Email Notifications</h2></td>
 							</tr>
 							<tr>

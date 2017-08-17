@@ -2,7 +2,7 @@
 
 
 /**
-* 
+*
 */
 class Checkout_Public
 {
@@ -10,7 +10,7 @@ class Checkout_Public
     public static function checkout_unlock_callback()
     {
         $user_code = $_GET['code'];
-        if ($user_code==get_setting_iam('ipad_code'))
+        if ((string)$user_code===(string)get_setting_iam('ipad_code'))
             iam_respond(SUCCESS);
         iam_throw_error('INVALID CODE');
     }
@@ -20,7 +20,7 @@ class Checkout_Public
         iam_respond(SUCCESS, IAM_Checkout_Page::getUnlocked());
     }
 
-    
+
     public static function update_checkout_table_callback()
     {
         iam_respond(SUCCESS, IAM_Checkout_Page::update_checkout_table());

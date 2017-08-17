@@ -99,7 +99,7 @@ class IAM_Checkout_Page
 		date_default_timezone_set(IMRC_TIME_ZONE);
 		$today = date("Y-m-d 00:00:00");
 		$validReservationsEchoed = false;
-		$reservation_not_checked_out_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ");
+		$reservation_not_checked_out_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ORDER BY Reservation_ID DESC");
 		$html = '';
 		foreach ($reservation_not_checked_out_results as $row) {
 			$iam_id = $row->IAM_ID;
