@@ -100,6 +100,7 @@ class IAM_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
+		wp_enqueue_style($this->plugin_name.'-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-structure', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.structure.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-theme', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.theme.min.css');
@@ -116,6 +117,7 @@ class IAM_Admin {
 	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script($this->plugin_name.'context-menu', plugin_dir_url( __FILE__ ) . 'js/contextMenu.min.js', array('jquery'),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'-moment', plugin_dir_url( __FILE__ ) . 'js/moment.min.js', array(),$this->version, false);
 
