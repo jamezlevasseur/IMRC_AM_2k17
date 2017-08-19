@@ -86,13 +86,18 @@ class Admin_Content
 				?>
 			</div>
 			<div id="iam-admin-col-far-right">
-				<button id="iam-duplicate-equipment-button" class="iam-secondary-button">Duplicate Current Equipment</button>
-				<br />
-				<button id="iam-new-equipment-button" class="iam-secondary-button">New Equipment</button>
-				<br />
-				<input type="text" class="iam-er-user-emails">
-				<br />
-				<button class="iam-secondary-button iam-er-action-button"></button>
+				<div class="rent-box">
+					<h3 style="margin:0 0 10px 0;color:#666;">Equipment Management</h3>
+					<button id="iam-duplicate-equipment-button" class="iam-secondary-button">Duplicate Current Equipment</button>
+					<br />
+					<button id="iam-new-equipment-button" class="iam-secondary-button">New Equipment</button>
+				</div>
+				<div class="rent-box">
+					<h3 style="margin:0;color:#666;">Rental</h3>
+					<input type="text" class="iam-er-user-emails" placeholder="user email">
+					<br />
+					<button class="iam-secondary-button iam-er-action-button"></button>
+				</div>
 			</div>
 		</div>
 

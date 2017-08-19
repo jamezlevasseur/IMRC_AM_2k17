@@ -1011,9 +1011,7 @@
 				}
 
 				var updateForRentalStatus = function (rentedTo) {
-					console.log(rentedTo)
 					if (rentedTo==0) {
-						console.log('rentedTo')
 						$('.iam-er-action-button').addClass('iam-er-checkout');
 						$('.iam-er-action-button').removeClass('iam-er-checkin');
 						$('.iam-er-user-emails').prop('disabled',false);

@@ -136,6 +136,14 @@ label.iam-no-pay {
 	margin-left: 30px;
   vertical-align: top;
 }
+.rent-box {
+  margin: 15px 0; 
+  padding: 10px;
+  border: 3px dashed #aaa;
+}
+.iam-er-user-emails {
+  margin: 10px 0;
+}
 .iam-er-action-button.iam-er-checkout::before {
   content: "Check In";
 }
@@ -186,7 +194,6 @@ label.iam-no-pay {
 
 /* to push down the footer */
 #iam-new-equipment-button {
-	margin-bottom: 400px;
 	margin-top: 5px;
 }
 
