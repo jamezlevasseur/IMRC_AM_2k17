@@ -26,8 +26,18 @@ class Admin_Content
 
 	public static function equipment_content($dept)
 	{
+		global $wpdb;
+		$c = $dept=='e' ? 'iam-er' : 'iam-fl';
+
+		$users = $wpdb->get_results("SELECT WP_ID FROM ".IAM_USERS_TABLE);
+		$emails = [];
+		foreach ($users as $row) {
+			$emails[] = strtolower( get_userdata($row->WP_ID)->user_email );
+		}
+		asort($emails);
 		?>
-		<div class="wrap iam-equipment-wrap">
+		<div class="wrap iam-equipment-wrap <?php echo $c; ?>">
+			<div class="iam-ninja iam-on-load-data" data-users="<?php echo iam_output(implode(',', $emails)) ?>"></div>
 			<h1 class="iam-admin-header">Equipment</h1>
 			<div id="iam-admin-col-left">
 				<h3>Existing Equipment</h3>
@@ -36,26 +46,28 @@ class Admin_Content
 				</div>
 				<ul id="iam-equipment-list" class="iam-existing-list">
 					<?php
-						global $wpdb;
+
 						$dept_cond = $dept=='e' ? "WHERE Root_Tag!='Fab Lab'" : "WHERE Root_Tag!='Equipment Room'" ;
-						$equipment_query = "SELECT Name FROM ".IAM_EQUIPMENT_TABLE." ".$dept_cond;
+						$equipment_query = "SELECT Name,Checked_Out FROM ".IAM_EQUIPMENT_TABLE." ".$dept_cond;
 						$equipment_results = $wpdb->get_results($equipment_query);
 						$empty = true;
 						$selected_name = "";
 
 						$sorted = [];
 						foreach ($equipment_results as $row) {
-							$sorted[] = $row->Name;
+							$sorted[$row->Name] = $row;
 						}
-						asort($sorted);
+						ksort($sorted);
 
 						foreach ($sorted as $row) {
+							$available = $row->Checked_Out==0 ? 0 : get_email($wpdb->get_results("SELECT IAM_ID FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=".$row->Checked_Out)[0]->IAM_ID);
+
 							if ($empty) { //determines whether there is equipment & sets initial selected item
 								$empty = false;
-								$selected_name = $row;
-								echo "<li selected>".iam_output($row)."</li>";
+								$selected_name = $row->Name;
+								echo "<li data-rented-to=\"".$available."\" selected>".iam_output($row->Name)."</li>";
 							} else {
-								echo "<li>".iam_output($row)."</li>";
+								echo "<li data-rented-to=\"".$available."\">".iam_output($row->Name)."</li>";
 							}
 						}
 						if ($empty) {
@@ -63,8 +75,6 @@ class Admin_Content
 						}
 					 ?>
 				</ul>
-				<button id="iam-duplicate-equipment-button" class="iam-secondary-button">Duplicate Current Equipment</button>
-				<button id="iam-new-equipment-button" class="iam-secondary-button">New Equipment</button>
 			</div>
 			<div id="iam-admin-col-right">
 				<?php
@@ -74,6 +84,15 @@ class Admin_Content
 				echo IAM_Admin_Forms::new_equipment_form();
 
 				?>
+			</div>
+			<div id="iam-admin-col-far-right">
+				<button id="iam-duplicate-equipment-button" class="iam-secondary-button">Duplicate Current Equipment</button>
+				<br />
+				<button id="iam-new-equipment-button" class="iam-secondary-button">New Equipment</button>
+				<br />
+				<input type="text" class="iam-er-user-emails">
+				<br />
+				<button class="iam-secondary-button iam-er-action-button"></button>
 			</div>
 		</div>
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Forms and functions for forms in the admin menu
@@ -60,7 +60,7 @@ class IAM_Admin_Forms
 			$supporting_files[] = $file_results[0]->Name;
 		}
 		$list_html = "";
-		for ($i=0; $i < count($supporting_files); $i++) { 
+		for ($i=0; $i < count($supporting_files); $i++) {
 			$list_html.='<div class="iam-existing-upload">'.iam_output($supporting_files[$i]).'<span class="iam-existing-upload-x"></span></div>';
 		}
 		iam_respond(SUCCESS,$list_html);
@@ -81,7 +81,7 @@ class IAM_Admin_Forms
 		if ($title!=null) {
 			$html.= "<h3 class=\"iam-form-row\">".iam_output($title)."</h3>";
 		}
-		for ($i=0; $i < count($data); $i++) { 
+		for ($i=0; $i < count($data); $i++) {
 			$html.= '<p class="iam-form-row">'.$data[$i].'</p>';
 		}
 		$html.= '<p class="iam-form-row">
@@ -130,7 +130,7 @@ class IAM_Admin_Forms
 			$supporting_files[] = $file_results[0]->Name;
 		}
 		$list_html = "<label>Existing Files:</label>";
-		for ($i=0; $i < count($supporting_files); $i++) { 
+		for ($i=0; $i < count($supporting_files); $i++) {
 			$list_html.='<div class="iam-existing-upload">'.iam_output($supporting_files[$i]).'<span class="iam-existing-upload-x"></span></div>';
 		}
 		$update_cert_fields[] = IAM_Admin_Forms::CERTIFICATION_SUPPORT_LABEL.'<div id="iam-existing-files">'.$list_html.'</div><div id="iam-new-supporting-upload"><input type="file" id="supporting0" name="supporting0"><br /><button id="iam-add-supporting-upload-button" type="button">add</button></div>';

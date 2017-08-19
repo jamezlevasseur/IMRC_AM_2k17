@@ -131,6 +131,17 @@ label.iam-no-pay {
 	display: inline-block;
 	margin-left: 30px;
 }
+#iam-admin-col-far-right {
+	display: inline-block;
+	margin-left: 30px;
+  vertical-align: top;
+}
+.iam-er-action-button.iam-er-checkout::before {
+  content: "Check In";
+}
+.iam-er-action-button.iam-er-checkin::before {
+  content: "Check In";
+}
 .iam-delete-account-type {
 	font-size: 35px;
 }

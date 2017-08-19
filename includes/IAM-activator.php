@@ -65,6 +65,7 @@ class IAM_Activator {
 			On_Slide_Show tinyint(1) DEFAULT 0,
 			Out_Of_Order tinyint(1) DEFAULT 0,
 			Root_Tag varchar(120) NOT NULL,
+			Checked_Out bigint(20) DEFAULT 0,
 			PRIMARY KEY(Equipment_ID),
 			UNIQUE(NI_ID),
 			UNIQUE(Name)

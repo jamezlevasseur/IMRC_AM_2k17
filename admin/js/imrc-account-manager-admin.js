@@ -791,7 +791,7 @@
 				$('.iam-admin-submit-button').off();
 				$('.iam-admin-submit-button').click(function(event) {
 					submissionStart();
-					var form = $(this).parent();
+					var form = $('form#iam-update-form').hasClass('iam-ninja') ? $('form#iam-new-form') : $('form#iam-update-form') ;
 					var method = form.attr('id')=='iam-new-form' ? 'n' : 'u' ;
 					var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0 ;
 					var slideShow = form.children('.iam-form-row').children('#slide-show').is(':checked') ? 1 : 0 ;
@@ -887,115 +887,171 @@
 
 		  	var initNewEquipmentButtonListener = function () {
 		  		$('#iam-new-equipment-button').click(function(event) {
-					make_form_visible('#iam-new-form');
-					prepare_new_form('#iam-new-form');
-				});
+						make_form_visible('#iam-new-form');
+						prepare_new_form('#iam-new-form');
+					});
 		  	}
 
 		  	var initDuplicateEquipmentButtonListener = function () {
 		  		$('#iam-duplicate-equipment-button').click(function(event) {
 		  			submissionStart();
-					var form = $('#iam-update-form');
-					var method = 'n';
-					var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0 ;
-					var slideShow = form.children('.iam-form-row').children('#slide-show').is(':checked') ? 1 : 0 ;
-					var tagsVal = form.children('.iam-form-row').children('.tags').val().trim();
-					if (tagsVal.substring(tagsVal.length-1)==',') {
-						tagsVal = tagsVal.substring(0,tagsVal.length-1);
-					}
-					var equip_tags = tagsVal=='' ? [] : tagsVal.split(',');
-					var new_tags = [];
-					for (var i = 0; i < equip_tags.length; i++) {
-						equip_tags[i] = equip_tags[i].trim();
-						if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1) {
-							new_tags.push(equip_tags[i]);
+						var form = $('#iam-update-form');
+						var method = 'n';
+						var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0 ;
+						var slideShow = form.children('.iam-form-row').children('#slide-show').is(':checked') ? 1 : 0 ;
+						var tagsVal = form.children('.iam-form-row').children('.tags').val().trim();
+						if (tagsVal.substring(tagsVal.length-1)==',') {
+							tagsVal = tagsVal.substring(0,tagsVal.length-1);
 						}
-					}
-					var formData = new FormData();
-					if (form.children('.iam-form-row').children('.iam-image').attr('src').indexOf('default_large.png')==-1) {
-						formData.append('photo',form.children('.iam-form-row').children('.iam-image').attr('src'));
-						formData.append('duplicate','true');
-					}
-					var new_name = form.children('.iam-form-row').children('#name').val().trim();
-					if (new_name.charAt(new_name.length-1)!=')') {
-						new_name = new_name+' (1)';
-					} else {
-						var num = '';
-						var firstparenthesis;
-
-						for (var i=new_name.length-2; i>-1; i--) {
-							if (!isNaN(new_name.charAt(i))) {
-								num = num+""+new_name.charAt(i);
-							} else if (new_name.charAt(i)=='(') {
-								num = parseInt(num)+1;
-								firstparenthesis = i;
-								break;
-							} else {
-								num = false;
-								break;
+						var equip_tags = tagsVal=='' ? [] : tagsVal.split(',');
+						var new_tags = [];
+						for (var i = 0; i < equip_tags.length; i++) {
+							equip_tags[i] = equip_tags[i].trim();
+							if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1) {
+								new_tags.push(equip_tags[i]);
 							}
 						}
-						if (num===false) {
+						var formData = new FormData();
+						if (form.children('.iam-form-row').children('.iam-image').attr('src').indexOf('default_large.png')==-1) {
+							formData.append('photo',form.children('.iam-form-row').children('.iam-image').attr('src'));
+							formData.append('duplicate','true');
+						}
+						var new_name = form.children('.iam-form-row').children('#name').val().trim();
+						if (new_name.charAt(new_name.length-1)!=')') {
 							new_name = new_name+' (1)';
 						} else {
-							new_name = new_name.substring(0,firstparenthesis)+'('+num+')';
-						}
-					}
-					formData.append('method',method);
-					formData.append('action','admin_equipment_action');
-					formData.append('name', new_name);
-					formData.append('certification',form.children('.iam-form-row').children('#certification').val());
-					formData.append('description',form.children('.iam-form-row').children('#description').val());
-					formData.append('pricing-description',form.children('.iam-form-row').children('#pricing-description').val());
-					formData.append('manufacturer-info',form.children('.iam-form-row').children('#manufacturer-info').val());
-					formData.append('out-of-order',outOfOrder);
-					formData.append('on-slide-show',slideShow);
-					formData.append('tags',equip_tags);
-					formData.append('new_tags',new_tags);
+							var num = '';
+							var firstparenthesis;
 
-					if (method=='u')
-						formData.append('x',form.children('.iam-form-row').children('#x').val());
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: formData,
-						cache: false,
-						contentType: false,
-						processData: false,
-						success: function (data) {
-							handleServerResponse(data)
-							window.location.reload();
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
+							for (var i=new_name.length-2; i>-1; i--) {
+								if (!isNaN(new_name.charAt(i))) {
+									num = num+""+new_name.charAt(i);
+								} else if (new_name.charAt(i)=='(') {
+									num = parseInt(num)+1;
+									firstparenthesis = i;
+									break;
+								} else {
+									num = false;
+									break;
+								}
+							}
+							if (num===false) {
+								new_name = new_name+' (1)';
+							} else {
+								new_name = new_name.substring(0,firstparenthesis)+'('+num+')';
+							}
 						}
-					});
+						formData.append('method',method);
+						formData.append('action','admin_equipment_action');
+						formData.append('name', new_name);
+						formData.append('certification',form.children('.iam-form-row').children('#certification').val());
+						formData.append('description',form.children('.iam-form-row').children('#description').val());
+						formData.append('pricing-description',form.children('.iam-form-row').children('#pricing-description').val());
+						formData.append('manufacturer-info',form.children('.iam-form-row').children('#manufacturer-info').val());
+						formData.append('out-of-order',outOfOrder);
+						formData.append('on-slide-show',slideShow);
+						formData.append('tags',equip_tags);
+						formData.append('new_tags',new_tags);
+
+						if (method=='u')
+							formData.append('x',form.children('.iam-form-row').children('#x').val());
+						$.ajax({
+							url: ajaxurl,
+							type: 'POST',
+							data: formData,
+							cache: false,
+							contentType: false,
+							processData: false,
+							success: function (data) {
+								handleServerResponse(data)
+								window.location.reload();
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
 
 		  		});
 		  	}
 
-		  	var initExistingEquipmentListItemsListener = function () {
-				$('.iam-existing-list li').click(function(event) {
-					make_form_visible('#iam-update-form');
-					//if form is already present do not make a request
-					if ($(this).html()==$('#iam-update-form').children('.iam-form-row').children('#name').val())
-						return;
-					$.ajax({
-						url: ajaxurl,
-						type: 'GET',
-						data: {action: 'get_admin_forms', request: 'u_equipment', name: $(this).html()},
-						success: function (data) {
-							$('#iam-update-form').replaceWith(handleServerResponse(data));
-							initTagAutoCompleteListener();
-							initSubmitEquipmentFormListener();
-							initDeleteFormListener('e');
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
+				var userEmails = []
+				var initCheckinCheckout = function () {
+					console.log('init checkin')
+						userEmails = $('.iam-on-load-data').data('users').split(',');
+						console.log(userEmails)
+						$('.iam-er-user-emails').autocomplete({
+				      source: userEmails
+				    });
+				}
 
-				});
+				var initRentalButton = function () {
+					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
+						$.ajax({
+							url: ajaxurl,
+							type: 'POST',
+							data: {action: 'attempt_to_rent', email: $('.iam-er-user-emails').val(), equipment: $('#x').val()},
+							success: function (data) {
+								data = handleServerResponse(data);
+								if (data=='no-user') {
+									alert('Could not complete rental. Cannot find user: '+$('.iam-er-user-emails').val());
+								} else if (data=='no-equipment') {
+									alert('Could not complete rental. Equipment invalid, please refresh page.');
+								} else if (data=='success') {
+									alert('Rental success.');
+								}
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
+					});
+					$('.iam-er-action-button.iam-er-checkin').click(function(event) {
+
+					});
+				}
+
+				var updateForRentalStatus = function (rentedTo) {
+					console.log(rentedTo)
+					if (rentedTo==0) {
+						console.log('rentedTo')
+						$('.iam-er-action-button').addClass('iam-er-checkout');
+						$('.iam-er-action-button').removeClass('iam-er-checkin');
+						$('.iam-er-user-emails').prop('disabled',false);
+						$('.iam-er-user-emails').val('');
+					} else {
+						$('.iam-er-action-button').removeClass('iam-er-checkout');
+						$('.iam-er-action-button').addClass('iam-er-checkin');
+						$('.iam-er-user-emails').prop('disabled',true);
+						$('.iam-er-user-emails').val(rentedTo);
+					}
+					initRentalButton();
+				}
+
+		  	var initExistingEquipmentListItemsListener = function () {
+					updateForRentalStatus($('.iam-existing-list li[selected]').data('rented-to'));
+					$('.iam-existing-list li').click(function(event) {
+						make_form_visible('#iam-update-form');
+						//if form is already present do not make a request
+						if ($(this).html()==$('#iam-update-form').children('.iam-form-row').children('#name').val())
+							return;
+						updateForRentalStatus($(this).data('rented-to'));
+						$.ajax({
+							url: ajaxurl,
+							type: 'GET',
+							data: {action: 'get_admin_forms', request: 'u_equipment', name: $(this).html()},
+							success: function (data) {
+								$('#iam-update-form').replaceWith(handleServerResponse(data));
+								initTagAutoCompleteListener();
+								initSubmitEquipmentFormListener();
+								initDeleteFormListener('e');
+
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
+
+					});
 		  	}
 
 			//CERT LISTENERS
@@ -2361,6 +2417,9 @@
 				itemNameListener($('#iam-new-form #name'));
 				itemNameListener($('#iam-update-form #name'));
 				updateSearchOnLoad();
+				if ($('.iam-er').length>0) {
+					initCheckinCheckout();
+				}
 				$(document).tooltip();
 
 			} else if ( $('.iam-certification-wrap').length>0 ) {

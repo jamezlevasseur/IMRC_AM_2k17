@@ -177,6 +177,13 @@ function iam_throw_error($message,$code='400')
 	exit;
 }
 
+function get_email($iam_id)
+{
+	global $wpdb;
+	$wpid = $wpdb->get_results($wpdb->prepare("SELECT WP_ID FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$iam_id))[0]->WP_ID;
+	return get_userdata($wpid)->user_email;
+}
+
 function send_to_debug_file($s)
 {
     if(!file_exists(DEBUG_FILE)) {
