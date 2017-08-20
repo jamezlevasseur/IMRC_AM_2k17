@@ -974,12 +974,10 @@
 		  		});
 		  	}
 
-				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0;
+				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = null;
 
 				var initCheckinCheckout = function () {
-					console.log('init checkin')
 						userEmails = $('.iam-on-load-data').data('users').split(',');
-						console.log(userEmails)
 						$('.iam-er-user-emails').autocomplete({
 				      source: userEmails
 				    });
@@ -989,7 +987,6 @@
 					$('.fc-event').removeClass('relevant-res');
 					$(element).addClass('relevant-res');
 					releventRes = event.uid;
-					console.log(event.uid);
 				}
 
 				var initRentalButton = function () {
@@ -1035,7 +1032,6 @@
 													equipment: equip_name.split('_').join(' ')};
 							} else {
 								var events = $('.iam-cal').fullCalendar('clientEvents');
-								console.log(events);
 								for (var i = 0; i < events.length; i++) {
 
 									if (events[i].uid==releventRes) {
@@ -1048,7 +1044,6 @@
 									}
 								}
 							}
-							console.log(chosen);
 
 							$.ajax({
 								url: ajaxurl,
@@ -1058,6 +1053,8 @@
 									handleServerResponse(data);
 									resetEvents();
 									submissionEnd();
+									lastequipclick.data('rented-to',useremail);
+									updateForRentalStatus(useremail);
 								},
 								error: function (data) {
 									handleServerError(data, new Error());
@@ -1142,7 +1139,7 @@
 							},
 							eventAfterAllRender: function () {
 								initContextMenu('rental');
-								console.log(persistentRelEvent)
+
 								if (persistentRelEvent!=null)
 									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
 								persistentRelEvent = null;
@@ -1159,25 +1156,6 @@
 							},
 							events: ajaxurl+"?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name="+equip_name
 						});
-						/*
-						$.ajax({
-							url: ajaxurl,
-							type: 'POST',
-							data: {action: 'attempt_to_rent', email: $('.iam-er-user-emails').val(), equipment: $('#x').val()},
-							success: function (data) {
-								data = handleServerResponse(data);
-								if (data=='no-user') {
-									alert('Could not complete rental. Cannot find user: '+$('.iam-er-user-emails').val());
-								} else if (data=='no-equipment') {
-									alert('Could not complete rental. Equipment invalid, please refresh page.');
-								} else if (data=='success') {
-									alert('Rental success.');
-								}
-							},
-							error: function (data) {
-								handleServerError(data, new Error());
-							}
-						});*/
 					});
 
 					$('.iam-er-action-button.iam-er-checkin').click(function(event) {
@@ -1202,7 +1180,9 @@
 
 		  	var initExistingEquipmentListItemsListener = function () {
 					updateForRentalStatus($('.iam-existing-list li[selected]').data('rented-to'));
+
 					$('.iam-existing-list li').click(function(event) {
+						lastequipclick = $(this);
 						make_form_visible('#iam-update-form');
 						//if form is already present do not make a request
 						if ($(this).html()==$('#iam-update-form').children('.iam-form-row').children('#name').val())
