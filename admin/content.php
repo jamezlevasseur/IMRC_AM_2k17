@@ -96,8 +96,27 @@ class Admin_Content
 					<h3 style="margin:0;color:#666;">Rental</h3>
 					<input type="text" class="iam-er-user-emails" placeholder="user email">
 					<br />
-					<button class="iam-secondary-button iam-er-action-button"></button>
+					<button class="iam-secondary-button iam-er-action-button" data-toggle="modal" data-target="#exampleModal"></button>
 				</div>
+			</div>
+
+			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			  <div class="modal-dialog modal-lg" style="max-width:65vw;" role="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <h5 class="modal-title" id="exampleModalLabel">Reservations</h5>
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			          <span aria-hidden="true">&times;</span>
+			        </button>
+			      </div>
+			      <div class="modal-body">
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			        <button type="button" class="btn btn-primary">Save changes</button>
+			      </div>
+			    </div>
+			  </div>
 			</div>
 		</div>
 

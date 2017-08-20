@@ -986,6 +986,51 @@
 
 				var initRentalButton = function () {
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
+						console.log('RENTAL CLICK');
+						if ($('.iam-er-user-emails').val()=='') {
+							alert('please enter an email.');
+							return;
+						}
+						$('#myModal').modal('show');
+
+						$('.iam-cal').remove();
+						$('.modal-body').append('<div class="iam-cal"></div>');
+
+						var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
+						var useremail = $('.iam-er-user-emails').val();
+
+
+						$('.iam-cal').fullCalendar({
+							header: {
+								left: 'prev,next today',
+								center: 'title',
+								right: 'month'
+							},
+							droppable: true,
+							eventOverlap: false,
+						    weekends:true,
+							height: 600,
+							forceEventDuration: true,
+							defaultView: 'month',
+							editable: true,
+							eventLimit: true, // allow "more" link when too many events
+							eventRender: function (event, element) {
+								eventToolTip(event,element);
+							},
+							eventAfterRender: function (event, element) {
+
+							},
+							eventDrop: function (event) {
+								eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+							},
+							eventResize: function (event) {
+								eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+							},
+							eventClick: function (event, jsEvent, view) {
+							},
+							events: ajaxurl+"?action=get_equipment_calendar&user="+useremail+"&is=y&descriptive=y&name="+equip_name
+						});
+						/*
 						$.ajax({
 							url: ajaxurl,
 							type: 'POST',
@@ -1003,8 +1048,9 @@
 							error: function (data) {
 								handleServerError(data, new Error());
 							}
-						});
+						});*/
 					});
+
 					$('.iam-er-action-button.iam-er-checkin').click(function(event) {
 
 					});
@@ -1549,7 +1595,7 @@
                     refreshResCal();
                     return;
                 }
-				equip_name = equip_name.replace(' ', '_');
+				equip_name = equip_name.split(' ').join('_');
 
 				//init calendar
 				$('.fc-event').each(function() {
@@ -1741,7 +1787,7 @@
 				$('.iam-irregular-hours-update-button').click(function(event) {
 					var cal = $(this).siblings('.iam-cal');
 					var facilityName = $(this).parent().siblings('.iam-scheduling-name').children('h1').text().trim();
-					facilityName = facilityName.replace(' ','_');
+					facilityName = facilityName.split(' ').join('_');
 					submissionStart();
 					var newEvents = [];
 					var events = $(this).siblings('.iam-cal').fullCalendar('clientEvents');
@@ -1910,7 +1956,7 @@
 						});
 						var facilityName = sib.parent().siblings('.iam-scheduling-name').children('h1').text().trim();
 
-						facilityName = facilityName.replace(' ','_');
+						facilityName = facilityName.split(' ').join('_');
 						sib.fullCalendar({
 							header: {
 								left: 'prev,next today',

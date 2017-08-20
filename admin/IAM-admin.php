@@ -116,8 +116,14 @@ class IAM_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
+
+		wp_register_script($this->plugin_name.'popper-js','https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',['jquery']);
+		wp_register_script($this->plugin_name.'bootstrap-js','https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', ['jquery',$this->plugin_name.'popper-js']);
+
+
 		wp_enqueue_script($this->plugin_name.'context-menu', plugin_dir_url( __FILE__ ) . 'js/contextMenu.min.js', array('jquery'),$this->version, false);
-		wp_enqueue_script($this->plugin_name.'bootstrap-js', plugin_dir_url( __FILE__ ) . 'js/bootstrap.min.js', array('jquery'),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'popper-js');
+		wp_enqueue_script($this->plugin_name.'bootstrap-js');
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'-moment', plugin_dir_url( __FILE__ ) . 'js/moment.min.js', array(),$this->version, false);
 
@@ -132,7 +138,6 @@ class IAM_Admin {
 	}
 
     public function admin_setup_menu() {
-
 
         add_menu_page ( 'Fab Labs', 'Fab Labs', 'manage_options', 'imrc-fab-lab', array('Admin_Content','fab_lab_content'), 'http://jameslevasseur.com/imr-icon.png');
         add_submenu_page ('imrc-fab-lab', 'Balances', 'Balances', 'manage_options', 'fl_balances', array('Admin_Content', 'balance_content') );

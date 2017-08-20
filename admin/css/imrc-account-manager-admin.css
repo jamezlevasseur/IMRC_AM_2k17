@@ -137,7 +137,7 @@ label.iam-no-pay {
   vertical-align: top;
 }
 .rent-box {
-  margin: 15px 0; 
+  margin: 15px 0;
   padding: 10px;
   border: 3px dashed #aaa;
 }
@@ -145,7 +145,7 @@ label.iam-no-pay {
   margin: 10px 0;
 }
 .iam-er-action-button.iam-er-checkout::before {
-  content: "Check In";
+  content: "Check Out";
 }
 .iam-er-action-button.iam-er-checkin::before {
   content: "Check In";

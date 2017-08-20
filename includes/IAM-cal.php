@@ -117,6 +117,7 @@ class IAM_Cal
 		$is_admin = isset($_GET['is']);
 		$equipment_in_title = isset($_GET['descriptive']);
 		$get_all_reservations = isset($_GET['all']);
+		$user = array_key_exists('user',$_GET) ? $_GET['user'] : null;
 		global $wpdb;
 
 		$equip_result = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
@@ -126,9 +127,12 @@ class IAM_Cal
 
 			date_default_timezone_set(IMRC_TIME_ZONE);
 			$weekago = date("Y-m-d 00:00:00", strtotime('-1 week'));
-			$date_condition = $get_all_reservations ? " " : "AND Start_Time > '$weekago' ";
+			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$weekago' ";
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
-			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
+			$user_condition = $user==null ? "" : " AND IAM_ID=".get_user_for_email($_GET['user'])->IAM_ID;
+			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition.$user_condition, $equip_id));
+			//exit(get_user_for_email($_GET['user']));
+			//exit($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition.$user_condition, $equip_id));
 
 			$formatted_events = [];
 			if(res_result==null && gettype($res_result)!='array') {
