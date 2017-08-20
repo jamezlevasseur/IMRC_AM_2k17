@@ -8,11 +8,11 @@ class Equipment_Page extends Item_Mgmt
 
     public static function admin_bind_rental()
     {
-      $e = $_POST['event'];
+      global $wpdb;
+      $e = $_POST['ev'];
       if (isset($e['nid'])) {
-        global $wpdb;
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$e['nid']))[0]->Reservation_ID;
-        
+
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE NI_ID=%s",ACTIVE,$e['nid']));
       } else {
@@ -20,7 +20,10 @@ class Equipment_Page extends Item_Mgmt
         $equipment_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e['equipment']))[0]->Equipment_ID;
         $iam_id = get_user_for_email($e['user'])->IAM_ID;
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status) VALUES ($nid,$iam_id,$equipment_id,%d)",ACTIVE));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time) VALUES (%s,%d,%d,%d,%s,%s)",$nid,$iam_id,$equipment_id,ACTIVE,$e['start'],$e['end']));
+
+        $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s AND IAM_ID=%d",$nid,$iam_id))[0]->Reservation_ID;
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
       }
       iam_respond(SUCCESS);
     }

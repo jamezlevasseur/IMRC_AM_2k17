@@ -974,7 +974,7 @@
 		  		});
 		  	}
 
-				var userEmails = [], erRentalDays = null;
+				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0;
 
 				var initCheckinCheckout = function () {
 					console.log('init checkin')
@@ -985,9 +985,11 @@
 				    });
 				}
 
-				var makeRelevantReservation = function (element) {
+				var makeRelevantReservation = function (element, event) {
 					$('.fc-event').removeClass('relevant-res');
 					$(element).addClass('relevant-res');
+					releventRes = event.uid;
+					console.log(event.uid);
 				}
 
 				var initRentalButton = function () {
@@ -995,6 +997,7 @@
 						var erInfo = $('.iam-facility-data').data('facility');
 						erRentalDays = erInfo['rental_period'];
 					}
+					$('.iam-er-action-button.iam-er-checkout').off();
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
 						resetEvents();
 						if ($('.iam-er-user-emails').val()=='') {
@@ -1002,6 +1005,8 @@
 							return;
 						}
 						$('#myModal').modal('show');
+
+						$('#myModal .modal-footer .btn-primary').off();
 
 						$('#myModal .modal-footer .btn-primary').click(function(event) {
 							if ($('.relevant-res').length<1) {
@@ -1029,10 +1034,11 @@
 								chosen = {nid: chosen.data('nid'),
 													equipment: equip_name.split('_').join(' ')};
 							} else {
-								var events = $('.iam-res-cal').fullCalendar('clientEvents');
-
+								var events = $('.iam-cal').fullCalendar('clientEvents');
+								console.log(events);
 								for (var i = 0; i < events.length; i++) {
-									if (events[i].className.indexOf('relevant-res')!=-1) {
+
+									if (events[i].uid==releventRes) {
 										chosen = {
 											user: useremail,
 											equipment: equip_name.split('_').join(' '),
@@ -1042,11 +1048,12 @@
 									}
 								}
 							}
+							console.log(chosen);
 
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
-								data: {action: 'admin_bind_rental', event: chosen},
+								data: {action: 'admin_bind_rental', ev: chosen},
 								success: function (data) {
 									handleServerResponse(data);
 									resetEvents();
@@ -1058,7 +1065,8 @@
 							});
 						});
 
-						$('#myModal .modal-footer .btn-primary').click(function(event) {
+						$('#myModal .modal-footer .btn-secondary').off();
+						$('#myModal .modal-footer .btn-secondary').click(function(event) {
 							resetEvents();
 						});
 
@@ -1075,8 +1083,7 @@
 								title: "Drag Me", // use the element's text as the event title
 								stick: true, // maintain when user navigates (see docs on the renderEvent method)
 								editable: true,
-								color:'#4cad57',
-								className: 'iam-new-event',
+								className: 'iam-new-event iam-look-like-normal-event',
 								allDay:true
 							});
 
@@ -1111,7 +1118,21 @@
 								$(element).data('equipment', event.equipment);
 	              $(element).data('nid', event.nid);
 
-								if (event.email!=useremail) {
+								if (typeof event.uid == 'undefined') {
+									eventCount++;
+									event.uid = eventCount;
+								}
+
+								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
+									event.isNewbie = 1;
+									persistentRelEvent = { ele: element, ev: event};
+								}
+
+								if (releventRes == event.uid && persistentRelEvent==null) {
+									persistentRelEvent = { ele: element, ev: event};
+								}
+
+								if (event.email!=useremail && typeof event.nid != 'undefined') {
 									$(element).addClass('event-not-editable');
 									event.editable = false;
 								}
@@ -1121,13 +1142,17 @@
 							},
 							eventAfterAllRender: function () {
 								initContextMenu('rental');
+								console.log(persistentRelEvent)
+								if (persistentRelEvent!=null)
+									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
+								persistentRelEvent = null;
 							},
 							eventDrop: function (event) {
-								if (event.nid!='new')
+								if (typeof event.nid != 'undefined')
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventResize: function (event) {
-								if (event.nid!='new')
+								if (typeof event.nid != 'undefined')
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventClick: function (event, jsEvent, view) {
@@ -1701,7 +1726,7 @@
 								fun: function (e) {
 									var t = $(e.trigger);
 									var event = {nid: t.data('nid')};
-									makeRelevantReservation(t);
+									makeRelevantReservation(t, t.data('fcSeg').event);
 								}
 						}, {
 								name: 'mark for deletion',
