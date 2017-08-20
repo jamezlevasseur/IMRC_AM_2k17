@@ -1004,12 +1004,49 @@
 						$('#myModal').modal('show');
 
 						$('#myModal .modal-footer .btn-primary').click(function(event) {
+							if ($('.relevant-res').length<1) {
+								alert('No Reservation Selected.');
+								return;
+							}
 							submissionStart();
 							$('#myModal').modal('hide');
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
 								data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: ''},
+								success: function (data) {
+									handleServerResponse(data);
+									resetEvents();
+									submissionEnd();
+								},
+								error: function (data) {
+									handleServerError(data, new Error());
+								}
+							});
+
+							var chosen = $('.relevant-res');
+							if (typeof chosen.data('nid') != 'undefined') {
+								chosen = {nid: chosen.data('nid'),
+													equipment: equip_name.split('_').join(' ')};
+							} else {
+								var events = $('.iam-res-cal').fullCalendar('clientEvents');
+
+								for (var i = 0; i < events.length; i++) {
+									if (events[i].className.indexOf('relevant-res')!=-1) {
+										chosen = {
+											user: useremail,
+											equipment: equip_name.split('_').join(' '),
+											start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
+											end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
+										}
+									}
+								}
+							}
+
+							$.ajax({
+								url: ajaxurl,
+								type: 'POST',
+								data: {action: 'admin_bind_rental', event: chosen},
 								success: function (data) {
 									handleServerResponse(data);
 									resetEvents();

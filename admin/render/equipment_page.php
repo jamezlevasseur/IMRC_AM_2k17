@@ -1,10 +1,29 @@
 <?php
 
 /**
-* 
+*
 */
 class Equipment_Page extends Item_Mgmt
 {
+
+    public static function admin_bind_rental()
+    {
+      $e = $_POST['event'];
+      if (isset($e['nid'])) {
+        global $wpdb;
+        $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$e['nid']))[0]->Reservation_ID;
+        
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE NI_ID=%s",ACTIVE,$e['nid']));
+      } else {
+        $nid = make_nid();
+        $equipment_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e['equipment']))[0]->Equipment_ID;
+        $iam_id = get_user_for_email($e['user'])->IAM_ID;
+
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status) VALUES ($nid,$iam_id,$equipment_id,%d)",ACTIVE));
+      }
+      iam_respond(SUCCESS);
+    }
 
     public static function admin_get_tags_callback()
     {
