@@ -901,6 +901,11 @@ label.iam-no-pay {
   cursor: not-allowed!important;
 }
 
+.fc-event.relevant-res {
+  background-color:#08cc1f!important;
+  border: 1px solid #08cc1f;
+}
+
 .iam-schedule-submit-button {
 	margin-top: 15px;
 }

@@ -136,8 +136,8 @@ class IAM_Cal
 			$weekago = date("Y-m-d 00:00:00", strtotime('-1 week'));
 			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$weekago' ";
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
-			$user_condition = $user==null ? "" : " AND IAM_ID=".get_user_for_email($_GET['user'])->IAM_ID;
-			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition.$user_condition, $equip_id));
+			//$user_condition = $user==null ? "" : " AND IAM_ID=".get_user_for_email($_GET['user'])->IAM_ID;
+			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
 			//exit(get_user_for_email($_GET['user']));
 			//exit($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition.$user_condition, $equip_id));
 

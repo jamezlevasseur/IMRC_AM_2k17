@@ -985,6 +985,11 @@
 				    });
 				}
 
+				var makeRelevantReservation = function (element) {
+					$('.fc-event').removeClass('relevant-res');
+					$(element).addClass('relevant-res');
+				}
+
 				var initRentalButton = function () {
 					if (erRentalDays==null) {
 						var erInfo = $('.iam-facility-data').data('facility');
@@ -1068,7 +1073,7 @@
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
 	              $(element).data('nid', event.nid);
-								
+
 								if (event.email!=useremail) {
 									$(element).addClass('event-not-editable');
 									event.editable = false;
@@ -1081,10 +1086,12 @@
 								initContextMenu('rental');
 							},
 							eventDrop: function (event) {
-								//eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+								if (event.nid!='new')
+									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventResize: function (event) {
-								//eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+								if (event.nid!='new')
+									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventClick: function (event, jsEvent, view) {
 							},
@@ -1622,6 +1629,7 @@
 			}
 
 			var initContextMenu = function (menuToUse) {
+				menuToUse = typeof menuToUse=='undefined' ? 'default' : menuToUse;
 
 				var menu = [{
 			        name: 'confirm',
@@ -1650,7 +1658,27 @@
 			        }
 			    }];
 
-					var menuOfChoice = menu;
+					var rentalMenu = [{
+								name: 'use this reservation',
+								title: 'select reservation button',
+								fun: function (e) {
+									var t = $(e.trigger);
+									var event = {nid: t.data('nid')};
+									makeRelevantReservation(t);
+								}
+						}, {
+								name: 'mark for deletion',
+								title: 'delete button',
+								fun: function (e) {
+									var t = $(e.trigger);
+									var event = {nid: t.data('nid')};
+									handleEventToDelete(event,t);
+								}
+						}
+						];
+
+					var menuDict = {'default':menu, 'rental':rentalMenu};
+					var menuOfChoice = menuDict[menuToUse];
 
 			    $('.fc-event').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
 			}
