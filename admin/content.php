@@ -99,12 +99,19 @@ class Admin_Content
 					<button class="iam-secondary-button iam-er-action-button" data-toggle="modal" data-target="#exampleModal"></button>
 				</div>
 			</div>
+			<?php
+			$er_tag_id = $wpdb->get_results("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag='Equipment Room'")[0]->Tag_ID;
+
+			$er_info = $wpdb->get_results("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=".$er_tag_id)[0];
+
+			echo '<div class="iam-ninja iam-facility-data" '.'data-facility="'.iam_output(json_encode(['schedule_type'=>$er_info->Schedule_Type,'rental_period'=>$er_info->Rental_Days,'rental_hours_description'=>$er_info->Rental_Hours_Description,'appointment_business_hours'=>$er_info->Appointment_Business_Hours])).'" ></div>';
+			 ?>
 
 			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			  <div class="modal-dialog modal-lg" style="max-width:65vw;" role="document">
 			    <div class="modal-content">
 			      <div class="modal-header">
-			        <h5 class="modal-title" id="exampleModalLabel">Reservations</h5>
+			        <h5 class="modal-title" id="exampleModalLabel">Reservations</h5><div class="fc-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  drag me &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>

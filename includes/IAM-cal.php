@@ -8,6 +8,12 @@ class IAM_Cal
 	public static function update_equipment_cal()
 	{
 		global $wpdb;
+		/*
+		if (isset($_POST['new_events'])) {
+			foreach ($_POST['new_events'] as $key => $value) {
+
+			}
+		}*/
 		if (isset($_POST['modified'])) {
 			foreach ($_POST['modified'] as $key => $value) {
 				if (in_array($key, $_POST['to_delete']))
@@ -51,7 +57,8 @@ class IAM_Cal
 				}
 			}
 		}
-		iam_respond(SUCCESS,$_POST,IAM::$status_message);
+
+		iam_respond(SUCCESS,implode(",",$_POST['to_delete']),IAM::$status_message);
 	}
 
 	public static function get_business_hours()
@@ -152,6 +159,9 @@ class IAM_Cal
 					if ($is_admin) {
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay'];
 						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name,'status'=>$RES_STATUS_CLASS_DICT[$row->Status]];
+						if (array_key_exists('allDay', $_GET)) {
+							$formatted_events[count($formatted_events)-1]['allDay'] = true;
+						}
 					} else {
 						$formatted_events[] = ['constraint'=> 'businessHours','allDay'=>false, 'nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time];
 					}

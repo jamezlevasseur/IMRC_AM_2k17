@@ -11,6 +11,10 @@
 
 }
 
+.iw-contextMenu {
+  z-index: 9999999999!important;
+}
+
 @media (min-width: 1250px) {
 	.res-toolbar {
 		width: 60vw;
@@ -652,7 +656,7 @@ label.iam-no-pay {
 
 .iam-loading-anim {
 	background-image: url('../../assets/loading.gif');
-	z-index: 999;
+	z-index: 9999999;
 	position: fixed;
 	top: 40%;
 	left: 45%;
@@ -663,7 +667,7 @@ label.iam-no-pay {
 .iam-loading-bg {
 	background-color: #fff;
 	opacity: .6;
-	z-index: 998;
+	z-index: 9999998;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -889,8 +893,13 @@ label.iam-no-pay {
 
 .fc-event {
 	cursor: pointer;
+  color: white!important;
 }
 
+.fc-event.event-not-editable {
+  opacity: .7;
+  cursor: not-allowed!important;
+}
 
 .iam-schedule-submit-button {
 	margin-top: 15px;

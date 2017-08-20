@@ -974,7 +974,8 @@
 		  		});
 		  	}
 
-				var userEmails = []
+				var userEmails = [], erRentalDays = null;
+
 				var initCheckinCheckout = function () {
 					console.log('init checkin')
 						userEmails = $('.iam-on-load-data').data('users').split(',');
@@ -985,13 +986,39 @@
 				}
 
 				var initRentalButton = function () {
+					if (erRentalDays==null) {
+						var erInfo = $('.iam-facility-data').data('facility');
+						erRentalDays = erInfo['rental_period'];
+					}
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
-						console.log('RENTAL CLICK');
+						resetEvents();
 						if ($('.iam-er-user-emails').val()=='') {
 							alert('please enter an email.');
 							return;
 						}
 						$('#myModal').modal('show');
+
+						$('#myModal .modal-footer .btn-primary').click(function(event) {
+							submissionStart();
+							$('#myModal').modal('hide');
+							$.ajax({
+								url: ajaxurl,
+								type: 'POST',
+								data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: ''},
+								success: function (data) {
+									handleServerResponse(data);
+									resetEvents();
+									submissionEnd();
+								},
+								error: function (data) {
+									handleServerError(data, new Error());
+								}
+							});
+						});
+
+						$('#myModal .modal-footer .btn-primary').click(function(event) {
+							resetEvents();
+						});
 
 						$('.iam-cal').remove();
 						$('.modal-body').append('<div class="iam-cal"></div>');
@@ -999,36 +1026,69 @@
 						var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
 						var useremail = $('.iam-er-user-emails').val();
 
+						$('.modal-header .fc-event').each(function() {
+
+							// store data so the calendar knows to render an event upon drop
+							$(this).data('event', {
+								title: "Drag Me", // use the element's text as the event title
+								stick: true, // maintain when user navigates (see docs on the renderEvent method)
+								editable: true,
+								color:'#4cad57',
+								className: 'iam-new-event',
+								allDay:true
+							});
+
+							// make the event draggable using jQuery UI
+							$(this).draggable({
+								zIndex: 999,
+								revert: true,      // will cause the event to go back to its
+								revertDuration: 0  //  original position after the drag
+							});
+
+						});
 
 						$('.iam-cal').fullCalendar({
 							header: {
 								left: 'prev,next today',
 								center: 'title',
-								right: 'month'
+								right: 'month,agendaWeek'
 							},
 							droppable: true,
-							eventOverlap: false,
-						    weekends:true,
+							eventOverlap: true,
+						  weekends:true,
 							height: 600,
 							forceEventDuration: true,
 							defaultView: 'month',
 							editable: true,
+							durationEditable: true,
+							allDay: true,
+							defaultAllDayEventDuration: {days: erRentalDays},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
+								$(element).data('email', event.email);
+								$(element).data('equipment', event.equipment);
+	              $(element).data('nid', event.nid);
+								
+								if (event.email!=useremail) {
+									$(element).addClass('event-not-editable');
+									event.editable = false;
+								}
 								eventToolTip(event,element);
 							},
 							eventAfterRender: function (event, element) {
-
+							},
+							eventAfterAllRender: function () {
+								initContextMenu('rental');
 							},
 							eventDrop: function (event) {
-								eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+								//eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventResize: function (event) {
-								eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+								//eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventClick: function (event, jsEvent, view) {
 							},
-							events: ajaxurl+"?action=get_equipment_calendar&user="+useremail+"&is=y&descriptive=y&name="+equip_name
+							events: ajaxurl+"?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name="+equip_name
 						});
 						/*
 						$.ajax({
@@ -1537,6 +1597,7 @@
 					}
 				}
 			}
+
 			var handleEventToDelete = function(event,j) {
 				var index = eventsToDelete.indexOf(event.nid);
 				if (index!=-1) {
@@ -1550,6 +1611,7 @@
 					j.addClass('marked-for-delete');
 				}
 			}
+
 			var handleEventCopyEmail = function(event) {
 				var e = $('<div>'+event.email+'</div>');
 				copyToClipboard(e[0]);
@@ -1559,7 +1621,8 @@
 				});
 			}
 
-			var initContextMenu = function () {
+			var initContextMenu = function (menuToUse) {
+
 				var menu = [{
 			        name: 'confirm',
 			        title: 'confirm button',
@@ -1573,9 +1636,8 @@
 			        name: 'mark for deletion',
 			        title: 'delete button',
 			        fun: function (e) {
-						var t = $(e.trigger);
+								var t = $(e.trigger);
 			        	var event = {nid: t.data('nid')};
-			        	//
 			        	handleEventToDelete(event,t);
 			        }
 			    }, {
@@ -1587,7 +1649,10 @@
 			        	handleEventCopyEmail(event);
 			        }
 			    }];
-			    $('.fc-event').contextMenu(menu,{triggerOn:'click',mouseClick:'right'});
+
+					var menuOfChoice = menu;
+
+			    $('.fc-event').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
 			}
 
 			var makeCalendarReservationsMulti = function (equip_name) {
