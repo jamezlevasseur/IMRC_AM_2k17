@@ -284,7 +284,7 @@ label.iam-no-pay {
 #iam-balances-table {
 	border-collapse: collapse;
 	border-bottom: 2px solid #CCCCCC;
-	width: 388px;
+	min-width: 388px;
 }
 #iam-title-row {
 	background-color: lightblue !important;
@@ -546,8 +546,8 @@ label.iam-no-pay {
 
 #iam-balances-table tbody {
 	overflow-y: scroll;
+  overflow-x: visible;
 	max-height: 500px;
-	display: block;
 }
 
 .iam-res-search-container {
@@ -585,6 +585,11 @@ label.iam-no-pay {
 .iam-reservations-equipment-list-item, .iam-room-res-list li {
 	background-color: #e5e5e5;
 	border-top: 2px solid #f1f1f1;
+  padding: 2px;
+  width: 260px;
+ white-space: nowrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
 }
 
 .iam-reservation-tab-list div:hover, .iam-room-res-list li:hover {
@@ -611,7 +616,6 @@ label.iam-no-pay {
 		width: 70vw;
 	}
 }
-
 
 .iam-res-cal-placeholder, .iam-cal-placeholder {
 	font-size: 30px;

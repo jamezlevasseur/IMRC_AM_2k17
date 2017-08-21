@@ -204,6 +204,8 @@ class Admin_Content
 			<div class="iam-search-container">
 				<input type="search" placeholder="search..." class="iam-search iam-balances-search">
 			</div>
+			<div class="iam-table-container" style="display: inline-block;vertical-align: top;max-height: 600px;overflow-y: scroll;">
+
 			<table class="iam-table" id="iam-balances-table" style="display:inline-block;vertical-align:top;">
 				<colgroup>
 					<col width="100px">
@@ -234,6 +236,7 @@ class Admin_Content
 				?>
 				</tbody>
 			</table>
+		</div>
 			<div id="iam-admin-funds" style="display:inline-block;padding-left: 30px; vertical-align:top;">
 				<div class="iam-ninja iam-add-funds">
 					<p class="iam-form-row">
@@ -366,7 +369,9 @@ class Admin_Content
                             $equipment_tag_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%s",$dept_tags[$i]));
                             foreach ($equipment_tag_results as $row) {
                                 $equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name,NI_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$row->Equipment_ID))[0];
-                                $dept_list[$equip_results->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($equip_results->NI_ID).'">'.iam_output($equip_results->Name).'</div>';
+																if (trim($equip_results->Name)=='')
+																	continue;
+                                $dept_list[$equip_results->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($equip_results->NI_ID).'" title="'.iam_output($equip_results->Name).'">'.iam_output($equip_results->Name).'</div>';
                             }
                         }
                         ksort($dept_list);
