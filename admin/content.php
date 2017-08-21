@@ -110,9 +110,9 @@ class Admin_Content
 			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
 			  <div class="modal-dialog modal-lg" style="max-width:65vw;" role="document">
 			    <div class="modal-content">
-			      <div class="modal-header">
+			      <div class="modal-header" style="min-height:24px;">
 			        <div class="fc-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  drag me &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
 			      </div>

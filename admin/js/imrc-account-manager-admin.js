@@ -998,6 +998,7 @@
 					$('.iam-er-action-button.iam-er-checkout').off();
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
 						resetEvents();
+						$('.modal-header .fc-event').removeClass('iam-ninja');
 						if ($('.iam-er-user-emails').val()=='') {
 							alert('please enter an email.');
 							return;
@@ -1081,7 +1082,7 @@
 								title: "Drag Me", // use the element's text as the event title
 								stick: true, // maintain when user navigates (see docs on the renderEvent method)
 								editable: true,
-								className: 'iam-new-event iam-look-like-normal-event',
+								className: 'iam-new-event',
 								allDay:true
 							});
 
@@ -1124,6 +1125,7 @@
 								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
 									event.isNewbie = 1;
 									persistentRelEvent = { ele: element, ev: event};
+									$('.modal-header .fc-event').addClass('iam-ninja');
 								}
 
 								if (releventRes == event.uid && persistentRelEvent==null) {
@@ -1140,7 +1142,6 @@
 							},
 							eventAfterAllRender: function () {
 								initContextMenu('rental');
-
 								if (persistentRelEvent!=null)
 									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
 								persistentRelEvent = null;
@@ -1150,6 +1151,8 @@
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventResize: function (event) {
+								console.log('resize')
+								$('.iam-cal').fullCalendar( 'rerenderEvents' );
 								if (typeof event.nid != 'undefined')
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
