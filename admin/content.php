@@ -111,7 +111,7 @@ class Admin_Content
 			  <div class="modal-dialog modal-lg" style="max-width:65vw;" role="document">
 			    <div class="modal-content">
 			      <div class="modal-header">
-			        <h5 class="modal-title" id="exampleModalLabel">Reservations</h5><div class="fc-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  drag me &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+			        <div class="fc-event">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  drag me &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
