@@ -974,7 +974,7 @@
 		  		});
 		  	}
 
-				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = null;
+				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]');
 
 				var initCheckinCheckout = function () {
 						userEmails = $('.iam-on-load-data').data('users').split(',');
@@ -994,6 +994,7 @@
 						var erInfo = $('.iam-facility-data').data('facility');
 						erRentalDays = erInfo['rental_period'];
 					}
+					$('.iam-er-action-button').off();
 					$('.iam-er-action-button.iam-er-checkout').off();
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
 						resetEvents();
@@ -1159,7 +1160,19 @@
 					});
 
 					$('.iam-er-action-button.iam-er-checkin').click(function(event) {
-
+						$.ajax({
+							url: ajaxurl,
+							type: 'POST',
+							data: {action: 'admin_end_rental', equipment: $('#iam-update-form #name').val()},
+							success: function (data) {
+								handleServerResponse(data);
+								lastequipclick.data('rented-to',0);
+								updateForRentalStatus(0);
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
 					});
 				}
 

@@ -28,6 +28,22 @@ class Equipment_Page extends Item_Mgmt
       iam_respond(SUCCESS);
     }
 
+    public static function admin_end_rental()
+    {
+      global $wpdb;
+      $e = IAM_Sec::textfield_cleaner($_POST['equipment']);
+      $res_id = $wpdb->get_results($wpdb->prepare("SELECT Checked_Out FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e))[0]->Checked_Out;
+      $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Checked_Out=%d",$res_id));
+
+      $status = $wpdb->get_results($wpdb->prepare("SELECT Status FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$res_id))[0]->Reservation_ID;
+
+      if ($status==ACTIVE) {
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE Reservation_ID=%d",COMPLETED,$res_id));
+      }
+
+      iam_respond(SUCCESS);
+    }
+
     public static function admin_get_tags_callback()
     {
         IAM_Tags::get_all_tags();

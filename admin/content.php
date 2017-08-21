@@ -96,7 +96,7 @@ class Admin_Content
 					<h3 style="margin:0;color:#666;">Rental</h3>
 					<input type="text" class="iam-er-user-emails" placeholder="user email">
 					<br />
-					<button class="iam-secondary-button iam-er-action-button" data-toggle="modal" data-target="#exampleModal"></button>
+					<button class="iam-secondary-button iam-er-action-button"></button>
 				</div>
 			</div>
 			<?php
