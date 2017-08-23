@@ -918,10 +918,14 @@
 					formData.append('method',method);
 					formData.append('action','admin_equipment_action');
 					formData.append('name', form.children('.iam-form-row').children('#name').val());
+
 					formData.append('certification',form.children('.iam-form-row').children('#certification').val());
 					formData.append('description',form.children('.iam-form-row').children('#description').val());
 					formData.append('pricing-description',form.children('.iam-form-row').children('#pricing-description').val());
 					formData.append('manufacturer-info',form.children('.iam-form-row').children('#manufacturer-info').val());
+					console.log(form.find('.iam-rental-types-list').val())
+					if ($('.iam-rental-types-list').length>0)
+						formData.append('rental_type', form.find('.iam-rental-types-list').val());
 					formData.append('out-of-order',outOfOrder);
 					formData.append('on-slide-show',slideShow);
 					formData.append('tags',equip_tags);

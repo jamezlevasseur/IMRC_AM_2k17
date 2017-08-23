@@ -170,7 +170,21 @@ class IAM_Admin_Forms
 	 	return IAM_Admin_Forms::make_admin_form($update_room_fields,'Update Existing Room',false,false,'r');
 	}
 
-		public static function new_equipment_form()
+	public static function make_rental_list($chosen=null)
+	{
+		global $wpdb;
+		$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
+		$rental_list = '<select class="iam-rental-types-list"><option data-nid="">None</option>';
+		foreach ($rental_types as $row) {
+			$r = json_decode($row->Meta_Value);
+			$selected = $chosen==$r->id ? 'selected' : '';
+			$rental_list.='<option value="'.$r->id.'" '.$selected.'>'.$r->label.' ('.$r->duration.')</option>';
+		}
+		$rental_list.='</select>';
+		return $rental_list;
+	}
+
+		public static function new_equipment_form($dept)
 	{
 		global $wpdb;
 		$certifications_query = "SELECT Certification_ID,Name FROM ".IAM_CERTIFICATION_TABLE." ";
@@ -179,6 +193,9 @@ class IAM_Admin_Forms
 		foreach ($certifications_results as $row) {
 			$cert_list[] = $row->Name;
 		}
+
+
+
 	 	$new_equipment_fields = [];
 		$new_equipment_fields[] = '<img class="iam-image" width="200" src="'.IAM_Admin_Forms::or_sample_large('').'" alt="" >';
 		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_PHOTO_LABEL.'<input type="file" id="photo" name="photo" accept="image/*">';
@@ -192,17 +209,24 @@ class IAM_Admin_Forms
 		}
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_CERTICATION_LABEL.'<select id="certification" name="certification">'.$list_html.'</select>';
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_TAGS_LABEL.'<input class="tags" size="50">';
+		if ($dept=='e') {
+			$new_equipment_fields[] = '<label>Rental_Type: </label>'.IAM_Admin_Forms::make_rental_list();
+		}
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_ON_SLIDE_SHOW.'<input type="checkbox" id="slide-show" name="slide-show">';
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_OUT_OF_ORDER.'<input type="checkbox" id="out-of-order" name="out-of-order">';
+
 
 	 	return IAM_Admin_Forms::make_admin_form($new_equipment_fields,'Insert New Equipment',true,true,'e');
 	}
 
-	public static function update_equipment_form($selected_name)
+	public static function update_equipment_form($selected_name, $dept)
 	{
 		global $wpdb;
 		$selected_name = stripslashes($selected_name);
 		$init_equipment_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s ",$selected_name));
+		if ($init_equipment_results[0]->Root_Tag=='Equipment Room') {
+			$dept='e';
+		}
 		$certifications_results = $wpdb->get_results("SELECT Certification_ID,Name FROM ".IAM_CERTIFICATION_TABLE." ");
 		$current_cert = 'None';
 		$cert_list = [];
@@ -242,6 +266,11 @@ class IAM_Admin_Forms
 	 	$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_TAGS_LABEL.'<input class="tags" value="'.iam_output($equip_tags).'" size="50">';
 	 	$slide_show_val = $init_equipment_results[0]->On_Slide_Show==1 ? 'checked' : '' ;
 	 	$out_of_order_val = $init_equipment_results[0]->Out_Of_Order==1 ? 'checked' : '' ;
+
+		if ($dept=='e') {
+			$update_equipment_fields[] = '<label>Rental_Type: </label>'.IAM_Admin_Forms::make_rental_list($init_equipment_results[0]->Rental_Type);
+		}
+
 	 	$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_ON_SLIDE_SHOW.'<input type="checkbox" id="slide-show" name="slide-show" '.$slide_show_val.'>';
 	 	$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_OUT_OF_ORDER.'<input type="checkbox" id="out-of-order" name="out-of-order" '.$out_of_order_val.'>';
 	 	return IAM_Admin_Forms::make_admin_form($update_equipment_fields,'Update Existing Equipment',false,false,'e');

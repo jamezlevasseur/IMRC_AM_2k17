@@ -122,6 +122,9 @@ define('DATE_FORMAT', 'Y-m-d H:i:s');
 
 define('RENTAL_PREFIX', 'rental_type_');
 
+define('RENTAL_ALL_QUERY', "SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE '".RENTAL_PREFIX."%'");
+
+
 
 //global functions
 

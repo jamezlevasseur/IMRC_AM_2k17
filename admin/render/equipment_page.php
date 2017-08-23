@@ -73,9 +73,18 @@ class Equipment_Page extends Item_Mgmt
 
             $certification = IAM_Sec::textfield_cleaner($_POST['certification']);
             //name checks
-            if (gettype($name)!='string') {
+            if (gettype($certification)!='string') {
                 iam_throw_error ( 'Error - Invalid Input in Field: "Certification"');
                 exit;
+            }
+
+            if (isset($_POST['rental_type'])) {
+              $rental_type = IAM_Sec::textfield_cleaner($_POST['rental_type']);
+              //name checks
+              if (gettype($rental_type)!='string') {
+                  iam_throw_error ( 'Error - Invalid Input in Field: "Rental Type"');
+                  exit;
+              }
             }
 
             $out_of_order = $_POST['out-of-order'];
@@ -164,7 +173,7 @@ class Equipment_Page extends Item_Mgmt
             if ($interaction=='n') {
                 //TODO: try again routine for remote case of uniqueid producing a duplicate id
                 //TODO: more complex ni_id
-                $ni_id = uniqid();
+                $ni_id = make_nid();
                 if ($photo!=null) {
                     $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order);
                 } else {
@@ -182,6 +191,10 @@ class Equipment_Page extends Item_Mgmt
             }
 
             $result = $wpdb->query($insert_query);
+
+            if (isset($rental_type)) {
+              $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=%s WHERE NI_ID=%s",$rental_type, $ni_id));
+            }
 
             $tags = $_POST['tags']=='' ? [] : explode(',', $_POST['tags']);
             $equip_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$name))[0]->Equipment_ID;

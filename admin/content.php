@@ -80,8 +80,8 @@ class Admin_Content
 				<?php
 
 				if (!$empty)
-					echo IAM_Admin_Forms::update_equipment_form($selected_name);
-				echo IAM_Admin_Forms::new_equipment_form();
+					echo IAM_Admin_Forms::update_equipment_form($selected_name, $dept);
+				echo IAM_Admin_Forms::new_equipment_form($dept);
 
 				?>
 			</div>
@@ -883,7 +883,7 @@ class Admin_Content
 					<table>
 						<tbody>
 								<?php
-									$rental_types = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE %s",RENTAL_PREFIX.'%'));
+									$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
 									if (count($rental_types)==0) {
 										echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
 									}
