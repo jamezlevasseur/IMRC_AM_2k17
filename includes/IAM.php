@@ -251,6 +251,9 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_report_bug', 'Settings_Page', 'admin_report_bug_callback');
 		$this->loader->add_action('wp_ajax_admin_update_settings', 'Settings_Page', 'admin_update_settings_callback');
 		$this->loader->add_action('wp_ajax_admin_update_account_type', 'Settings_Page', 'admin_update_account_type_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_account_type', 'Settings_Page', 'admin_delete_account_type_callback');
+		$this->loader->add_action('wp_ajax_admin_update_rental_type', 'Settings_Page', 'admin_update_rental_type_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_rental_type', 'Settings_Page', 'admin_delete_rental_type_callback');
 
 		$this->loader->add_action('wp_ajax_admin_get_user_certifications', 'User_Certifications_Page', 'admin_get_user_certifications_callback');
 		$this->loader->add_action('wp_ajax_admin_add_certifications_to_users', 'User_Certifications_Page', 'admin_add_certifications_to_users_callback');

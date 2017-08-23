@@ -120,6 +120,8 @@ define('SMALL_DB_MODE', json_decode( file_get_contents(iam_dir().'config/operati
 
 define('DATE_FORMAT', 'Y-m-d H:i:s');
 
+define('RENTAL_PREFIX', 'rental_type_');
+
 
 //global functions
 

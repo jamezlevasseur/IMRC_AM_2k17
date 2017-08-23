@@ -1,7 +1,7 @@
 <?php
 
 /**
-* 
+*
 */
 class Settings_Page
 {
@@ -19,6 +19,43 @@ class Settings_Page
             }
             update_settings_iam($key, $v);
         }
+        iam_respond(SUCCESS);
+    }
+
+    public static function admin_update_rental_type_callback()
+    {
+        global $wpdb;
+        //print_r($_POST);exit;
+        $updated_vals = $_POST['updated_rental_types'];
+        $new_vals = $_POST['new_rental_types'];
+        foreach ($updated_vals as $key => $value) {
+
+            if (!is_numeric($value['duration'])) {
+                iam_throw_error(INVALID_INPUT_EXCEPTION);
+            }
+            $new_json = json_encode(['id'=>$key, 'duration'=>$value['duration'], 'label'=>IAM_Sec::textfield_cleaner($value['label']) ]);
+            $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$new_json,RENTAL_PREFIX.$key));
+        }
+        foreach ($new_vals as $entry) {
+            if (!is_numeric($entry['duration'])) {
+                iam_throw_error(INVALID_INPUT_EXCEPTION);
+            }
+            $id = make_nid();
+            $val = json_encode(['id'=>$id, 'duration'=>$entry['duration'], 'label'=>IAM_Sec::textfield_cleaner($entry['label']) ]);
+            $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",RENTAL_PREFIX.$id,$val));
+        }
+        iam_respond(SUCCESS);
+    }
+
+    public static function admin_delete_rental_type_callback()
+    {
+        global $wpdb;
+        $replacement = IAM_Sec::textfield_cleaner($_POST['replacement']);
+        $to_delete = IAM_Sec::textfield_cleaner($_POST['toDelete']);
+
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=%s WHERE Rental_Type=%s",$replacement,$to_delete));
+        
+        $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$to_delete));
         iam_respond(SUCCESS);
     }
 

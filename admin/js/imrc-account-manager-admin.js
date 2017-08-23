@@ -625,11 +625,115 @@
 
 		  	//MAIN MENU LISTENERS
 
-		  	var updatedAccountTypes = {};
+		  	var updatedAccountTypes = {}, updatedRentalTypes = {};
 
-		  	var initAccountTypeRowListener = function () {
-		  		$('.iam-account-discount').off();
-		  		numbersOnlyListener($('.iam-account-discount'));
+				var initRentalTypeRowListener = function () {
+		  		$('.rental-duration').off();
+		  		numbersOnlyListener($('.rental-duration'));
+				//detects changes in account and type
+				$('.rental-duration').change(function(event) {
+					var n = $(this).closest('tr').data('id');
+					if (n=='') {
+						return;
+					}
+					updatedRentalTypes[$(this).closest('tr').data('id')] = {
+						'label':$(this).closest('tr').find('.rental-label').val(),
+						'duration':$(this).val()
+										};
+				});
+				$('.rental-label').change(function(event) {
+					var n = $(this).closest('tr').data('id');
+					if (typeof n=='undefined' || n=='') {
+						return;
+					}
+					updatedRentalTypes[$(this).closest('tr').data('id')] = {
+						'duration':$(this).closest('tr').find('.rental-duration').val(),
+						'label':$(this).val()
+										};
+				});
+				initDeleteRentalTypeButtonListener();
+		  	}
+
+				var initAddRentalTypeButtonListener = function () {
+					$('.iam-add-rental-type').click(function(event) {
+						if ($('.iam-rental-type-form .iam-no-data-row').length>0) {
+							$('.iam-rental-type-form .iam-no-data-row').remove();
+						}
+						$('.iam-rental-type-form table tbody').append('<tr data-id=""><td><label>Label: <input type="text" class="rental-label"></label></td><td><label>Duration (in days): <input type="number" class="rental-duration"></label></td><td><i class="iam-delete-rental-type fa fa-close fa-3"></i></td></tr>');
+						initRentalTypeRowListener();
+					});
+				}
+
+				var initDeleteRentalTypeButtonListener = function () {
+					$('.iam-delete-rental-type').off();
+					$('.iam-delete-rental-type').click(function(event) {
+						var toDelete = $(this).parent().parent().find('.rental-label').val();
+						var list = '<select class="iam-select iam-delete-rental-type-select">';
+		  			$('.rental-label').each(function(index, el) {
+		  				if ($(this).val()!=toDelete) {
+		  					list+='<option value="'+$(this).closest('tr').data('id')+'">'+$(this).val()+'</option>';
+		  				}
+		  			});
+		  			list+='</select>';
+		  			deleteRentalTypeListener.bind(this);
+		  			if ($(this).parent().parent().data('id')=='') {
+		  				$(this).parent().parent().remove();
+		  				return;
+		  			}
+		  			makeSubmitPopup('Delete Rental Type','<p style="color:red;">Deleting: '+toDelete+'</p><p>Select a replacement rental type for equipment that currently have '+toDelete+'.</p>'+list,deleteRentalTypeListener,[$(this).closest('tr')]);
+					});
+				}
+
+				var deleteRentalTypeListener = function (a) {
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: {action: 'admin_delete_rental_type', replacement: $('.iam-delete-rental-type-select').val(), toDelete: a[0].data('id')},
+						success: function (data) {
+							handleServerResponse(data);
+							a[0].remove();
+						},
+					error: function (data) {
+						handleServerError(data, new Error());
+					}
+					});
+				}
+
+				var initSubmitRentalTypeListener = function () {
+					$('.iam-rental-types-submit').click(function(event) {
+						submissionStart();
+						var newTypes = [];
+						$('.iam-rental-type-form table tbody tr').each(function(index, el) {
+							if ($(this).data('id')=='' &&
+								$(this).find('.rental-label').val().length>0 &&
+								$(this).find('.rental-duration').val().length>0) {
+								var duration = $(this).find('.rental-duration').val();
+								newTypes.push({
+											'label':$(this).find('.rental-label').val(),
+											'duration': duration
+										});
+							}
+						});
+						console.log($('.iam-rental-type-form table tbody tr'))
+						console.log({action: 'admin_update_rental_type', updated_rental_types: updatedRentalTypes, new_rental_types: newTypes});
+						$.ajax({
+							url: ajaxurl,
+							type: 'POST',
+							data: {action: 'admin_update_rental_type', updated_rental_types: updatedRentalTypes, new_rental_types: newTypes},
+							success: function (data) {
+								handleServerResponse(data);
+								submissionEnd();
+							},
+						error: function (data) {
+							handleServerError(data, new Error());
+						}
+						});
+					});
+				}
+
+				var initAccountTypeRowListener = function () {
+					$('.iam-account-discount').off();
+					numbersOnlyListener($('.iam-account-discount'));
 				maxLengthListener($('.iam-account-discount'),3);
 				//detects changes in account and type
 				$('.iam-account-discount').change(function(event) {
@@ -653,12 +757,12 @@
 										};
 				});
 				initDeleteAccountTypeButtonListener();
-		  	}
+				}
 
 		  	var initAddAccountTypeButtonListener = function () {
 		  		$('.iam-add-account-type').click(function(event) {
-		  			if ($('.iam-no-data-row').length>0) {
-		  				$('.iam-no-data-row').remove();
+		  			if ($('.iam-account-type-form .iam-no-data-row').length>0) {
+		  				$('.iam-account-type-form .iam-no-data-row').remove();
 		  			}
 		  			$('.iam-account-type-form table tbody').append('<tr data-nid=""><td><label>Account Type</label><br /><label>Discount (0-100)</label></td>	<td><input type="text" placeholder="example: student, faculty, alumni" class="iam-account-type"><br /><input type="number" class="iam-account-discount"></td><td><i class="iam-delete-account-type fa fa-close fa-3"></i></td></tr>');
 		  			initAccountTypeRowListener();
@@ -2507,6 +2611,10 @@
 				initAddAccountTypeButtonListener();
 				initAccountTypeRowListener();
 				initSubmitAccountTypeListener();
+
+				initAddRentalTypeButtonListener();
+				initRentalTypeRowListener();
+				initSubmitRentalTypeListener();
 
 			} else if ( $('.iam-room-wrap').length>0 ) {
 

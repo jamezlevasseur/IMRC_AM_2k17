@@ -877,6 +877,26 @@ class Admin_Content
 					<div class="iam-secondary-button iam-add-account-type">add new</div>
 					<div class="iam-account-types-submit iam-save iam-button"></div>
 				</form>
+				<hr>
+				<h1>Rental Types</h1>
+				<form accept-charset="utf-8" class="iam-rental-type-form">
+					<table>
+						<tbody>
+								<?php
+									$rental_types = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE %s",RENTAL_PREFIX.'%'));
+									if (count($rental_types)==0) {
+										echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
+									}
+									foreach ($rental_types as $row) {
+										$r = json_decode($row->Meta_Value);
+										echo '<tr data-id="'.$r->id.'"><td><label>Label: <input type="text" class="rental-label" value="'.$r->label.'"></label></td><td><label>Duration (in days): <input type="number" class="rental-duration" value="'.$r->duration.'"></label></td><td><i class="iam-delete-rental-type fa fa-close fa-3"></i></td></tr>';
+									}
+									?>
+						</tbody>
+					</table>
+					<div class="iam-secondary-button iam-add-rental-type">add new</div>
+					<div class="iam-rental-types-submit iam-save iam-button"></div>
+				</form>
 			</section>
 			<hr>
 			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
