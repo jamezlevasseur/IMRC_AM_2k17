@@ -456,7 +456,8 @@
 				var d = moment().day();
 				if (d==0 || d==6)
 					wknd = true;
-				//console.log(facility_info[current_root_tag])
+				console.log(facility_info)
+				var rental_period = $(this).data('rental-period')==0 ? facility_info[current_root_tag]['rental_period'] : $(this).data('rental-period');
 				if (facility_info[current_root_tag]['schedule_type']=='Rental') {
 
 					$('.iam-facility-info').html('<h1>'+$(this).data('equiproot')+' Hours</h1><p>'+facility_info[current_root_tag]['rental_hours_description'])+'</p>';
@@ -495,7 +496,7 @@
 						forceEventDuration: true,
 						defaultView: 'month',
 						allDay: true,
-						defaultAllDayEventDuration: {days: facility_info[current_root_tag]['rental_period']},
+						defaultAllDayEventDuration: {days: rental_period},
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
 						events: ajaxurl+"?action=get_equipment_calendar&name="+equip_name

@@ -176,6 +176,16 @@ function iam_respond($status='success',$content='',$message='',$redirect='')
 	exit;
 }
 
+function get_rental_period($id)
+{
+	global $wpdb;
+	$json = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$id));
+	if (count($json)==0) {
+		return 0;
+	}
+	return json_decode($json[0]->Meta_Value)->duration;
+}
+
 function iam_throw_error($message,$code='400')
 {
 	header('HTTP/1.1 '.$code.' '.$message);

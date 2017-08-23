@@ -44,7 +44,7 @@ class IAM_Reservation_Page
 		return $key.$val;
 	}
 
-	private static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $equip_root_tag='Fab Lab')
+	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag='Fab Lab')
 	{
 		global $wpdb;
 		$current_username = wp_get_current_user()->user_login;
@@ -76,7 +76,7 @@ class IAM_Reservation_Page
 								<div class="iam-equipment-certifications iam-equipment-sub-block">'.IAM_Reservation_Page::orNoInfo('Certifications : ',iam_output($cert_name)).'</div>
 								'.$certified_html.'
 							</div>
-							<div class="iam-equipment-block-button"><button class="iam-equipment-button" data-equiproot="'.iam_output($equip_root_tag).'" '.$button_disabled.'>Select</button></div>
+							<div class="iam-equipment-block-button"><button class="iam-equipment-button" data-equiproot="'.iam_output($equip_root_tag).'" data-rental-period="'.$rental_period.'" '.$button_disabled.'>Select</button></div>
 						</div>';
 	}
 
@@ -110,6 +110,7 @@ class IAM_Reservation_Page
 						$equip_row = $equip_results[0];
 						$cert_id = $equip_row->Certification_ID;
 						$cert_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID=%d ",$cert_id))[0]->Name;
+						$rental_type = get_rental_period($equip_row->Rental_Type);
 						$photo_url = $equip_row->Photo==null ? IAM_DEFAULT_LARGE_PICTURE : $equip_row->Photo;
 						$equipment_blocks[$equip_row->Name] = IAM_Reservation_Page::make_equipment_block(
 							$equip_row->Out_Of_Order,
@@ -120,6 +121,7 @@ class IAM_Reservation_Page
 							$equip_row->Pricing_Description,
 							$cert_name,
 							$cert_id,
+							$rental_type,
 							$equip_row->Root_Tag);
 					}
 				}
@@ -159,6 +161,7 @@ class IAM_Reservation_Page
 				$row->Pricing_Description,
 				$cert_name,
 				$cert_id,
+				get_rental_period($row->Rental_Type),
 				$row->Root_Tag);
 		}
 		return $html;
