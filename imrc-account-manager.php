@@ -124,7 +124,9 @@ define('RENTAL_PREFIX', 'rental_type_');
 
 define('RENTAL_ALL_QUERY', "SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE '".RENTAL_PREFIX."%'");
 
+define('LATE_CHARGE_FEE_KEY', 'late_charge_fee');
 
+define('DEFAULT_LATE_CHARGE_FEE_QUERY', "INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES ('".LATE_CHARGE_FEE_KEY."',10)");
 
 //global functions
 
@@ -360,7 +362,7 @@ function init_settings_iam($fresh = false)
 		$settings = fopen( plugin_dir_path( __FILE__ ) . "config/settings", "w");
 	}
 	$current_gmt_timestamp = time();
-	fwrite($settings, "fresh_install:true;init_tags:false;ipad_code:0000;ipad_code_updated:$current_gmt_timestamp;training_email:admin@".$_SERVER['HTTP_HOST'].";late_reservations_email:admin@".$_SERVER['HTTP_HOST'].";equipment_room_email:admin@".$_SERVER['HTTP_HOST'].";fab_lab_email:admin@".$_SERVER['HTTP_HOST'].";rooms_email:admin@".$_SERVER['HTTP_HOST'].";debug_log:none;");
+	fwrite($settings, "fresh_install:true;init_tags:false;ipad_code:0000;ipad_code_updated:$current_gmt_timestamp;training_email:admin@".$_SERVER['HTTP_HOST'].";late_reservations_email:admin@".$_SERVER['HTTP_HOST'].";equipment_room_email:admin@".$_SERVER['HTTP_HOST'].";fab_lab_email:admin@".$_SERVER['HTTP_HOST'].";rooms_email:admin@".$_SERVER['HTTP_HOST'].";".LATE_CHARGE_FEE_KEY.":10;debug_log:none;");
 }
 
 //updates a setting in config/settings to value
@@ -371,6 +373,11 @@ function update_settings_iam($setting, $value)
 	}
 	$content = file_get_contents(plugin_dir_path( __FILE__ ) . 'config/settings');
 	$start = strpos($content, $setting);
+	if ($start===false) {
+		$file = fopen(plugin_dir_path( __FILE__ ) . 'config/settings', 'w+');
+		fwrite($file, $content.$setting.':'.$value.';');
+		return;
+	}
 	$file = fopen(plugin_dir_path( __FILE__ ) . 'config/settings', 'w+');
 	fwrite($file, substr($content, 0, strpos($content, ':', $start)+1).$value.substr($content, strpos($content, ';',$start+1)));
 }
@@ -383,6 +390,8 @@ function get_setting_iam($setting)
 	}
 	$content = file_get_contents(plugin_dir_path( __FILE__ ) .'config/settings');
 	$start = strpos($content, $setting);
+	if ($start===false)
+		return false;
 	return substr( $content, strpos($content, ':', $start)+1, strpos($content, ';', $start)-strpos($content, ':', $start)-1);
 }
 

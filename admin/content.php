@@ -757,17 +757,20 @@ class Admin_Content
 		?>
 		<div class="wrap iam-main-menu-wrap">
 			<h1 class="iam-admin-header">Settings</h1>
-			<hr>
+
 			<section class="iam-settings-container">
 				<form accept-charset="utf-8" class="iam-settings-form">
 					<table>
 						<tbody>
 							<tr>
+								<td><h1>Misc Settings</h1><hr></td>
+							</tr>
+							<tr>
 								<td><label>iPad Lock Code</label></td>
 								<td><input type="number" class="iam-ipad-code" width="50" value="<?php echo get_setting_iam('ipad_code') ?>"></td>
 							</tr>
 							<tr>
-								<td><h2>Email Notifications</h2></td>
+								<td><h1>Email Notifications</h1></td>
 							</tr>
 							<tr>
 								<td><label>Training Page Inquiry</label></td>
@@ -828,16 +831,23 @@ class Admin_Content
 	public static function equipment_room_content()
 	{
 		global $wpdb;
+		if (get_setting_iam(LATE_CHARGE_FEE_KEY)===false)
+			update_settings_iam(LATE_CHARGE_FEE_KEY,10);
 		?>
 		<div class="wrap iam-main-menu-wrap">
 			<h1 class="iam-admin-header">Settings</h1>
-			<hr>
 			<section class="iam-settings-container">
 				<form accept-charset="utf-8" class="iam-settings-form">
 					<table>
 						<tbody>
 							<tr>
-								<td><h2>Email Notifications</h2></td>
+								<td><h1>Misc Settings</h1><hr></td>
+							</tr>
+							<tr>
+								<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
+							</tr>
+							<tr>
+								<td><h1>Email Notifications</h1></td>
 							</tr>
 							<tr>
 								<td><label>Training Page Inquiry</label></td>

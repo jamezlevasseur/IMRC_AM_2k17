@@ -864,6 +864,8 @@
 						return;
 					}
 					var newSettings = {action:'admin_update_settings'};
+					if ($('.iam-late-charge-fee').length>0)
+						newSettings.late_charge_fee = $('.iam-late-charge-fee').val()
 					if ($('.iam-ipad-code').length>0)
 						newSettings.ipad_code = $('.iam-ipad-code').val();
 					if ($('.iam-training-page-email').length>0)
