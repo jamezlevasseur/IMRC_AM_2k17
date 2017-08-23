@@ -1182,6 +1182,7 @@
 
 						var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
 						var useremail = $('.iam-er-user-emails').val();
+						var thisRentalDays = $('.iam-rental-types-list').data('onload-duration')>0 ? $('.iam-rental-types-list').data('onload-duration') : erRentalDays;
 
 						$('.modal-header .fc-event').each(function() {
 
@@ -1218,7 +1219,7 @@
 							editable: true,
 							durationEditable: true,
 							allDay: true,
-							defaultAllDayEventDuration: {days: erRentalDays},
+							defaultAllDayEventDuration: {days: thisRentalDays},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
 								$(element).data('email', event.email);
