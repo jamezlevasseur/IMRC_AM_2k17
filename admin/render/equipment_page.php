@@ -45,8 +45,10 @@ class Equipment_Page extends Item_Mgmt
 
       $status = $wpdb->get_results($wpdb->prepare("SELECT Status FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$res_id))[0]->Status;
 
+      $new_status = $status==IS_LATE ? WAS_LATE : COMPLETED;
+
       if ($status==ACTIVE) {
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s WHERE Reservation_ID=%d",COMPLETED,$rightnow,$res_id));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$res_id));
       }
 
       iam_respond(SUCCESS);
