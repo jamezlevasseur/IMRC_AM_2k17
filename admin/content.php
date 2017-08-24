@@ -331,6 +331,8 @@ class Admin_Content
 	public static function equipment_room_reservation_content()
 	{
 		echo Admin_Content::reservation_content('e');
+		require_once iam_dir().'public/render/utils_public.php';
+		Utils_Public::late_reservations_check();
 	}
 
 	public static function fab_lab_reservation_content()

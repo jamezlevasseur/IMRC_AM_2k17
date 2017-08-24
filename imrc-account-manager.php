@@ -94,6 +94,12 @@ define('IS_LATE', 5);
 
 define('WAS_LATE', 6);
 
+define('CHARGE_CANCELLED', -1);
+
+define('CHARGE_PENDING', 0);
+
+define('CHARGE_APPROVED', 1);
+
 define('IAM_DIR', plugin_dir_path(__FILE__));
 
 define('IAM_IP_LOGS','iplogs');
@@ -126,9 +132,15 @@ define('DATE_FORMAT', 'Y-m-d H:i:s');
 
 define('RENTAL_PREFIX', 'rental_type_');
 
+define('LAST_ER_CHECK_PREFIX', 'last_er_check_');
+
+
 define('RENTAL_ALL_QUERY', "SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE '".RENTAL_PREFIX."%'");
 
 define('LATE_CHARGE_FEE_KEY', 'late_charge_fee');
+
+define('SECONDS_IN_DAY', 86400);
+
 
 define('DEFAULT_LATE_CHARGE_FEE_QUERY', "INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES ('".LATE_CHARGE_FEE_KEY."',10)");
 
@@ -165,6 +177,20 @@ function iam_mail($to,$subject,$message,$failure_message="Failed to send email."
 	catch(Exception $e) {
 	   IAM::$status_message = $e->getMessage();
 	}
+}
+
+function ordinal_format($number) {
+    $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+    if ((($number % 100) >= 11) && (($number%100) <= 13))
+        return $number. 'th';
+    else
+        return $number. $ends[$number % 10];
+}
+
+function cash_format($number)
+{
+	setlocale(LC_MONETARY, 'en_US.UTF-8');
+	return money_format('%.2n', $number);
 }
 
 add_filter('wp_mail_from','iam_wp_mail_from');
