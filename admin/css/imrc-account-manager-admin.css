@@ -59,7 +59,15 @@ label.iam-completed {
 }
 
 label.iam-no-pay {
-  background-color: #f6b4f7;
+  background-color: #f45fb9;
+}
+
+label.iam-is-late {
+  background-color: #f45fb9;
+}
+
+label.iam-was-late {
+  background-color: #dd4444;
 }
 
 .iam-status-upcoming {
@@ -83,8 +91,18 @@ label.iam-no-pay {
 }
 
 .iam-status-no-pay {
-  background-color: #f6b4f7;
-  border: 1px solid #f6b4f7;
+  background-color: #f45fb9;
+  border: 1px solid #f45fb9;
+}
+
+.iam-status-is-late {
+  background-color: #f45fb9;
+  border: 1px solid #f45fb9;
+}
+
+.iam-status-was-late {
+  background-color: #dd4444;
+  border: 1px solid #dd4444;
 }
 
 .marked-for-delete {

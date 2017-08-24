@@ -390,7 +390,19 @@ class Admin_Content
 							<label class="iam-status-label iam-active">active: <input type="checkbox" name="active"></label>
 							<label class="iam-status-label iam-completed">completed: <input type="checkbox" name="completed"></label>
 							<label class="iam-status-label iam-no-show">no show: <input type="checkbox" name="no-show"></label>
-							<label class="iam-status-label iam-no-pay">didn't pay: <input type="checkbox" name="no-pay"></label>
+							<?php
+								if ($dept=='e') {
+									?>
+									<label class="iam-status-label iam-is-late">is late <input type="checkbox" name="is-late"></label>
+									<label class="iam-status-label iam-was-late">returned late <input type="checkbox" name="was-late"></label>
+									<?php
+								} else {
+									?>
+									<label class="iam-status-label iam-no-pay">didn't pay: <input type="checkbox" name="no-pay"></label>
+									<?php
+								}
+							 ?>
+
 						</div>
 					</div>
 					<div class="iam-res-cal"><div class="iam-res-cal-placeholder">Select equipment</div></div>

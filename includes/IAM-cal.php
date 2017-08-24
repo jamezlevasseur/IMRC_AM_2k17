@@ -136,10 +136,7 @@ class IAM_Cal
 			$weekago = date("Y-m-d 00:00:00", strtotime('-1 week'));
 			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$weekago' ";
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
-			//$user_condition = $user==null ? "" : " AND IAM_ID=".get_user_for_email($_GET['user'])->IAM_ID;
 			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
-			//exit(get_user_for_email($_GET['user']));
-			//exit($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition.$user_condition, $equip_id));
 
 			$formatted_events = [];
 			if(res_result==null && gettype($res_result)!='array') {
@@ -157,7 +154,7 @@ class IAM_Cal
 						$title = 'Existing Reservation';
 					}
 					if ($is_admin) {
-						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay'];
+						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
 						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name,'status'=>$RES_STATUS_CLASS_DICT[$row->Status]];
 						if (array_key_exists('allDay', $_GET)) {
 							$formatted_events[count($formatted_events)-1]['allDay'] = true;

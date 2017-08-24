@@ -90,6 +90,10 @@ define('COMPLETED', 3);
 
 define('NO_PAY', 4);
 
+define('IS_LATE', 5);
+
+define('WAS_LATE', 6);
+
 define('IAM_DIR', plugin_dir_path(__FILE__));
 
 define('IAM_IP_LOGS','iplogs');
