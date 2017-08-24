@@ -10,17 +10,21 @@ class Equipment_Page extends Item_Mgmt
     {
       global $wpdb;
       $e = $_POST['ev'];
+
+      date_default_timezone_set(IMRC_TIME_ZONE);
+  		$rightnow = date(DATE_FORMAT);
+
       if (isset($e['nid'])) {
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$e['nid']))[0]->Reservation_ID;
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE NI_ID=%s",ACTIVE,$e['nid']));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_Out=%s WHERE NI_ID=%s",ACTIVE,$rightnow,$e['nid']));
       } else {
         $nid = make_nid();
         $equipment_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e['equipment']))[0]->Equipment_ID;
         $iam_id = get_user_for_email($e['user'])->IAM_ID;
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time) VALUES (%s,%d,%d,%d,%s,%s)",$nid,$iam_id,$equipment_id,ACTIVE,$e['start'],$e['end']));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time,Checked_Out) VALUES (%s,%d,%d,%d,%s,%s,%s)",$nid,$iam_id,$equipment_id,ACTIVE,$e['start'],$e['end'],$rightnow));
 
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s AND IAM_ID=%d",$nid,$iam_id))[0]->Reservation_ID;
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
@@ -31,6 +35,10 @@ class Equipment_Page extends Item_Mgmt
     public static function admin_end_rental()
     {
       global $wpdb;
+
+      date_default_timezone_set(IMRC_TIME_ZONE);
+  		$rightnow = date(DATE_FORMAT);
+
       $e = IAM_Sec::textfield_cleaner($_POST['equipment']);
       $res_id = $wpdb->get_results($wpdb->prepare("SELECT Checked_Out FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e))[0]->Checked_Out;
       $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Checked_Out=%d",$res_id));
@@ -38,7 +46,7 @@ class Equipment_Page extends Item_Mgmt
       $status = $wpdb->get_results($wpdb->prepare("SELECT Status FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$res_id))[0]->Status;
 
       if ($status==ACTIVE) {
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE Reservation_ID=%d",COMPLETED,$res_id));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s WHERE Reservation_ID=%d",COMPLETED,$rightnow,$res_id));
       }
 
       iam_respond(SUCCESS);
