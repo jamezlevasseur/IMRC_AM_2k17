@@ -31,15 +31,15 @@ class Utils_Public
 
         if ((int) $rightnow > (int) $d->format('U')) {// is late
 
-          $last_attempt = $wpdb->get_results("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key='".LAST_ER_CHECK_PREFIX.$entry->Reservation_ID."'");
+          $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
           if (count($last_attempt)==0) {
-            $wpdb->query("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES ('".LAST_ER_CHECK_PREFIX.$entry->Reservation_ID."',".$rightnow.")");
+            $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID,$rightnow));
           } else if ((int)$rightnow-(int)$last_attempt[0]->Meta_Value<SECONDS_IN_DAY) {
             continue;
           }
 
-          $wpdb->query("UPDATE ".IAM_META_TABLE." SET Meta_Value=".$rightnow." WHERE Meta_Key='".LAST_ER_CHECK_PREFIX.$entry->Reservation_ID."'");
+          $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$rightnow,LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
           $eq = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Checked_Out=".$entry->Reservation_ID)[0];
           $user = $wpdb->get_results("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=".$entry->IAM_ID)[0];
@@ -48,7 +48,7 @@ class Utils_Public
 
           $notifcation_num = $entry->Late_Notification_Sent++;
 
-          $wpdb->query("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent=".$notifcation_num." WHERE Reservation_ID=".$entry->Reservation_ID);
+          $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent=%d WHERE Reservation_ID=%d",$notifcation_num,$entry->Reservation_ID));
 
           iam_mail(get_setting_iam('equipment_room_email'),
                   'Reservation: '.$user->WP_Username.' renting '.$eq->Name.' is late',
@@ -59,7 +59,7 @@ class Utils_Public
                   'Greetings, You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible. The hours of operations are "'.$hours.'". Thank you, - The IMRC Team');
 
           if ($entry->Status!=IS_LATE)
-            $wpdb->query("UPDATE ".IAM_RESERVATION_TABLE." SET Status=".IS_LATE." WHERE Reservation_ID=".$entry->Reservation_ID);
+            $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%s WHERE Reservation_ID=%d",IS_LATE,$entry->Reservation_ID));
 
           $charge_desc = 'Automatic late charge for not returning '.$eq->Name.' in on time. This is the '.ordinal_format($notifcation_num).' in this series.';
 
