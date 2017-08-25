@@ -20,9 +20,6 @@ class Utils_Public
       else if ((int)$rightnow-(int)get_setting_iam('late_er_check')>(SECONDS_IN_DAY/3))
         $do_check = true;
 
-
-      $do_check = true;
-
       if (!$do_check)
         return;
 
@@ -35,7 +32,6 @@ class Utils_Public
         $d = date_create_from_format(DATE_FORMAT, $entry->End_Time);
 
         if ((int) $rightnow > (int) $d->format('U')) {// is late
-          print "is-late , ";
 
           $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
