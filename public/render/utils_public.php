@@ -65,7 +65,7 @@ class Utils_Public
 
           $charge_desc = 'Automatic late charge for not returning '.$eq->Name.' in on time. This is the '.ordinal_format($notifcation_num).' in this series.';
 
-          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Approver,Amount) VALUES (%s,%d,%s,%s,%d,%s,%s,%f)",make_nid(),$eq->Equipment_ID,$user->WP_Username,$charge_desc,CHARGE_APPROVED,date(DATE_FORMAT),'automatic',$fee));
+          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Approver,Amount) VALUES (%s,%d,%s,%s,%d,%s,%s,%f)",make_nid(),$eq->Equipment_ID,$user->WP_Username,$charge_desc,CHARGE_APPROVED,date(DATE_FORMAT),'automatic',(-1*(int)$fee) ));
         }
       }
 
