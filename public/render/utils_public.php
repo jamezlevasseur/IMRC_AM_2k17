@@ -20,16 +20,22 @@ class Utils_Public
       else if ((int)$rightnow-(int)get_setting_iam('late_er_check')>(SECONDS_IN_DAY/3))
         $do_check = true;
 
+
+      $do_check = true;
+
       if (!$do_check)
         return;
 
       $hours = $wpdb->get_results("SELECT Rental_Hours_Description FROM ".IAM_FACILITY_TABLE." WHERE Schedule_Type='Rental'")[0]->Rental_Hours_Description;
 
       $active = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Checked_In IS NULL AND Checked_Out IS NOT NULL");
+
+
       foreach ($active as $entry) {
         $d = date_create_from_format(DATE_FORMAT, $entry->End_Time);
 
         if ((int) $rightnow > (int) $d->format('U')) {// is late
+          print "is-late , ";
 
           $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
@@ -63,7 +69,7 @@ class Utils_Public
 
           $charge_desc = 'Automatic late charge for not returning '.$eq->Name.' in on time. This is the '.ordinal_format($notifcation_num).' in this series.';
 
-          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Approver,Amount) VALUES (%s,%d,%s,%s,%d,%s,%s,%f)"make_nid(),$eq->Equipment_ID,$user->WP_Username,$charge_desc,CHARGE_APPROVED,date(DATDATE_FORMAT),'automatic',$fee));
+          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Approver,Amount) VALUES (%s,%d,%s,%s,%d,%s,%s,%f)",make_nid(),$eq->Equipment_ID,$user->WP_Username,$charge_desc,CHARGE_APPROVED,date(DATDATE_FORMAT),'automatic',$fee));
         }
       }
 

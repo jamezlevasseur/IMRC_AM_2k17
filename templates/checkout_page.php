@@ -135,7 +135,8 @@ class IAM_Checkout_Page
 					'Greetings, User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to a lab tech alerting them of the issue. Please resolve this as soon as possible.');
 			}
 		}
-		require_once iam_dir().'public/render/utils_public.php';
+
+		
 		Utils_Public::late_reservations_check();
 		return $html;
 	}

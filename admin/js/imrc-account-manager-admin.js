@@ -2002,6 +2002,20 @@
 					}
 					$('.iam-status-no-pay').toggleClass('iam-ninja');
 				});
+				$('.res-toolbar input[name=is-late]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-is-late').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=was-late]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-was-late').toggleClass('iam-ninja');
+				});
 			}
 
 			//schedling wrap functions
