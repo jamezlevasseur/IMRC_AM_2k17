@@ -13,7 +13,7 @@
 			var redirectUrl,selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [];
 			var debug = window.location.href.indexOf('imrcaccounts')==-1;
 
-			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {};
+			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null;
 
 			var availableTags,comparableTags;
 
@@ -1089,6 +1089,12 @@
 						$('.iam-er-user-emails').autocomplete({
 				      source: userEmails
 				    });
+
+						userBalances = $('.iam-on-load-data').data('balances');
+
+						eqLateFee = $('.iam-on-load-data').data('fee');
+
+						//$('.iam-on-load-data').remove();
 				}
 
 				var makeRelevantReservation = function (element, event) {
@@ -1106,11 +1112,21 @@
 					$('.iam-er-action-button.iam-er-checkout').off();
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
 						resetEvents();
-						$('.modal-header .fc-event').removeClass('iam-ninja');
 						if ($('.iam-er-user-emails').val()=='') {
 							alert('please enter an email.');
 							return;
 						}
+
+						try {
+							if (eqLateFee>userBalances[$('.iam-er-user-emails').val()]) {
+								alert('This user has less than the late fee amount of $'+eqLateFee+'. They will not be able to pay late fees if they keep the equipment late. User balance: $'+userBalances[$('.iam-er-user-emails').val()]);
+							}
+						} catch (error) {
+							//nothing
+						}
+
+						$('.modal-header .fc-event').removeClass('iam-ninja');
+
 						$('#myModal').modal('show');
 
 						$('#myModal .modal-footer .btn-primary').off();

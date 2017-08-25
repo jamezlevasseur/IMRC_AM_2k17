@@ -29,15 +29,19 @@ class Admin_Content
 		global $wpdb;
 		$c = $dept=='e' ? 'iam-er' : 'iam-fl';
 
-		$users = $wpdb->get_results("SELECT WP_ID FROM ".IAM_USERS_TABLE);
+		$users = $wpdb->get_results("SELECT WP_ID,Balance FROM ".IAM_USERS_TABLE);
 		$emails = [];
+		$bal_dict = [];
 		foreach ($users as $row) {
-			$emails[] = strtolower( get_userdata($row->WP_ID)->user_email );
+			$email = get_userdata($row->WP_ID)->user_email;
+			$emails[] = strtolower( $email );
+			$bal_dict[$email] = $row->Balance;
 		}
 		asort($emails);
+
 		?>
 		<div class="wrap iam-equipment-wrap <?php echo $c; ?>">
-			<div class="iam-ninja iam-on-load-data" data-users="<?php echo iam_output(implode(',', $emails)) ?>"></div>
+			<div class="iam-ninja iam-on-load-data" data-fee="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" data-balances="<?php echo iam_output(json_encode($bal_dict)); ?>" data-users="<?php echo iam_output(implode(',', $emails)) ?>"></div>
 			<h1 class="iam-admin-header">Equipment</h1>
 			<div id="iam-admin-col-left">
 				<h3>Existing Equipment</h3>
