@@ -13,6 +13,8 @@
 			var redirectUrl,selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [];
 			var debug = window.location.href.indexOf('imrcaccounts')==-1;
 
+			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {};
+
 			var availableTags,comparableTags;
 
 			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
@@ -625,8 +627,6 @@
 
 		  	//MAIN MENU LISTENERS
 
-		  	var updatedAccountTypes = {}, updatedRentalTypes = {};
-
 				var initRentalTypeRowListener = function () {
 		  		$('.rental-duration').off();
 		  		numbersOnlyListener($('.rental-duration'));
@@ -1084,8 +1084,6 @@
 		  		});
 		  	}
 
-				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]');
-
 				var initCheckinCheckout = function () {
 						userEmails = $('.iam-on-load-data').data('users').split(',');
 						$('.iam-er-user-emails').autocomplete({
@@ -1453,12 +1451,12 @@
 
 			//ROOM LISTENERS
 
-		  	var initNewRoomButtonListener = function () {
-		  		$('#iam-new-room-button').click(function(event) {
+	  	var initNewRoomButtonListener = function () {
+	  		$('#iam-new-room-button').click(function(event) {
 					make_form_visible('#iam-new-form');
 					prepare_new_form('#iam-new-form');
 				});
-		  	}
+	  	}
 
 			var initSubmitRoomFormListener = function () {
 				$('.iam-admin-submit-button').off();
@@ -1744,8 +1742,6 @@
 					refreshResCal();
 				});
 			}
-
-			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '';
 
 			var handleEventConfirmed = function(event,j) {
 				var index = eventsConfirmed.indexOf(event.nid);
@@ -2771,12 +2767,18 @@
 				$('.iam-bal-user-row').click(function(event) {
 					if (fetchingChargeTable)
 						return;
+
+					currentBalRowNID = $(this).data('nid');
+
+					if (lastBalClick==currentBalRowNID)
+						return;
+					lastBalClick = currentBalRowNID;
+
 					fetchingChargeTable = true;
 					var that = this;
 					selectedBalUser = $(this).children('.iam-bal-user-row-username').text();
 					$('.iam-bal-user-row').removeClass('iam-selected-row');
 					$(this).addClass('iam-selected-row');
-					currentBalRowNID = $(this).data('nid');
 					$.ajax({
 						url: ajaxurl,
 						type: 'GET',

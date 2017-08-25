@@ -7,7 +7,7 @@
 class Utils_Public
 {
 
-    public static function late_reservations_check()
+    public static function late_reservations_check($force=false)
     {
       global $wpdb;
       date_default_timezone_set(IMRC_TIME_ZONE);
@@ -15,7 +15,7 @@ class Utils_Public
 
       $do_check = false;
 
-      if (get_setting_iam('late_er_check')===false)
+      if (get_setting_iam('late_er_check')===false || $force===true)
         $do_check = true;
       else if ((int)$rightnow-(int)get_setting_iam('late_er_check')>(SECONDS_IN_DAY/3))
         $do_check = true;
@@ -65,7 +65,7 @@ class Utils_Public
 
           $charge_desc = 'Automatic late charge for not returning '.$eq->Name.' in on time. This is the '.ordinal_format($notifcation_num).' in this series.';
 
-          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Approver,Amount) VALUES (%s,%d,%s,%s,%d,%s,%s,%f)",make_nid(),$eq->Equipment_ID,$user->WP_Username,$charge_desc,CHARGE_APPROVED,date(DATDATE_FORMAT),'automatic',$fee));
+          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Approver,Amount) VALUES (%s,%d,%s,%s,%d,%s,%s,%f)",make_nid(),$eq->Equipment_ID,$user->WP_Username,$charge_desc,CHARGE_APPROVED,date(DATE_FORMAT),'automatic',$fee));
         }
       }
 

@@ -440,6 +440,12 @@
 
 			$('.iam-equipment-button').click(function(event) {
 				//init popup
+				current_root_tag = $(this).data('equiproot').replace(' ','_').toLowerCase();
+
+				if(canReserveER==0) {
+					alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $'+erLateFee+'.');
+					return;
+				}
 
 				$('body').append(res_form);
 				var equip_name = $(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text();
@@ -451,12 +457,12 @@
 				if (isRoom==1) {
 					$('.iam-res-popup-body').after('<p class="iam-room-note" style="color:red;">Room reservations must be approved by admin via email before official added to the calendar.</p><p class="iam-room-note" style="">Reservations in grey are pending approval.</p>')
 				}
-				current_root_tag = $(this).data('equiproot').replace(' ','_').toLowerCase();
-				var wknd = true;
+
+				var wknd = false;
 				var d = moment().day();
 				if (d==0 || d==6)
 					wknd = true;
-				console.log(facility_info)
+
 				var rental_period = $(this).data('rental-period')==0 ? facility_info[current_root_tag]['rental_period'] : $(this).data('rental-period');
 				if (facility_info[current_root_tag]['schedule_type']=='Rental') {
 
@@ -1105,7 +1111,7 @@
 				$('.iam-cal').fullCalendar( 'addEventSource', newSource );
 				lastSource = newSource;
 			});
-			var wknd = true;
+			var wknd = false;
 			var d = moment().day();
 			if (d==0 || d==6)
 				wknd = true;
@@ -1166,7 +1172,7 @@
 					$('.iam-res-popup-body').after('<p class="iam-room-note" style="color:red;">Reservations in grey have not been approved yet.</p>');
 				}
 				current_root_tag = $('.iam-discover-data').data('equiproot').replace(' ','_').toLowerCase();
-				var wknd = true;
+				var wknd = false;
 				var d = moment().day();
 				if (d==0 || d==6)
 					wknd = true;
@@ -1331,6 +1337,8 @@
 		if ($('#iam-ref').length>0) { //reservation page
 			var res_form, current_root_tag;
 			var facilities = $('.iam-cal-data').data('names').split(',');
+			var canReserveER = $('.iam-cal-data').data('can-res-er');
+			var erLateFee = $('.iam-cal-data').data('late-fee');
 			var facility_info = {};
 			for (var i = 0; i < facilities.length; i++) {
 				facility_info[facilities[i]] = $('.iam-cal-data').data(facilities[i]);

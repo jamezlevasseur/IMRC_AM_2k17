@@ -19,6 +19,8 @@ class Debug_Page
         </div>
         <?php
         /** de bugs go here **/
+        require_once iam_dir().'public/render/utils_public.php';
+        Utils_Public::late_reservations_check(true);
 
     }
 

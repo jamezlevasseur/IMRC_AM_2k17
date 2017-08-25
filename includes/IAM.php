@@ -204,6 +204,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_debug_make_res', 'Debug_Page', 'make_dummy_res');
 
 		$this->loader->add_action('wp_ajax_admin_balances_action', 'Balances_Page', 'admin_balances_callback');
+		$this->loader->add_action('wp_ajax_admin_get_charge_table', 'Balances_Page', 'admin_get_charge_table');
 
 		$this->loader->add_action('wp_ajax_admin_delete_supporting_file', 'Certifications_Page', 'admin_delete_supporting_file');
 		$this->loader->add_action('wp_ajax_admin_update_existing_file_list', 'Certifications_Page', 'admin_update_existing_file_list');
@@ -213,7 +214,6 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_update_charge_row', 'Charge_Sheet_Page', 'admin_update_charge_row');
 		$this->loader->add_action('wp_ajax_admin_get_pagination_max', 'Charge_Sheet_Page', 'admin_get_pagination_max');
 		$this->loader->add_action('wp_ajax_admin_switch_charge_status', 'Charge_Sheet_Page', 'admin_switch_charge_status');
-		$this->loader->add_action('wp_ajax_admin_get_charge_table', 'Charge_Sheet_Page', 'admin_get_charge_table');
 		$this->loader->add_action('wp_ajax_approve_charge', 'Charge_Sheet_Page', 'approve_charge_callback');
 		$this->loader->add_action('wp_ajax_admin_get_charge_table_json', 'Charge_Sheet_Page', 'admin_get_charge_table_json');
 		$this->loader->add_action('wp_ajax_admin_update_charge_row', 'Charge_Sheet_Page', 'admin_update_charge_row');

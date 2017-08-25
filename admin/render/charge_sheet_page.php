@@ -1,7 +1,7 @@
 <?php
 
 /**
-* 
+*
 */
 class Charge_Sheet_Page
 {
@@ -51,19 +51,6 @@ class Charge_Sheet_Page
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_CHARGE_TABLE." SET Status=%d WHERE NI_ID=%s",$status,$nid));
         $username = $wpdb->get_results($wpdb->prepare("SELECT WP_Username FROM ".IAM_CHARGE_TABLE." WHERE NI_ID=%s",$nid))[0]->WP_Username;
         iam_respond(SUCCESS,IAM_Funds_Handler::update($username,true));
-    }
-
-    public static function admin_get_charge_table()
-    {
-        require_once iam_dir(). 'templates/account_balance_page.php';
-        global $wpdb;
-        if (isset($_GET['nid'])) {
-            $iam_id = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE NI_ID=%s",IAM_Sec::textfield_cleaner($_GET['nid'])))[0]->IAM_ID;
-        } else {
-            $iam_id = 0;
-        }
-        $html = '<table id="iam-user-charges-table">' . IAM_Account_Balance_Page::get_charge_table_head() . '<tbody>'. IAM_Account_Balance_Page::get_table_rows_for_id($iam_id, true) . '</tbody></table><br><button type="button" class="iam-secondary-button iam-csv-button">generate csv</button>';
-        iam_respond(SUCCESS,$html);
     }
 
     public static function admin_get_charge_table_json()
