@@ -290,7 +290,7 @@ class IAM_Reservation_Page
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
 		$html = '<div id="iam-ref">
 		<p class="iam-page-header">Available Equiment</p>
-		<div class="iam-ninja iam-cal-data" data-late-fee"'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
+		<div class="iam-ninja iam-cal-data" data-late-fee="'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
 		<div class="iam-ref-left-top">
 			<div class="iam-search-container">
 				<input type="search" placeholder="search..." class="iam-search iam-reservations-search">
