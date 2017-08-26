@@ -46,11 +46,12 @@ class Utils_Public
             $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID,$rightnow));
           } else if ((int)$rightnow-(int)$last_attempt[0]->Meta_Value<SECONDS_IN_DAY) {
             send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS TRUE');
-
+            send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
             continue;
           }
 
           send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS FALSE');
+          send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
 
           $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$rightnow,LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
