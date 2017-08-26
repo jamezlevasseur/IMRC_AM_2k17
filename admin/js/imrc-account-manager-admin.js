@@ -60,7 +60,6 @@
 
 			if ( $('.debug-wrap').length>0 ) {
 				$('.make-dummy-res input[type=submit]').click(function(event) {
-					console.log('click')
 					$.ajax({
 						url: ajaxurl,
 						type: 'POST',
@@ -714,8 +713,6 @@
 										});
 							}
 						});
-						console.log($('.iam-rental-type-form table tbody tr'))
-						console.log({action: 'admin_update_rental_type', updated_rental_types: updatedRentalTypes, new_rental_types: newTypes});
 						$.ajax({
 							url: ajaxurl,
 							type: 'POST',
@@ -1267,7 +1264,6 @@
 							eventAfterRender: function (event, element) {
 							},
 							eventAfterAllRender: function (view) {
-								console.log($('.fc-event').eq(0).data());
 								initContextMenu('rental');
 								if (persistentRelEvent!=null)
 									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
@@ -1278,7 +1274,6 @@
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventResize: function (event) {
-								console.log('resize')
 								$('.iam-cal').fullCalendar( 'rerenderEvents' );
 								if (typeof event.nid != 'undefined')
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
@@ -1873,7 +1868,6 @@
                 }
 				equip_name = equip_name.split(' ').join('_');
 				submissionStart();
-				console.log()
 
 				//init calendar
 				$('.fc-event').each(function() {
@@ -1911,8 +1905,6 @@
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&all=y&names="+equip_names;
 					else
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
-
-					console.log(lastReservationResource)
 
 					$('.iam-res-cal').fullCalendar({
 						header: {
@@ -1986,7 +1978,6 @@
 				$('.res-toolbar input[name=no-pay]').off();
 
 				$('.res-toolbar input[name=upcoming]').click(function (e) {
-					console.log('RES parade')
 					if($('.iam-res-cal-placeholder').length>0) {
 						e.preventDefault();
 						return false;

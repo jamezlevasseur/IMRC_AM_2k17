@@ -1053,7 +1053,7 @@
 				var matToSend = {};
 				var multipleMats = false;
 				if ($('.iam-mats-row').length>1) {
-					console.log(123)
+
 					multipleMats = true;
 
 					$.each($('.iam-checkout-total'), function(index, val) {
@@ -1062,22 +1062,21 @@
 
 					matToSend = [];
 					checkoutAmount = [];
-					console.log(456)
+
 					$.each($('.iam-mats-row'), function(index, val) {
-						console.log('LOOP')
+
 						matToSend.push( {'name':$(this).find('.iam-checkout-possible-mats option:selected').val(),
 										'unit_name':$(this).children('span').children('.iam-checkout-unit-name').eq(0).text(),
 										'price_per_unit':$(this).children('span').children('.iam-checkout-price-per-unit').text(),
 										'base_price':$(this).children('label').children('.iam-checkout-base-price').text()} );
 						checkoutAmount.push($(this).find('.iam-checkout-amount').val());
 					});
-					console.log('POST LOOP')
+
 				} else {
 					checkoutSubmitAmount = (-checkoutTotal);
 					matToSend = {'name':selectedMat,'unit_name':checkout_mats[selectedMat]['unit_name'],'price_per_unit':checkout_mats[selectedMat]['price_per_unit'],'base_price':checkout_mats[selectedMat]['base_price']};
 				}
-				console.log('PRE AJAX')
-				console.log({'action':'checkout_submit','nid':checkoutNid,'total':checkoutSubmitAmount,'mat':matToSend,'amount':checkoutAmount,'multiple_mats':multipleMats})
+
 				$.ajax({
 					url: ajaxurl,
 					type: 'POST',
@@ -1597,4 +1596,3 @@
 	});
 
 })( jQuery );
-console.log('NOT MINI')
