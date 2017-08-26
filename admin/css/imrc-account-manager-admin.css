@@ -37,6 +37,13 @@ label.iam-status-label {
   color: white;
   padding: 4px;
   border-radius: 4px;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
 }
 
 label.iam-upcoming {
@@ -59,7 +66,15 @@ label.iam-completed {
 }
 
 label.iam-no-pay {
-  background-color: #f6b4f7;
+  background-color: #f45fb9;
+}
+
+label.iam-is-late {
+  background-color: #f45fb9;
+}
+
+label.iam-was-late {
+  background-color: #dd4444;
 }
 
 .iam-status-upcoming {
@@ -83,8 +98,18 @@ label.iam-no-pay {
 }
 
 .iam-status-no-pay {
-  background-color: #f6b4f7;
-  border: 1px solid #f6b4f7;
+  background-color: #f45fb9;
+  border: 1px solid #f45fb9;
+}
+
+.iam-status-is-late {
+  background-color: #f45fb9;
+  border: 1px solid #f45fb9;
+}
+
+.iam-status-was-late {
+  background-color: #dd4444;
+  border: 1px solid #dd4444;
 }
 
 .marked-for-delete {

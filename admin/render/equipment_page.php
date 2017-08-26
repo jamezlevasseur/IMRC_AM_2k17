@@ -10,17 +10,21 @@ class Equipment_Page extends Item_Mgmt
     {
       global $wpdb;
       $e = $_POST['ev'];
+
+      date_default_timezone_set(IMRC_TIME_ZONE);
+  		$rightnow = date(DATE_FORMAT);
+
       if (isset($e['nid'])) {
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$e['nid']))[0]->Reservation_ID;
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE NI_ID=%s",ACTIVE,$e['nid']));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_Out=%s WHERE NI_ID=%s",ACTIVE,$rightnow,$e['nid']));
       } else {
         $nid = make_nid();
         $equipment_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e['equipment']))[0]->Equipment_ID;
         $iam_id = get_user_for_email($e['user'])->IAM_ID;
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time) VALUES (%s,%d,%d,%d,%s,%s)",$nid,$iam_id,$equipment_id,ACTIVE,$e['start'],$e['end']));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time,Checked_Out) VALUES (%s,%d,%d,%d,%s,%s,%s)",$nid,$iam_id,$equipment_id,ACTIVE,$e['start'],$e['end'],$rightnow));
 
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s AND IAM_ID=%d",$nid,$iam_id))[0]->Reservation_ID;
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
@@ -31,15 +35,19 @@ class Equipment_Page extends Item_Mgmt
     public static function admin_end_rental()
     {
       global $wpdb;
+
+      date_default_timezone_set(IMRC_TIME_ZONE);
+  		$rightnow = date(DATE_FORMAT);
+
       $e = IAM_Sec::textfield_cleaner($_POST['equipment']);
       $res_id = $wpdb->get_results($wpdb->prepare("SELECT Checked_Out FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e))[0]->Checked_Out;
       $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Checked_Out=%d",$res_id));
 
       $status = $wpdb->get_results($wpdb->prepare("SELECT Status FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$res_id))[0]->Status;
 
-      if ($status==ACTIVE) {
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d WHERE Reservation_ID=%d",COMPLETED,$res_id));
-      }
+      $new_status = $status==IS_LATE ? WAS_LATE : COMPLETED;
+
+      $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$res_id));
 
       iam_respond(SUCCESS);
     }
@@ -123,8 +131,18 @@ class Equipment_Page extends Item_Mgmt
             if (isset($_POST['pricing-description'])) {
                 $pricing_description = IAM_Sec::textfield_cleaner($_POST['pricing-description']);
                 //desc checks
-                if (gettype($description)!='string') {
+                if (gettype($pricing_description)!='string') {
                     iam_throw_error ( 'Error - Invalid Input in Field: "Pricing Description"');
+                    exit;
+                }
+            }
+
+            $internal_comments = null;
+            if (isset($_POST['internal-comments'])) {
+                $internal_comments = IAM_Sec::textfield_cleaner($_POST['internal-comments']);
+                //desc checks
+                if (gettype($internal_comments)!='string') {
+                    iam_throw_error ( 'Error - Invalid Input in Field: "Internal Comments"');
                     exit;
                 }
             }
@@ -175,16 +193,16 @@ class Equipment_Page extends Item_Mgmt
                 //TODO: more complex ni_id
                 $ni_id = make_nid();
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order,$internal_comments);
                 } else {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments);
                 }
             } else if ($interaction=='u') {
                 $ni_id = IAM_Sec::textfield_cleaner($_POST['x']);
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Photo=%s,Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d WHERE NI_ID=%s ",$photo,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$ni_id);
+                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Photo=%s,Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$photo,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
                 } else {
-                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d WHERE NI_ID=%s ",$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$ni_id);
+                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
                 }
             } else {
                 iam_throw_error(INVALID_INPUT_EXCEPTION);

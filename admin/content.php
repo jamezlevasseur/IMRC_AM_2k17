@@ -29,15 +29,19 @@ class Admin_Content
 		global $wpdb;
 		$c = $dept=='e' ? 'iam-er' : 'iam-fl';
 
-		$users = $wpdb->get_results("SELECT WP_ID FROM ".IAM_USERS_TABLE);
+		$users = $wpdb->get_results("SELECT WP_ID,Balance FROM ".IAM_USERS_TABLE);
 		$emails = [];
+		$bal_dict = [];
 		foreach ($users as $row) {
-			$emails[] = strtolower( get_userdata($row->WP_ID)->user_email );
+			$email = get_userdata($row->WP_ID)->user_email;
+			$emails[] = strtolower( $email );
+			$bal_dict[$email] = $row->Balance;
 		}
 		asort($emails);
+
 		?>
 		<div class="wrap iam-equipment-wrap <?php echo $c; ?>">
-			<div class="iam-ninja iam-on-load-data" data-users="<?php echo iam_output(implode(',', $emails)) ?>"></div>
+			<div class="iam-ninja iam-on-load-data" data-fee="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" data-balances="<?php echo iam_output(json_encode($bal_dict)); ?>" data-users="<?php echo iam_output(implode(',', $emails)) ?>"></div>
 			<h1 class="iam-admin-header">Equipment</h1>
 			<div id="iam-admin-col-left">
 				<h3>Existing Equipment</h3>
@@ -331,6 +335,8 @@ class Admin_Content
 	public static function equipment_room_reservation_content()
 	{
 		echo Admin_Content::reservation_content('e');
+		require_once iam_dir().'public/render/utils_public.php';
+		Utils_Public::late_reservations_check();
 	}
 
 	public static function fab_lab_reservation_content()
@@ -390,7 +396,19 @@ class Admin_Content
 							<label class="iam-status-label iam-active">active: <input type="checkbox" name="active"></label>
 							<label class="iam-status-label iam-completed">completed: <input type="checkbox" name="completed"></label>
 							<label class="iam-status-label iam-no-show">no show: <input type="checkbox" name="no-show"></label>
-							<label class="iam-status-label iam-no-pay">didn't pay: <input type="checkbox" name="no-pay"></label>
+							<?php
+								if ($dept=='e') {
+									?>
+									<label class="iam-status-label iam-is-late">is late <input type="checkbox" name="is-late"></label>
+									<label class="iam-status-label iam-was-late">returned late <input type="checkbox" name="was-late"></label>
+									<?php
+								} else {
+									?>
+									<label class="iam-status-label iam-no-pay">didn't pay: <input type="checkbox" name="no-pay"></label>
+									<?php
+								}
+							 ?>
+
 						</div>
 					</div>
 					<div class="iam-res-cal"><div class="iam-res-cal-placeholder">Select equipment</div></div>
@@ -757,17 +775,20 @@ class Admin_Content
 		?>
 		<div class="wrap iam-main-menu-wrap">
 			<h1 class="iam-admin-header">Settings</h1>
-			<hr>
+
 			<section class="iam-settings-container">
 				<form accept-charset="utf-8" class="iam-settings-form">
 					<table>
 						<tbody>
 							<tr>
+								<td><h1>Misc Settings</h1><hr></td>
+							</tr>
+							<tr>
 								<td><label>iPad Lock Code</label></td>
 								<td><input type="number" class="iam-ipad-code" width="50" value="<?php echo get_setting_iam('ipad_code') ?>"></td>
 							</tr>
 							<tr>
-								<td><h2>Email Notifications</h2></td>
+								<td><h1>Email Notifications</h1></td>
 							</tr>
 							<tr>
 								<td><label>Training Page Inquiry</label></td>
@@ -828,16 +849,23 @@ class Admin_Content
 	public static function equipment_room_content()
 	{
 		global $wpdb;
+		if (get_setting_iam(LATE_CHARGE_FEE_KEY)===false)
+			update_settings_iam(LATE_CHARGE_FEE_KEY,10);
 		?>
 		<div class="wrap iam-main-menu-wrap">
 			<h1 class="iam-admin-header">Settings</h1>
-			<hr>
 			<section class="iam-settings-container">
 				<form accept-charset="utf-8" class="iam-settings-form">
 					<table>
 						<tbody>
 							<tr>
-								<td><h2>Email Notifications</h2></td>
+								<td><h1>Misc Settings</h1><hr></td>
+							</tr>
+							<tr>
+								<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
+							</tr>
+							<tr>
+								<td><h1>Email Notifications</h1></td>
 							</tr>
 							<tr>
 								<td><label>Training Page Inquiry</label></td>

@@ -265,6 +265,12 @@ class IAM_Reservation_Page
 		if (count($has_priv)>0 && $has_priv!=false) {
 			Utils_Public::render_page_for_login_status('<h1>Your reservation privileges have been removed</h1><p>Please contact an admin for further assistance.</p>');
 			return;
+		} else {
+			$can_reserve_er = 1;
+			$user_bal = $wpdb->get_results("SELECT Balance FROM ".IAM_USERS_TABLE." WHERE WP_ID=".$current_user->ID)[0]->Balance;
+			if ((float)$user_bal<(float)get_setting_iam(LATE_CHARGE_FEE_KEY)) {
+				$can_reserve_er = 0;
+			}
 		}
 		$facility_results = $wpdb->get_results("SELECT * FROM ".IAM_FACILITY_TABLE);
 		$facility_html = '';
@@ -284,7 +290,7 @@ class IAM_Reservation_Page
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
 		$html = '<div id="iam-ref">
 		<p class="iam-page-header">Available Equiment</p>
-		<div class="iam-ninja iam-cal-data" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
+		<div class="iam-ninja iam-cal-data" data-late-fee="'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
 		<div class="iam-ref-left-top">
 			<div class="iam-search-container">
 				<input type="search" placeholder="search..." class="iam-search iam-reservations-search">

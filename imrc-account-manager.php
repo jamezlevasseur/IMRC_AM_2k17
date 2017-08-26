@@ -90,6 +90,16 @@ define('COMPLETED', 3);
 
 define('NO_PAY', 4);
 
+define('IS_LATE', 5);
+
+define('WAS_LATE', 6);
+
+define('CHARGE_CANCELLED', -1);
+
+define('CHARGE_PENDING', 0);
+
+define('CHARGE_APPROVED', 1);
+
 define('IAM_DIR', plugin_dir_path(__FILE__));
 
 define('IAM_IP_LOGS','iplogs');
@@ -122,9 +132,17 @@ define('DATE_FORMAT', 'Y-m-d H:i:s');
 
 define('RENTAL_PREFIX', 'rental_type_');
 
+define('LAST_ER_CHECK_PREFIX', 'last_er_check_');
+
+
 define('RENTAL_ALL_QUERY', "SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE '".RENTAL_PREFIX."%'");
 
+define('LATE_CHARGE_FEE_KEY', 'late_charge_fee');
 
+define('SECONDS_IN_DAY', 86400);
+
+
+define('DEFAULT_LATE_CHARGE_FEE_QUERY', "INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES ('".LATE_CHARGE_FEE_KEY."',10)");
 
 //global functions
 
@@ -159,6 +177,20 @@ function iam_mail($to,$subject,$message,$failure_message="Failed to send email."
 	catch(Exception $e) {
 	   IAM::$status_message = $e->getMessage();
 	}
+}
+
+function ordinal_format($number) {
+    $ends = array('th','st','nd','rd','th','th','th','th','th','th');
+    if ((($number % 100) >= 11) && (($number%100) <= 13))
+        return $number. 'th';
+    else
+        return $number. $ends[$number % 10];
+}
+
+function cash_format($number)
+{
+	setlocale(LC_MONETARY, 'en_US.UTF-8');
+	return money_format('%.2n', $number);
 }
 
 add_filter('wp_mail_from','iam_wp_mail_from');
@@ -360,7 +392,7 @@ function init_settings_iam($fresh = false)
 		$settings = fopen( plugin_dir_path( __FILE__ ) . "config/settings", "w");
 	}
 	$current_gmt_timestamp = time();
-	fwrite($settings, "fresh_install:true;init_tags:false;ipad_code:0000;ipad_code_updated:$current_gmt_timestamp;training_email:admin@".$_SERVER['HTTP_HOST'].";late_reservations_email:admin@".$_SERVER['HTTP_HOST'].";equipment_room_email:admin@".$_SERVER['HTTP_HOST'].";fab_lab_email:admin@".$_SERVER['HTTP_HOST'].";rooms_email:admin@".$_SERVER['HTTP_HOST'].";debug_log:none;");
+	fwrite($settings, "fresh_install:true;init_tags:false;ipad_code:0000;ipad_code_updated:$current_gmt_timestamp;training_email:admin@".$_SERVER['HTTP_HOST'].";late_reservations_email:admin@".$_SERVER['HTTP_HOST'].";equipment_room_email:admin@".$_SERVER['HTTP_HOST'].";fab_lab_email:admin@".$_SERVER['HTTP_HOST'].";rooms_email:admin@".$_SERVER['HTTP_HOST'].";".LATE_CHARGE_FEE_KEY.":10;debug_log:none;");
 }
 
 //updates a setting in config/settings to value
@@ -371,6 +403,11 @@ function update_settings_iam($setting, $value)
 	}
 	$content = file_get_contents(plugin_dir_path( __FILE__ ) . 'config/settings');
 	$start = strpos($content, $setting);
+	if ($start===false) {
+		$file = fopen(plugin_dir_path( __FILE__ ) . 'config/settings', 'w+');
+		fwrite($file, $content.$setting.':'.$value.';');
+		return;
+	}
 	$file = fopen(plugin_dir_path( __FILE__ ) . 'config/settings', 'w+');
 	fwrite($file, substr($content, 0, strpos($content, ':', $start)+1).$value.substr($content, strpos($content, ';',$start+1)));
 }
@@ -383,6 +420,8 @@ function get_setting_iam($setting)
 	}
 	$content = file_get_contents(plugin_dir_path( __FILE__ ) .'config/settings');
 	$start = strpos($content, $setting);
+	if ($start===false)
+		return false;
 	return substr( $content, strpos($content, ':', $start)+1, strpos($content, ';', $start)-strpos($content, ':', $start)-1);
 }
 

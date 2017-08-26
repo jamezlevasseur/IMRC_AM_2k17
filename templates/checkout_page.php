@@ -123,10 +123,21 @@ class IAM_Checkout_Page
 				$res_id = $row->Reservation_ID;
 				$wpdb->query("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent='1', Status=".NO_PAY." WHERE Reservation_ID='$res_id'");
 				$user_email = $wpdb->get_results("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login='$username'")[0]->user_email;
-				iam_mail(get_setting_iam('late_reservations_email'),$username.' didn\'t check out','User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to them alerting them of the issue.');
-				iam_mail($user_email,'You didn\'t check out!','Greetings, User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to a lab tech alerting them of the issue. Please resolve this as soon as possible.');
+
+				iam_mail(
+					get_setting_iam('late_reservations_email'),
+					$username.' didn\'t check out',
+					'User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to them alerting them of the issue.');
+
+				iam_mail(
+					$user_email,
+					'You didn\'t check out!',
+					'Greetings, User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to a lab tech alerting them of the issue. Please resolve this as soon as possible.');
 			}
 		}
+
+		
+		Utils_Public::late_reservations_check();
 		return $html;
 	}
 

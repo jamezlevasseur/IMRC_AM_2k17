@@ -13,6 +13,8 @@
 			var redirectUrl,selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [];
 			var debug = window.location.href.indexOf('imrcaccounts')==-1;
 
+			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null;
+
 			var availableTags,comparableTags;
 
 			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
@@ -625,8 +627,6 @@
 
 		  	//MAIN MENU LISTENERS
 
-		  	var updatedAccountTypes = {}, updatedRentalTypes = {};
-
 				var initRentalTypeRowListener = function () {
 		  		$('.rental-duration').off();
 		  		numbersOnlyListener($('.rental-duration'));
@@ -864,6 +864,8 @@
 						return;
 					}
 					var newSettings = {action:'admin_update_settings'};
+					if ($('.iam-late-charge-fee').length>0)
+						newSettings.late_charge_fee = $('.iam-late-charge-fee').val()
 					if ($('.iam-ipad-code').length>0)
 						newSettings.ipad_code = $('.iam-ipad-code').val();
 					if ($('.iam-training-page-email').length>0)
@@ -922,8 +924,8 @@
 					formData.append('certification',form.children('.iam-form-row').children('#certification').val());
 					formData.append('description',form.children('.iam-form-row').children('#description').val());
 					formData.append('pricing-description',form.children('.iam-form-row').children('#pricing-description').val());
+					formData.append('internal-comments',form.children('.iam-form-row').children('#internal-comments').val());
 					formData.append('manufacturer-info',form.children('.iam-form-row').children('#manufacturer-info').val());
-					console.log(form.find('.iam-rental-types-list').val())
 					if ($('.iam-rental-types-list').length>0)
 						formData.append('rental_type', form.find('.iam-rental-types-list').val());
 					formData.append('out-of-order',outOfOrder);
@@ -1082,13 +1084,17 @@
 		  		});
 		  	}
 
-				var userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]');
-
 				var initCheckinCheckout = function () {
 						userEmails = $('.iam-on-load-data').data('users').split(',');
 						$('.iam-er-user-emails').autocomplete({
 				      source: userEmails
 				    });
+
+						userBalances = $('.iam-on-load-data').data('balances');
+
+						eqLateFee = $('.iam-on-load-data').data('fee');
+
+						//$('.iam-on-load-data').remove();
 				}
 
 				var makeRelevantReservation = function (element, event) {
@@ -1106,11 +1112,21 @@
 					$('.iam-er-action-button.iam-er-checkout').off();
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
 						resetEvents();
-						$('.modal-header .fc-event').removeClass('iam-ninja');
 						if ($('.iam-er-user-emails').val()=='') {
 							alert('please enter an email.');
 							return;
 						}
+
+						try {
+							if (eqLateFee>userBalances[$('.iam-er-user-emails').val()]) {
+								alert('This user has less than the late fee amount of $'+eqLateFee+'. They will not be able to pay late fees if they keep the equipment late. User balance: $'+userBalances[$('.iam-er-user-emails').val()]);
+							}
+						} catch (error) {
+							//nothing
+						}
+
+						$('.modal-header .fc-event').removeClass('iam-ninja');
+
 						$('#myModal').modal('show');
 
 						$('#myModal .modal-footer .btn-primary').off();
@@ -1225,6 +1241,7 @@
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
 	              $(element).data('nid', event.nid);
+								$(element).data('_id', event._id);
 
 								if (typeof event.uid == 'undefined') {
 									eventCount++;
@@ -1249,7 +1266,8 @@
 							},
 							eventAfterRender: function (event, element) {
 							},
-							eventAfterAllRender: function () {
+							eventAfterAllRender: function (view) {
+								console.log($('.fc-event').eq(0).data());
 								initContextMenu('rental');
 								if (persistentRelEvent!=null)
 									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
@@ -1451,12 +1469,12 @@
 
 			//ROOM LISTENERS
 
-		  	var initNewRoomButtonListener = function () {
-		  		$('#iam-new-room-button').click(function(event) {
+	  	var initNewRoomButtonListener = function () {
+	  		$('#iam-new-room-button').click(function(event) {
 					make_form_visible('#iam-new-form');
 					prepare_new_form('#iam-new-form');
 				});
-		  	}
+	  	}
 
 			var initSubmitRoomFormListener = function () {
 				$('.iam-admin-submit-button').off();
@@ -1743,8 +1761,6 @@
 				});
 			}
 
-			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '';
-
 			var handleEventConfirmed = function(event,j) {
 				var index = eventsConfirmed.indexOf(event.nid);
 				if (index!=-1) {
@@ -1856,6 +1872,8 @@
                     return;
                 }
 				equip_name = equip_name.split(' ').join('_');
+				submissionStart();
+				console.log()
 
 				//init calendar
 				$('.fc-event').each(function() {
@@ -1894,6 +1912,8 @@
 					else
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
 
+					console.log(lastReservationResource)
+
 					$('.iam-res-cal').fullCalendar({
 						header: {
 							left: 'prev,next today',
@@ -1926,6 +1946,7 @@
 						eventAfterAllRender: function () {
                initContextMenu();
 							 initStatusHideListeners();
+							 submissionEnd();
             },
 						eventDrop: function (event) {
 							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
@@ -1999,6 +2020,20 @@
 						return false;
 					}
 					$('.iam-status-no-pay').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=is-late]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-is-late').toggleClass('iam-ninja');
+				});
+				$('.res-toolbar input[name=was-late]').click(function (e) {
+					if($('.iam-res-cal-placeholder').length>0) {
+						e.preventDefault();
+						return false;
+					}
+					$('.iam-status-was-late').toggleClass('iam-ninja');
 				});
 			}
 
@@ -2755,12 +2790,18 @@
 				$('.iam-bal-user-row').click(function(event) {
 					if (fetchingChargeTable)
 						return;
+
+					currentBalRowNID = $(this).data('nid');
+
+					if (lastBalClick==currentBalRowNID)
+						return;
+					lastBalClick = currentBalRowNID;
+
 					fetchingChargeTable = true;
 					var that = this;
 					selectedBalUser = $(this).children('.iam-bal-user-row-username').text();
 					$('.iam-bal-user-row').removeClass('iam-selected-row');
 					$(this).addClass('iam-selected-row');
-					currentBalRowNID = $(this).data('nid');
 					$.ajax({
 						url: ajaxurl,
 						type: 'GET',
