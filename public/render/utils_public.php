@@ -60,17 +60,17 @@ class Utils_Public
 
           $fee = get_setting_iam(LATE_CHARGE_FEE_KEY);
 
-          $notifcation_num = $entry->Late_Notification_Sent++;
+          $notifcation_num = $entry->Late_Notification_Sent+1;
 
           $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent=%d WHERE Reservation_ID=%d",$notifcation_num,$entry->Reservation_ID));
 
           iam_mail(get_setting_iam('equipment_room_email'),
                   'Reservation: '.$user->WP_Username.' renting '.$eq->Name.' is late',
-                  'User: '.$user->WP_Username.' was due to check in the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent. This is their '.ordinal_format($notifcation_num).' notification.');
+                  'User: '.$user->WP_Username.' was due to check in the '.$eq->Name.' yesterday. <br /> An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent. This is their '.ordinal_format($notifcation_num).' notification.');
 
           iam_mail(get_email($user->IAM_ID),
                   'Your rental of '.$eq->Name.' is late',
-                  'Greetings, You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible. The hours of operations are "'.$hours.'". Thank you, - The IMRC Team');
+                  'Greetings, <br /><br /> You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible.<br /> The hours of operations are "'.$hours.'". <br /><br /> Thank you, - The IMRC Team');
 
           if ($entry->Status!=IS_LATE)
             $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%s WHERE Reservation_ID=%d",IS_LATE,$entry->Reservation_ID));
