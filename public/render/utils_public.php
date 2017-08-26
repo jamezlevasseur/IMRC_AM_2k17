@@ -23,6 +23,8 @@ class Utils_Public
       if (!$do_check)
         return;
 
+      send_to_debug_file('CHECKED AT '.date(DATE_FORMAT).' PAST 8 HOUR CHECK');
+
       $hours = $wpdb->get_results("SELECT Rental_Hours_Description FROM ".IAM_FACILITY_TABLE." WHERE Schedule_Type='Rental'")[0]->Rental_Hours_Description;
 
       $active = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Checked_In IS NULL AND Checked_Out IS NOT NULL");
@@ -35,11 +37,16 @@ class Utils_Public
 
           $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
+          send_to_debug_file('FOR RES: '.$entry->Reservation_ID);
+          send_to_debug_file('LAST ATTEMPT COUNT '.count($last_attempt));
+
           if (count($last_attempt)==0) {
             $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID,$rightnow));
           } else if ((int)$rightnow-(int)$last_attempt[0]->Meta_Value<SECONDS_IN_DAY) {
             continue;
           }
+
+          send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS FALSE');
 
           $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$rightnow,LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
