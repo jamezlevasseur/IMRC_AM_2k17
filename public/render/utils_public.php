@@ -7,7 +7,7 @@
 class Utils_Public
 {
 
-    public static function late_reservations_check($force=true)
+    public static function late_reservations_check($force=false)
     {
       global $wpdb;
       date_default_timezone_set(IMRC_TIME_ZONE);
