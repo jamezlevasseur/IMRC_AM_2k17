@@ -1241,6 +1241,7 @@
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
 	              $(element).data('nid', event.nid);
+								$(element).data('_id', event._id);
 
 								if (typeof event.uid == 'undefined') {
 									eventCount++;
@@ -1265,7 +1266,8 @@
 							},
 							eventAfterRender: function (event, element) {
 							},
-							eventAfterAllRender: function () {
+							eventAfterAllRender: function (view) {
+								console.log($('.fc-event').eq(0).data());
 								initContextMenu('rental');
 								if (persistentRelEvent!=null)
 									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
@@ -1870,6 +1872,8 @@
                     return;
                 }
 				equip_name = equip_name.split(' ').join('_');
+				submissionStart();
+				console.log()
 
 				//init calendar
 				$('.fc-event').each(function() {
@@ -1908,6 +1912,8 @@
 					else
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
 
+					console.log(lastReservationResource)
+
 					$('.iam-res-cal').fullCalendar({
 						header: {
 							left: 'prev,next today',
@@ -1940,6 +1946,7 @@
 						eventAfterAllRender: function () {
                initContextMenu();
 							 initStatusHideListeners();
+							 submissionEnd();
             },
 						eventDrop: function (event) {
 							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};

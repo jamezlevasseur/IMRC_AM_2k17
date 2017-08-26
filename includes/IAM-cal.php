@@ -139,7 +139,7 @@ class IAM_Cal
 			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
 
 			$formatted_events = [];
-			if(res_result==null && gettype($res_result)!='array') {
+			if(res_result===null && gettype($res_result)!='array') {
 				iam_throw_error('BAD QUERY');
 			} else {
 				foreach ($res_result as $row) {
@@ -192,19 +192,25 @@ class IAM_Cal
 
 	public static function get_equipment_cal()
 	{
+
 		if (isset($_GET['names'])) {
 			$names = explode('~!~', $_GET['names']);
+			//print_r($names);exit;
 			if (gettype($names)!='array') {
 				iam_throw_error(INVALID_INPUT_EXCEPTION);
 			}
 			$a = [];
 			for ($i=0; $i < count($names); $i++) {
-				if ($names[$i]=='') {
+				if (trim($names[$i])=='') {
 					continue;
 				}
 				$item_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner( $names[$i] ));
-				$a = array_merge($a,IAM_Cal::get_cal_for_equipment($item_name));
+
+				$item_events = IAM_Cal::get_cal_for_equipment($item_name);
+				$item_events = $item_events===null ? [] : $item_events;
+				$a = array_merge($a,$item_events);
 			}
+			
 			echo json_encode($a);
 			exit;
 		} else if (isset($_GET['name'])) {
