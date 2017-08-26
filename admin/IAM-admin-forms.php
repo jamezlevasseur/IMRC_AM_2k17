@@ -40,6 +40,7 @@ class IAM_Admin_Forms
 	const EQUIPMENT_TAGS_LABEL = '<label for="tags">Tags:</label>';
 	const EQUIPMENT_ON_SLIDE_SHOW = '<label style="display:inline;" for="slide-show">Appear on Slideshow: </label>';
 	const EQUIPMENT_OUT_OF_ORDER = '<label style="display:inline;" for="out-of-order">Out of Order: </label>';
+	const EQUIPMENT_COMMENTS = '<label for="internal-comments">Internal Comments: </label>';
 
 	//room constants
 	const ROOM_PHOTO_LABEL = '<label for="photo">Room Photo:</label>';
@@ -47,6 +48,7 @@ class IAM_Admin_Forms
 	const ROOM_DESCRIPTION_LABEL = '<label for="description">Room Description:</label>';
 	const ROOM_PRICING_DESCRIPTION_LABEL = '<label for="pricing-description">Pricing Description:</label>';
 	const ROOM_OUT_OF_ORDER = '<label style="display:inline;" for="out-of-order">Out of order: </label>';
+
 
 	public static function update_existing_file_list()
 	{
@@ -218,6 +220,7 @@ class IAM_Admin_Forms
 		}
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_ON_SLIDE_SHOW.'<input type="checkbox" id="slide-show" name="slide-show">';
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_OUT_OF_ORDER.'<input type="checkbox" id="out-of-order" name="out-of-order">';
+		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_COMMENTS.'<textarea id="internal-comments" name="internal-comments" rows="4" cols="50"></textarea>';
 
 
 	 	return IAM_Admin_Forms::make_admin_form($new_equipment_fields,'Insert New Equipment',true,true,'e');
@@ -277,6 +280,9 @@ class IAM_Admin_Forms
 
 	 	$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_ON_SLIDE_SHOW.'<input type="checkbox" id="slide-show" name="slide-show" '.$slide_show_val.'>';
 	 	$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_OUT_OF_ORDER.'<input type="checkbox" id="out-of-order" name="out-of-order" '.$out_of_order_val.'>';
+		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_COMMENTS.'<textarea id="internal-comments" name="internal-comments" rows="4" cols="50">'.iam_output($init_equipment_results[0]->Comments).'</textarea>';
+
+
 	 	return IAM_Admin_Forms::make_admin_form($update_equipment_fields,'Update Existing Equipment',false,false,'e');
 	}
 

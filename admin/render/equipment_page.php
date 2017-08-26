@@ -131,8 +131,18 @@ class Equipment_Page extends Item_Mgmt
             if (isset($_POST['pricing-description'])) {
                 $pricing_description = IAM_Sec::textfield_cleaner($_POST['pricing-description']);
                 //desc checks
-                if (gettype($description)!='string') {
+                if (gettype($pricing_description)!='string') {
                     iam_throw_error ( 'Error - Invalid Input in Field: "Pricing Description"');
+                    exit;
+                }
+            }
+
+            $internal_comments = null;
+            if (isset($_POST['internal-comments'])) {
+                $internal_comments = IAM_Sec::textfield_cleaner($_POST['internal-comments']);
+                //desc checks
+                if (gettype($internal_comments)!='string') {
+                    iam_throw_error ( 'Error - Invalid Input in Field: "Internal Comments"');
                     exit;
                 }
             }
@@ -183,16 +193,16 @@ class Equipment_Page extends Item_Mgmt
                 //TODO: more complex ni_id
                 $ni_id = make_nid();
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order,$internal_comments);
                 } else {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments);
                 }
             } else if ($interaction=='u') {
                 $ni_id = IAM_Sec::textfield_cleaner($_POST['x']);
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Photo=%s,Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d WHERE NI_ID=%s ",$photo,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$ni_id);
+                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Photo=%s,Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$photo,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
                 } else {
-                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d WHERE NI_ID=%s ",$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$ni_id);
+                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
                 }
             } else {
                 iam_throw_error(INVALID_INPUT_EXCEPTION);
