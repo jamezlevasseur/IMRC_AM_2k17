@@ -16,7 +16,9 @@ class Admin_Content
 
 	 public static function er_equipment_content()
 	 {
-	 	Admin_Content::equipment_content('e');
+		 require_once iam_dir().'public/render/utils_public.php';
+		 Utils_Public::late_reservations_check();
+	 	 Admin_Content::equipment_content('e');
 	 }
 
 	 public static function fl_equipment_content()
@@ -335,8 +337,6 @@ class Admin_Content
 	public static function equipment_room_reservation_content()
 	{
 		echo Admin_Content::reservation_content('e');
-		require_once iam_dir().'public/render/utils_public.php';
-		Utils_Public::late_reservations_check();
 	}
 
 	public static function fab_lab_reservation_content()

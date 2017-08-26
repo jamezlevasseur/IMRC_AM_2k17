@@ -13,6 +13,8 @@ class Utils_Public
       date_default_timezone_set(IMRC_TIME_ZONE);
   		$rightnow = date('U');
 
+      send_to_debug_file('CHECK START '.date(DATE_FORMAT).' BEFORE 8 HOUR CHECK');
+
       $do_check = false;
 
       if (get_setting_iam('late_er_check')===false || $force===true)
