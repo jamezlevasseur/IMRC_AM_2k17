@@ -45,6 +45,8 @@ class Utils_Public
           if (count($last_attempt)==0) {
             $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID,$rightnow));
           } else if ((int)$rightnow-(int)$last_attempt[0]->Meta_Value<SECONDS_IN_DAY) {
+            send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS FALSE');
+
             continue;
           }
 
