@@ -1815,15 +1815,6 @@
 				menuToUse = typeof menuToUse=='undefined' ? 'default' : menuToUse;
 
 				var menu = [{
-			        name: 'confirm',
-			        title: 'confirm button',
-			        fun: function (e) {
-			        	return;
-			        	var t = $(e.trigger);
-			        	var event = {nid: t.data('nid')};
-			        	handleEventConfirmed(event,t);
-			        }
-			    }, {
 			        name: 'mark for deletion',
 			        title: 'delete button',
 			        fun: function (e) {
