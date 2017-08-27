@@ -98,12 +98,14 @@ class Admin_Content
 					<br />
 					<button id="iam-new-equipment-button" class="iam-secondary-button">New Equipment</button>
 				</div>
+				<?php if ($dept=='e') { ?>
 				<div class="rent-box">
 					<h3 style="margin:0;color:#666;">Rental</h3>
 					<input type="text" class="iam-er-user-emails" placeholder="user email">
 					<br />
 					<button class="iam-secondary-button iam-er-action-button"></button>
 				</div>
+				<?php } ?>
 			</div>
 			<?php
 			$er_tag_id = $wpdb->get_results("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag='Equipment Room'")[0]->Tag_ID;
@@ -859,11 +861,12 @@ class Admin_Content
 					<table>
 						<tbody>
 							<tr>
-								<td><h1>Misc Settings</h1><hr></td>
+								<td><h1>Misc Settings</h1></td>
 							</tr>
 							<tr>
 								<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
 							</tr>
+							
 							<tr>
 								<td><h1>Email Notifications</h1></td>
 							</tr>
@@ -878,34 +881,7 @@ class Admin_Content
 						</tbody>
 					</table>
 					<div class="iam-settings-submit iam-save iam-button"></div>
-					<hr>
-				</form>
-				<h1>Account Types &amp; Discounts</h1>
-				<form accept-charset="utf-8" class="iam-account-type-form">
-					<table>
-						<tbody>
-								<?php
-								$account_types_results = $wpdb->get_results("SELECT * FROM ".IAM_ACCOUNT_TYPES_TABLE);
-								foreach ($account_types_results as $row) {
-									echo '<tr data-nid="'.IAM_Sec::iamEncrypt($row->Account_Type_ID).'">
-									<td class="iam-account-type-label"><label>Type</label>
-									<br />
-									<label>Discount (0-100%)</label></td>
-									<td><input type="text" placeholder="example: student, faculty, alumni" class="iam-account-type" value="'.iam_output($row->Name).'">
-									<br />
-									<input type="number" class="iam-account-discount" value="'.iam_output($row->Discount).'"></td>
-									<td><i class="iam-delete-account-type fa fa-close fa-3"></i></td></tr>';
-								}
-								if (count($account_types_results)<1) {
-									echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
-								}
-								?>
-						</tbody>
-					</table>
-					<div class="iam-secondary-button iam-add-account-type">add new</div>
-					<div class="iam-account-types-submit iam-save iam-button"></div>
-				</form>
-				<hr>
+
 				<h1>Rental Types</h1>
 				<form accept-charset="utf-8" class="iam-rental-type-form">
 					<table>
