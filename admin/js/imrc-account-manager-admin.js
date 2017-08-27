@@ -1864,7 +1864,6 @@
                 }
 				equip_name = equip_name.split(' ').join('_');
 				submissionStart();
-				console.log()
 
 				//init calendar
 				$('.fc-event').each(function() {
@@ -1912,8 +1911,8 @@
 							right: 'month,agendaWeek,agendaDay'
 						},
 						droppable: true,
-						eventOverlap: false,
-					    weekends:true,
+						eventOverlap: true,
+					  weekends:true,
 						height: 600,
 						forceEventDuration: true,
 						defaultView: 'month',
