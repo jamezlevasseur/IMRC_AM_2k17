@@ -77,6 +77,43 @@
 
 			//misc functions
 
+			var getUrlArg = function (argname) {
+				var url = new URL(window.location.href);
+				return url.searchParams.get(argname);
+			}
+
+			var findItemAgain = function (list) {
+				if (window.location.href.indexOf('&finditem=')==-1)
+					return;
+
+				var target = getUrlArg('finditem').split('_').join(' ');
+
+				$.each(list.children('li'), function(index, el) {
+					if ($(this).html().trim()==target) {
+						$(this).click();
+						return false;
+					}
+				});
+			}
+
+			var findTableItemAgain = function (table, colNum) {
+				if (window.location.href.indexOf('&finditem=')==-1)
+					return;
+
+				var target = getUrlArg('finditem').split('_').join(' ');
+
+				$.each(table.find('tbody').find('tr'), function(index, el) {
+					if ($(this).find('td').eq(colNum).html().trim()==target) {
+						$(this).click();
+						return false;
+					}
+				});
+			}
+
+			var reloadAndFind = function (target) {
+				window.location.href = window.location.href+'&finditem='+target.trim().split(' ').join('_');
+			}
+
 			var initPagination = function (id,t,paginationUpdateCallback) {
 				$.ajax({
 					url: ajaxurl,
@@ -941,7 +978,8 @@
 						processData: false,
 						success: function (data) {
 							handleServerResponse(data);
-							window.location.reload();
+							reloadAndFind(form.children('.iam-form-row').children('#name').val())
+							//window.location.reload();
 						},
 						error: function (data) {
 							handleServerError(data, new Error());
@@ -1420,7 +1458,7 @@
 						data: formData,
 						success: function (data) {
 							handleServerResponse(data);
-							window.location.reload();
+							reloadAndFind(form.children('.iam-form-row').children('#name').val());
 						},
 						error: function (data) {
 							handleServerError(data, new Error());
@@ -1549,7 +1587,7 @@
 						data: {action: 'admin_balances_action', comment: $('#description').val(), username: $('#username').val(), amount: $('#amount').val()},
 						success: function (data) {
 							handleServerResponse(data);
-							window.location.reload();
+							reloadAndFind($('#username').val());
 						},
 						error: function (data) {
 							handleServerError(data, new Error());
@@ -2735,6 +2773,7 @@
 					initCheckinCheckout();
 				}
 				$(document).tooltip();
+				findItemAgain($('#iam-equipment-list'));
 
 			} else if ( $('.iam-certification-wrap').length>0 ) {
 				//vars
@@ -2754,7 +2793,7 @@
 				itemNameListener($('#iam-update-form #name'));
 				updateSearchOnLoad();
 				$(document).tooltip();
-
+				findItemAgain($('#iam-certifcation-list'));
 			} else if ( $('.iam-balances-wrap').length>0 ) {
 				var addFundsHTML = $('.iam-add-funds').html(), fetchingChargeTable = false, currentBalRowNID;
 				$('.iam-add-funds').remove();
@@ -2798,6 +2837,8 @@
 				initAddFundsButtonListener();
 				initSearchListener('.iam-balances-search','.iam-bal-user-row-username',1);
 				updateSearchOnLoad();
+
+				findTableItemAgain($('#iam-balances-table'), 0);
 			} else if ($('.iam-registration-wrap').length>0) {
 				$('.iam-approve-account').click(function(event) {
 					$.ajax({
