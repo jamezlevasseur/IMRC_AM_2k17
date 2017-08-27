@@ -1268,7 +1268,6 @@
 							eventAfterRender: function (event, element) {
 							},
 							eventAfterAllRender: function (view) {
-								console.log($('.fc-event').eq(0).data());
 								initContextMenu('rental');
 								if (persistentRelEvent!=null)
 									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
@@ -1762,34 +1761,9 @@
 				});
 			}
 
-			var handleEventConfirmed = function(event,j) {
-				var index = eventsConfirmed.indexOf(event.nid);
-				if (index!=-1) {
-					eventsConfirmed.splice(index,1);
-					j.css({
-						'background-color': '#3a87ad',
-						'border': '1px solid #3a87ad'
-					});
-				} else {
-					if (eventsToDelete.indexOf(event.nid)!=-1) {
-						eventsToDelete.splice(index,1);
-					}
-					eventsConfirmed.push(event.nid);
-					if (roomResStatus==1) {
-						j.css({
-							'background-color': '#d8cf6a',
-							'border': '1px solid #d8cf6a'
-						});
-					} else {
-						j.css({
-							'background-color': '#5abc5a',
-							'border': '1px solid #5abc5a'
-						});
-					}
-				}
-			}
-
 			var handleEventToDelete = function(event,j) {
+				if (j.hasClass('event-not-editable'))
+					return;
 				var index = eventsToDelete.indexOf(event.nid);
 				if (index!=-1) {
 					eventsToDelete.splice(index,1);
@@ -1902,8 +1876,6 @@
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&all=y&names="+equip_names;
 					else
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
-
-					console.log(lastReservationResource)
 
 					$('.iam-res-cal').fullCalendar({
 						header: {
