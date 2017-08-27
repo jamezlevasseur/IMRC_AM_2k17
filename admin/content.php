@@ -392,7 +392,7 @@ class Admin_Content
 
 				<div id="iam-res-cal-wrap">
 					<div class="res-toolbar">
-						<label>Load more than a week: <input class="iam-load-all-reservations" type="checkbox"></label>
+						<label>Load more than a month: <input class="iam-load-all-reservations" type="checkbox"></label>
 						<div class="res-status-bar">
 							<label class="iam-status-label iam-upcoming">upcoming: <input type="checkbox" name="upcoming"></label>
 							<label class="iam-status-label iam-active">active: <input type="checkbox" name="active"></label>
@@ -866,7 +866,7 @@ class Admin_Content
 							<tr>
 								<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
 							</tr>
-							
+
 							<tr>
 								<td><h1>Email Notifications</h1></td>
 							</tr>

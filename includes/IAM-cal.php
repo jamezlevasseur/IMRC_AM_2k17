@@ -133,7 +133,7 @@ class IAM_Cal
 			$equip_id = $equip_result[0]->Equipment_ID;
 
 			date_default_timezone_set(IMRC_TIME_ZONE);
-			$weekago = date("Y-m-d 00:00:00", strtotime('-1 week'));
+			$weekago = date("Y-m-d 00:00:00", strtotime('-4 week'));
 			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$weekago' ";
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
 			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
