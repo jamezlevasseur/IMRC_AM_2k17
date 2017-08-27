@@ -1768,13 +1768,13 @@
 				var index = eventsToDelete.indexOf(event.nid);
 				if (index!=-1) {
 					eventsToDelete.splice(index,1);
-					j.removeClass('marked-for-delete');
+					refreshResCal();
 				} else {
 					if (eventsConfirmed.indexOf(event.nid)!=-1) {
 						eventsConfirmed.splice(index,1);
 					}
 					eventsToDelete.push(event.nid);
-					j.addClass('marked-for-delete');
+					refreshResCal();
 				}
 			}
 
@@ -1899,6 +1899,9 @@
 							$(element).data('equipment', event.equipment);
               $(element).data('nid', event.nid);
 							$(element).addClass('iam-status-'+event.status);
+							if (eventsToDelete.indexOf(event.nid)!=-1) {
+								$(element).addClass('marked-for-delete');
+							}
 						},
 						eventAfterRender: function (event, element) {
 							if (event.toDelete==1) {
@@ -1924,7 +1927,7 @@
 						events: lastReservationResource
 					});
 				} else {
-					
+
 					$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
           if (typeof reservationSourcesMap[equip_name]!='undefined') {
               reservationSources.splice(reservationSourcesMap[equip_name],1);
