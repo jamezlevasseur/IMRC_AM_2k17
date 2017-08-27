@@ -1865,13 +1865,13 @@
 					$('.iam-res-cal-placeholder').remove();
 
 					if (typeof reservationSourcesMap[equip_name]!='undefined') {
-                        reservationSources.splice(reservationSourcesMap[equip_name],1);
-                    } else {
-                        reservationSources.push(equip_name);
-                        reservationSourcesMap[equip_name] = reservationSources.length-1;
-                    }
-                    var equip_names = reservationSources.join('~!~');
-                    lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&names="+equip_names;
+              reservationSources.splice(reservationSourcesMap[equip_name],1);
+          } else {
+              reservationSources.push(equip_name);
+              reservationSourcesMap[equip_name] = reservationSources.length-1;
+          }
+          var equip_names = reservationSources.join('~!~');
+          lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&names="+equip_names;
 
 					if ($('.iam-load-all-reservations').is(':checked'))
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&all=y&names="+equip_names;
@@ -1924,22 +1924,30 @@
 						events: lastReservationResource
 					});
 				} else {
+					
 					$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-                    if (typeof reservationSourcesMap[equip_name]!='undefined') {
-                        reservationSources.splice(reservationSourcesMap[equip_name],1);
-                        reservationSourcesMap[equip_name] = undefined;
-                    } else {
-                        reservationSources.push(equip_name);
-                        reservationSourcesMap[equip_name] = reservationSources.length-1;
-                    }
-                    var equip_names = reservationSources.join('~!~');
+          if (typeof reservationSourcesMap[equip_name]!='undefined') {
+              reservationSources.splice(reservationSourcesMap[equip_name],1);
+							delete reservationSourcesMap[equip_name]
+              //reservationSourcesMap[equip_name] = undefined;
+          } else {
+              reservationSources.push(equip_name);
+              reservationSourcesMap[equip_name] = reservationSources.length-1;
+          }
+
+					if (Object.values(reservationSourcesMap).length===0) {
+						reservationSources = [];
+					}
+
+          var equip_names = reservationSources.join('~!~');
 
 					if ($('.iam-load-all-reservations').is(':checked'))
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&all=y&is=y&names="+equip_names;
 					else
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
 
-                    $('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
+          $('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
+
 				}
 			}
 
