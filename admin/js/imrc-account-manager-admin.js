@@ -1097,10 +1097,9 @@
 						//$('.iam-on-load-data').remove();
 				}
 
-				var makeRelevantReservation = function (element, event) {
-					$('.fc-event').removeClass('relevant-res');
-					$(element).addClass('relevant-res');
+				var makeRelevantReservation = function (event) {
 					releventRes = event.uid;
+					refreshResCal();
 				}
 
 				var initRentalButton = function () {
@@ -1251,12 +1250,13 @@
 
 								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
 									event.isNewbie = 1;
-									persistentRelEvent = { ele: element, ev: event};
 									$('.modal-header .fc-event').addClass('iam-ninja');
+									releventRes = event.uid;
+									$(element).addClass('relevant-res');
 								}
 
-								if (releventRes == event.uid && persistentRelEvent==null) {
-									persistentRelEvent = { ele: element, ev: event};
+								if (releventRes == event.uid) {
+									$(element).addClass('relevant-res');
 								}
 
 								if (event.email!=useremail && typeof event.nid != 'undefined') {
@@ -1269,9 +1269,6 @@
 							},
 							eventAfterAllRender: function (view) {
 								initContextMenu('rental');
-								if (persistentRelEvent!=null)
-									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
-								persistentRelEvent = null;
 							},
 							eventDrop: function (event) {
 								if (typeof event.nid != 'undefined')
@@ -1727,8 +1724,11 @@
 			}
 
 			var refreshResCal = function () {
-				$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-				$('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
+				var c = '.iam-cal';
+				if ($('.iam-res-cal').length>0)
+					c = '.iam-res-cal';
+				$(c).fullCalendar( 'removeEventSource', lastReservationResource);
+				$(c).fullCalendar( 'addEventSource', lastReservationResource);
 			}
 
 			var initResCalSubmitListener = function () {
@@ -1814,7 +1814,7 @@
 								fun: function (e) {
 									var t = $(e.trigger);
 									var event = {nid: t.data('nid')};
-									makeRelevantReservation(t, t.data('fcSeg').event);
+									makeRelevantReservation(t.data('fcSeg').event);
 								}
 						}, {
 								name: 'mark for deletion',
