@@ -60,7 +60,6 @@
 
 			if ( $('.debug-wrap').length>0 ) {
 				$('.make-dummy-res input[type=submit]').click(function(event) {
-					console.log('click')
 					$.ajax({
 						url: ajaxurl,
 						type: 'POST',
@@ -714,8 +713,6 @@
 										});
 							}
 						});
-						console.log($('.iam-rental-type-form table tbody tr'))
-						console.log({action: 'admin_update_rental_type', updated_rental_types: updatedRentalTypes, new_rental_types: newTypes});
 						$.ajax({
 							url: ajaxurl,
 							type: 'POST',
@@ -1275,7 +1272,6 @@
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
 							},
 							eventResize: function (event) {
-								console.log('resize')
 								$('.iam-cal').fullCalendar( 'rerenderEvents' );
 								if (typeof event.nid != 'undefined')
 									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
@@ -1962,7 +1958,6 @@
 				$('.res-toolbar input[name=no-pay]').off();
 
 				$('.res-toolbar input[name=upcoming]').click(function (e) {
-					console.log('RES parade')
 					if($('.iam-res-cal-placeholder').length>0) {
 						e.preventDefault();
 						return false;
