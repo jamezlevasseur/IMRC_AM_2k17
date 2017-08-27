@@ -1,4 +1,5 @@
 node_modules/*
 .DS_Store
 iam_debug.txt
+logs/*
 config/settings
