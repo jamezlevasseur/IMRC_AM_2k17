@@ -1289,6 +1289,7 @@
 						});
 					});
 
+					$('.iam-er-action-button.iam-er-checkin').off();
 					$('.iam-er-action-button.iam-er-checkin').click(function(event) {
 						$.ajax({
 							url: ajaxurl,
