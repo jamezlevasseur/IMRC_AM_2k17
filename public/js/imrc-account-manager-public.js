@@ -1053,7 +1053,6 @@
 				var matToSend = {};
 				var multipleMats = false;
 				if ($('.iam-mats-row').length>1) {
-
 					multipleMats = true;
 
 					$.each($('.iam-checkout-total'), function(index, val) {

@@ -296,7 +296,7 @@
 
 			var eventToolTip = function (event,element) {
 				var e = $(element);
-				e.attr('title','Name: '+event.title+'\n Email: '+event.email+' \n Equipment: '+event.equipment);
+				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment);
 			}
 
 			var makeSubmitPopup = function (heading,body,callback,a) {
@@ -1094,10 +1094,9 @@
 						//$('.iam-on-load-data').remove();
 				}
 
-				var makeRelevantReservation = function (element, event) {
-					$('.fc-event').removeClass('relevant-res');
-					$(element).addClass('relevant-res');
+				var makeRelevantReservation = function (event) {
 					releventRes = event.uid;
+					refreshResCal();
 				}
 
 				var initRentalButton = function () {
@@ -1235,6 +1234,7 @@
 							defaultAllDayEventDuration: {days: thisRentalDays},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
+								$(element).data('fullname', event.fullname);
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
 	              $(element).data('nid', event.nid);
@@ -1247,12 +1247,13 @@
 
 								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
 									event.isNewbie = 1;
-									persistentRelEvent = { ele: element, ev: event};
 									$('.modal-header .fc-event').addClass('iam-ninja');
+									releventRes = event.uid;
+									$(element).addClass('relevant-res');
 								}
 
-								if (releventRes == event.uid && persistentRelEvent==null) {
-									persistentRelEvent = { ele: element, ev: event};
+								if (releventRes == event.uid) {
+									$(element).addClass('relevant-res');
 								}
 
 								if (event.email!=useremail && typeof event.nid != 'undefined') {
@@ -1265,9 +1266,6 @@
 							},
 							eventAfterAllRender: function (view) {
 								initContextMenu('rental');
-								if (persistentRelEvent!=null)
-									makeRelevantReservation(persistentRelEvent.ele, persistentRelEvent.ev);
-								persistentRelEvent = null;
 							},
 							eventDrop: function (event) {
 								if (typeof event.nid != 'undefined')
@@ -1284,6 +1282,7 @@
 						});
 					});
 
+					$('.iam-er-action-button.iam-er-checkin').off();
 					$('.iam-er-action-button.iam-er-checkin').click(function(event) {
 						$.ajax({
 							url: ajaxurl,
@@ -1721,8 +1720,11 @@
 			}
 
 			var refreshResCal = function () {
-				$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-				$('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
+				var c = '.iam-cal';
+				if ($('.iam-res-cal').length>0)
+					c = '.iam-res-cal';
+				$(c).fullCalendar( 'removeEventSource', lastReservationResource);
+				$(c).fullCalendar( 'addEventSource', lastReservationResource);
 			}
 
 			var initResCalSubmitListener = function () {
@@ -1756,44 +1758,19 @@
 				});
 			}
 
-			var handleEventConfirmed = function(event,j) {
-				var index = eventsConfirmed.indexOf(event.nid);
-				if (index!=-1) {
-					eventsConfirmed.splice(index,1);
-					j.css({
-						'background-color': '#3a87ad',
-						'border': '1px solid #3a87ad'
-					});
-				} else {
-					if (eventsToDelete.indexOf(event.nid)!=-1) {
-						eventsToDelete.splice(index,1);
-					}
-					eventsConfirmed.push(event.nid);
-					if (roomResStatus==1) {
-						j.css({
-							'background-color': '#d8cf6a',
-							'border': '1px solid #d8cf6a'
-						});
-					} else {
-						j.css({
-							'background-color': '#5abc5a',
-							'border': '1px solid #5abc5a'
-						});
-					}
-				}
-			}
-
 			var handleEventToDelete = function(event,j) {
+				if (j.hasClass('event-not-editable'))
+					return;
 				var index = eventsToDelete.indexOf(event.nid);
 				if (index!=-1) {
 					eventsToDelete.splice(index,1);
-					j.removeClass('marked-for-delete');
+					refreshResCal();
 				} else {
 					if (eventsConfirmed.indexOf(event.nid)!=-1) {
 						eventsConfirmed.splice(index,1);
 					}
 					eventsToDelete.push(event.nid);
-					j.addClass('marked-for-delete');
+					refreshResCal();
 				}
 			}
 
@@ -1833,7 +1810,7 @@
 								fun: function (e) {
 									var t = $(e.trigger);
 									var event = {nid: t.data('nid')};
-									makeRelevantReservation(t, t.data('fcSeg').event);
+									makeRelevantReservation(t.data('fcSeg').event);
 								}
 						}, {
 								name: 'mark for deletion',
@@ -1884,13 +1861,13 @@
 					$('.iam-res-cal-placeholder').remove();
 
 					if (typeof reservationSourcesMap[equip_name]!='undefined') {
-                        reservationSources.splice(reservationSourcesMap[equip_name],1);
-                    } else {
-                        reservationSources.push(equip_name);
-                        reservationSourcesMap[equip_name] = reservationSources.length-1;
-                    }
-                    var equip_names = reservationSources.join('~!~');
-                    lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&names="+equip_names;
+              reservationSources.splice(reservationSourcesMap[equip_name],1);
+          } else {
+              reservationSources.push(equip_name);
+              reservationSourcesMap[equip_name] = reservationSources.length-1;
+          }
+          var equip_names = reservationSources.join('~!~');
+          lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&names="+equip_names;
 
 					if ($('.iam-load-all-reservations').is(':checked'))
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&all=y&names="+equip_names;
@@ -1904,8 +1881,8 @@
 							right: 'month,agendaWeek,agendaDay'
 						},
 						droppable: true,
-						eventOverlap: false,
-					    weekends:true,
+						eventOverlap: true,
+					  weekends:true,
 						height: 600,
 						forceEventDuration: true,
 						defaultView: 'month',
@@ -1913,10 +1890,14 @@
 						eventLimit: true, // allow "more" link when too many events
 						eventRender: function (event, element) {
 							eventToolTip(event,element);
+							$(element).data('fullname', event.fullname);
 							$(element).data('email', event.email);
 							$(element).data('equipment', event.equipment);
               $(element).data('nid', event.nid);
 							$(element).addClass('iam-status-'+event.status);
+							if (eventsToDelete.indexOf(event.nid)!=-1) {
+								$(element).addClass('marked-for-delete');
+							}
 						},
 						eventAfterRender: function (event, element) {
 							if (event.toDelete==1) {
@@ -1942,22 +1923,30 @@
 						events: lastReservationResource
 					});
 				} else {
+
 					$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-                    if (typeof reservationSourcesMap[equip_name]!='undefined') {
-                        reservationSources.splice(reservationSourcesMap[equip_name],1);
-                        reservationSourcesMap[equip_name] = undefined;
-                    } else {
-                        reservationSources.push(equip_name);
-                        reservationSourcesMap[equip_name] = reservationSources.length-1;
-                    }
-                    var equip_names = reservationSources.join('~!~');
+          if (typeof reservationSourcesMap[equip_name]!='undefined') {
+              reservationSources.splice(reservationSourcesMap[equip_name],1);
+							delete reservationSourcesMap[equip_name]
+              //reservationSourcesMap[equip_name] = undefined;
+          } else {
+              reservationSources.push(equip_name);
+              reservationSourcesMap[equip_name] = reservationSources.length-1;
+          }
+
+					if (Object.values(reservationSourcesMap).length===0) {
+						reservationSources = [];
+					}
+
+          var equip_names = reservationSources.join('~!~');
 
 					if ($('.iam-load-all-reservations').is(':checked'))
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&all=y&is=y&names="+equip_names;
 					else
 						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
 
-                    $('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
+          $('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
+
 				}
 			}
 
