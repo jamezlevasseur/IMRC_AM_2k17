@@ -297,7 +297,7 @@
 
 			var eventToolTip = function (event,element) {
 				var e = $(element);
-				e.attr('title','Name: '+event.title+'\n Email: '+event.email+' \n Equipment: '+event.equipment);
+				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment);
 			}
 
 			var makeSubmitPopup = function (heading,body,callback,a) {
@@ -1238,6 +1238,7 @@
 							defaultAllDayEventDuration: {days: thisRentalDays},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
+								$(element).data('fullname', event.fullname);
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
 	              $(element).data('nid', event.nid);
@@ -1920,6 +1921,7 @@
 						eventLimit: true, // allow "more" link when too many events
 						eventRender: function (event, element) {
 							eventToolTip(event,element);
+							$(element).data('fullname', event.fullname);
 							$(element).data('email', event.email);
 							$(element).data('equipment', event.equipment);
               $(element).data('nid', event.nid);

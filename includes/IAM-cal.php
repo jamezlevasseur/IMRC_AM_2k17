@@ -145,7 +145,9 @@ class IAM_Cal
 				foreach ($res_result as $row) {
 					$title;
 					if ($is_admin) {
-						$title = $wpdb->get_results($wpdb->prepare("SELECT WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$row->IAM_ID))[0]->WP_Username;
+						$uinfo = $wpdb->get_results($wpdb->prepare("SELECT WP_ID,WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$row->IAM_ID));
+						$title = $uinfo[0]->WP_Username;
+						$wp_id = $uinfo[0]->WP_ID;
 						$email = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login=%s",$title))[0]->user_email;
 						if ($equipment_in_title) {
 							$title = $title.' using '.$item_name;
@@ -155,7 +157,7 @@ class IAM_Cal
 					}
 					if ($is_admin) {
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
-						$formatted_events[] = ['nid'=>$row->NI_ID, 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name,'status'=>$RES_STATUS_CLASS_DICT[$row->Status]];
+						$formatted_events[] = ['nid'=>$row->NI_ID, 'fullname'=> get_full_name($wp_id), 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name,'status'=>$RES_STATUS_CLASS_DICT[$row->Status]];
 						if (array_key_exists('allDay', $_GET)) {
 							$formatted_events[count($formatted_events)-1]['allDay'] = true;
 						}
@@ -210,7 +212,7 @@ class IAM_Cal
 				$item_events = $item_events===null ? [] : $item_events;
 				$a = array_merge($a,$item_events);
 			}
-			
+
 			echo json_encode($a);
 			exit;
 		} else if (isset($_GET['name'])) {

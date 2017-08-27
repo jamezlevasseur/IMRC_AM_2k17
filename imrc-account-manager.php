@@ -237,6 +237,12 @@ function get_user_for_email($email)
 	return $wpdb->get_results("SELECT * FROM ".IAM_USERS_TABLE." WHERE WP_ID=".get_user_by('email',$email)->ID)[0];
 }
 
+function get_full_name($wpid)
+{
+	$u = get_userdata($wpid);
+	return ucwords($u->first_name.' '.$u->last_name);
+}
+
 function send_to_debug_file($s)
 {
     if(!file_exists(DEBUG_FILE)) {
