@@ -163,6 +163,8 @@ class IAM_Admin {
         add_submenu_page ('imrc-equipment-room', 'Scheduling', 'Scheduling', 'manage_options', 'er_scheduling', array('Admin_Content', 'scheduling_content') );
         add_submenu_page ('imrc-equipment-room', 'User Privileges', 'User Privileges', 'manage_options', 'er_user_privileges', array('Admin_Content', 'user_privileges_content') );
 
+				add_menu_page ( 'IAM info', 'IAM info', 'manage_options', 'imrc-info', array('Admin_Content','info_content'), plugins_url( 'assets/eye.png', dirname(__FILE__) ));
+
         if (DEV_MODE === 1)
             add_menu_page ( 'Debug', 'Debug', 'manage_options', 'imrc-debug', array('Debug_Page','debug_content'), plugins_url( 'assets/bug.png', dirname(__FILE__) ));
     }

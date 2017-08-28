@@ -14,6 +14,13 @@ class Admin_Content
 	 * @return string
 	 */
 
+	 public static function info_content()
+	 {
+		 ?>
+		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
+	 <?php
+	 }
+
 	 public static function er_equipment_content()
 	 {
 	 	Admin_Content::equipment_content('e');
