@@ -7,7 +7,7 @@
 class Utils_Public
 {
 
-  public static function late_reservations_check($force=false)
+  public static function late_reservations_check()
   {
     global $wpdb;
     date_default_timezone_set(IMRC_TIME_ZONE);
@@ -17,7 +17,7 @@ class Utils_Public
 
     $do_check = false;
 
-    if (get_setting_iam('late_er_check')===false || $force===true)
+    if (get_setting_iam('late_er_check')===false || get_setting_iam('force_email_check')=='yes')
       $do_check = true;
     else if ((int)$rightnow-(int)get_setting_iam('late_er_check')>(SECONDS_IN_DAY/3))
       $do_check = true;
@@ -44,6 +44,10 @@ class Utils_Public
 
         if (count($last_attempt)==0) {
           $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID,$rightnow));
+        } else if (get_setting_iam('force_email_check_all_emails')=='yes') {
+          send_to_debug_file('force_email_check_all_emails is set. Ignoring check and sending all emails.');
+          send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY);
+          send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
         } else if ((int)$rightnow-(int)$last_attempt[0]->Meta_Value<SECONDS_IN_DAY) {
           send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS TRUE');
           send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
