@@ -72,7 +72,7 @@ class Utils_Public
 
         $tech_email_body = 'User: '.$user->WP_Username.' was due to check in the '.$eq->Name.' yesterday. <br /> An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent. This is their '.ordinal_format($notifcation_num).' notification.';
 
-        $user_email_body = 'Greetings, <br /><br /> You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible.<br /> The hours of operations are "'.$hours.'". <br /><br /> Thank you, <br /><br /> - The IMRC Team';
+        $user_email_body = 'Greetings, <br /><br /> You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible.<br /><br /> The hours of operations are "'.$hours.'". <br /><br /> Thank you, <br /><br /> - The IMRC Team';
 
         send_to_debug_file( $tech_email_body );
         send_to_debug_file( get_email($user->IAM_ID) );
