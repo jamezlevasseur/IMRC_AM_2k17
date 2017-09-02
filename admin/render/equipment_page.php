@@ -241,6 +241,8 @@ class Equipment_Page extends Item_Mgmt
                         }
                         $search_tag = $search_parent;
                     }
+                    $search_tag = str_replace('_',' ',$search_tag);
+
                     $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Root_Tag=%s WHERE Equipment_ID=%d",$search_tag,$equip_id));
                 }
 
