@@ -548,7 +548,6 @@
 						height: 500,
 						forceEventDuration: true,
 						defaultView: 'agendaWeek',
-						eventConstraint: 'businessHours',
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
 						eventSources: [
@@ -603,7 +602,6 @@
 								height: 500,
 								forceEventDuration: true,
 								defaultView: 'agendaWeek',
-								eventConstraint: 'businessHours',
 								editable: false, //new events will be made editable else where
 								eventLimit: true, // allow "more" link when too many events
 								eventSources: [
@@ -1136,7 +1134,6 @@
 						defaultView: 'agendaDay',
 						editable: false, //new events will be made editable else where
 						businessHours: businessHoursConverted,
-						eventConstraint: 'businessHours',
 						eventSources: [
 							{url:ajaxurl+"?action=get_equipment_calendar&name="+selected_equip_name},
 							{url: ajaxurl+"?action=get_irregular_hours_calendar&equip_name="+selected_equip_name,
@@ -1214,7 +1211,6 @@
 						height: 500,
 						forceEventDuration: true,
 						defaultView: 'agendaWeek',
-						eventConstraint: 'businessHours',
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
 						eventSources: [
@@ -1247,7 +1243,6 @@
 								height: 500,
 								forceEventDuration: true,
 								defaultView: 'agendaWeek',
-								eventConstraint: 'businessHours',
 								editable: false, //new events will be made editable else where
 								eventLimit: true, // allow "more" link when too many events
 								eventSources: [
