@@ -218,6 +218,8 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_get_charge_table_json', 'Charge_Sheet_Page', 'admin_get_charge_table_json');
 		$this->loader->add_action('wp_ajax_admin_update_charge_row', 'Charge_Sheet_Page', 'admin_update_charge_row');
 		$this->loader->add_action('wp_ajax_admin_get_pagination_max', 'Charge_Sheet_Page', 'admin_get_pagination_max');
+		$this->loader->add_action('wp_ajax_admin_get_all_charges_as_csv', 'Charge_Sheet_Page', 'get_all_charges_as_csv');
+
 
 		$this->loader->add_action('wp_ajax_admin_equipment_action', 'Equipment_Page', 'admin_equipment_callback');
 		$this->loader->add_action('wp_ajax_admin_get_tags', 'Equipment_Page', 'admin_get_tags_callback');
