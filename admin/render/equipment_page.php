@@ -6,6 +6,27 @@
 class Equipment_Page extends Item_Mgmt
 {
 
+    public static function equipment_csv()
+    {
+      global $wpdb;
+
+      $r = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." ORDER BY Name ASC");
+
+      $csv = 'Name,Description,Pricing Description,Manufacturer Info,Certification,Status,Facility,Comments'.PHP_EOL;
+
+      foreach ($r as $row) {
+        $cert = 'None';
+        if ($row->Certification_ID!=0) {
+          $cert = $wpdb->get_results("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID={$row->Certification_ID}")[0]->Name;
+        }
+
+        $ooo = $row->Out_Of_Order==1 ? 'Out of Order' : 'Functional';
+
+        $csv.='"'.escape_CSV_quotes($row->Name).'","'.escape_CSV_quotes($row->Description).'","'.escape_CSV_quotes($row->Pricing_Description).'","'.escape_CSV_quotes($row->Manufacturer_Info).'","'.escape_CSV_quotes($cert).'","'.escape_CSV_quotes($ooo).'","'.escape_CSV_quotes($row->Root_Tag).'","'.escape_CSV_quotes($row->Comments).'"'.PHP_EOL;
+      }
+      iam_respond(SUCCESS,$csv);
+    }
+
     public static function admin_bind_rental()
     {
       global $wpdb;

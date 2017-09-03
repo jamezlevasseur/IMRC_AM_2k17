@@ -102,6 +102,8 @@ class Admin_Content
 					<button id="iam-duplicate-equipment-button" class="iam-secondary-button">Duplicate Current Equipment</button>
 					<br />
 					<button id="iam-new-equipment-button" class="iam-secondary-button">New Equipment</button>
+					<br />
+					<button class="iam-secondary-button iam-csv-button">Generate CSV</button>
 				</div>
 				<?php if ($dept=='e') { ?>
 				<div class="rent-box">

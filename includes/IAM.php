@@ -225,7 +225,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_get_tags', 'Equipment_Page', 'admin_get_tags_callback');
 		$this->loader->add_action('wp_ajax_admin_bind_rental', 'Equipment_Page', 'admin_bind_rental');
 		$this->loader->add_action('wp_ajax_admin_end_rental', 'Equipment_Page', 'admin_end_rental');
-
+		$this->loader->add_action('wp_ajax_admin_equipment_csv', 'Equipment_Page', 'equipment_csv');
 
 		$this->loader->add_action('wp_ajax_admin_pricing', 'Pricing_Page', 'admin_pricing_callback');
 		$this->loader->add_action('wp_ajax_admin_get_pricing_dropdowns', 'Pricing_Page', 'admin_get_pricing_dropdowns_callback');

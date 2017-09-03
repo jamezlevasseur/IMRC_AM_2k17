@@ -322,6 +322,10 @@ function iam_output($val)
 	return htmlspecialchars($val);
 }
 
+function escape_CSV_quotes($str)
+{
+	return str_replace('"','""',$str);
+}
 
 add_filter( 'registration_errors', 'prevent_other_registration', 10, 3 );
 function prevent_other_registration( $errors, $sanitized_user_login, $user_email ) {

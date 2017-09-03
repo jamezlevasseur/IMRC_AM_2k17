@@ -2792,6 +2792,7 @@
 				if ($('.iam-er').length>0) {
 					initCheckinCheckout();
 				}
+				initCSVAJAXButtonListener('admin_equipment_csv');
 				$(document).tooltip();
 				findItemAgain($('#iam-equipment-list'));
 
