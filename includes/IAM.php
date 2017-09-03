@@ -231,6 +231,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_get_pricing_dropdowns', 'Pricing_Page', 'admin_get_pricing_dropdowns_callback');
 		$this->loader->add_action('wp_ajax_admin_delete_material', 'Pricing_Page', 'admin_delete_material_callback');
 		$this->loader->add_action('wp_ajax_admin_get_new_mat_row', 'Pricing_Page', 'admin_get_new_mat_row_callback');
+		$this->loader->add_action('wp_ajax_admin_pricing_csv', 'Pricing_Page', 'pricing_csv');
 
 		$this->loader->add_action('wp_ajax_admin_approve_new_user', 'Registration_Page', 'admin_approve_new_user_callback');
 		$this->loader->add_action('wp_ajax_admin_deny_new_user', 'Registration_Page', 'admin_deny_new_user_callback');

@@ -729,7 +729,8 @@ class Admin_Content
 				</tbody>
 			</table>
 			<div class="iam-new-mat-button iam-secondary-button">Add New</div><br />
-			<div class="iam-button iam-admin-submit-button">Save Changes</div>
+			<div class="iam-button iam-admin-submit-button">Save Changes</div><br />
+			<div class="iam-csv-button iam-secondary-button">Generate CSV</div>
 		</div>
 		<?php
 	}

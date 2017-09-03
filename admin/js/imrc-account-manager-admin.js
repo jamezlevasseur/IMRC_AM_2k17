@@ -2941,6 +2941,7 @@
 				initNewMaterialButtonListener();
 				initDeletePricingDropDownListener();
 				initPricingRowDeleteListener();
+				initCSVAJAXButtonListener('admin_pricing_csv');
 			} else if ($('.iam-room-res-wrap').length>0) {
 
 				resetEvents();

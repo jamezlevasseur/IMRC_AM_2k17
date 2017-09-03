@@ -6,6 +6,36 @@
 class Pricing_Page
 {
 
+    public static function pricing_csv()
+    {
+      global $wpdb;
+      $r = $wpdb->get_results("SELECT * FROM ".IAM_MATERIAL_TABLE." ORDER BY Name ASC");
+
+      $csv = 'Name,Price Per Unit,Minimum Price,Unit Name,Associated Tags, Associated Equipment'.PHP_EOL;
+
+      foreach ($r as $row) {
+        $tag_results = $wpdb->get_results("SELECT Tag_ID FROM ".IAM_MATERIAL_TAGS_TABLE." WHERE Material_ID='{$row->Material_ID}' ");
+        $equip_results = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_MATERIAL_EQUIPMENT_TABLE." WHERE Material_ID='{$row->Material_ID}' ");
+
+        $associated_tags = [];
+        $associated_equipment = [];
+
+        foreach ($tag_results as $tag_row) {
+          $tag_id = $tag_row->Tag_ID;
+          $tag_name = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
+          $associated_tags[] = $tag_name;
+        }
+        foreach ($equip_results as $equip_row) {
+          $equip_id = $equip_row->Equipment_ID;
+          $equip_name = $wpdb->get_results("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID='$equip_id'")[0]->Name;
+          $associated_equipment[] = $equip_name;
+        }
+
+        $csv.='"'.escape_CSV_quotes($row->Name).'","'.$row->Price_Per_Unit.'","'.$row->Base_Price.'","'.$row->Unit_Name.'","'.implode(' & ',$associated_tags).'","'.implode(' & ',$associated_equipment).'"'.PHP_EOL;
+      }
+      iam_respond(SUCCES, $csv);
+    }
+
     public static function make_pricing_drop_down($query_results, $selected='')
     {
         $html = $selected=='' ? '<div class="iam-pricing-drop-down"><select><option disabled selected>Select a value</option>': '<div class="iam-pricing-drop-down"><select><option disabled>Select a value</option>';
@@ -25,7 +55,7 @@ class Pricing_Page
         iam_respond(SUCCESS,Pricing_Page::make_mat_row());
     }
 
-        public static function make_mat_row($id=null,$name,$price,$base_price,$unit_name,$associated_tags,$associated_equipment)
+    public static function make_mat_row($id=null,$name,$price,$base_price,$unit_name,$associated_tags,$associated_equipment)
     {
         if ($id==null) {
             $id=$name=$price=$base_price=$unit_name='';
