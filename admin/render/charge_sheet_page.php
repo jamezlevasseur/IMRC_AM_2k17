@@ -15,10 +15,7 @@ class Charge_Sheet_Page
 
       $charge_array = Charge_Sheet_Page::make_charge_table_array($r, false);
 
-      //print_r($charge_array);exit;
-
       foreach ($charge_array as $row) {
-        //echo implode(',',$row).'\n';exit;
         $csv.=implode(',',$row['values']).PHP_EOL;
       }
 
