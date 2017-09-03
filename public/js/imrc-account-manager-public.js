@@ -428,13 +428,27 @@
 		}
 
 		var isEmail = function (email) {
-		    var atpos = email.indexOf("@");
-		    var dotpos = email.lastIndexOf(".");
-		 	if (atpos<1 || dotpos<atpos+2 || dotpos+2>=email.length) {
-		        return false;
-		    }
-		    return true;
-	  	}
+		  var atpos = email.indexOf("@");
+		  var dotpos = email.lastIndexOf(".");
+			if (atpos<1 || dotpos<atpos+2 || dotpos+2>=email.length) {
+		      return false;
+		  }
+		  return true;
+	  }
+
+		var warnIfOutOfBounds = function (e, businessHoursConverted) {
+			var thisDay = businessHoursConverted[daynums[e.start.format('ddd').toLowerCase()]];
+
+			var thisStart = moment(thisDay.start, 'HH:mm');
+			var thisEnd = moment(thisDay.end, 'HH:mm');
+
+			var targetTimeStart = moment( e.start.format('HH:mm'), 'HH:mm' );
+			var targetTimeEnd = moment( e.end.format('HH:mm'), 'HH:mm' );
+
+			if ( targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) ) {
+					alert ('You reservation takes place outside of operating hours.');
+			}
+		}
 
 		var initEquipmentButtonListener = function () {
 
@@ -519,7 +533,10 @@
 							stick: true, // maintain when user navigates (see docs on the renderEvent method)
 							editable: true,
 							color:'#4cad57',
-							className: 'iam-new-event'
+							className: 'iam-new-event',
+							drop: function (e) {
+								console.log('drop')
+							}
 						});
 
 						// make the event draggable using jQuery UI
@@ -548,9 +565,17 @@
 						height: 500,
 						forceEventDuration: true,
 						defaultView: 'agendaWeek',
-						eventConstraint: 'businessHours',
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
+						eventReceive: function (e) {
+							warnIfOutOfBounds(e, businessHoursConverted);
+						},
+						eventDrop: function (e) {
+							warnIfOutOfBounds(e, businessHoursConverted);
+						},
+						eventResize: function (e) {
+							warnIfOutOfBounds(e, businessHoursConverted);
+						},
 						eventSources: [
 						{url:ajaxurl+"?action=get_equipment_calendar&name="+equip_name},
 						{url: ajaxurl+"?action=get_irregular_hours_calendar&facility="+current_root_tag,
@@ -603,7 +628,6 @@
 								height: 500,
 								forceEventDuration: true,
 								defaultView: 'agendaWeek',
-								eventConstraint: 'businessHours',
 								editable: false, //new events will be made editable else where
 								eventLimit: true, // allow "more" link when too many events
 								eventSources: [
@@ -1136,7 +1160,6 @@
 						defaultView: 'agendaDay',
 						editable: false, //new events will be made editable else where
 						businessHours: businessHoursConverted,
-						eventConstraint: 'businessHours',
 						eventSources: [
 							{url:ajaxurl+"?action=get_equipment_calendar&name="+selected_equip_name},
 							{url: ajaxurl+"?action=get_irregular_hours_calendar&equip_name="+selected_equip_name,
@@ -1214,7 +1237,6 @@
 						height: 500,
 						forceEventDuration: true,
 						defaultView: 'agendaWeek',
-						eventConstraint: 'businessHours',
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
 						eventSources: [
@@ -1247,7 +1269,6 @@
 								height: 500,
 								forceEventDuration: true,
 								defaultView: 'agendaWeek',
-								eventConstraint: 'businessHours',
 								editable: false, //new events will be made editable else where
 								eventLimit: true, // allow "more" link when too many events
 								eventSources: [

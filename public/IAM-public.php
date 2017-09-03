@@ -61,7 +61,7 @@ class IAM_Public {
 		 * The class responsible for orchestrating the actions and filters of the
 		 * core plugin.
 		 */
-		
+
 
 
 		require_once iam_dir() . 'includes/IAM-cal.php';

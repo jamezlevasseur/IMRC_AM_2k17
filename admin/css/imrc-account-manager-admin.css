@@ -442,6 +442,7 @@ label.iam-was-late {
 	margin-top: 15px;
 	border-collapse: collapse;
 	text-align: left;
+  font-size: 12px;
 }
 #iam-charge-table th {
 	background-color: lightblue;

@@ -2415,6 +2415,26 @@
 				});
 			}
 
+			var initCSVAJAXButtonListener = function (ajaxaction) {
+				$('.iam-csv-button').click(function(event) {
+					submissionStart();
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: {action: ajaxaction},
+						success: function (data) {
+							submissionEnd();
+							var encodedUri = encodeURI('data:text/csv;charset=utf-8,'+handleServerResponse(data));
+							window.open(encodedUri);
+						},
+						error: function (data) {
+							submissionEnd();
+							handleServerError(data, new Error());
+						}
+					});
+				});
+			}
+
 			var initCSVButtonListener = function (ignoreColumn,id) {
 				$('.iam-csv-button').click(function(event) {
 					var csvText = 'data:text/csv;charset=utf-8,';
@@ -2741,7 +2761,7 @@
 				initScheduleSubmitListeners();
 
 			} else if ( $('.iam-charge-sheet-wrap').length>0 ) {
-				initCSVButtonListener(11);
+				initCSVAJAXButtonListener('admin_get_all_charges_as_csv');
 				$('.iam-search-field').change(function(event) {
 					$('.iam-charge-sheet-search').val('');
 					$('#iam-charges-table tr').removeClass('iam-ninja');
@@ -2772,6 +2792,7 @@
 				if ($('.iam-er').length>0) {
 					initCheckinCheckout();
 				}
+				initCSVAJAXButtonListener('admin_equipment_csv');
 				$(document).tooltip();
 				findItemAgain($('#iam-equipment-list'));
 
@@ -2920,6 +2941,7 @@
 				initNewMaterialButtonListener();
 				initDeletePricingDropDownListener();
 				initPricingRowDeleteListener();
+				initCSVAJAXButtonListener('admin_pricing_csv');
 			} else if ($('.iam-room-res-wrap').length>0) {
 
 				resetEvents();
