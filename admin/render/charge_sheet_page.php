@@ -6,6 +6,10 @@
 class Charge_Sheet_Page
 {
 
+    public static function map_charge_array_to_csv($v) {
+      return '"'.escape_CSV_quotes($v).'"';
+    }
+
     public static function get_all_charges_as_csv()
     {
       global $wpdb;
@@ -16,7 +20,7 @@ class Charge_Sheet_Page
       $charge_array = Charge_Sheet_Page::make_charge_table_array($r, false);
 
       foreach ($charge_array as $row) {
-        $csv.=implode(',',$row['values']).PHP_EOL;
+        $csv.=implode(',', array_map('Charge_Sheet_Page::map_charge_array_to_csv', $row['values'])).PHP_EOL;
       }
 
       iam_respond(SUCCESS,$csv);
