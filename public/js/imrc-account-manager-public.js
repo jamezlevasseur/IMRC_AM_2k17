@@ -456,7 +456,7 @@
 				//init popup
 				current_root_tag = $(this).data('equiproot').replace(' ','_').toLowerCase();
 
-				if(canReserveER==0) {
+				if(canReserveER==0 && current_root_tag=='equipment_room') {
 					alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $'+erLateFee+'.');
 					return;
 				}
