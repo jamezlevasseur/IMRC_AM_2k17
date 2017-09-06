@@ -585,20 +585,8 @@
 						defaultView: 'agendaWeek',
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
-						drop: function (date, jsevent) {
-							console.log($(this).data());
-							$(this).data('to-delete',1);
-							//$.removeData( this );
-
-							//$(this).removeData('event',{});
-							if (!preventPastReservation(date, businessHoursConverted))
-								date = null;
-
-							console.log($(this).data());
-							return false;
-						},
 						eventReceive: function (e, d, revert) {
-							$(this).data('to-delete',1);
+							preventPastReservation(e, businessHoursConverted);
 							warnIfOutOfBounds(e, businessHoursConverted);
 						},
 						eventDrop: function (e, d, revert) {
