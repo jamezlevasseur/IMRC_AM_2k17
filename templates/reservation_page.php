@@ -251,7 +251,7 @@ class IAM_Reservation_Page
 	{
 		return '
 		<div class="iam-banner iam-res-banner">
-			Room and equipment room reservations coming soon. Fab Labs reservations are in beta!
+			The Equipment Room is under going an update. <br /><br /> Online reservations for the Equipment Room will be available soon!
 		</div>';
 	}
 
@@ -288,7 +288,7 @@ class IAM_Reservation_Page
 			$facility_html.='data-'.$tag.'="'.iam_output(json_encode(['schedule_type'=>$row->Schedule_Type,'rental_period'=>$row->Rental_Days,'rental_hours_description'=>$row->Rental_Hours_Description,'appointment_business_hours'=>$row->Appointment_Business_Hours])).'" ';
 		}
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
-		$html = '<div id="iam-ref">
+		$html = '<div id="iam-ref">'.IAM_Reservation_Page::res_banner().'
 		<p class="iam-page-header">Available Equiment</p>
 		<div class="iam-ninja iam-cal-data" data-late-fee="'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
 		<div class="iam-ref-left-top">
