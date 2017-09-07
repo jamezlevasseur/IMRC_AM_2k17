@@ -1133,7 +1133,7 @@
 				}
 
 				var makeRelevantReservation = function (event) {
-					releventRes = event.uid;
+					releventRes = event._id;
 					refreshResCal();
 				}
 
@@ -1186,15 +1186,15 @@
 								}
 							});
 
-							var chosen = $('.relevant-res');
-							if (typeof chosen.data('nid') != 'undefined') {
-								chosen = {nid: chosen.data('nid'),
+							var relRes = $('.relevant-res'), chosen = null;
+							if (typeof relRes.data('nid') != 'undefined') {
+								chosen = {nid: relRes.data('nid'),
 													equipment: equip_name.split('_').join(' ')};
 							} else {
 								var events = $('.iam-cal').fullCalendar('clientEvents');
 								for (var i = 0; i < events.length; i++) {
 
-									if (events[i].uid==releventRes) {
+									if (events[i]._id==releventRes) {
 										chosen = {
 											user: useremail,
 											equipment: equip_name.split('_').join(' '),
@@ -1205,6 +1205,11 @@
 								}
 							}
 
+							if (chosen===null) {
+								alert("Error selecting reservation.");
+								return;
+							}
+							
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
@@ -1275,34 +1280,45 @@
 								$(element).data('fullname', event.fullname);
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
-	              $(element).data('nid', event.nid);
-								$(element).data('_id', event._id);
-
-								if (typeof event.uid == 'undefined') {
-									eventCount++;
-									event.uid = eventCount;
-								}
+								$(element).data('nid', event.nid);
 
 								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
-									event.isNewbie = 1;
+
 									$('.modal-header .fc-event').addClass('iam-ninja');
-									releventRes = event.uid;
+									releventRes = event._id;
 									$(element).addClass('relevant-res');
 								}
 
-								if (releventRes == event.uid) {
+								if (releventRes == event._id) {
 									$(element).addClass('relevant-res');
 								}
 
-								if (event.email!=useremail && typeof event.nid != 'undefined') {
+								if (event.editable==false) {
 									$(element).addClass('event-not-editable');
-									event.editable = false;
 								}
+
 								eventToolTip(event,element);
 							},
 							eventAfterRender: function (event, element) {
 							},
 							eventAfterAllRender: function (view) {
+								var events = $('.iam-cal').fullCalendar('clientEvents');
+								var toUpdate = [];
+								for (var i = 0; i < events.length; i++) {
+									var ev = events[i];
+
+									if (typeof ev.nid == 'undefined' && typeof ev.isNewbie=='undefined') {
+										ev.isNewbie = 1;
+										toUpdate.push(ev);
+									}
+									if (ev.email!=useremail && typeof ev.nid != 'undefined' && (ev.editable==true || typeof ev.editable == 'undefined' )) {
+										ev.editable = false;
+										toUpdate.push(ev);
+									}
+								}
+								if (toUpdate.length>0) {
+									$('.iam-cal').fullCalendar('updateEvents', toUpdate);
+								}
 								initContextMenu('rental');
 							},
 							eventDrop: function (event) {
