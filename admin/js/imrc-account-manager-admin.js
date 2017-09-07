@@ -1297,10 +1297,6 @@
 									$(element).addClass('event-not-editable');
 								}
 
-<<<<<<< Updated upstream
-=======
-								//$('.iam-cal').fullCalendar('updateEvent', event);
->>>>>>> Stashed changes
 								eventToolTip(event,element);
 							},
 							eventAfterAllRender: function (view) {
