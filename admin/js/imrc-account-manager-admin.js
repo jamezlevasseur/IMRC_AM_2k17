@@ -1312,7 +1312,6 @@
 								if (toUpdate.length>0) {
 									$('.iam-cal').fullCalendar('updateEvents', toUpdate);
 								}
-
 								initContextMenu('rental');
 							},
 							eventDrop: function (event) {
