@@ -1186,9 +1186,9 @@
 								}
 							});
 
-							var chosen = $('.relevant-res');
-							if (typeof chosen.data('nid') != 'undefined') {
-								chosen = {nid: chosen.data('nid'),
+							var relRes = $('.relevant-res'), chosen = null;
+							if (typeof relRes.data('nid') != 'undefined') {
+								chosen = {nid: relRes.data('nid'),
 													equipment: equip_name.split('_').join(' ')};
 							} else {
 								var events = $('.iam-cal').fullCalendar('clientEvents');
@@ -1203,6 +1203,11 @@
 										}
 									}
 								}
+							}
+
+							if (chosen===null) {
+								alert("Error selecting reservation.");
+								return;
 							}
 
 							$.ajax({
@@ -1292,6 +1297,10 @@
 									$(element).addClass('event-not-editable');
 								}
 
+<<<<<<< Updated upstream
+=======
+								//$('.iam-cal').fullCalendar('updateEvent', event);
+>>>>>>> Stashed changes
 								eventToolTip(event,element);
 							},
 							eventAfterAllRender: function (view) {
