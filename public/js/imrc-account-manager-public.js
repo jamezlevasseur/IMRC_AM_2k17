@@ -436,16 +436,16 @@
 		  return true;
 	  }
 
+		var pastEvent = null;
+
 		var preventPastReservation = function (e, businessHoursConverted) {
+
 			var targetTimeStart = null;
 
 			if (typeof e.start == 'undefined')
 				targetTimeStart = moment( e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
 			else
 				targetTimeStart = moment( e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
-
-			console.log(targetTimeStart.format('MM-DD-YYYY HH:mm'));
-			console.log(moment().format('MM-DD-YYYY HH:mm'));
 
 			if (targetTimeStart.isBefore(moment())) {
 				alert ('You cannot make reservations in the past.');
@@ -463,7 +463,7 @@
 			var targetTimeStart = moment( e.start.format('HH:mm'), 'HH:mm' );
 			var targetTimeEnd = moment( e.end.format('HH:mm'), 'HH:mm' );
 
-			if ( targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) ) {
+			if ( targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
 					alert ('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
 			}
 		}
@@ -548,7 +548,7 @@
 						// store data so the calendar knows to render an event upon drop
 						$(this).data('event', {
 							title: $.trim($(this).text()), // use the element's text as the event title
-							stick: true, // maintain when user navigates (see docs on the renderEvent method)
+							//stick: true, // maintain when user navigates (see docs on the renderEvent method)
 							editable: true,
 							color:'#4cad57',
 							className: 'iam-new-event',
@@ -586,17 +586,24 @@
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
 						eventReceive: function (e, d, revert) {
-							preventPastReservation(e, businessHoursConverted);
+							if (!preventPastReservation(e, businessHoursConverted)) {
+								$('.iam-res-cal').fullCalendar('removeEvents',e._id);
+								return false;
+							}
 							warnIfOutOfBounds(e, businessHoursConverted);
 						},
 						eventDrop: function (e, d, revert) {
-							if (!preventPastReservation(e, businessHoursConverted))
+							if (!preventPastReservation(e, businessHoursConverted)) {
 								revert();
+								return;
+							}
 							warnIfOutOfBounds(e, businessHoursConverted);
 						},
 						eventResize: function (e, d, revert) {
-							if (!preventPastReservation(e, businessHoursConverted))
+							if (!preventPastReservation(e, businessHoursConverted)) {
 								revert();
+								return;
+							}
 							warnIfOutOfBounds(e, businessHoursConverted);
 						},
 						eventSources: [
