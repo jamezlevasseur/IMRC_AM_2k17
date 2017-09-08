@@ -6,6 +6,42 @@
 class Equipment_Page extends Item_Mgmt
 {
 
+    public static function duplicate_equipment()
+    {
+      global $wpdb;
+      $equipment = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID=%s",$_POST['nid']))[0];
+
+      $name = $equipment->Name;
+      $count = 1;
+
+      if (strpos($name,'(')!=false) {
+        $num = (int) trim( substr($name, (strrpos($name,'(')+1), strrpos($name,')' ) ) );
+        if ( is_numeric( $num ) ) {
+          $count = $num;
+          $count++;
+          $name = substr($name, 0, strrpos($name,'(')-1 );
+        }
+      } else if ( is_numeric( substr($name, -1) ) ) {
+        $count = (int) trim( substr($name, strrpos($name, ' ')) );
+        $count++;
+        $name = substr($name, 0, strrpos($name, ' '));
+      }
+
+
+      $name = $name." ($count)";
+
+      while ( count($wpdb->get_results("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$name' "))>0 ) {
+        $count++;
+        $name = $equipment->Name." ($count)";
+      }
+
+      $ni_id = make_nid();
+
+      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo) );
+
+      iam_respond(SUCCESS);
+    }
+
     public static function equipment_csv()
     {
       global $wpdb;
