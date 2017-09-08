@@ -979,7 +979,6 @@
 						success: function (data) {
 							handleServerResponse(data);
 							reloadAndFind(form.children('.iam-form-row').children('#name').val())
-							//window.location.reload();
 						},
 						error: function (data) {
 							handleServerError(data, new Error());
@@ -1047,7 +1046,7 @@
 							data: {action: 'duplicate_equipment', nid: $('#iam-update-form').children('.iam-form-row').children('#x').val()},
 							success: function (data) {
 								handleServerResponse(data)
-								//window.location.reload();
+								reloadAndFind($('#iam-update-form').children('.iam-form-row').children('#name').val())
 							},
 							error: function (data) {
 								handleServerError(data, new Error());
