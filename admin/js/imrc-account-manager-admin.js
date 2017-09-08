@@ -1209,7 +1209,7 @@
 								alert("Error selecting reservation.");
 								return;
 							}
-							
+
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
@@ -1283,7 +1283,6 @@
 								$(element).data('nid', event.nid);
 
 								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
-
 									$('.modal-header .fc-event').addClass('iam-ninja');
 									releventRes = event._id;
 									$(element).addClass('relevant-res');
@@ -1295,6 +1294,10 @@
 
 								if (event.editable==false) {
 									$(element).addClass('event-not-editable');
+								}
+
+								if (eventsToDelete.indexOf(event.nid)!=-1) {
+									$(element).addClass('marked-for-delete');
 								}
 
 								eventToolTip(event,element);
@@ -1820,9 +1823,6 @@
 					eventsToDelete.splice(index,1);
 					refreshResCal();
 				} else {
-					if (eventsConfirmed.indexOf(event.nid)!=-1) {
-						eventsConfirmed.splice(index,1);
-					}
 					eventsToDelete.push(event.nid);
 					refreshResCal();
 				}
