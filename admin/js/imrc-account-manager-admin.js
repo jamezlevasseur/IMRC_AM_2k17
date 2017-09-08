@@ -1280,16 +1280,11 @@
 								$(element).data('fullname', event.fullname);
 								$(element).data('email', event.email);
 								$(element).data('equipment', event.equipment);
-<<<<<<< HEAD
-	              $(element).data('nid', event.nid);
 
-								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
-
-=======
 								$(element).data('nid', event.nid);
 
 								if (typeof event.nid == 'undefined' && typeof event.isNewbie=='undefined' ) {
->>>>>>> hotfixes-09052017
+
 									$('.modal-header .fc-event').addClass('iam-ninja');
 									releventRes = event._id;
 									$(element).addClass('relevant-res');
@@ -1303,13 +1298,10 @@
 									$(element).addClass('event-not-editable');
 								}
 
-<<<<<<< HEAD
-=======
 								if (eventsToDelete.indexOf(event.nid)!=-1) {
 									$(element).addClass('marked-for-delete');
 								}
 
->>>>>>> hotfixes-09052017
 								eventToolTip(event,element);
 							},
 							eventAfterAllRender: function (view) {
