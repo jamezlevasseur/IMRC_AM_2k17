@@ -1040,76 +1040,14 @@
 		  	var initDuplicateEquipmentButtonListener = function () {
 		  		$('#iam-duplicate-equipment-button').click(function(event) {
 		  			submissionStart();
-						var form = $('#iam-update-form');
-						var method = 'n';
-						var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0 ;
-						var slideShow = form.children('.iam-form-row').children('#slide-show').is(':checked') ? 1 : 0 ;
-						var tagsVal = form.children('.iam-form-row').children('.tags').val().trim();
-						if (tagsVal.substring(tagsVal.length-1)==',') {
-							tagsVal = tagsVal.substring(0,tagsVal.length-1);
-						}
-						var equip_tags = tagsVal=='' ? [] : tagsVal.split(',');
-						var new_tags = [];
-						for (var i = 0; i < equip_tags.length; i++) {
-							equip_tags[i] = equip_tags[i].trim();
-							if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1) {
-								new_tags.push(equip_tags[i]);
-							}
-						}
-						var formData = new FormData();
-						if (form.children('.iam-form-row').children('.iam-image').attr('src').indexOf('default_large.png')==-1) {
-							formData.append('photo',form.children('.iam-form-row').children('.iam-image').attr('src'));
-							formData.append('duplicate','true');
-						}
-						var new_name = form.children('.iam-form-row').children('#name').val().trim();
-						if (new_name.charAt(new_name.length-1)!=')') {
-							new_name = new_name+' (1)';
-						} else {
-							var num = '';
-							var firstparenthesis;
 
-							for (var i=new_name.length-2; i>-1; i--) {
-								if (!isNaN(new_name.charAt(i))) {
-									num = num+""+new_name.charAt(i);
-								} else if (new_name.charAt(i)=='(') {
-									num = parseInt(num)+1;
-									firstparenthesis = i;
-									break;
-								} else {
-									num = false;
-									break;
-								}
-							}
-							if (num===false) {
-								new_name = new_name+' (1)';
-							} else {
-								new_name = new_name.substring(0,firstparenthesis)+'('+num+')';
-							}
-						}
-						formData.append('method',method);
-						formData.append('action','admin_equipment_action');
-						formData.append('name', new_name);
-						formData.append('certification',form.children('.iam-form-row').children('#certification').val());
-						formData.append('description',form.children('.iam-form-row').children('#description').val());
-						formData.append('pricing-description',form.children('.iam-form-row').children('#pricing-description').val());
-						formData.append('manufacturer-info',form.children('.iam-form-row').children('#manufacturer-info').val());
-						formData.append('out-of-order',outOfOrder);
-						formData.append('on-slide-show',slideShow);
-						formData.append('tags',equip_tags);
-						formData.append('new_tags',new_tags);
-
-						if (method=='u')
-							formData.append('x',form.children('.iam-form-row').children('#x').val());
 						$.ajax({
 							url: ajaxurl,
 							type: 'POST',
-							data: formData,
-							cache: false,
-							contentType: false,
-							processData: false,
+							data: {action: 'duplicate_equipment', nid: $('#iam-update-form').children('.iam-form-row').children('#x').val()},
 							success: function (data) {
 								handleServerResponse(data)
-								window.location.reload();
+								//window.location.reload();
 							},
 							error: function (data) {
 								handleServerError(data, new Error());
