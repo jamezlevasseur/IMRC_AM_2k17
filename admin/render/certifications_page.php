@@ -92,7 +92,7 @@ class Certifications_Page extends Item_Mgmt
 
             $photo = null;
             if (count($_FILES)>0) {
-                validateAndMoveImg( $_FILES['photo'] );
+                $photo = validateAndMoveImg( $_FILES['photo'] );
             }
 
             $insert_query = "";
