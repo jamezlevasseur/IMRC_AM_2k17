@@ -1,11 +1,11 @@
 <?php
 
 /**
-* 
+*
 */
 class Item_Mgmt
 {
-    
+
     public static function get_admin_forms_callback ()
     {
         $request = $_GET['request'];
@@ -49,8 +49,10 @@ class Item_Mgmt
         } else if ($type=='e') {
             $equipment_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Photo FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID=%s",$ni_id));
             $url = $equipment_results[0]->Photo;
+
             $equip_id = $equipment_results[0]->Equipment_ID;
-            unlink(WP_CONTENT_DIR.substr($url, strpos($url, '/uploads')));
+            if (  empty($wpdb->get_results("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Photo='$url'")) )
+              unlink(WP_CONTENT_DIR.substr($url, strpos($url, '/uploads')));
 
             $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID=%s",$ni_id));
             $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id));
