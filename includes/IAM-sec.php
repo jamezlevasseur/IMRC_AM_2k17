@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 /**
-* 
+*
 */
-class IAM_Sec 
+class IAM_Sec
 {
 
 	public static function iamEncrypt($data)
@@ -17,7 +17,7 @@ class IAM_Sec
                                  $data, MCRYPT_MODE_CBC, $iv);
     	# prepend the IV for it to be available for decryption
 	    $ciphertext = $iv . $ciphertext;
-	    
+
 	    # encode the resulting cipher text so it can be represented by a string
 	    $ciphertext_base64 = base64_encode($ciphertext);
 	    return $ciphertext_base64;
@@ -28,10 +28,10 @@ class IAM_Sec
 		$key = pack('H*', "adcdabf14d9507e122f4af0ba461fb4b4403321e4b91106b871881b9375e4c09");
 		$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 		$ciphertext_dec = base64_decode($data);
-	    
+
 	    # retrieves the IV, iv_size should be created using mcrypt_get_iv_size()
 	    $iv_dec = substr($ciphertext_dec, 0, $iv_size);
-	    
+
 	    # retrieves the cipher text (everything except the $iv_size in the front)
 	    $ciphertext_dec = substr($ciphertext_dec, $iv_size);
 
@@ -41,30 +41,22 @@ class IAM_Sec
 	    return trim($plaintext_dec);
 	}
 
-	public static function strtohex($x) 
+	public static function strtohex($x)
     {
         $s='';
         foreach (str_split($x) as $c) $s.=sprintf("%02X",ord($c));
         return($s);
-    } 
+    }
 
-	public static function verifyImageFile($filepath, $accepted_file_types = [])
+	public static function verifyImageFile($filepath)
 	{
-		$test = false;
-		for ($i=0; $i < count($accepted_file_types); $i++) { 
-			$test = IAM_Sec::verifyFileType($filepath,$accepted_file_types[$i]);
-			if ($test) {
-				break;
-			}
+		$type = exif_imagetype($filepath);
+		if ($type==IMAGETYPE_JPEG ||
+			$type==IMAGETYPE_PNG ||
+			$type==IMAGETYPE_GIF) {
+			return true;
 		}
-		if (!$test && count($accepted_file_types)>0) {
-			return false;
-		}
-		$array = getimagesize($filepath);
-		if ($array[0]==0) {
-			return false;
-		}
-		return true;
+		return false;
 	}
 
 	public static function is_alpha($val, $throw_error = true)
@@ -88,7 +80,7 @@ class IAM_Sec
 		}
 		return true;
 	}
-	
+
 	public static function textfield_cleaner($val, $check_empty = false)
 	{
 		if (strlen($val)<1 && $check_empty) {
@@ -107,7 +99,7 @@ class IAM_Sec
 			if (!$throw_error) {
 				return false;
 			}
-    		iam_throw_error(INVALID_INPUT_EXCEPTION);	
+    		iam_throw_error(INVALID_INPUT_EXCEPTION);
 		}
 		return $val;
 	}
@@ -122,18 +114,10 @@ class IAM_Sec
 		}
 		return false;
 	}
-	
-	public static function verifyFileType($filepath,$type)
-	{
-		$finfo = finfo_open(FILEINFO_MIME_TYPE);
-		if (finfo_file($finfo, $filepath)===$type)
-			return true;
-		return false;
-	}
 
 	/**
 	 * Escape all HTML, JavaScript, and CSS
-	 * 
+	 *
 	 * @param string $input The input string
 	 * @param string $encoding Which character encoding are we using?
 	 * @return string

@@ -3,3 +3,4 @@ node_modules/*
 iam_debug.txt
 logs/*
 config/settings
+vendor/*
