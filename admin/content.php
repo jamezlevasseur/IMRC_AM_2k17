@@ -498,19 +498,11 @@ class Admin_Content
 		?>
 			<div class="wrap iam-charge-sheet-wrap">
 				<h1 class="iam-admin-header">Charge Sheet</h1>
-				<div class="iam-search-container">
-					<input type="search" placeholder="search..." class="iam-search iam-charge-sheet-search"><i> by </i>
-					<select class="iam-search-field">
-						<option value=".iam-charge-table-username" selected>Username</option>
-						<option value=".iam-charge-table-email">Email</option>
-						<option value=".iam-charge-table-equipment_used">Equipment Used</option>
-						<option value=".iam-charge-table-Charge_Description">Description</option>
-						<option value=".iam-charge-table-approver">Employee Who Approved Charge</option>
-					</select>
-					<span style="background:none;" title="Fields with a red asterisk can be edited by clicking"><i style="font-size:20px;" class="fa fa-question-circle"></i></span>
-				</div>
 				<div id="iam-table-container">
-
+					<div class="iam-search-container">
+						<form style="display:inline-block;"> <input type="search" placeholder="search..." class="iam-search iam-charge-sheet-search"> <input type="submit" value="search"> </form>
+						<span style="background:none;" title="Fields with a red asterisk can be edited by clicking"><i style="font-size:20px;" class="fa fa-question-circle"></i></span>
+					</div>
 				</div>
 				<button type="button" class="iam-csv-button iam-secondary-button" style="margin-top:15px;">Generate CSV</button>
 

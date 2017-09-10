@@ -128,7 +128,6 @@
 			}
 
 			var initChargeTable = function () {
-				$('#iam-table-container').empty();
 				$.ajax({
 					url: ajaxurl,
 					type: 'GET',
@@ -136,17 +135,18 @@
 					success: function (data) {
 						data = JSON.parse(data);
 						makeEditableTableHeaders(data,'#iam-table-container','iam-charge-table');
-						$('#iam-table-container').pagination({
-							position: 'top',
-							pageSize: 5,
-							dataSource: data['data'],
-							callback: function (data, pagination) {
-								console.log(data);
-								makeEditableTableBody(data,'#iam-table-container','iam-charge-table',chargeTableEditingCallback);
-								initChargeTableActions();
-							}
+						initSearchWithTableDataSetListener($('.iam-search'),data['data'], ['username','email','account_type','certifications','equipment_used','Charge_Description','date','approver','Comment','values'], function (searchResults) {
+							$('#iam-table-container').pagination({
+								position: 'top',
+								pageSize: 5,
+								dataSource: searchResults,
+								callback: function (pgData, pagination) {
+									makeEditableTableBody(pgData,'#iam-table-container','iam-charge-table',chargeTableEditingCallback);
+									initChargeTableActions();
+								}
+							});
 						});
-						//$('.iam-search-field').change();
+						updateSearch();
 					},
 					error: function (data) {
 						handleServerError(data, new Error());
@@ -227,7 +227,6 @@
 				});
 			}
 			var chargeTableEditingCallback = function (ele,rowID,rowField,rowVal) {
-				console.log(ele,rowID,rowField,rowVal)
 				submissionStart();
 				$.ajax({
 					url: ajaxurl,
@@ -554,6 +553,58 @@
 				if ($('.iam-search').val().length>0) {
 					$('.iam-search').keyup();
 				}
+			}
+
+			var updateSearch = function () {
+				if ($('.iam-search').next('input[type=submit]').length>0)
+					$('.iam-search').next('input[type=submit]').click()
+				else
+					$('.iam-search').keyup();
+			}
+
+			var paginationRefresh = function () {
+				$('.paginationjs-page.active').click();
+			}
+
+			var initSearchWithTableDataSetListener = function (searchElement,dataset,fields,searchCallback) {
+				$(searchElement).next('input[type=submit]').click(function(event) {
+					submissionStart();
+					var targetString = $(searchElement).val();
+					if (targetString=='') {
+						searchCallback( dataset );
+						submissionEnd();
+						event.preventDefault();
+						return false;
+					}
+					var filtered = dataset.filter(function (a) {
+						return dataContainsString(targetString, a, fields);
+					});
+					searchCallback( filtered );
+					submissionEnd();
+					event.preventDefault();
+					return false;
+				});
+			}
+
+			var dataContainsString = function (string, data, fields) {
+				var add = false;
+				for (var key in data) {
+					if ( fields.indexOf(key)==-1 && fields.length>0 )
+						continue;
+					var val = data[key];
+					if (typeof val == 'string') {
+						if (val.indexOf(string)!=-1)
+							add = true;
+					} else if (Array.isArray(val)) {
+						add = dataContainsString(string, val, fields);
+					} else if (typeof val == 'object') {
+						//debugger;
+						add = dataContainsString(string, val, fields);
+					}
+					if (add)
+						return true;
+				}
+				return add;
 			}
 
 			var initSearchListener = function (searchElement,elementWithText,parents) {
@@ -2677,12 +2728,6 @@
 
 			} else if ( $('.iam-charge-sheet-wrap').length>0 ) {
 				initCSVAJAXButtonListener('admin_get_all_charges_as_csv');
-				$('.iam-search-field').change(function(event) {
-					$('.iam-charge-sheet-search').val('');
-					$('#iam-charges-table tr').removeClass('iam-ninja');
-					$('.iam-charge-sheet-search').off();
-					initSearchListener('.iam-charge-sheet-search','#iam-charge-table tr '+$(this).val(),1);
-				});
 				initChargeTable();
 				$(document).tooltip();
 
