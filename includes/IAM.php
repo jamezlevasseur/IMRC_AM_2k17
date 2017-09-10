@@ -286,7 +286,6 @@ class IAM {
 
 		$this->loader->add_shortcode( 'imrc-reservations', 'Public_Content', 'render_reservation_page' );
 		$this->loader->add_shortcode( 'imrc-certifications', 'Public_Content', 'render_certification_page' );
-		$this->loader->add_shortcode( 'imrc-faq', 'Public_Content', 'render_faq_page' );
 		$this->loader->add_shortcode( 'imrc-account-balances', 'Public_Content', 'render_account_balances_page' );
 		$this->loader->add_shortcode( 'imrc-training', 'Public_Content', 'render_training_page' );
 		$this->loader->add_shortcode( 'imrc-checkout', 'Public_Content', 'render_checkout_page' );
