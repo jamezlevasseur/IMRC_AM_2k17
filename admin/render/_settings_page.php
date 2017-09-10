@@ -61,7 +61,6 @@ class Settings_Page
 
     public static function admin_update_account_type_callback()
     {
-      iam_throw_error('HEY WHAT DOES THIS ERROR NEED? A USER HAHAHAHAH NOT FUNNY');
         global $wpdb;
         $updated_vals = $_POST['updated_account_types'];
         $new_vals = $_POST['new_account_types'];
