@@ -54,13 +54,14 @@ class Settings_Page
         $to_delete = IAM_Sec::textfield_cleaner($_POST['toDelete']);
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=%s WHERE Rental_Type=%s",$replacement,$to_delete));
-        
+
         $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$to_delete));
         iam_respond(SUCCESS);
     }
 
     public static function admin_update_account_type_callback()
     {
+      iam_throw_error('HEY WHAT DOES THIS ERROR NEED? A USER HAHAHAHAH NOT FUNNY');
         global $wpdb;
         $updated_vals = $_POST['updated_account_types'];
         $new_vals = $_POST['new_account_types'];

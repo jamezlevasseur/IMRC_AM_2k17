@@ -21,6 +21,9 @@
  * License:           All rights reserved
  */
 
+ use Monolog\Logger;
+ use Monolog\Handler\StreamHandler;
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
 	die;
@@ -134,17 +137,67 @@ define('RENTAL_PREFIX', 'rental_type_');
 
 define('LAST_ER_CHECK_PREFIX', 'last_er_check_');
 
-
 define('RENTAL_ALL_QUERY', "SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE '".RENTAL_PREFIX."%'");
 
 define('LATE_CHARGE_FEE_KEY', 'late_charge_fee');
 
 define('SECONDS_IN_DAY', 86400);
 
-
 define('DEFAULT_LATE_CHARGE_FEE_QUERY', "INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES ('".LATE_CHARGE_FEE_KEY."',10)");
 
 //global functions
+require __DIR__ . '/vendor/autoload.php';
+
+error_reporting(E_ALL);
+ini_set("display_errors", 1);
+
+//sentry
+if ( strpos($_SERVER['HTTP_HOST'], 'imrcaccounts')===false )
+	$sentry_client = new Raven_Client('https://0165b1189752472c9d0daf5ad7789f49:22bc7871773a424cb14dba3b7c32dc56@sentry.io/215004');
+else
+	$sentry_client = new Raven_Client('https://d5d0b3fa167c49ffa6cc8364e094ba01:dd29a64341f04d32901bdf617e3ca30e@sentry.io/214196');
+
+$error_handler = null;
+
+add_action('init','init_sentry');
+function init_sentry(){
+	global $sentry_client;
+	global $error_handler;
+
+	$current_wp_user = wp_get_current_user();
+
+	if ($current_wp_user->ID>0) {
+		$sentry_client->user_context(array(
+		    'email' => $current_wp_user->user_email
+		));
+	}
+
+	$error_handler = new Raven_ErrorHandler($sentry_client);
+
+	$error_handler->registerExceptionHandler();
+	$error_handler->registerErrorHandler();
+	$error_handler->registerShutdownFunction();
+}
+
+function iam_throw_error($message,$code='400')
+{
+	// create a log channel
+	/*
+	$monolog = new Logger('basic_logger');
+	$monolog->pushHandler(new StreamHandler(iam_dir().'logs/phplogs.log', Logger::WARNING));
+	$monolog->error($message);*/
+
+	throw new Exception($message);
+	//header('HTTP/1.1 '.$code.' '.$message);
+	exit;
+}
+
+function iam_dir()
+{
+    $dir = plugin_dir_path( dirname( __FILE__ ) );
+    $dir = strpos($dir, 'imrc-account-manager')===false ? $dir.'imrc-account-manager/' : $dir;
+    return $dir;
+}
 
 function get_client_ip() {
     $ipaddress = '';
@@ -167,8 +220,8 @@ function get_client_ip() {
 
 function iam_mail($to,$subject,$message,$failure_message="Failed to send email.")
 {
-    if (strpos( $_SERVER['HTTP_HOST'], 'localhost' )!==false)
-        return;
+  if (strpos( $_SERVER['HTTP_HOST'], 'localhost' )!==false)
+      return;
 	try {
 		if (!wp_mail($to, $subject, $message, array('Content-Type: text/html; charset=UTF-8'))) {
 			throw new Exception($failure_message);
@@ -238,12 +291,6 @@ function get_rental_period($id)
 	return json_decode($json[0]->Meta_Value)->duration;
 }
 
-function iam_throw_error($message,$code='400')
-{
-	header('HTTP/1.1 '.$code.' '.$message);
-	exit;
-}
-
 function get_email($iam_id)
 {
 	global $wpdb;
@@ -280,13 +327,6 @@ function include_files_in($dir)
 	foreach ($files as $file) {
 	    require_once($file);
 	}
-}
-
-function iam_dir()
-{
-    $dir = plugin_dir_path( dirname( __FILE__ ) );
-    $dir = strpos($dir, 'imrc-account-manager')===false ? $dir.'imrc-account-manager/' : $dir;
-    return $dir;
 }
 
 function iam_make_post($url,$data,$header="Content-type: application/x-www-form-urlencoded\r\n")

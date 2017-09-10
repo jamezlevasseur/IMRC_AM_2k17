@@ -25,6 +25,12 @@
 			var handleServerResponse = function (r) {
 				if (debug)
 					console.log(r);
+				if (typeof r === 'string') {
+					if (r.indexOf('Fatal error')!=-1 && r.indexOf('Fatal error')<32) { //make sure fatal error isn't some incidental text in a json strong somewhere
+						alert(r.substring( r.indexOf('Uncaught Exception'), r.indexOf('in /') ));
+						return;
+					}
+				}
 				try {
 					var _r = JSON.parse(r);
 					if (debug)
@@ -35,9 +41,8 @@
 						redirectUrl = _r.redirect;
 					return _r.content;
 				} catch (error) {
-						if (debug)
-							console.log(error);
-						console.log('error occured');
+						console.warn(error);
+						console.log('JS error occured when handling server response.');
 				}
 			}
 
