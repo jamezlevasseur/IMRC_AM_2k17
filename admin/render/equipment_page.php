@@ -42,7 +42,7 @@ class Equipment_Page extends Item_Mgmt
 
       $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo) );
 
-      iam_respond(SUCCESS);
+      iam_respond(SUCCESS, $name);
     }
 
     public static function equipment_csv()

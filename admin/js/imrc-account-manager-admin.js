@@ -1045,8 +1045,7 @@
 							type: 'POST',
 							data: {action: 'duplicate_equipment', nid: $('#iam-update-form').children('.iam-form-row').children('#x').val()},
 							success: function (data) {
-								handleServerResponse(data)
-								reloadAndFind($('#iam-update-form').children('.iam-form-row').children('#name').val())
+								reloadAndFind( handleServerResponse(data) );
 							},
 							error: function (data) {
 								handleServerError(data, new Error());
