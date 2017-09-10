@@ -127,8 +127,19 @@ class Charge_Sheet_Page
       return $arr;
     }
 
+    public static function admin_update_charge_row()
+  	{
+  		global $wpdb;
+  		$field = IAM_Sec::textfield_cleaner($_POST['field']);
+  		$val = IAM_Sec::textfield_cleaner($_POST['val']);
+  		$nid = IAM_Sec::textfield_cleaner($_POST['id']);
+  		$wpdb->query($wpdb->prepare("UPDATE ".IAM_CHARGE_TABLE." SET ".$field."=%s WHERE NI_ID=%s",$val,$nid));
+  		iam_respond(SUCCESS,$wpdb->prepare("UPDATE ".IAM_CHARGE_TABLE." SET ".$field."=%s WHERE NI_ID=%s",$val,$nid));
+  	}
+
     public static function admin_get_charge_table_json()
     {
+      /*
         $num_rows = isset($_GET['amount']) ? $_GET['amount'] : 15;
         $start_index = isset($_GET['i']) ? ($_GET['i']-1)*$num_rows : 0;
         if ($start_index<0 || !is_numeric($start_index)) {
@@ -136,9 +147,9 @@ class Charge_Sheet_Page
         }
         if (!is_numeric($num_rows)) {
             iam_throw_error(INVALID_INPUT_EXCEPTION);
-        }
+        }*/
         global $wpdb;
-        $charge_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_CHARGE_TABLE." ORDER BY Charge_ID DESC LIMIT %d, %d",$start_index,$num_rows));
+        $charge_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_CHARGE_TABLE." ORDER BY Charge_ID DESC"));
         $json = [
             'metadata'=>[
             ['name'=>'username','label'=>'Username','datatype'=>'varchar','editable'=>false],
