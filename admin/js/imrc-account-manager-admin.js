@@ -114,79 +114,39 @@
 				window.location.href = window.location.href+'&finditem='+target.trim().split(' ').join('_');
 			}
 
-			var initPagination = function (id,t,paginationUpdateCallback) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: {action: 'admin_get_pagination_max', table:t},
-					success: function (data) {
-						var max = handleServerResponse(data), h = '';
-						for (var i = 0; i < max; i++) {
-							h+='<option value="'+(i+1)+'">'+(i+1)+'</option>';
+			var initChargeTableActions = function () {
+				$.each($('tr'), function(index, val) {
+					if (index!=0) {
+						if ($(this).children('.iam-charge-table-approver').html()=='n/a') {
+							$(this).append('<td><div class="iam-button iam-approve-charge-button" data-status="0">approve</div></td>');
+						} else {
+							$(this).append('<td><div class="iam-secondary-button iam-approve-charge-button" data-status="1">cancel</div></td>');
 						}
-						$(id+' .iam-pagination-select').html(h);
-						$(id+' .iam-pagination-select').change(function(event) {
-							paginationUpdateCallback($(this).val());
-						});
-						$('.iam-select-first').click(function(event) {
-							if ($(id+' .iam-pagination-select option').eq(0).prop('selected')==true)
-								return;
-							var a = $(id+' .iam-pagination-select option').eq(0).prop('selected', true);
-							paginationUpdateCallback($(id+' .iam-pagination-select').val());
-						});
-						$('.iam-select-prev').click(function(event) {
-							if ($(id+' .iam-pagination-select option').eq(0).prop('selected')==true)
-								return;
-							var c = $(id+' .iam-pagination-select option:selected');
-							var p = c.prev('option');
-							p.prop('selected', true);
-							c.prop('selected', false)
-							paginationUpdateCallback($(id+' .iam-pagination-select').val());
-						});
-						$('.iam-select-next').click(function(event) {
-							var a = $(id+' .iam-pagination-select option');
-							if ($(a[a.length-1]).prop('selected')==true)
-								return;
-							var c = $(id+' .iam-pagination-select option:selected');
-							var n = c.next('option');
-							n.prop('selected', true);
-							c.prop('selected', false);
-							paginationUpdateCallback($(id+' .iam-pagination-select').val());
-						});
-						$('.iam-select-last').click(function(event) {
-							var a = $(id+' .iam-pagination-select option');
-							if ($(a[a.length-1]).prop('selected')==true)
-								return;
-							$(a[a.length-1]).prop('selected', true);
-							paginationUpdateCallback($(id+' .iam-pagination-select').val());
-						});
-
-					},
-					error: function (data) {
-						handleServerError(data, new Error());
 					}
 				});
+				initApproveChargeButtonListener();
 			}
 
-			var initChargeTable = function (index) {
-				$('#iam-table-container').empty();
+			var initChargeTable = function () {
 				$.ajax({
 					url: ajaxurl,
 					type: 'GET',
-					data: {action: 'admin_get_charge_table_json', i: index},
+					data: {action: 'admin_get_charge_table_json'},
 					success: function (data) {
-						makeEditableTable(data,'#iam-table-container','iam-charge-table',chargeTableEditingCallback);
-						$.each($('tr'), function(index, val) {
-							if (index!=0) {
-								if ($(this).children('.iam-charge-table-approver').html()=='n/a') {
-									$(this).append('<td><div class="iam-button iam-approve-charge-button" data-status="0">approve</div></td>');
-								} else {
-									$(this).append('<td><div class="iam-secondary-button iam-approve-charge-button" data-status="1">cancel</div></td>');
+						data = JSON.parse(data);
+						makeEditableTableHeaders(data,'#iam-table-container','iam-charge-table');
+						initSearchWithTableDataSetListener($('.iam-search'),data['data'], ['username','email','account_type','certifications','equipment_used','Charge_Description','date','approver','Comment','values'], function (searchResults) {
+							$('#iam-table-container').pagination({
+								position: 'top',
+								pageSize: 5,
+								dataSource: searchResults,
+								callback: function (pgData, pagination) {
+									makeEditableTableBody(pgData,'#iam-table-container','iam-charge-table',chargeTableEditingCallback);
+									initChargeTableActions();
 								}
-							}
+							});
 						});
-						initApproveChargeButtonListener();
-						$('.iam-search-field').change();
+						updateSearch();
 					},
 					error: function (data) {
 						handleServerError(data, new Error());
@@ -194,11 +154,20 @@
 				});
 			}
 
-			var chargePaginationCallback = function (currentIndex) {
-				initChargeTable(currentIndex);
+			var editableTableRowData = [];
+
+			var makeEditableTableHeaders = function (json,container,tableName) {
+				var table = '<table id="'+tableName+'"><thead><tr class="table-header">', rowData = [];
+				for (var i = 0; i < json.metadata.length; i++) {
+					var editMark = json.metadata[i]['editable'] ? '<b style="color:red;">*</b>': '';
+					table+='<th>'+json.metadata[i]['label']+editMark+'</th>';
+					editableTableRowData.push( json.metadata[i] );
+				}
+				table+='</tr></thead><tbody></tbody></table>';
+				$(container).append(table);
 			}
 
-			var makeEditableTable = function (json,container,tableName,finishEditingCallback) {
+			var makeEditableTableBody = function (json,container,tableName,finishEditingCallback) {
 				if (typeof json=='string') {
 					json = JSON.parse(json);
 				}
@@ -207,33 +176,27 @@
 						//do nothing;
 					}
 				}
-				var table = '<table id="'+tableName+'"><tbody><tr class="table-header">', rowData = [];
-				for (var i = 0; i < json.metadata.length; i++) {
-					var editMark = json.metadata[i]['editable'] ? '<b style="color:red;">*</b>': '';
-					table+='<th>'+json.metadata[i]['label']+editMark+'</th>';
-					rowData.push( json.metadata[i] );
-				}
-				table+='</tr>';
-				for (var i = 0; i < json.data.length; i++) {
-					table+='<tr data-id="'+json.data[i].id+'">';
-					for (var k = 0; k < rowData.length; k++) {
-						var d = json.data[i].values;
-						var val = d[rowData[k].name];
-						var editClass = rowData[k].editable ? 'table-editable': '' ;
-						switch (rowData[k].datatype) {
+				var tbody = '', rowData = [];
+				for (var i = 0; i < json.length; i++) {
+					tbody+='<tr data-id="'+json[i].id+'">';
+					for (var k = 0; k < editableTableRowData.length; k++) {
+						var d = json[i].values;
+						var val = d[editableTableRowData[k].name];
+						var editClass = editableTableRowData[k].editable ? 'table-editable': '' ;
+						switch (editableTableRowData[k].datatype) {
 							case 'varchar':
-							table+='<td class="'+tableName+'-'+rowData[k].name+' table-varchar '+editClass+'" data-field="'+rowData[k].name+'">'+val;
+							tbody+='<td class="'+tableName+'-'+editableTableRowData[k].name+' table-varchar '+editClass+'" data-field="'+editableTableRowData[k].name+'">'+val;
 							break;
 							case 'text':
-							table+='<td class="'+tableName+'-'+rowData[k].name+' table-text '+editClass+'" data-field="'+rowData[k].name+'">'+val;
+							tbody+='<td class="'+tableName+'-'+editableTableRowData[k].name+' table-text '+editClass+'" data-field="'+editableTableRowData[k].name+'">'+val;
 							break;
 						}
-						table+='</td>';
+						tbody+='</td>';
 					}
-					table+='</tr>';
+					tbody+='</tr>';
 				}
-				table+='</tbody></table>';
-				$(container).append(table);
+				$(container).find('tbody').empty();
+				$(container).find('tbody').append(tbody);
 				editableTableTDListener(tableName,finishEditingCallback);
 			}
 			var editableTableTDListener = function (tableName,finishEditingCallback) {
@@ -590,6 +553,58 @@
 				if ($('.iam-search').val().length>0) {
 					$('.iam-search').keyup();
 				}
+			}
+
+			var updateSearch = function () {
+				if ($('.iam-search').next('input[type=submit]').length>0)
+					$('.iam-search').next('input[type=submit]').click()
+				else
+					$('.iam-search').keyup();
+			}
+
+			var paginationRefresh = function () {
+				$('.paginationjs-page.active').click();
+			}
+
+			var initSearchWithTableDataSetListener = function (searchElement,dataset,fields,searchCallback) {
+				$(searchElement).next('input[type=submit]').click(function(event) {
+					submissionStart();
+					var targetString = $(searchElement).val();
+					if (targetString=='') {
+						searchCallback( dataset );
+						submissionEnd();
+						event.preventDefault();
+						return false;
+					}
+					var filtered = dataset.filter(function (a) {
+						return dataContainsString(targetString, a, fields);
+					});
+					searchCallback( filtered );
+					submissionEnd();
+					event.preventDefault();
+					return false;
+				});
+			}
+
+			var dataContainsString = function (string, data, fields) {
+				var add = false;
+				for (var key in data) {
+					if ( fields.indexOf(key)==-1 && fields.length>0 )
+						continue;
+					var val = data[key];
+					if (typeof val == 'string') {
+						if (val.indexOf(string)!=-1)
+							add = true;
+					} else if (Array.isArray(val)) {
+						add = dataContainsString(string, val, fields);
+					} else if (typeof val == 'object') {
+						//debugger;
+						add = dataContainsString(string, val, fields);
+					}
+					if (add)
+						return true;
+				}
+				return add;
 			}
 
 			var initSearchListener = function (searchElement,elementWithText,parents) {
@@ -2356,7 +2371,6 @@
 								$(that).data('status', 1);
 								$(that).html('cancel');
 							}
-							$('.iam-pagination-select').change();
 							submissionEnd();
 						},
 						error: function (data) {
@@ -2714,14 +2728,7 @@
 
 			} else if ( $('.iam-charge-sheet-wrap').length>0 ) {
 				initCSVAJAXButtonListener('admin_get_all_charges_as_csv');
-				$('.iam-search-field').change(function(event) {
-					$('.iam-charge-sheet-search').val('');
-					$('#iam-charges-table tr').removeClass('iam-ninja');
-					$('.iam-charge-sheet-search').off();
-					initSearchListener('.iam-charge-sheet-search','#iam-charge-table tr '+$(this).val(),1);
-				});
-				initChargeTable(1);
-				initPagination('.iam-charge-sheet-pagination','charge',chargePaginationCallback);
+				initChargeTable();
 				$(document).tooltip();
 
 			} else if ( $('.iam-equipment-wrap').length>0 ) {

@@ -126,8 +126,8 @@ class IAM_Admin {
 		wp_enqueue_script($this->plugin_name.'bootstrap-js');
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'-moment', plugin_dir_url( __FILE__ ) . 'js/moment.min.js', array(),$this->version, false);
-
 		wp_enqueue_script($this->plugin_name.'fullcalendar-js', plugin_dir_url( __FILE__ ) . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name.'pagination-js', plugin_dir_url( __FILE__ ) . 'js/pagination.min.js',array('jquery'), $this->version, false);
 
 		if (DEV_MODE == 1)
 			$script_name = 'js/imrc-account-manager-admin.js';
