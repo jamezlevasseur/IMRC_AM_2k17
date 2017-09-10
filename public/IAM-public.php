@@ -62,8 +62,6 @@ class IAM_Public {
 		 * core plugin.
 		 */
 
-
-
 		require_once iam_dir() . 'includes/IAM-cal.php';
 
 		require_once iam_dir() . 'includes/IAM-reservation-handler.php';
@@ -77,8 +75,6 @@ class IAM_Public {
 		require_once iam_dir() . 'templates/training_page.php';
 
 		require_once iam_dir() . 'templates/checkout_page.php';
-
-		require_once iam_dir() . 'templates/faq_page.php';
 
 		require_once iam_dir() . 'templates/account_balance_page.php';
 
