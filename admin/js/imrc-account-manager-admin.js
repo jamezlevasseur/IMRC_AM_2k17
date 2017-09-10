@@ -114,10 +114,6 @@
 				window.location.href = window.location.href+'&finditem='+target.trim().split(' ').join('_');
 			}
 
-			var initPagination = function (jqueryObj,paginationUpdateCallback) {
-
-			}
-
 			var initChargeTableActions = function () {
 				$.each($('tr'), function(index, val) {
 					if (index!=0) {
@@ -156,10 +152,6 @@
 						handleServerError(data, new Error());
 					}
 				});
-			}
-
-			var chargePaginationCallback = function (currentIndex) {
-				initChargeTable(currentIndex);
 			}
 
 			var editableTableRowData = [];
@@ -2328,7 +2320,6 @@
 								$(that).data('status', 1);
 								$(that).html('cancel');
 							}
-							$('.iam-pagination-select').change();
 							submissionEnd();
 						},
 						error: function (data) {
@@ -2693,7 +2684,6 @@
 					initSearchListener('.iam-charge-sheet-search','#iam-charge-table tr '+$(this).val(),1);
 				});
 				initChargeTable();
-				//initPagination('.iam-charge-sheet-pagination','charge',chargePaginationCallback);
 				$(document).tooltip();
 
 			} else if ( $('.iam-equipment-wrap').length>0 ) {

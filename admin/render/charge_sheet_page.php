@@ -26,18 +26,6 @@ class Charge_Sheet_Page
       iam_respond(SUCCESS,$csv);
     }
 
-    public static function admin_get_pagination_max()
-    {
-        global $wpdb;
-        $table_map = ['charge'=>IAM_CHARGE_TABLE];
-        $table = $table_map[$_GET['table']];
-        $num_rows = isset($_GET['amount']) ? $_GET['amount'] : 15;
-        $v = floor(count($wpdb->get_results("SELECT * FROM ".$table)));
-        $max = floor(count($wpdb->get_results("SELECT * FROM ".$table))/$num_rows);
-        $max = $v%$num_rows==0 ? $max : $max+1;
-        iam_respond(SUCCESS,$max+1);
-    }
-
     public static function approve_charge_callback()
     {
         global $wpdb;
@@ -139,15 +127,6 @@ class Charge_Sheet_Page
 
     public static function admin_get_charge_table_json()
     {
-      /*
-        $num_rows = isset($_GET['amount']) ? $_GET['amount'] : 15;
-        $start_index = isset($_GET['i']) ? ($_GET['i']-1)*$num_rows : 0;
-        if ($start_index<0 || !is_numeric($start_index)) {
-            $start_index = 0;
-        }
-        if (!is_numeric($num_rows)) {
-            iam_throw_error(INVALID_INPUT_EXCEPTION);
-        }*/
         global $wpdb;
         $charge_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_CHARGE_TABLE." ORDER BY Charge_ID DESC"));
         $json = [
