@@ -148,9 +148,6 @@ define('DEFAULT_LATE_CHARGE_FEE_QUERY', "INSERT INTO ".IAM_META_TABLE." (Meta_Ke
 //global functions
 require __DIR__ . '/vendor/autoload.php';
 
-error_reporting(E_ALL);
-ini_set("display_errors", 1);
-
 //sentry
 if ( strpos($_SERVER['HTTP_HOST'], 'imrcaccounts')===false )
 	$sentry_client = new Raven_Client('https://0165b1189752472c9d0daf5ad7789f49:22bc7871773a424cb14dba3b7c32dc56@sentry.io/215004');
