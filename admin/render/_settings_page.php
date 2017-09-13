@@ -54,7 +54,7 @@ class Settings_Page
         $to_delete = IAM_Sec::textfield_cleaner($_POST['toDelete']);
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=%s WHERE Rental_Type=%s",$replacement,$to_delete));
-        
+
         $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$to_delete));
         iam_respond(SUCCESS);
     }

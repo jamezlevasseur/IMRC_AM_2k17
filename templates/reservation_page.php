@@ -47,6 +47,7 @@ class IAM_Reservation_Page
 	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag='Fab Lab')
 	{
 		global $wpdb;
+
 		$current_username = wp_get_current_user()->user_login;
 		$iam_id = $wpdb->get_results("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_Username='$current_username'")[0]->IAM_ID;
 		$user_certs_results = $wpdb->get_results("SELECT Certification_ID FROM ".IAM_USER_CERTIFICATIONS_TABLE." WHERE IAM_ID='$iam_id'");
@@ -260,8 +261,10 @@ class IAM_Reservation_Page
 
 		global $wpdb;
 		global $current_user;
-      	get_currentuserinfo();
-      	$has_priv = get_user_meta($current_user->ID,IAM_RESERVATIONS_PRIVILEGE_META);
+
+  	get_currentuserinfo();
+  	$has_priv = get_user_meta($current_user->ID,IAM_RESERVATIONS_PRIVILEGE_META);
+
 		if (count($has_priv)>0 && $has_priv!=false) {
 			Utils_Public::render_page_for_login_status('<h1>Your reservation privileges have been removed</h1><p>Please contact an admin for further assistance.</p>');
 			return;

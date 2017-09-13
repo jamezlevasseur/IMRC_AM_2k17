@@ -40,7 +40,16 @@ class Equipment_Page extends Item_Mgmt
 
       //TODO this deletes the photo from disk some how????
 
-      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo) );
+      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo,Root_Tag) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo,$equipment->Root_Tag) );
+
+      $new_id = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID='$ni_id'")[0]->Equipment_ID;
+
+      $tags = $wpdb->get_results("SELECT Tag_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID={$equipment->Equipment_ID}");
+
+      foreach ($tags as $row) {
+        $uid = $row->Tag_ID.''.$new_id;
+        $wpdb->query("INSERT INTO ".IAM_TAGS_EQUIPMENT_TABLE." (Tag_ID,Equipment_ID,Unique_ID) VALUES ({$row->Tag_ID},{$new_id},{$uid})");
+      }
 
       iam_respond(SUCCESS, $name);
     }

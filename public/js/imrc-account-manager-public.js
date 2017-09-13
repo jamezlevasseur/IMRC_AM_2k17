@@ -28,6 +28,12 @@
 		var handleServerResponse = function (r) {
 			if (debug)
 				console.log(r);
+			if (typeof r === 'string') {
+				if (r.indexOf('Fatal error')!=-1 && r.indexOf('Fatal error')<32) { //make sure fatal error isn't some incidental text in a json strong somewhere
+					alert(r.substring( r.indexOf('Uncaught Exception'), r.indexOf('in /') ));
+					return;
+				}
+			}
 			try {
 				var _r = JSON.parse(r);
 				if (debug)
@@ -38,14 +44,8 @@
 					redirectUrl = _r.redirect;
 				return _r.content;
 			} catch (error) {
-				if (softFail) {
-					if (debug) {
-						console.log(error);
-					}
-					console.log('error occured');
-				} else {
-					alert('An unknown error occured! :(');
-				}
+					console.warn(error);
+					console.log('JS error occured when handling server response.');
 			}
 		}
 
@@ -468,6 +468,29 @@
 			}
 		}
 
+		var ERinvalidTimePrompt = function () {
+			alert('Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.');
+		}
+
+		var eventFallsOnWeekend = function (e) {
+			var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+			var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+			//for now it ends at midnight of the following day
+			if (dayOfWeekStart=='sat' || dayOfWeekStart=='sun'
+					|| dayOfWeekEnd=='sun' || dayOfWeekEnd=='mon') {
+				ERinvalidTimePrompt();
+				return true;
+			}
+			return false;
+		}
+
+		var eventIsLongerThan = function (e, days) {
+			var start = moment( e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
+			var end = moment( e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
+			return end.diff(start, 'days') > days;
+		}
+
 		var initEquipmentButtonListener = function () {
 
 			$('.iam-equipment-button').click(function(event) {
@@ -496,6 +519,7 @@
 					wknd = true;
 
 				var rental_period = $(this).data('rental-period')==0 ? facility_info[current_root_tag]['rental_period'] : $(this).data('rental-period');
+
 				if (facility_info[current_root_tag]['schedule_type']=='Rental') {
 
 					$('.iam-facility-info').html('<h1>'+$(this).data('equiproot')+' Hours</h1><p>'+facility_info[current_root_tag]['rental_hours_description'])+'</p>';
@@ -507,6 +531,7 @@
 							title: $.trim($(this).text()), // use the element's text as the event title
 							stick: true, // maintain when user navigates (see docs on the renderEvent method)
 							editable: true,
+							eventDurationEditable: true,
 							color:'#4cad57',
 							className: 'iam-new-event',
 							allDay:true
@@ -526,6 +551,22 @@
 							center: 'title',
 							right: 'month'
 						},
+						eventReceive: function (e) {
+							if (eventFallsOnWeekend(e)) {
+								$('.iam-res-cal').fullCalendar('removeEvents',e._id);
+								return false;
+							}
+						},
+						eventDrop: function (e, d, revert) {
+							if (eventFallsOnWeekend(e))
+								revert();
+						},
+						eventResize: function (e, d, revert) {
+							if (eventIsLongerThan(e, (parseInt(rental_period) + 1))) {
+								alert('The maximum rental time for this equipment is ' + rental_period + ' days.')
+								revert();
+							}
+						},
 						droppable: true,
 						eventOverlap: false,
 						allDaySlot: true,
@@ -534,7 +575,7 @@
 						forceEventDuration: true,
 						defaultView: 'month',
 						allDay: true,
-						defaultAllDayEventDuration: {days: rental_period},
+						defaultAllDayEventDuration: {days: (parseInt(rental_period) + 1) },
 						editable: false, //new events will be made editable else where
 						eventLimit: true, // allow "more" link when too many events
 						events: ajaxurl+"?action=get_equipment_calendar&name="+equip_name
@@ -612,66 +653,6 @@
 						color: '#f13d39'}
 						]
 					});
-				} else if (facility_info[current_root_tag]['schedule_type']=='Approval') {//res page
-
-					$('.iam-events .fc-event').each(function() {
-
-						// store data so the calendar knows to render an event upon drop
-						$(this).data('event', {
-							title: $.trim($(this).text()), // use the element's text as the event title
-							stick: true, // maintain when user navigates (see docs on the renderEvent method)
-							editable: true,
-							color:'#4cad57',
-							className: 'iam-new-event'
-						});
-
-						// make the event draggable using jQuery UI
-						$(this).draggable({
-							zIndex: 999,
-							revert: true,      // will cause the event to go back to its
-							revertDuration: 0  //  original position after the drag
-						});
-
-					});
-					$.ajax({
-						url: ajaxurl,
-						type: 'GET',
-						data: {action: 'get_approval_hours',name:original_name},
-						success: function (data) {
-
-							var businessHoursConverted = JSON.parse(data);
-							if (businessHoursConverted==null) {
-								businessHoursConverted = [];
-							}
-							$('.iam-res-cal').fullCalendar({
-								header: {
-									left: 'prev,next today',
-									center: 'title',
-									right: 'agendaWeek,agendaDay'
-								},
-								droppable: true,
-								allDaySlot: false,
-								eventOverlap: false,
-							    businessHours: businessHoursConverted,
-							    defaultTimedEventDuration: '00:30:00',
-							    weekends:wknd,
-								height: 500,
-								forceEventDuration: true,
-								defaultView: 'agendaWeek',
-								editable: false, //new events will be made editable else where
-								eventLimit: true, // allow "more" link when too many events
-								eventSources: [
-								{url:ajaxurl+"?action=get_equipment_calendar&name="+equip_name},
-								{url:ajaxurl+"?action=get_equipment_calendar&rstatus=0&name="+equip_name,
-								color:'#a5a5a5'},
-								]
-							});
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
-
 				}
 
 				$('.iam-popup-submit button').click(function(event) {
