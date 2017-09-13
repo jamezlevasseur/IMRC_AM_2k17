@@ -35,7 +35,7 @@ class Utils_Public
     foreach ($active as $entry) {
       $d = date_create_from_format(DATE_FORMAT, $entry->End_Time);
 
-      if ((int) $rightnow > (int) $d->format('U')) {// is late
+      if ((int) $rightnow > (int) $d->format('U')-37800) {// is late
 
         $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
