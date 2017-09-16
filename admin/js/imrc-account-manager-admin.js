@@ -1839,125 +1839,80 @@
 			    $('.fc-event').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
 			}
 
-			var makeCalendarReservationsMulti = function (equip_name) {
-				if (equip_name=='' && !$('.iam-cal-placeholder').length) { //refresh but with new res status
-                    refreshResCal();
-                    return;
-                }
-				equip_name = equip_name.split(' ').join('_');
+			var updateResSource = function () {
+				var selectedEquipment = $('.iam-reservations-equipment-list-item.iam-highlighted');
+				var newEventResource = [];
+				$(selectedEquipment).each(function(index, el) {
+					newEventResource = newEventResource.concat( $(this).data('calevents') );
+				});
+				lastReservationResource = newEventResource;
+			}
+
+			var makeCalendarReservationsMulti = function () {
 				submissionStart();
 
-				//init calendar
-				$('.fc-event').each(function() {
-
-					// store data so the calendar knows to render an event upon drop
-					$(this).data('event', {
-						title: $.trim($(this).text()), // use the element's text as the event title
-						stick: true, // maintain when user navigates (see docs on the renderEvent method)
-						editable: true,
-						color:'#4cad57',
-						className: 'iam-new-event'
-					});
-
-					// make the event draggable using jQuery UI
-					$(this).draggable({
-						zIndex: 999,
-						revert: true,      // will cause the event to go back to its
-						revertDuration: 0  //  original position after the drag
-					});
-
-				});
 				if ($('.iam-res-cal-placeholder').length) {
 					$('.iam-res-cal-placeholder').remove();
-
-					if (typeof reservationSourcesMap[equip_name]!='undefined') {
-              reservationSources.splice(reservationSourcesMap[equip_name],1);
-          } else {
-              reservationSources.push(equip_name);
-              reservationSourcesMap[equip_name] = reservationSources.length-1;
-          }
-          var equip_names = reservationSources.join('~!~');
-          lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&names="+equip_names;
-
-					if ($('.iam-load-all-reservations').is(':checked'))
-						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&descriptive=y&all=y&names="+equip_names;
-					else
-						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
-
-					$('.iam-res-cal').fullCalendar({
-						header: {
-							left: 'prev,next today',
-							center: 'title',
-							right: 'month,agendaWeek,agendaDay'
-						},
-						droppable: true,
-						eventOverlap: true,
-					  weekends:true,
-						height: 600,
-						forceEventDuration: true,
-						defaultView: 'month',
-						editable: true,
-						eventLimit: true, // allow "more" link when too many events
-						eventRender: function (event, element) {
-							eventToolTip(event,element);
-							$(element).data('fullname', event.fullname);
-							$(element).data('email', event.email);
-							$(element).data('equipment', event.equipment);
-              $(element).data('nid', event.nid);
-							$(element).addClass('iam-status-'+event.status);
-							if (eventsToDelete.indexOf(event.nid)!=-1) {
-								$(element).addClass('marked-for-delete');
-							}
-						},
-						eventAfterRender: function (event, element) {
-							if (event.toDelete==1) {
-								$(element).css({
-									'background-color': '#ef4040',
-									'border': '1px solid #ef4040'
-								});
-							}
-						},
-						eventAfterAllRender: function () {
-               initContextMenu();
-							 initStatusHideListeners();
-							 submissionEnd();
-            },
-						eventDrop: function (event) {
-							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
-						},
-						eventResize: function (event) {
-							eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
-						},
-						eventClick: function (event, jsEvent, view) {
-						},
-						events: lastReservationResource
-					});
+					updateResSource();
+					initAdminResCal();
 				} else {
-
 					$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-          if (typeof reservationSourcesMap[equip_name]!='undefined') {
-              reservationSources.splice(reservationSourcesMap[equip_name],1);
-							delete reservationSourcesMap[equip_name]
-              //reservationSourcesMap[equip_name] = undefined;
-          } else {
-              reservationSources.push(equip_name);
-              reservationSourcesMap[equip_name] = reservationSources.length-1;
-          }
-
-					if (Object.values(reservationSourcesMap).length===0) {
-						reservationSources = [];
-					}
-
-          var equip_names = reservationSources.join('~!~');
-
-					if ($('.iam-load-all-reservations').is(':checked'))
-						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&all=y&is=y&names="+equip_names;
-					else
-						lastReservationResource = ajaxurl+"?action=get_equipment_calendar&is=y&names="+equip_names;
-
+					updateResSource();
           $('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
-
 				}
+
+			}
+
+			var initAdminResCal = function () {
+
+				$('.iam-res-cal').fullCalendar({
+					header: {
+						left: 'prev,next today',
+						center: 'title',
+						right: 'month,agendaWeek,agendaDay'
+					},
+					droppable: true,
+					eventOverlap: true,
+				  weekends:true,
+					height: 600,
+					forceEventDuration: true,
+					defaultView: 'month',
+					editable: true,
+					eventLimit: true, // allow "more" link when too many events
+					eventRender: function (event, element) {
+						eventToolTip(event,element);
+						$(element).data('fullname', event.fullname);
+						$(element).data('email', event.email);
+						$(element).data('equipment', event.equipment);
+            $(element).data('nid', event.nid);
+						$(element).addClass('iam-status-'+event.status);
+						if (eventsToDelete.indexOf(event.nid)!=-1) {
+							$(element).addClass('marked-for-delete');
+						}
+					},
+					eventAfterRender: function (event, element) {
+						if (event.toDelete==1) {
+							$(element).css({
+								'background-color': '#ef4040',
+								'border': '1px solid #ef4040'
+							});
+						}
+					},
+					eventAfterAllRender: function () {
+             initContextMenu();
+						 initStatusHideListeners();
+						 submissionEnd();
+          },
+					eventDrop: function (event) {
+						eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+					},
+					eventResize: function (event) {
+						eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+					},
+					eventClick: function (event, jsEvent, view) {
+					},
+					events: lastReservationResource
+				});
 			}
 
 			var initStatusHideListeners = function () {
@@ -2671,49 +2626,53 @@
 				$(document).tooltip();
 			} else if ( $('.iam-reservation-wrap').length>0 ) {
 				resetEvents();
+
 				$('.iam-load-all-reservations').click(function(event) {
 					if ($('.iam-res-cal-placeholder').length>0)
 						return;
-					if ($(this).is(':checked')) {
-						$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-						lastReservationResource+='&all=y';
-						$('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
-					} else {
-						$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-						lastReservationResource = lastReservationResource.split('&all=y').join('');
-						$('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
-					}
+
+					submissionStart();
+					$.ajax({
+							url: ajaxurl,
+							type: 'GET',
+							data: {action: 'load_all_events_admin_res_cal', facility: $('.iam-reservation-wrap').data('facility')},
+							success: function (data) {
+								var newData = handleServerResponse(data);
+								for (var i in newData) {
+									var c = newData[i];
+									$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
+								}
+								makeCalendarReservationsMulti();
+								submissionEnd();
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
 				});
+
         $('.iam-res-select-all').click(function(event) {
             $(this).toggleClass('iam-highlighted');
             if ($(this).hasClass('iam-highlighted')) {
-                var lastEquip = null;
                 $('.iam-reservation-list div:not(.iam-highlighted)').each(function(index, el) {
                     if (!$(this).hasClass('iam-ninja')) {
                         $(this).addClass('iam-highlighted');
-                        if (lastEquip==null) {
-                            lastEquip=$(this).text();
-                        } else {
-                            reservationSources.push($(this).text());
-                            reservationSourcesMap[$(this).text()] = reservationSources.length-1;
-                        }
                     }
                 });
-                makeCalendarReservationsMulti(lastEquip);
+                makeCalendarReservationsMulti();
             } else {
-
                 $('.iam-reservation-list div.iam-highlighted').each(function(index, el) {
                     $(this).removeClass('iam-highlighted');
                 });
-                reservationSources = [];
-                reservationSourcesMap = {};
-                $('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
+                makeCalendarReservationsMulti();
             }
         });
+
 				$('.iam-reservation-list div').click(function(event) {
-					makeCalendarReservationsMulti($(this).text());
 					$(this).toggleClass('iam-highlighted');
+					makeCalendarReservationsMulti();
 				});
+
 				$('label.iam-status-label input').prop('checked', true);
 				initResCalSubmitListener();
 				initSearchListener('.iam-search','.iam-reservation-list div',0);

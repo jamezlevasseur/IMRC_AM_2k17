@@ -239,6 +239,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_delete_registration_key', 'Registration_Page', 'admin_delete_registration_key_callback');
 
 		$this->loader->add_action('wp_ajax_admin_update_reservations', 'Reservations_Page', 'admin_update_reservations_callback');
+		$this->loader->add_action('wp_ajax_load_all_events_admin_res_cal', 'Reservations_Page', 'load_all_events_admin_res_cal');
 
 		$this->loader->add_action('wp_ajax_admin_get_appointment_info_template', 'Scheduling_Page', 'admin_get_appointment_info_template_callback');
 		$this->loader->add_action('wp_ajax_admin_get_rental_info_template', 'Scheduling_Page', 'admin_get_rental_info_template_callback');

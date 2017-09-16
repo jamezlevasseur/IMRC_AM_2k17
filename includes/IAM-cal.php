@@ -119,12 +119,11 @@ class IAM_Cal
 		return $events;
 	}
 
-	public static function get_cal_for_equipment($item_name)
+	public static function get_cal_for_equipment($item_name, $param_array)
 	{
-		$is_admin = isset($_GET['is']);
-		$equipment_in_title = isset($_GET['descriptive']);
-		$get_all_reservations = isset($_GET['all']);
-		$user = array_key_exists('user',$_GET) ? $_GET['user'] : null;
+		$is_admin = isset($param_array['is']);
+		$get_all_reservations = isset($param_array['all']);
+
 		global $wpdb;
 
 		$equip_result = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
@@ -137,7 +136,6 @@ class IAM_Cal
 			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$weekago' ";
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
 			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
-
 			$formatted_events = [];
 			if(res_result===null && gettype($res_result)!='array') {
 				iam_throw_error('BAD QUERY');
@@ -149,9 +147,6 @@ class IAM_Cal
 						$title = $uinfo[0]->WP_Username;
 						$wp_id = $uinfo[0]->WP_ID;
 						$email = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login=%s",$title))[0]->user_email;
-						if ($equipment_in_title) {
-							$title = $title.' using '.$item_name;
-						}
 					} else {
 						$title = 'Existing Reservation';
 					}
@@ -194,9 +189,8 @@ class IAM_Cal
 
 	public static function get_equipment_cal()
 	{
-
-		if (isset($_GET['names'])) {
-			$names = explode('~!~', $_GET['names']);
+		if (isset($_GET['items'])) {
+			/*$names = $_GET['items'];
 			//print_r($names);exit;
 			if (gettype($names)!='array') {
 				iam_throw_error(INVALID_INPUT_EXCEPTION);
@@ -214,10 +208,10 @@ class IAM_Cal
 			}
 
 			echo json_encode($a);
-			exit;
+			exit;*/
 		} else if (isset($_GET['name'])) {
 			$item_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner( $_GET['name'] ));
-			echo json_encode(IAM_Cal::get_cal_for_equipment($item_name));
+			echo json_encode(IAM_Cal::get_cal_for_equipment($item_name, $_GET));
 			exit;
 		}
 

@@ -358,7 +358,7 @@ class Admin_Content
 	public static function reservation_content($dept)
 	{
 		?>
-			<div class="wrap iam-reservation-wrap">
+			<div class="wrap iam-reservation-wrap" data-facility="<?php echo $dept=='e' ? 'Equipment Room' : 'Fab Lab'; ?>">
 				<h1 class="iam-admin-header">Reservations</h1>
 				<div class="res-col-left">
 					<h3 style ="margin-top:0 !important;"> <?php if ($dept=='e') {echo 'Equpment Room';} else if ($dept=='f') {echo 'Fab Labs';} else {echo 'ERROR';} ?></h3>
@@ -370,38 +370,24 @@ class Admin_Content
 					</div>
 					<div class="iam-reservation-list">
 						<?php
-                        global $wpdb;
-                        $dept_tag = $dept == 'e' ? 'Equipment Room' : 'Fab Lab' ;
-                        $dept_list = [];
-                        $dept_tags = [$wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s", $dept_tag))[0]->Tag_ID];
-                        $unchecked_tags = [$dept_tag];
-                        while (count($unchecked_tags)) {
-                            $fab_lab_results = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID,Tag FROM ".IAM_TAGS_TABLE." WHERE Parent=%s",array_shift($unchecked_tags)));
-                            foreach ($fab_lab_results as $row) {
-                                $unchecked_tags[] = $row->Tag;
-                                $dept_tags[] = $row->Tag_ID;
-                            }
-                        }
-                        for ($i=0; $i < count($dept_tags); $i++) {
-                            $equipment_tag_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%s",$dept_tags[$i]));
-                            foreach ($equipment_tag_results as $row) {
-                                $equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name,NI_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$row->Equipment_ID))[0];
-																if (trim($equip_results->Name)=='')
-																	continue;
-                                $dept_list[$equip_results->Name] = '<div class="iam-reservations-equipment-list-item" data-nid="'.iam_output($equip_results->NI_ID).'" title="'.iam_output($equip_results->Name).'">'.iam_output($equip_results->Name).'</div>';
-                            }
-                        }
-                        ksort($dept_list);
-                        foreach ($dept_list as $key => $value) {
-                            echo $value;
-                        }
+                global $wpdb;
+                $dept_tag = $dept == 'e' ? 'Equipment Room' : 'Fab Lab' ;
+								$equip_results = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Root_Tag='$dept_tag' ORDER BY Name ASC");
+
+                foreach ($equip_results as $row) {
+										if (trim($row->Name)=='')
+											continue;
+										$events = htmlentities( json_encode(IAM_Cal::get_cal_for_equipment($row->Name, ['is'=>'y','descriptive'=>'y'])) );
+                    echo '<div class="iam-reservations-equipment-list-item"
+										data-calevents="'.$events.'" data-nid="'.iam_output($row->NI_ID).'" title="'.iam_output($row->Name).'">'.iam_output($row->Name).'</div>';
+                }
 						 ?>
 					</div>
 				</div>
 
 				<div id="iam-res-cal-wrap">
 					<div class="res-toolbar">
-						<label>Load more than a month: <input class="iam-load-all-reservations" type="checkbox"></label>
+						<div class="iam-secondary-button iam-load-all-reservations">Load more than a month</div>
 						<div class="res-status-bar">
 							<label class="iam-status-label iam-upcoming">upcoming: <input type="checkbox" name="upcoming"></label>
 							<label class="iam-status-label iam-active">active: <input type="checkbox" name="active"></label>

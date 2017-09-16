@@ -121,6 +121,11 @@ label.iam-was-late {
     white-space: pre-line;
 }
 
+.iam-reservation-list {
+  max-height: 60vh;
+  overflow-y:scroll;
+}
+
 .iam-reservation-list div {
 	cursor: pointer;
   -webkit-user-select: none; /* Chrome/Safari */
