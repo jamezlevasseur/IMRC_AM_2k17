@@ -1847,28 +1847,12 @@
 				equip_name = equip_name.split(' ').join('_');
 				submissionStart();
 
-				//init calendar
-				$('.fc-event').each(function() {
-
-					// store data so the calendar knows to render an event upon drop
-					$(this).data('event', {
-						title: $.trim($(this).text()), // use the element's text as the event title
-						stick: true, // maintain when user navigates (see docs on the renderEvent method)
-						editable: true,
-						color:'#4cad57',
-						className: 'iam-new-event'
-					});
-
-					// make the event draggable using jQuery UI
-					$(this).draggable({
-						zIndex: 999,
-						revert: true,      // will cause the event to go back to its
-						revertDuration: 0  //  original position after the drag
-					});
-
-				});
 				if ($('.iam-res-cal-placeholder').length) {
 					$('.iam-res-cal-placeholder').remove();
+
+					$('.iam-reservation-list div').each(function(index, el) {
+						$(this).data('index',index);
+					});
 
 					if (typeof reservationSourcesMap[equip_name]!='undefined') {
               reservationSources.splice(reservationSourcesMap[equip_name],1);
@@ -1958,6 +1942,7 @@
           $('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
 
 				}
+
 			}
 
 			var initStatusHideListeners = function () {
