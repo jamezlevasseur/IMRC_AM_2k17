@@ -119,12 +119,12 @@ class IAM_Cal
 		return $events;
 	}
 
-	public static function get_cal_for_equipment($item_name)
+	public static function get_cal_for_equipment($item_name, $param_array)
 	{
-		$is_admin = isset($_GET['is']);
-		$equipment_in_title = isset($_GET['descriptive']);
-		$get_all_reservations = isset($_GET['all']);
-		$user = array_key_exists('user',$_GET) ? $_GET['user'] : null;
+		$is_admin = isset($param_array['is']);
+		$equipment_in_title = isset($param_array['descriptive']);
+		$get_all_reservations = isset($param_array['all']);
+		
 		global $wpdb;
 
 		$equip_result = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
@@ -137,8 +137,6 @@ class IAM_Cal
 			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$weekago' ";
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
 			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
-			echo $item_name.'<br>';
-			//print_r($res_result);exit;
 			$formatted_events = [];
 			if(res_result===null && gettype($res_result)!='array') {
 				iam_throw_error('BAD QUERY');
@@ -195,9 +193,8 @@ class IAM_Cal
 
 	public static function get_equipment_cal()
 	{
-
-		if (isset($_GET['names'])) {
-			$names = explode('~!~', $_GET['names']);
+		if (isset($_GET['items'])) {
+			/*$names = $_GET['items'];
 			//print_r($names);exit;
 			if (gettype($names)!='array') {
 				iam_throw_error(INVALID_INPUT_EXCEPTION);
@@ -215,10 +212,10 @@ class IAM_Cal
 			}
 
 			echo json_encode($a);
-			exit;
+			exit;*/
 		} else if (isset($_GET['name'])) {
 			$item_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner( $_GET['name'] ));
-			echo json_encode(IAM_Cal::get_cal_for_equipment($item_name));
+			echo json_encode(IAM_Cal::get_cal_for_equipment($item_name, $_GET));
 			exit;
 		}
 

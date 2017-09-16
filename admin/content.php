@@ -377,7 +377,9 @@ class Admin_Content
                 foreach ($equip_results as $row) {
 										if (trim($row->Name)=='')
 											continue;
-                    echo '<div class="iam-reservations-equipment-list-item res-list-'.$count.'" data-nid="'.iam_output($row->NI_ID).'" title="'.iam_output($row->Name).'">'.iam_output($row->Name).'</div>';
+										$events = htmlentities( json_encode(IAM_Cal::get_cal_for_equipment($row->Name, ['is'=>'y'])) );
+                    echo '<div class="iam-reservations-equipment-list-item"
+										data-calevents="'.$events.'" data-nid="'.iam_output($row->NI_ID).'" title="'.iam_output($row->Name).'">'.iam_output($row->Name).'</div>';
 										$count++;
                 }
 						 ?>
