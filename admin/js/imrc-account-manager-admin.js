@@ -2637,9 +2637,7 @@
 							type: 'GET',
 							data: {action: 'load_all_events_admin_res_cal', facility: $('.iam-reservation-wrap').data('facility')},
 							success: function (data) {
-
 								var newData = handleServerResponse(data);
-								console.log(data)
 								for (var i in newData) {
 									var c = newData[i];
 									$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
