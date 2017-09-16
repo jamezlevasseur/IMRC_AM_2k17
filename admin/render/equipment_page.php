@@ -239,7 +239,7 @@ class Equipment_Page extends Item_Mgmt
                 //TODO: more complex ni_id
                 $ni_id = make_nid();
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order,$internal_comments);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order,$internal_comments);
                 } else {
                     $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments);
                 }
