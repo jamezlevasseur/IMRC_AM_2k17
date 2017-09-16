@@ -2630,15 +2630,27 @@
 				$('.iam-load-all-reservations').click(function(event) {
 					if ($('.iam-res-cal-placeholder').length>0)
 						return;
-					if ($(this).is(':checked')) {
-						$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-						lastReservationResource+='&all=y';
-						$('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
-					} else {
-						$('.iam-res-cal').fullCalendar( 'removeEventSource', lastReservationResource);
-						lastReservationResource = lastReservationResource.split('&all=y').join('');
-						$('.iam-res-cal').fullCalendar( 'addEventSource', lastReservationResource);
-					}
+
+					submissionStart();
+					$.ajax({
+							url: ajaxurl,
+							type: 'GET',
+							data: {action: 'load_all_events_admin_res_cal', facility: $('.iam-reservation-wrap').data('facility')},
+							success: function (data) {
+
+								var newData = handleServerResponse(data);
+								console.log(data)
+								for (var i in newData) {
+									var c = newData[i];
+									$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
+								}
+								makeCalendarReservationsMulti();
+								submissionEnd();
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
 				});
 
         $('.iam-res-select-all').click(function(event) {
@@ -2662,7 +2674,7 @@
 					$(this).toggleClass('iam-highlighted');
 					makeCalendarReservationsMulti();
 				});
-				
+
 				$('label.iam-status-label input').prop('checked', true);
 				initResCalSubmitListener();
 				initSearchListener('.iam-search','.iam-reservation-list div',0);

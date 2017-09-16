@@ -122,9 +122,8 @@ class IAM_Cal
 	public static function get_cal_for_equipment($item_name, $param_array)
 	{
 		$is_admin = isset($param_array['is']);
-		$equipment_in_title = isset($param_array['descriptive']);
 		$get_all_reservations = isset($param_array['all']);
-		
+
 		global $wpdb;
 
 		$equip_result = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
@@ -148,9 +147,6 @@ class IAM_Cal
 						$title = $uinfo[0]->WP_Username;
 						$wp_id = $uinfo[0]->WP_ID;
 						$email = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login=%s",$title))[0]->user_email;
-						if ($equipment_in_title) {
-							$title = $title.' using '.$item_name;
-						}
 					} else {
 						$title = 'Existing Reservation';
 					}
