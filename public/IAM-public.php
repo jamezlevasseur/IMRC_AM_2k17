@@ -89,15 +89,15 @@ class IAM_Public {
 	 */
 	public function enqueue_styles() {
 
-		wp_enqueue_style($this->plugin_name.'-slick', plugin_dir_url( __FILE__ ) . 'css/slick.css', $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-slick', iam_url().'static/' . 'css/slick.css', $this->version, 'all' );
 
-		wp_enqueue_style($this->plugin_name.'-slick-theme', plugin_dir_url( __FILE__ ) . 'css/slick-theme.css', $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-slick-theme', iam_url().'static/' . 'css/slick-theme.css', $this->version, 'all' );
 
-		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.min.css', $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', iam_url().'static/' . 'css/fullcalendar.min.css', $this->version, 'all' );
 
-		wp_enqueue_style($this->plugin_name.'-fullcalendar-print', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.print.css',array('iam_fullcalendar_css'),false,'media');
+		//wp_enqueue_style($this->plugin_name.'-fullcalendar-print', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.print.css',array('iam_fullcalendar_css'),false,'media');
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/imrc-account-manager-public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, iam_url().'build/css/public.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -107,22 +107,22 @@ class IAM_Public {
 	 */
 	public function enqueue_scripts() {
 
-		wp_enqueue_script($this->plugin_name.'-jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui.custom.min.js', array('jquery'),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'-jquery-ui', iam_url().'static/' . 'js/jquery-ui.custom.min.js', array('jquery'),$this->version, false);
 
-		wp_enqueue_script($this->plugin_name.'slick-js', plugin_dir_url( __FILE__ ) . 'js/slick.min.js',array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name.'slick-js', iam_url().'static/' . 'js/slick.min.js',array('jquery'), $this->version, false);
 
-		wp_enqueue_script($this->plugin_name.'-moment', plugin_dir_url( __FILE__ ) . 'js/moment.min.js', array(),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'-moment', iam_url().'static/' . 'js/moment.min.js', array(),$this->version, false);
 
-		wp_enqueue_script($this->plugin_name.'fullcalendar-js', plugin_dir_url( __FILE__ ) . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name.'fullcalendar-js', iam_url().'static/' . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
 
 		wp_enqueue_script( $this->plugin_name.'-captcha', 'https://www.google.com/recaptcha/api.js', array( ), $this->version, false );
 
 		if (DEV_MODE == 1)
-			$script_name = 'js/imrc-account-manager-public.js';
+			$script_name = 'build/js/public.min.js';
 		else
-			$script_name = 'js/imrc-account-manager-public.min.js';
+			$script_name = 'build/js/public.min.js';
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . $script_name, array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, iam_url() . $script_name, array( 'jquery' ), $this->version, false );
 
 		wp_localize_script( $this->plugin_name, 'ajaxurl', admin_url( 'admin-ajax.php' ) );
 	}

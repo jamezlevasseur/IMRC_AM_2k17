@@ -100,14 +100,14 @@ class IAM_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style($this->plugin_name.'-bootstrap-css', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css');
-		wp_enqueue_style($this->plugin_name.'-jquery-ui-css', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.min.css');
-		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-structure', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.structure.min.css');
-		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-theme', plugin_dir_url( __FILE__ ) . 'css/jquery-ui.theme.min.css');
-		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.min.css', $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name.'font-awesome', plugin_dir_url( __FILE__ ) . 'css/font-awesome.min.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name.'context-menu-css', plugin_dir_url( __FILE__ ) . 'css/contextMenu.css', array(), $this->version, 'all' );
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/imrc-account-manager-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-bootstrap-css', iam_url().'static/' . 'css/bootstrap.min.css');
+		wp_enqueue_style($this->plugin_name.'-jquery-ui-css', iam_url().'static/' . 'css/jquery-ui.min.css');
+		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-structure', iam_url().'static/' . 'css/jquery-ui.structure.min.css');
+		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-theme', iam_url().'static/' . 'css/jquery-ui.theme.min.css');
+		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', iam_url().'static/' . 'css/fullcalendar.min.css', $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name.'font-awesome', iam_url().'static/' . 'css/font-awesome.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name.'context-menu-css', iam_url().'static/' . 'css/contextMenu.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, iam_url().'build/css/admin.css', array(), $this->version, 'all' );
 	}
 
 	/**
@@ -121,19 +121,22 @@ class IAM_Admin {
 		wp_register_script($this->plugin_name.'bootstrap-js','https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', ['jquery',$this->plugin_name.'popper-js']);
 
 
-		wp_enqueue_script($this->plugin_name.'context-menu', plugin_dir_url( __FILE__ ) . 'js/contextMenu.min.js', array('jquery'),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'context-menu', iam_url().'static/' . 'js/contextMenu.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'popper-js');
 		wp_enqueue_script($this->plugin_name.'bootstrap-js');
-		wp_enqueue_script($this->plugin_name.'-jquery-ui', plugin_dir_url( __FILE__ ) . 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
-		wp_enqueue_script($this->plugin_name.'-moment', plugin_dir_url( __FILE__ ) . 'js/moment.min.js', array(),$this->version, false);
-		wp_enqueue_script($this->plugin_name.'fullcalendar-js', plugin_dir_url( __FILE__ ) . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
-		wp_enqueue_script($this->plugin_name.'pagination-js', plugin_dir_url( __FILE__ ) . 'js/pagination.min.js',array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name.'-jquery-ui', iam_url().'static/'. 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'-moment', iam_url().'static/'. 'js/moment.min.js', array(),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'pagination-js', iam_url().'static/' . 'js/pagination.min.js',array('jquery'), $this->version, false);
+
+		wp_enqueue_script($this->plugin_name.'fullcalendar-js', iam_url().'static/' . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
 
 		if (DEV_MODE == 1)
-			$script_name = 'js/imrc-account-manager-admin.js';
+			$script_name = 'build/js/admin.js';
 		else
-			$script_name = 'js/imrc-account-manager-admin.min.js';
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . $script_name, array( 'jquery' ), $this->version, false );
+			$script_name = 'build/js/admin.js';
+
+		wp_enqueue_script( $this->plugin_name, iam_url() . $script_name, array( 'jquery' ), $this->version, false );
+
 
 	}
 

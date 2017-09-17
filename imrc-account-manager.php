@@ -189,6 +189,13 @@ function iam_throw_error($message,$code='400')
 	exit;
 }
 
+function iam_url()
+{
+	$dir = plugin_dir_url( dirname( __FILE__ ) );
+	$dir = strpos($dir, 'imrc-account-manager')===false ? $dir.'imrc-account-manager/' : $dir;
+	return $dir;
+}
+
 function iam_dir()
 {
     $dir = plugin_dir_path( dirname( __FILE__ ) );
