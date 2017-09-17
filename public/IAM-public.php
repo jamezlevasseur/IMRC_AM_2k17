@@ -97,7 +97,7 @@ class IAM_Public {
 
 		//wp_enqueue_style($this->plugin_name.'-fullcalendar-print', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.print.css',array('iam_fullcalendar_css'),false,'media');
 
-		wp_enqueue_style( $this->plugin_name, iam_url().'build/css/public.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name, iam_url().'src/css/public.css', array(), $this->version, 'all' );
 	}
 
 	/**

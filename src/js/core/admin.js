@@ -1,65 +1,23 @@
+import $ from 'jquery';
+
+import { rStr, isEmail, getSize, escapeHtml } from '../core/utils';
+
+import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
+import { createCookie, readCookie, eraseCookie } from '../module/cookie';
+import { handleServerResponse, handleServerError } from '../module/serverresponse';
+import {submissionStart, submissionEnd} from '../module/userfeedback';
+
 (function( $ ) {
-		'use strict';
 
 	 $(function () {
-	 		//constants
-			var PLUG_DIR = 'http://'+document.domain+"/wp-content/plugins/imrc-account-manager/";
-
-			var FORM_METHOD_NEW = 'n';
-
-			var FORM_METHOD_UPDATE = 'u';
-
 			//global vars
-			var redirectUrl,selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [];
-			var debug = window.location.href.indexOf('imrcaccounts')==-1;
-
-			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null;
-
-			var availableTags,comparableTags;
-
-			var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-
-
-			//debug
-
-			var handleServerResponse = function (r) {
-				if (debug)
-					console.log(r);
-				if (typeof r === 'string') {
-					if (r.indexOf('Fatal error')!=-1 && r.indexOf('Fatal error')<32) { //make sure fatal error isn't some incidental text in a json strong somewhere
-						alert(r.substring( r.indexOf('Uncaught Exception'), r.indexOf('in /') ));
-						return;
-					}
-				}
-				try {
-					var _r = JSON.parse(r);
-					if (debug)
-						console.log(_r);
-					if (_r.message!='')
-						alert(_r.status.toUpperCase()+": "+_r.message);
-					if (_r.redirect!='')
-						redirectUrl = _r.redirect;
-					return _r.content;
-				} catch (error) {
-						console.warn(error);
-						console.log('JS error occured when handling server response.');
-				}
-			}
-
-			var handleServerError = function (e, err) {
-				if (debug) {
-					console.log(e);
-					console.log( err );
-				}
-				alert(e.statusText+" \n Error Code:"+e.status);
-			}
+			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags;
 
 			var debugSuccess = function() {
 				$('#debug-success').removeClass('iam-ninja');
 				$('#debug-success').fadeOut('500', function() {
 					$(this).remove();
 					$('.debug-wrap').append('<h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>');
-
 				});
 			}
 
@@ -80,7 +38,7 @@
 				});
 			}
 
-			//misc functions
+			//url reload functions
 
 			var getUrlArg = function (argname) {
 				var url = new URL(window.location.href);
@@ -118,6 +76,8 @@
 			var reloadAndFind = function (target) {
 				window.location.href = window.location.href+'&finditem='+target.trim().split(' ').join('_');
 			}
+
+			//charge table
 
 			var initChargeTableActions = function () {
 				$.each($('tr'), function(index, val) {
@@ -319,73 +279,6 @@
 				});
 			}
 
-			//functions
-			var numbersOnlyListener = function (jqueryObject) {
-				jqueryObject.keydown(function(event) {
-					if (event.key!='Backspace' && event.key!='ArrowLeft' && event.key!='ArrowRight') {
-						if (!event.key.match(/^[0-9.]*$/)) {
-							return false;
-						}
-					}
-				});
-			}
-
-			var emailOnlyListener = function (jqueryObject) {
-				jqueryObject.keydown(function(event) {
-					if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
-						return false;
-					}
-				});
-			}
-
-			var alphaNumericOnlyListener = function (jqueryObject) {
-				jqueryObject.keydown(function(event) {
-					if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
-						return false;
-					}
-				});
-			}
-
-			var alphaOnlyListener = function (jqueryObject) {
-				jqueryObject.keydown(function(event) {
-					if (!event.key.match(/^[a-zA-Z.]*$/)) {
-						return false;
-					}
-				});
-			}
-
-			var itemNameListener = function (jqueryObject) {
-				jqueryObject.keydown(function(event) {
-					if (event.key.match(/^[;'_]*$/)) {
-						return false;
-					}
-				});
-			}
-
-			var maxLengthListener = function (jqueryObject, maxLength) {
-				jqueryObject.keydown(function(event) {
-					if (jqueryObject.val().length>=maxLength && event.keyCode!=8) {
-						return false;
-					}
-				});
-			}
-
-			var getSize = function (obj) {
-				var size = 0, key;
-			    for (key in obj) {
-			        if (obj.hasOwnProperty(key)) size++;
-			    }
-			    return size;
-			}
-
-			var submissionStart = function () {
-				$('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
-			}
-
-			var submissionEnd = function () {
-				$('.iam-loading-anim').remove();
-			}
-
 			var unsupportedFile = function (element) {
 				element.value = null;
 				alert ('Unsupported file type!\n Supported file types: .pdf, .doc, .jpg, .jpeg, .png');
@@ -532,25 +425,6 @@
 					}
 				});
 		  	}
-
-			var rStr = function (length) {
-				var str = '';
-				for (var i = 0; i < length; i++) {
-					str+=String.fromCharCode(97+Math.floor(Math.random()*25));
-				}
-				return str;
-			}
-
-			var isEmail = function (email) {
-			    var atpos = email.indexOf("@");
-			    var dotpos = email.lastIndexOf(".");
-			 	if (atpos<1 || dotpos<atpos+2 || dotpos+2>=email.length) {
-			        return false;
-			    }
-			    return true;
-		  	}
-
-			//listener functions
 
 			//MULTI-PAGE LISTENERS
 

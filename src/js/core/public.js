@@ -1,66 +1,20 @@
+import $ from 'jquery';
+
+import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
+import { createCookie, readCookie, eraseCookie } from '../module/cookie';
+import { handleServerResponse, handleServerError } from '../module/serverresponse';
+import { rStr, isEmail, getSize, escapeHtml } from '../core/utils';
+
 (function( $ ) {
-	'use strict';
 
 	$(function () {
 		//constants
-		var PLUG_DIR = 'http://'+document.domain+'/wp-content/plugins/imrc-account-manager/';
-		var IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
-		var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+		const IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
 		//global vars
-		var softFail=true,redirectUrl,blockBuffer,oldScrollPos,firstLoginAttempt=1;
-		var debug = window.location.href.indexOf('imrcaccounts')==-1;
+		var blockBuffer,oldScrollPos,firstLoginAttempt=1;
 		var daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
 
 		//misc functions
-
-		function escapeHtml(text) {
-		  var map = {
-		    '&': '&amp;',
-		    '<': '&lt;',
-		    '>': '&gt;',
-		    '"': '&quot;',
-		    "'": '&#039;'
-		  };
-
-		  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-		}
-
-		var handleServerResponse = function (r) {
-			if (debug)
-				console.log(r);
-			if (typeof r === 'string') {
-				if (r.indexOf('Fatal error')!=-1 && r.indexOf('Fatal error')<32) { //make sure fatal error isn't some incidental text in a json strong somewhere
-					alert(r.substring( r.indexOf('Uncaught Exception'), r.indexOf('in /') ));
-					return;
-				}
-			}
-			try {
-				var _r = JSON.parse(r);
-				if (debug)
-					console.log(_r);
-				if (_r.message!='')
-					alert(_r.status.toUpperCase()+": "+_r.message);
-				if (_r.redirect!='')
-					redirectUrl = _r.redirect;
-				return _r.content;
-			} catch (error) {
-					console.warn(error);
-					console.log('JS error occured when handling server response.');
-			}
-		}
-
-		var handleServerError = function (e, err) {
-			if (debug) {
-				console.log(e);
-				console.log( err );
-			}
-			alert(e.statusText+" \n Error Code:"+e.status);
-		}
-
-		var redir = function () {
-			if (typeof redirectUrl!='undefined')
-				window.location.href = redirectUrl;
-		}
 
 		var loginLockout = function () {
 			$('.login-form-container').empty();
@@ -121,107 +75,9 @@
 			return converted;
 		}
 
-		var createCookie = function (name,value,days,readAsMS) {
-			if (days) {
-				var date = new Date();
-				if (readAsMS==true) {
-					date.setTime(date.getTime()+days);
-				} else {
-					date.setTime(date.getTime()+(days*24*60*60*1000));
-				}
-				var expires = "; expires="+date.toGMTString();
-			}
-			else var expires = "";
-			document.cookie = name+"="+value+expires+"; path=/";
-		}
-
-		var readCookie = function (name) {
-			var nameEQ = name + "=";
-			var ca = document.cookie.split(';');
-			for(var i=0;i < ca.length;i++) {
-				var c = ca[i];
-				while (c.charAt(0)==' ') c = c.substring(1,c.length);
-				if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
-			}
-			return null;
-		}
-
-		var eraseCookie = function (name) {
-			createCookie(name,"",-1);
-		}
-
-		var numbersOnlyListener = function (jqueryObject) {
-			if (jqueryObject==null)
-				return;
-			jqueryObject.keydown(function(event) {
-				if ($(this).val().indexOf('.')==-1 && event.key!='Backspace' && event.key!='ArrowLeft' && event.key!='ArrowRight') {
-					if (!event.key.match(/^[0-9.]*$/)) {
-						return false;
-					}
-				} else {
-					if (!event.key.match(/^[0-9]*$/) && event.key!='Backspace' && event.key!='ArrowLeft' && event.key!='ArrowRight') {
-						return false;
-					}
-				}
-			});
-		}
-
-		var emailOnlyListener = function (jqueryObject) {
-			jqueryObject.keydown(function(event) {
-				if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
-					return false;
-				}
-			});
-		}
-
-		var alphaNumericOnlyListener = function (jqueryObject) {
-			jqueryObject.keydown(function(event) {
-				if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
-					return false;
-				}
-			});
-		}
-
-		var alphaOnlyListener = function (jqueryObject) {
-			jqueryObject.keydown(function(event) {
-				if (!event.key.match(/^[a-zA-Z.]*$/)) {
-					return false;
-				}
-			});
-		}
-
-		var maxLengthListener = function (jqueryObject, maxLength) {
-			jqueryObject.keydown(function(event) {
-				if (jqueryObject.val().length>=maxLength && event.keyCode!=8 && event.keyCode!=9) {
-					return false;
-				}
-			});
-		}
-
 		var newDataToRefLeft = function (data, empty) {
 			$('.iam-ref-left').append(data);
 			initEquipmentButtonListener();
-		}
-
-
-		var reportBugListener = function () {
-			/*
-			$('.iam-report-bug').click(function(event) {
-				$('body').append('<div class="iam-report-bug-box"><input type="text" class="iam-report-bug-from" placeholder="From"><br><input type="text" class="iam-report-bug-subject" placeholder="Subject"><br><textarea class="iam-report-bug-message" placeholder="Describe the bug here."></textarea><br><input type="submit"></div>');
-				$('.iam-report-bug-box input[type=submit]').click(function(event) {
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'report_bug', from: $('.iam-report-bug-from').val(), subject: $('.iam-report-bug-subject').val(), message: $('.iam-report-bug-message').val()},
-						success: function (data) {
-							$('.iam-report-bug-box').remove();
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
-				});
-			});*/
 		}
 
 		//reservation management
@@ -382,20 +238,6 @@
 				success: function (data) {
 					var content = handleServerResponse(data);
 					newDataToRefLeft(content, true);
-					/*
-					$.ajax({
-						url: ajaxurl,
-						type: 'GET',
-						async: false,
-						data: {action: 'get_rooms',tags:root_tags},
-						success: function (roomData) {
-							var roomContent = handleServerResponse(roomData);
-							newDataToRefLeft(content+roomContent, true);
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});*/
 				},
 				error: function (data) {
 					handleServerError(data, new Error());
