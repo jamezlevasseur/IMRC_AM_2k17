@@ -196,6 +196,12 @@ function iam_dir()
     return $dir;
 }
 
+function short_res_period()
+{
+  date_default_timezone_set(IMRC_TIME_ZONE);
+  return date("Y-m-d 00:00:00", strtotime('-4 week'));
+}
+
 function get_client_ip() {
     $ipaddress = '';
     if (getenv('HTTP_CLIENT_IP'))
