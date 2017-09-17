@@ -1,9 +1,10 @@
 import $ from 'jquery';
 
-import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
+import { isEmail, escapeHtml } from '../core/utils';
+
+import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
-import { rStr, isEmail, getSize, escapeHtml } from '../core/utils';
 
 (function( $ ) {
 

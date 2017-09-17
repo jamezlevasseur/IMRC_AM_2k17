@@ -130,13 +130,7 @@ class IAM_Admin {
 
 		wp_enqueue_script($this->plugin_name.'fullcalendar-js', iam_url().'static/' . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
 
-		if (DEV_MODE == 1)
-			$script_name = 'build/js/admin.js';
-		else
-			$script_name = 'build/js/admin.js';
-
-		wp_enqueue_script( $this->plugin_name, iam_url() . $script_name, array( 'jquery' ), $this->version, false );
-
+		wp_enqueue_script( $this->plugin_name, iam_url() . 'build/js/admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 

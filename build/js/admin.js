@@ -9937,6 +9937,61 @@ module.exports = function (module) {
 
 
 Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var rStr = function rStr(length) {
+  var str = '';
+  for (var i = 0; i < length; i++) {
+    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+  }
+  return str;
+};
+
+var isEmail = function isEmail(email) {
+  var atpos = email.indexOf("@");
+  var dotpos = email.lastIndexOf(".");
+  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+    return false;
+  }
+  return true;
+};
+
+var getSize = function getSize(obj) {
+  var size = 0,
+      key = void 0;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
+function escapeHtml(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function (m) {
+    return map[m];
+  });
+}
+
+exports.rStr = rStr;
+exports.isEmail = isEmail;
+exports.getSize = getSize;
+exports.escapeHtml = escapeHtml;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
@@ -10005,50 +10060,6 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var createCookie = function createCookie(name, value, days, readAsMS) {
-  var expires = "";
-  if (days) {
-    var date = new Date();
-    if (readAsMS == true) {
-      date.setTime(date.getTime() + days);
-    } else {
-      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    }
-    var _expires = "; expires=" + date.toGMTString();
-  }
-  document.cookie = name + "=" + value + expires + "; path=/";
-};
-
-var readCookie = function readCookie(name) {
-  var nameEQ = name + "=";
-  var ca = document.cookie.split(';');
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1, c.length);
-    }if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-};
-
-var eraseCookie = function eraseCookie(name) {
-  createCookie(name, "", -1);
-};
-
-exports.createCookie = createCookie;
-exports.readCookie = readCookie;
-exports.eraseCookie = eraseCookie;
-
-/***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10091,61 +10102,7 @@ exports.handleServerResponse = handleServerResponse;
 exports.handleServerError = handleServerError;
 
 /***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var rStr = function rStr(length) {
-  var str = '';
-  for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
-  }
-  return str;
-};
-
-var isEmail = function isEmail(email) {
-  var atpos = email.indexOf("@");
-  var dotpos = email.lastIndexOf(".");
-  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
-    return false;
-  }
-  return true;
-};
-
-var getSize = function getSize(obj) {
-  var size = 0,
-      key = void 0;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
-};
-
-function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-
-  return text.replace(/[&<>"']/g, function (m) {
-    return map[m];
-  });
-}
-
-exports.rStr = rStr;
-exports.isEmail = isEmail;
-exports.getSize = getSize;
-exports.escapeHtml = escapeHtml;
-
-/***/ }),
+/* 5 */,
 /* 6 */,
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -10159,11 +10116,9 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(5);
+var _utils = __webpack_require__(2);
 
-var _textfieldlisteners = __webpack_require__(2);
-
-var _cookie = __webpack_require__(3);
+var _textfieldlisteners = __webpack_require__(3);
 
 var _serverresponse = __webpack_require__(4);
 

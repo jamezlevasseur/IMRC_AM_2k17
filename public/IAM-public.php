@@ -117,12 +117,7 @@ class IAM_Public {
 
 		wp_enqueue_script( $this->plugin_name.'-captcha', 'https://www.google.com/recaptcha/api.js', array( ), $this->version, false );
 
-		if (DEV_MODE == 1)
-			$script_name = 'build/js/public.min.js';
-		else
-			$script_name = 'build/js/public.min.js';
-
-		wp_enqueue_script( $this->plugin_name, iam_url() . $script_name, array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name, iam_url() . 'build/js/public.js', array( 'jquery' ), $this->version, false );
 
 		wp_localize_script( $this->plugin_name, 'ajaxurl', admin_url( 'admin-ajax.php' ) );
 	}

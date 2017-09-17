@@ -1,9 +1,8 @@
 import $ from 'jquery';
 
-import { rStr, isEmail, getSize, escapeHtml } from '../core/utils';
+import { rStr, isEmail, getSize } from '../core/utils';
 
-import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
-import { createCookie, readCookie, eraseCookie } from '../module/cookie';
+import { itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
 import {submissionStart, submissionEnd} from '../module/userfeedback';
 
