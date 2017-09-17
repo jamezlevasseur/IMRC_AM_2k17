@@ -13,7 +13,7 @@
 			var redirectUrl,selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [];
 			var debug = window.location.href.indexOf('imrcaccounts')==-1;
 
-			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null;
+			var reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null, didLoadAllRes = false;
 
 			var availableTags,comparableTags;
 
@@ -1131,10 +1131,10 @@
 							$.ajax({
 								url: ajaxurl,
 								type: 'POST',
-								data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: ''},
+								data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes},
 								success: function (data) {
-									handleServerResponse(data);
-									resetEvents();
+									updateEquipmentEvents( handleServerResponse(data) );
+									makeCalendarReservationsMulti();
 									submissionEnd();
 								},
 								error: function (data) {
@@ -1726,6 +1726,13 @@
 
 			//Reservation wrap
 
+			var updateEquipmentEvents = function (newData) {
+				for (var i in newData) {
+					var c = newData[i];
+					$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
+				}
+			}
+
 			var resetEvents = function () {
 				eventsToDelete = [];
 				eventsModified = {};
@@ -1750,18 +1757,17 @@
 						return;
 					submissionStart();
 					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: $('.iam-res-cal-send-emails').is(':checked'), reason: $('.iam-res-cal-reason').val()},
-						success: function (data) {
-							handleServerResponse(data);
-							refreshResCal();
-							resetEvents();
-							submissionEnd();
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
+					  url: ajaxurl,
+					  type: 'POST',
+					  data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes},
+					  success: function (data) {
+					    updateEquipmentEvents( handleServerResponse(data) );
+					    makeCalendarReservationsMulti();
+					    submissionEnd();
+					  },
+					  error: function (data) {
+					    handleServerError(data, new Error());
+					  }
 					});
 				});
 				$('.iam-res-cal-cancel').click(function(event) {
@@ -2637,11 +2643,8 @@
 							type: 'GET',
 							data: {action: 'load_all_events_admin_res_cal', facility: $('.iam-reservation-wrap').data('facility')},
 							success: function (data) {
-								var newData = handleServerResponse(data);
-								for (var i in newData) {
-									var c = newData[i];
-									$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
-								}
+								didLoadAllRes = true;
+								updateEquipmentEvents( handleServerResponse(data) );
 								makeCalendarReservationsMulti();
 								submissionEnd();
 							},
