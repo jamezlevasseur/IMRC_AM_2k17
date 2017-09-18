@@ -10,7 +10,7 @@ import {submissionStart, submissionEnd} from '../module/userfeedback';
 
 	 $(function () {
 			//global vars
-			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags;
+			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false;
 
 			var debugSuccess = function() {
 				$('#debug-success').removeClass('iam-ninja');
@@ -1002,17 +1002,17 @@ import {submissionStart, submissionEnd} from '../module/userfeedback';
 							submissionStart();
 							$('#myModal').modal('hide');
 							$.ajax({
-								url: ajaxurl,
-								type: 'POST',
-								data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: ''},
-								success: function (data) {
-									handleServerResponse(data);
-									resetEvents();
-									submissionEnd();
-								},
-								error: function (data) {
-									handleServerError(data, new Error());
-								}
+							  url: ajaxurl,
+							  type: 'POST',
+							  data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes},
+							  success: function (data) {
+							    updateEquipmentEvents( handleServerResponse(data) );
+							    makeCalendarReservationsMulti();
+							    submissionEnd();
+							  },
+							  error: function (data) {
+							    handleServerError(data, new Error());
+							  }
 							});
 
 							var relRes = $('.relevant-res'), chosen = null;
@@ -1623,18 +1623,17 @@ import {submissionStart, submissionEnd} from '../module/userfeedback';
 						return;
 					submissionStart();
 					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: $('.iam-res-cal-send-emails').is(':checked'), reason: $('.iam-res-cal-reason').val()},
-						success: function (data) {
-							handleServerResponse(data);
-							refreshResCal();
-							resetEvents();
-							submissionEnd();
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
+					  url: ajaxurl,
+					  type: 'POST',
+					  data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes},
+					  success: function (data) {
+					    updateEquipmentEvents( handleServerResponse(data) );
+					    makeCalendarReservationsMulti();
+					    submissionEnd();
+					  },
+					  error: function (data) {
+					    handleServerError(data, new Error());
+					  }
 					});
 				});
 				$('.iam-res-cal-cancel').click(function(event) {
