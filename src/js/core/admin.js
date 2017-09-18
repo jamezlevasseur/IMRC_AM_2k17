@@ -948,6 +948,13 @@ import {submissionStart, submissionEnd} from '../module/userfeedback';
 		  		});
 		  	}
 
+				var updateEquipmentEvents = function (newData) {
+					for (var i in newData) {
+						var c = newData[i];
+						$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
+					}
+				}
+
 				var initCheckinCheckout = function () {
 						userEmails = $('.iam-on-load-data').data('users').split(',');
 						$('.iam-er-user-emails').autocomplete({

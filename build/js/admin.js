@@ -10149,7 +10149,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    userBalances = {},
 		    eqLateFee = null,
 		    availableTags,
-		    comparableTags;
+		    comparableTags,
+		    didLoadAllRes = false;
 
 		var debugSuccess = function debugSuccess() {
 			$('#debug-success').removeClass('iam-ninja');
@@ -11062,6 +11063,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
+		var updateEquipmentEvents = function updateEquipmentEvents(newData) {
+			for (var i in newData) {
+				var c = newData[i];
+				$('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
+			}
+		};
+
 		var initCheckinCheckout = function initCheckinCheckout() {
 			userEmails = $('.iam-on-load-data').data('users').split(',');
 			$('.iam-er-user-emails').autocomplete({
@@ -11118,10 +11126,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					$.ajax({
 						url: ajaxurl,
 						type: 'POST',
-						data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '' },
+						data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes },
 						success: function success(data) {
-							(0, _serverresponse.handleServerResponse)(data);
-							resetEvents();
+							updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
+							makeCalendarReservationsMulti();
 							(0, _userfeedback.submissionEnd)();
 						},
 						error: function error(data) {
@@ -11716,11 +11724,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				$.ajax({
 					url: ajaxurl,
 					type: 'POST',
-					data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: $('.iam-res-cal-send-emails').is(':checked'), reason: $('.iam-res-cal-reason').val() },
+					data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes },
 					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						refreshResCal();
-						resetEvents();
+						updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
+						makeCalendarReservationsMulti();
 						(0, _userfeedback.submissionEnd)();
 					},
 					error: function error(data) {
