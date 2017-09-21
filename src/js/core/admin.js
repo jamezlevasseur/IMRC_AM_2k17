@@ -1172,7 +1172,7 @@ import { overridePrompt } from '../module/override';
 									if (
 									ev.email!=useremail && typeof ev.nid != 'undefined' && (ev.editable==true || typeof ev.editable == 'undefined')
 									||
-									ev.status!='upcoming' && (ev.editable==true || typeof ev.editable == 'undefined')
+									ev.status!='upcoming' && typeof ev.status != 'undefined' && (ev.editable==true || typeof ev.editable == 'undefined')
 									) {
 
 										ev.editable = false;

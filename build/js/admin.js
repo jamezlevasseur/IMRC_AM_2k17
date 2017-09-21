@@ -12592,7 +12592,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 								toUpdate.push(ev);
 							}
 
-							if (ev.email != useremail && typeof ev.nid != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined') || ev.status != 'upcoming' && (ev.editable == true || typeof ev.editable == 'undefined')) {
+							if (ev.email != useremail && typeof ev.nid != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined') || ev.status != 'upcoming' && typeof ev.status != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined')) {
 
 								ev.editable = false;
 								toUpdate.push(ev);
