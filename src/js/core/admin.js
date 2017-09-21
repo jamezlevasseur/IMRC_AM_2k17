@@ -12,7 +12,7 @@ import { overridePrompt } from '../module/override';
 
 	 $(function () {
 			//global vars
-			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false;
+			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false, releventResEventStart = null;
 
 			var debugSuccess = function() {
 				$('#debug-success').removeClass('iam-ninja');
@@ -967,7 +967,7 @@ import { overridePrompt } from '../module/override';
 
 						eqLateFee = $('.iam-on-load-data').data('fee');
 
-						//$('.iam-on-load-data').remove();
+						$('.iam-on-load-data').remove();
 				}
 
 				var makeRelevantReservation = function (event) {
@@ -1014,15 +1014,17 @@ import { overridePrompt } from '../module/override';
 								return;
 							}
 
-							let relRes = $('.relevant-res'), chosen = null, eventStart = null;
+							let relRes = $('.relevant-res'), chosen = null;
 							if (typeof relRes.data('nid') != 'undefined') {
+
 								chosen = {nid: relRes.data('nid'),
 													equipment: equip_name.split('_').join(' ')};
 							} else {
 								var events = $('.iam-cal').fullCalendar('clientEvents');
+
 								for (var i = 0; i < events.length; i++) {
 									if (events[i]._id==releventRes) {
-										eventStart = events[i].start.format('YYYY-MM-DD')
+										releventResEventStart = events[i].start.format('YYYY-MM-DD')
 										chosen = {
 											user: useremail,
 											equipment: equip_name.split('_').join(' '),
@@ -1033,12 +1035,14 @@ import { overridePrompt } from '../module/override';
 								}
 							}
 
-							if (chosen===null) {
+							if (chosen===null || releventResEventStart===null) {
 								alert("Error selecting reservation.");
 								return;
 							}
+							console.log(releventResEventStart)
+							console.log(moment().format('YYYY-MM-DD'))
 
-							if (eventStart!=moment().format('YYYY-MM-DD')) {
+							if (releventResEventStart!=moment().format('YYYY-MM-DD')) {
 								alert("Please choose a rental period that begins today.");
 								return;
 							}
@@ -1141,6 +1145,7 @@ import { overridePrompt } from '../module/override';
 
 								if (releventRes == event._id) {
 									$(element).addClass('relevant-res');
+									releventResEventStart = moment( event.start.format('YYYY-MM-DD'), 'YYYY-MM-DD' ).format('YYYY-MM-DD');
 								}
 
 								if (event.editable==false) {
@@ -1163,7 +1168,13 @@ import { overridePrompt } from '../module/override';
 										ev.isNewbie = 1;
 										toUpdate.push(ev);
 									}
-									if (ev.email!=useremail && typeof ev.nid != 'undefined' && (ev.editable==true || typeof ev.editable == 'undefined' )) {
+
+									if (
+									ev.email!=useremail && typeof ev.nid != 'undefined' && (ev.editable==true || typeof ev.editable == 'undefined')
+									||
+									ev.status!='upcoming' && (ev.editable==true || typeof ev.editable == 'undefined')
+									) {
+
 										ev.editable = false;
 										toUpdate.push(ev);
 									}
@@ -1749,7 +1760,7 @@ import { overridePrompt } from '../module/override';
 					var menuDict = {'default':menu, 'rental':rentalMenu};
 					var menuOfChoice = menuDict[menuToUse];
 
-			    $('.fc-event').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
+			    $('.fc-event:not(.event-not-editable)').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
 			}
 
 			var updateResSource = function () {
