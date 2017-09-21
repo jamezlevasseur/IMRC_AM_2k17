@@ -1013,6 +1013,36 @@ import { overridePrompt } from '../module/override';
 								alert('No Reservation Selected.');
 								return;
 							}
+
+							let relRes = $('.relevant-res'), chosen = null, eventStart = null;
+							if (typeof relRes.data('nid') != 'undefined') {
+								chosen = {nid: relRes.data('nid'),
+													equipment: equip_name.split('_').join(' ')};
+							} else {
+								var events = $('.iam-cal').fullCalendar('clientEvents');
+								for (var i = 0; i < events.length; i++) {
+									if (events[i]._id==releventRes) {
+										eventStart = events[i].start.format('YYYY-MM-DD')
+										chosen = {
+											user: useremail,
+											equipment: equip_name.split('_').join(' '),
+											start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
+											end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
+										}
+									}
+								}
+							}
+
+							if (chosen===null) {
+								alert("Error selecting reservation.");
+								return;
+							}
+
+							if (eventStart!=moment().format('YYYY-MM-DD')) {
+								alert("Please choose a rental period that begins today.");
+								return;
+							}
+
 							submissionStart();
 							$('#myModal').modal('hide');
 							$.ajax({
@@ -1028,30 +1058,6 @@ import { overridePrompt } from '../module/override';
 							    handleServerError(data, new Error());
 							  }
 							});
-
-							var relRes = $('.relevant-res'), chosen = null;
-							if (typeof relRes.data('nid') != 'undefined') {
-								chosen = {nid: relRes.data('nid'),
-													equipment: equip_name.split('_').join(' ')};
-							} else {
-								var events = $('.iam-cal').fullCalendar('clientEvents');
-								for (var i = 0; i < events.length; i++) {
-
-									if (events[i]._id==releventRes) {
-										chosen = {
-											user: useremail,
-											equipment: equip_name.split('_').join(' '),
-											start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
-											end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
-										}
-									}
-								}
-							}
-
-							if (chosen===null) {
-								alert("Error selecting reservation.");
-								return;
-							}
 
 							$.ajax({
 								url: ajaxurl,

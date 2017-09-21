@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -9897,7 +9897,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)(module)))
 
 /***/ }),
 /* 1 */
@@ -10644,582 +10644,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Keycode 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Keycode
-//>>group: Core
-//>>description: Provide keycodes as keynames
-//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.keyCode = {
-		BACKSPACE: 8,
-		COMMA: 188,
-		DELETE: 46,
-		DOWN: 40,
-		END: 35,
-		ENTER: 13,
-		ESCAPE: 27,
-		HOME: 36,
-		LEFT: 37,
-		PAGE_DOWN: 34,
-		PAGE_UP: 33,
-		PERIOD: 190,
-		RIGHT: 39,
-		SPACE: 32,
-		TAB: 9,
-		UP: 38
-	};
-});
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Position 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- *
- * http://api.jqueryui.com/position/
- */
-
-//>>label: Position
-//>>group: Core
-//>>description: Positions elements relative to other elements.
-//>>docs: http://api.jqueryui.com/position/
-//>>demos: http://jqueryui.com/position/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	(function () {
-		var cachedScrollbarWidth,
-		    max = Math.max,
-		    abs = Math.abs,
-		    rhorizontal = /left|center|right/,
-		    rvertical = /top|center|bottom/,
-		    roffset = /[\+\-]\d+(\.[\d]+)?%?/,
-		    rposition = /^\w+/,
-		    rpercent = /%$/,
-		    _position = $.fn.position;
-
-		function getOffsets(offsets, width, height) {
-			return [parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1), parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)];
-		}
-
-		function parseCss(element, property) {
-			return parseInt($.css(element, property), 10) || 0;
-		}
-
-		function getDimensions(elem) {
-			var raw = elem[0];
-			if (raw.nodeType === 9) {
-				return {
-					width: elem.width(),
-					height: elem.height(),
-					offset: { top: 0, left: 0 }
-				};
-			}
-			if ($.isWindow(raw)) {
-				return {
-					width: elem.width(),
-					height: elem.height(),
-					offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
-				};
-			}
-			if (raw.preventDefault) {
-				return {
-					width: 0,
-					height: 0,
-					offset: { top: raw.pageY, left: raw.pageX }
-				};
-			}
-			return {
-				width: elem.outerWidth(),
-				height: elem.outerHeight(),
-				offset: elem.offset()
-			};
-		}
-
-		$.position = {
-			scrollbarWidth: function scrollbarWidth() {
-				if (cachedScrollbarWidth !== undefined) {
-					return cachedScrollbarWidth;
-				}
-				var w1,
-				    w2,
-				    div = $("<div " + "style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" + "<div style='height:100px;width:auto;'></div></div>"),
-				    innerDiv = div.children()[0];
-
-				$("body").append(div);
-				w1 = innerDiv.offsetWidth;
-				div.css("overflow", "scroll");
-
-				w2 = innerDiv.offsetWidth;
-
-				if (w1 === w2) {
-					w2 = div[0].clientWidth;
-				}
-
-				div.remove();
-
-				return cachedScrollbarWidth = w1 - w2;
-			},
-			getScrollInfo: function getScrollInfo(within) {
-				var overflowX = within.isWindow || within.isDocument ? "" : within.element.css("overflow-x"),
-				    overflowY = within.isWindow || within.isDocument ? "" : within.element.css("overflow-y"),
-				    hasOverflowX = overflowX === "scroll" || overflowX === "auto" && within.width < within.element[0].scrollWidth,
-				    hasOverflowY = overflowY === "scroll" || overflowY === "auto" && within.height < within.element[0].scrollHeight;
-				return {
-					width: hasOverflowY ? $.position.scrollbarWidth() : 0,
-					height: hasOverflowX ? $.position.scrollbarWidth() : 0
-				};
-			},
-			getWithinInfo: function getWithinInfo(element) {
-				var withinElement = $(element || window),
-				    isWindow = $.isWindow(withinElement[0]),
-				    isDocument = !!withinElement[0] && withinElement[0].nodeType === 9,
-				    hasOffset = !isWindow && !isDocument;
-				return {
-					element: withinElement,
-					isWindow: isWindow,
-					isDocument: isDocument,
-					offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
-					scrollLeft: withinElement.scrollLeft(),
-					scrollTop: withinElement.scrollTop(),
-					width: withinElement.outerWidth(),
-					height: withinElement.outerHeight()
-				};
-			}
-		};
-
-		$.fn.position = function (options) {
-			if (!options || !options.of) {
-				return _position.apply(this, arguments);
-			}
-
-			// Make a copy, we don't want to modify arguments
-			options = $.extend({}, options);
-
-			var atOffset,
-			    targetWidth,
-			    targetHeight,
-			    targetOffset,
-			    basePosition,
-			    dimensions,
-			    target = $(options.of),
-			    within = $.position.getWithinInfo(options.within),
-			    scrollInfo = $.position.getScrollInfo(within),
-			    collision = (options.collision || "flip").split(" "),
-			    offsets = {};
-
-			dimensions = getDimensions(target);
-			if (target[0].preventDefault) {
-
-				// Force left top to allow flipping
-				options.at = "left top";
-			}
-			targetWidth = dimensions.width;
-			targetHeight = dimensions.height;
-			targetOffset = dimensions.offset;
-
-			// Clone to reuse original targetOffset later
-			basePosition = $.extend({}, targetOffset);
-
-			// Force my and at to have valid horizontal and vertical positions
-			// if a value is missing or invalid, it will be converted to center
-			$.each(["my", "at"], function () {
-				var pos = (options[this] || "").split(" "),
-				    horizontalOffset,
-				    verticalOffset;
-
-				if (pos.length === 1) {
-					pos = rhorizontal.test(pos[0]) ? pos.concat(["center"]) : rvertical.test(pos[0]) ? ["center"].concat(pos) : ["center", "center"];
-				}
-				pos[0] = rhorizontal.test(pos[0]) ? pos[0] : "center";
-				pos[1] = rvertical.test(pos[1]) ? pos[1] : "center";
-
-				// Calculate offsets
-				horizontalOffset = roffset.exec(pos[0]);
-				verticalOffset = roffset.exec(pos[1]);
-				offsets[this] = [horizontalOffset ? horizontalOffset[0] : 0, verticalOffset ? verticalOffset[0] : 0];
-
-				// Reduce to just the positions without the offsets
-				options[this] = [rposition.exec(pos[0])[0], rposition.exec(pos[1])[0]];
-			});
-
-			// Normalize collision option
-			if (collision.length === 1) {
-				collision[1] = collision[0];
-			}
-
-			if (options.at[0] === "right") {
-				basePosition.left += targetWidth;
-			} else if (options.at[0] === "center") {
-				basePosition.left += targetWidth / 2;
-			}
-
-			if (options.at[1] === "bottom") {
-				basePosition.top += targetHeight;
-			} else if (options.at[1] === "center") {
-				basePosition.top += targetHeight / 2;
-			}
-
-			atOffset = getOffsets(offsets.at, targetWidth, targetHeight);
-			basePosition.left += atOffset[0];
-			basePosition.top += atOffset[1];
-
-			return this.each(function () {
-				var collisionPosition,
-				    using,
-				    elem = $(this),
-				    elemWidth = elem.outerWidth(),
-				    elemHeight = elem.outerHeight(),
-				    marginLeft = parseCss(this, "marginLeft"),
-				    marginTop = parseCss(this, "marginTop"),
-				    collisionWidth = elemWidth + marginLeft + parseCss(this, "marginRight") + scrollInfo.width,
-				    collisionHeight = elemHeight + marginTop + parseCss(this, "marginBottom") + scrollInfo.height,
-				    position = $.extend({}, basePosition),
-				    myOffset = getOffsets(offsets.my, elem.outerWidth(), elem.outerHeight());
-
-				if (options.my[0] === "right") {
-					position.left -= elemWidth;
-				} else if (options.my[0] === "center") {
-					position.left -= elemWidth / 2;
-				}
-
-				if (options.my[1] === "bottom") {
-					position.top -= elemHeight;
-				} else if (options.my[1] === "center") {
-					position.top -= elemHeight / 2;
-				}
-
-				position.left += myOffset[0];
-				position.top += myOffset[1];
-
-				collisionPosition = {
-					marginLeft: marginLeft,
-					marginTop: marginTop
-				};
-
-				$.each(["left", "top"], function (i, dir) {
-					if ($.ui.position[collision[i]]) {
-						$.ui.position[collision[i]][dir](position, {
-							targetWidth: targetWidth,
-							targetHeight: targetHeight,
-							elemWidth: elemWidth,
-							elemHeight: elemHeight,
-							collisionPosition: collisionPosition,
-							collisionWidth: collisionWidth,
-							collisionHeight: collisionHeight,
-							offset: [atOffset[0] + myOffset[0], atOffset[1] + myOffset[1]],
-							my: options.my,
-							at: options.at,
-							within: within,
-							elem: elem
-						});
-					}
-				});
-
-				if (options.using) {
-
-					// Adds feedback as second argument to using callback, if present
-					using = function using(props) {
-						var left = targetOffset.left - position.left,
-						    right = left + targetWidth - elemWidth,
-						    top = targetOffset.top - position.top,
-						    bottom = top + targetHeight - elemHeight,
-						    feedback = {
-							target: {
-								element: target,
-								left: targetOffset.left,
-								top: targetOffset.top,
-								width: targetWidth,
-								height: targetHeight
-							},
-							element: {
-								element: elem,
-								left: position.left,
-								top: position.top,
-								width: elemWidth,
-								height: elemHeight
-							},
-							horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
-							vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
-						};
-						if (targetWidth < elemWidth && abs(left + right) < targetWidth) {
-							feedback.horizontal = "center";
-						}
-						if (targetHeight < elemHeight && abs(top + bottom) < targetHeight) {
-							feedback.vertical = "middle";
-						}
-						if (max(abs(left), abs(right)) > max(abs(top), abs(bottom))) {
-							feedback.important = "horizontal";
-						} else {
-							feedback.important = "vertical";
-						}
-						options.using.call(this, props, feedback);
-					};
-				}
-
-				elem.offset($.extend(position, { using: using }));
-			});
-		};
-
-		$.ui.position = {
-			fit: {
-				left: function left(position, data) {
-					var within = data.within,
-					    withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
-					    outerWidth = within.width,
-					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-					    overLeft = withinOffset - collisionPosLeft,
-					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
-					    newOverRight;
-
-					// Element is wider than within
-					if (data.collisionWidth > outerWidth) {
-
-						// Element is initially over the left side of within
-						if (overLeft > 0 && overRight <= 0) {
-							newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
-							position.left += overLeft - newOverRight;
-
-							// Element is initially over right side of within
-						} else if (overRight > 0 && overLeft <= 0) {
-							position.left = withinOffset;
-
-							// Element is initially over both left and right sides of within
-						} else {
-							if (overLeft > overRight) {
-								position.left = withinOffset + outerWidth - data.collisionWidth;
-							} else {
-								position.left = withinOffset;
-							}
-						}
-
-						// Too far left -> align with left edge
-					} else if (overLeft > 0) {
-						position.left += overLeft;
-
-						// Too far right -> align with right edge
-					} else if (overRight > 0) {
-						position.left -= overRight;
-
-						// Adjust based on position and margin
-					} else {
-						position.left = max(position.left - collisionPosLeft, position.left);
-					}
-				},
-				top: function top(position, data) {
-					var within = data.within,
-					    withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
-					    outerHeight = data.within.height,
-					    collisionPosTop = position.top - data.collisionPosition.marginTop,
-					    overTop = withinOffset - collisionPosTop,
-					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
-					    newOverBottom;
-
-					// Element is taller than within
-					if (data.collisionHeight > outerHeight) {
-
-						// Element is initially over the top of within
-						if (overTop > 0 && overBottom <= 0) {
-							newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
-							position.top += overTop - newOverBottom;
-
-							// Element is initially over bottom of within
-						} else if (overBottom > 0 && overTop <= 0) {
-							position.top = withinOffset;
-
-							// Element is initially over both top and bottom of within
-						} else {
-							if (overTop > overBottom) {
-								position.top = withinOffset + outerHeight - data.collisionHeight;
-							} else {
-								position.top = withinOffset;
-							}
-						}
-
-						// Too far up -> align with top
-					} else if (overTop > 0) {
-						position.top += overTop;
-
-						// Too far down -> align with bottom edge
-					} else if (overBottom > 0) {
-						position.top -= overBottom;
-
-						// Adjust based on position and margin
-					} else {
-						position.top = max(position.top - collisionPosTop, position.top);
-					}
-				}
-			},
-			flip: {
-				left: function left(position, data) {
-					var within = data.within,
-					    withinOffset = within.offset.left + within.scrollLeft,
-					    outerWidth = within.width,
-					    offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
-					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-					    overLeft = collisionPosLeft - offsetLeft,
-					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
-					    myOffset = data.my[0] === "left" ? -data.elemWidth : data.my[0] === "right" ? data.elemWidth : 0,
-					    atOffset = data.at[0] === "left" ? data.targetWidth : data.at[0] === "right" ? -data.targetWidth : 0,
-					    offset = -2 * data.offset[0],
-					    newOverRight,
-					    newOverLeft;
-
-					if (overLeft < 0) {
-						newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
-						if (newOverRight < 0 || newOverRight < abs(overLeft)) {
-							position.left += myOffset + atOffset + offset;
-						}
-					} else if (overRight > 0) {
-						newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
-						if (newOverLeft > 0 || abs(newOverLeft) < overRight) {
-							position.left += myOffset + atOffset + offset;
-						}
-					}
-				},
-				top: function top(position, data) {
-					var within = data.within,
-					    withinOffset = within.offset.top + within.scrollTop,
-					    outerHeight = within.height,
-					    offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
-					    collisionPosTop = position.top - data.collisionPosition.marginTop,
-					    overTop = collisionPosTop - offsetTop,
-					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
-					    top = data.my[1] === "top",
-					    myOffset = top ? -data.elemHeight : data.my[1] === "bottom" ? data.elemHeight : 0,
-					    atOffset = data.at[1] === "top" ? data.targetHeight : data.at[1] === "bottom" ? -data.targetHeight : 0,
-					    offset = -2 * data.offset[1],
-					    newOverTop,
-					    newOverBottom;
-					if (overTop < 0) {
-						newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
-						if (newOverBottom < 0 || newOverBottom < abs(overTop)) {
-							position.top += myOffset + atOffset + offset;
-						}
-					} else if (overBottom > 0) {
-						newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
-						if (newOverTop > 0 || abs(newOverTop) < overBottom) {
-							position.top += myOffset + atOffset + offset;
-						}
-					}
-				}
-			},
-			flipfit: {
-				left: function left() {
-					$.ui.position.flip.left.apply(this, arguments);
-					$.ui.position.fit.left.apply(this, arguments);
-				},
-				top: function top() {
-					$.ui.position.flip.top.apply(this, arguments);
-					$.ui.position.fit.top.apply(this, arguments);
-				}
-			}
-		};
-	})();
-
-	return $.ui.position;
-});
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.safeActiveElement = function (document) {
-		var activeElement;
-
-		// Support: IE 9 only
-		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
-		try {
-			activeElement = document.activeElement;
-		} catch (error) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 9 - 11 only
-		// IE may return null instead of an element
-		// Interestingly, this only seems to occur when NOT in an iframe
-		if (!activeElement) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 11 only
-		// IE11 returns a seemingly empty object in some cases when accessing
-		// document.activeElement from an <iframe>
-		if (!activeElement.nodeName) {
-			activeElement = document.body;
-		}
-
-		return activeElement;
-	};
-});
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
 module.exports = function (module) {
@@ -11246,7 +10670,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 7 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11301,7 +10725,7 @@ exports.getSize = getSize;
 exports.escapeHtml = escapeHtml;
 
 /***/ }),
-/* 8 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11376,7 +10800,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 9 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11418,7 +10842,7 @@ exports.handleServerResponse = handleServerResponse;
 exports.handleServerError = handleServerError;
 
 /***/ }),
-/* 10 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11448,68 +10872,7 @@ exports.eventFallsOnWeekend = eventFallsOnWeekend;
 exports.eventIsLongerThan = eventIsLongerThan;
 
 /***/ }),
-/* 11 */,
-/* 12 */,
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Unique ID 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: uniqueId
-//>>group: Core
-//>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.fn.extend({
-		uniqueId: function () {
-			var uuid = 0;
-
-			return function () {
-				return this.each(function () {
-					if (!this.id) {
-						this.id = "ui-id-" + ++uuid;
-					}
-				});
-			};
-		}(),
-
-		removeUniqueId: function removeUniqueId() {
-			return this.each(function () {
-				if (/^ui-id-\d+$/.test(this.id)) {
-					$(this).removeAttr("id");
-				}
-			});
-		}
-	});
-});
-
-/***/ }),
-/* 14 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11533,7 +10896,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(49), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(29), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -11727,26 +11090,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-// This file is deprecated in 1.12.0 to be removed in 1.13
-(function () {
-	!(__WEBPACK_AMD_DEFINE_FACTORY__ = (["jquery", "./data", "./disable-selection", "./focusable", "./form", "./ie", "./keycode", "./labels", "./jquery-1-7", "./plugin", "./safe-active-element", "./safe-blur", "./scroll-parent", "./tabbable", "./unique-id", "./version"]),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
-				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-})();
-
-/***/ }),
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11777,7 +11121,62 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 20 */
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Keycode 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Keycode
+//>>group: Core
+//>>description: Provide keycodes as keynames
+//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.keyCode = {
+		BACKSPACE: 8,
+		COMMA: 188,
+		DELETE: 46,
+		DOWN: 40,
+		END: 35,
+		ENTER: 13,
+		ESCAPE: 27,
+		HOME: 36,
+		LEFT: 37,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PERIOD: 190,
+		RIGHT: 39,
+		SPACE: 32,
+		TAB: 9,
+		UP: 38
+	};
+});
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11830,7 +11229,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 21 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11861,7 +11260,57 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 22 */
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.safeActiveElement = function (document) {
+		var activeElement;
+
+		// Support: IE 9 only
+		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+		try {
+			activeElement = document.activeElement;
+		} catch (error) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 9 - 11 only
+		// IE may return null instead of an element
+		// Interestingly, this only seems to occur when NOT in an iframe
+		if (!activeElement) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 11 only
+		// IE11 returns a seemingly empty object in some cases when accessing
+		// document.activeElement from an <iframe>
+		if (!activeElement.nodeName) {
+			activeElement = document.body;
+		}
+
+		return activeElement;
+	};
+});
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11959,9 +11408,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 23 */,
-/* 24 */,
-/* 25 */
+/* 15 */,
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11973,17 +11422,17 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(7);
+var _utils = __webpack_require__(4);
 
-var _textfieldlisteners = __webpack_require__(8);
+var _textfieldlisteners = __webpack_require__(5);
 
-var _serverresponse = __webpack_require__(9);
+var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(37);
+var _userfeedback = __webpack_require__(18);
 
-var _cal = __webpack_require__(10);
+var _cal = __webpack_require__(7);
 
-var _override = __webpack_require__(38);
+var _override = __webpack_require__(19);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12986,6 +12435,38 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						alert('No Reservation Selected.');
 						return;
 					}
+
+					var relRes = $('.relevant-res'),
+					    chosen = null,
+					    eventStart = null;
+					if (typeof relRes.data('nid') != 'undefined') {
+						chosen = { nid: relRes.data('nid'),
+							equipment: equip_name.split('_').join(' ') };
+					} else {
+						var events = $('.iam-cal').fullCalendar('clientEvents');
+						for (var i = 0; i < events.length; i++) {
+							if (events[i]._id == releventRes) {
+								eventStart = events[i].start.format('YYYY-MM-DD');
+								chosen = {
+									user: useremail,
+									equipment: equip_name.split('_').join(' '),
+									start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
+									end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
+								};
+							}
+						}
+					}
+
+					if (chosen === null) {
+						alert("Error selecting reservation.");
+						return;
+					}
+
+					if (eventStart != moment().format('YYYY-MM-DD')) {
+						alert("Please choose a rental period that begins today.");
+						return;
+					}
+
 					(0, _userfeedback.submissionStart)();
 					$('#myModal').modal('hide');
 					$.ajax({
@@ -13001,31 +12482,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 							(0, _serverresponse.handleServerError)(data, new Error());
 						}
 					});
-
-					var relRes = $('.relevant-res'),
-					    chosen = null;
-					if (typeof relRes.data('nid') != 'undefined') {
-						chosen = { nid: relRes.data('nid'),
-							equipment: equip_name.split('_').join(' ') };
-					} else {
-						var events = $('.iam-cal').fullCalendar('clientEvents');
-						for (var i = 0; i < events.length; i++) {
-
-							if (events[i]._id == releventRes) {
-								chosen = {
-									user: useremail,
-									equipment: equip_name.split('_').join(' '),
-									start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
-									end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
-								};
-							}
-						}
-					}
-
-					if (chosen === null) {
-						alert("Error selecting reservation.");
-						return;
-					}
 
 					$.ajax({
 						url: ajaxurl,
@@ -14764,18 +14220,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 26 */,
-/* 27 */,
-/* 28 */,
-/* 29 */,
-/* 30 */,
-/* 31 */,
-/* 32 */,
-/* 33 */,
-/* 34 */,
-/* 35 */,
-/* 36 */,
-/* 37 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14804,7 +14249,7 @@ exports.submissionStart = submissionStart;
 exports.submissionEnd = submissionEnd;
 
 /***/ }),
-/* 38 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14819,9 +14264,9 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(15);
+__webpack_require__(20);
 
-__webpack_require__(41);
+__webpack_require__(21);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14849,9 +14294,23 @@ function overridePrompt(args) {
 exports.overridePrompt = overridePrompt;
 
 /***/ }),
-/* 39 */,
-/* 40 */,
-/* 41 */
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+// This file is deprecated in 1.12.0 to be removed in 1.13
+(function () {
+	!(__WEBPACK_AMD_DEFINE_FACTORY__ = (["jquery", "./data", "./disable-selection", "./focusable", "./form", "./ie", "./keycode", "./labels", "./jquery-1-7", "./plugin", "./safe-active-element", "./safe-blur", "./scroll-parent", "./tabbable", "./unique-id", "./version"]),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+})();
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14879,7 +14338,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(42), __webpack_require__(48), __webpack_require__(14), __webpack_require__(52), __webpack_require__(22), __webpack_require__(3), __webpack_require__(4), __webpack_require__(5), __webpack_require__(21), __webpack_require__(54), __webpack_require__(13), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(22), __webpack_require__(28), __webpack_require__(8), __webpack_require__(32), __webpack_require__(14), __webpack_require__(10), __webpack_require__(34), __webpack_require__(13), __webpack_require__(12), __webpack_require__(35), __webpack_require__(36), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15751,7 +15210,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 42 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15785,7 +15244,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(43), __webpack_require__(44), __webpack_require__(3), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(23), __webpack_require__(24), __webpack_require__(10), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16136,7 +15595,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 43 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16432,7 +15891,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 44 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16461,7 +15920,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(19), __webpack_require__(45), __webpack_require__(47), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(25), __webpack_require__(27), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16718,7 +16177,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 45 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16742,7 +16201,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(46), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(26), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16799,7 +16258,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 46 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16829,7 +16288,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 47 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16853,7 +16312,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(19)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(9)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16900,7 +16359,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 48 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16926,7 +16385,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(14), __webpack_require__(50), __webpack_require__(20), __webpack_require__(5), __webpack_require__(21), __webpack_require__(51), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(8), __webpack_require__(30), __webpack_require__(11), __webpack_require__(13), __webpack_require__(12), __webpack_require__(31), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -18038,7 +17497,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 49 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18064,7 +17523,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 50 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18113,7 +17572,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 51 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18165,7 +17624,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 52 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18193,7 +17652,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(14), __webpack_require__(53), __webpack_require__(20), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(8), __webpack_require__(33), __webpack_require__(11), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -19337,7 +18796,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 53 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19391,7 +18850,478 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 54 */
+/* 34 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Position 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/position/
+ */
+
+//>>label: Position
+//>>group: Core
+//>>description: Positions elements relative to other elements.
+//>>docs: http://api.jqueryui.com/position/
+//>>demos: http://jqueryui.com/position/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	(function () {
+		var cachedScrollbarWidth,
+		    max = Math.max,
+		    abs = Math.abs,
+		    rhorizontal = /left|center|right/,
+		    rvertical = /top|center|bottom/,
+		    roffset = /[\+\-]\d+(\.[\d]+)?%?/,
+		    rposition = /^\w+/,
+		    rpercent = /%$/,
+		    _position = $.fn.position;
+
+		function getOffsets(offsets, width, height) {
+			return [parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1), parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)];
+		}
+
+		function parseCss(element, property) {
+			return parseInt($.css(element, property), 10) || 0;
+		}
+
+		function getDimensions(elem) {
+			var raw = elem[0];
+			if (raw.nodeType === 9) {
+				return {
+					width: elem.width(),
+					height: elem.height(),
+					offset: { top: 0, left: 0 }
+				};
+			}
+			if ($.isWindow(raw)) {
+				return {
+					width: elem.width(),
+					height: elem.height(),
+					offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+				};
+			}
+			if (raw.preventDefault) {
+				return {
+					width: 0,
+					height: 0,
+					offset: { top: raw.pageY, left: raw.pageX }
+				};
+			}
+			return {
+				width: elem.outerWidth(),
+				height: elem.outerHeight(),
+				offset: elem.offset()
+			};
+		}
+
+		$.position = {
+			scrollbarWidth: function scrollbarWidth() {
+				if (cachedScrollbarWidth !== undefined) {
+					return cachedScrollbarWidth;
+				}
+				var w1,
+				    w2,
+				    div = $("<div " + "style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" + "<div style='height:100px;width:auto;'></div></div>"),
+				    innerDiv = div.children()[0];
+
+				$("body").append(div);
+				w1 = innerDiv.offsetWidth;
+				div.css("overflow", "scroll");
+
+				w2 = innerDiv.offsetWidth;
+
+				if (w1 === w2) {
+					w2 = div[0].clientWidth;
+				}
+
+				div.remove();
+
+				return cachedScrollbarWidth = w1 - w2;
+			},
+			getScrollInfo: function getScrollInfo(within) {
+				var overflowX = within.isWindow || within.isDocument ? "" : within.element.css("overflow-x"),
+				    overflowY = within.isWindow || within.isDocument ? "" : within.element.css("overflow-y"),
+				    hasOverflowX = overflowX === "scroll" || overflowX === "auto" && within.width < within.element[0].scrollWidth,
+				    hasOverflowY = overflowY === "scroll" || overflowY === "auto" && within.height < within.element[0].scrollHeight;
+				return {
+					width: hasOverflowY ? $.position.scrollbarWidth() : 0,
+					height: hasOverflowX ? $.position.scrollbarWidth() : 0
+				};
+			},
+			getWithinInfo: function getWithinInfo(element) {
+				var withinElement = $(element || window),
+				    isWindow = $.isWindow(withinElement[0]),
+				    isDocument = !!withinElement[0] && withinElement[0].nodeType === 9,
+				    hasOffset = !isWindow && !isDocument;
+				return {
+					element: withinElement,
+					isWindow: isWindow,
+					isDocument: isDocument,
+					offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
+					scrollLeft: withinElement.scrollLeft(),
+					scrollTop: withinElement.scrollTop(),
+					width: withinElement.outerWidth(),
+					height: withinElement.outerHeight()
+				};
+			}
+		};
+
+		$.fn.position = function (options) {
+			if (!options || !options.of) {
+				return _position.apply(this, arguments);
+			}
+
+			// Make a copy, we don't want to modify arguments
+			options = $.extend({}, options);
+
+			var atOffset,
+			    targetWidth,
+			    targetHeight,
+			    targetOffset,
+			    basePosition,
+			    dimensions,
+			    target = $(options.of),
+			    within = $.position.getWithinInfo(options.within),
+			    scrollInfo = $.position.getScrollInfo(within),
+			    collision = (options.collision || "flip").split(" "),
+			    offsets = {};
+
+			dimensions = getDimensions(target);
+			if (target[0].preventDefault) {
+
+				// Force left top to allow flipping
+				options.at = "left top";
+			}
+			targetWidth = dimensions.width;
+			targetHeight = dimensions.height;
+			targetOffset = dimensions.offset;
+
+			// Clone to reuse original targetOffset later
+			basePosition = $.extend({}, targetOffset);
+
+			// Force my and at to have valid horizontal and vertical positions
+			// if a value is missing or invalid, it will be converted to center
+			$.each(["my", "at"], function () {
+				var pos = (options[this] || "").split(" "),
+				    horizontalOffset,
+				    verticalOffset;
+
+				if (pos.length === 1) {
+					pos = rhorizontal.test(pos[0]) ? pos.concat(["center"]) : rvertical.test(pos[0]) ? ["center"].concat(pos) : ["center", "center"];
+				}
+				pos[0] = rhorizontal.test(pos[0]) ? pos[0] : "center";
+				pos[1] = rvertical.test(pos[1]) ? pos[1] : "center";
+
+				// Calculate offsets
+				horizontalOffset = roffset.exec(pos[0]);
+				verticalOffset = roffset.exec(pos[1]);
+				offsets[this] = [horizontalOffset ? horizontalOffset[0] : 0, verticalOffset ? verticalOffset[0] : 0];
+
+				// Reduce to just the positions without the offsets
+				options[this] = [rposition.exec(pos[0])[0], rposition.exec(pos[1])[0]];
+			});
+
+			// Normalize collision option
+			if (collision.length === 1) {
+				collision[1] = collision[0];
+			}
+
+			if (options.at[0] === "right") {
+				basePosition.left += targetWidth;
+			} else if (options.at[0] === "center") {
+				basePosition.left += targetWidth / 2;
+			}
+
+			if (options.at[1] === "bottom") {
+				basePosition.top += targetHeight;
+			} else if (options.at[1] === "center") {
+				basePosition.top += targetHeight / 2;
+			}
+
+			atOffset = getOffsets(offsets.at, targetWidth, targetHeight);
+			basePosition.left += atOffset[0];
+			basePosition.top += atOffset[1];
+
+			return this.each(function () {
+				var collisionPosition,
+				    using,
+				    elem = $(this),
+				    elemWidth = elem.outerWidth(),
+				    elemHeight = elem.outerHeight(),
+				    marginLeft = parseCss(this, "marginLeft"),
+				    marginTop = parseCss(this, "marginTop"),
+				    collisionWidth = elemWidth + marginLeft + parseCss(this, "marginRight") + scrollInfo.width,
+				    collisionHeight = elemHeight + marginTop + parseCss(this, "marginBottom") + scrollInfo.height,
+				    position = $.extend({}, basePosition),
+				    myOffset = getOffsets(offsets.my, elem.outerWidth(), elem.outerHeight());
+
+				if (options.my[0] === "right") {
+					position.left -= elemWidth;
+				} else if (options.my[0] === "center") {
+					position.left -= elemWidth / 2;
+				}
+
+				if (options.my[1] === "bottom") {
+					position.top -= elemHeight;
+				} else if (options.my[1] === "center") {
+					position.top -= elemHeight / 2;
+				}
+
+				position.left += myOffset[0];
+				position.top += myOffset[1];
+
+				collisionPosition = {
+					marginLeft: marginLeft,
+					marginTop: marginTop
+				};
+
+				$.each(["left", "top"], function (i, dir) {
+					if ($.ui.position[collision[i]]) {
+						$.ui.position[collision[i]][dir](position, {
+							targetWidth: targetWidth,
+							targetHeight: targetHeight,
+							elemWidth: elemWidth,
+							elemHeight: elemHeight,
+							collisionPosition: collisionPosition,
+							collisionWidth: collisionWidth,
+							collisionHeight: collisionHeight,
+							offset: [atOffset[0] + myOffset[0], atOffset[1] + myOffset[1]],
+							my: options.my,
+							at: options.at,
+							within: within,
+							elem: elem
+						});
+					}
+				});
+
+				if (options.using) {
+
+					// Adds feedback as second argument to using callback, if present
+					using = function using(props) {
+						var left = targetOffset.left - position.left,
+						    right = left + targetWidth - elemWidth,
+						    top = targetOffset.top - position.top,
+						    bottom = top + targetHeight - elemHeight,
+						    feedback = {
+							target: {
+								element: target,
+								left: targetOffset.left,
+								top: targetOffset.top,
+								width: targetWidth,
+								height: targetHeight
+							},
+							element: {
+								element: elem,
+								left: position.left,
+								top: position.top,
+								width: elemWidth,
+								height: elemHeight
+							},
+							horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
+							vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
+						};
+						if (targetWidth < elemWidth && abs(left + right) < targetWidth) {
+							feedback.horizontal = "center";
+						}
+						if (targetHeight < elemHeight && abs(top + bottom) < targetHeight) {
+							feedback.vertical = "middle";
+						}
+						if (max(abs(left), abs(right)) > max(abs(top), abs(bottom))) {
+							feedback.important = "horizontal";
+						} else {
+							feedback.important = "vertical";
+						}
+						options.using.call(this, props, feedback);
+					};
+				}
+
+				elem.offset($.extend(position, { using: using }));
+			});
+		};
+
+		$.ui.position = {
+			fit: {
+				left: function left(position, data) {
+					var within = data.within,
+					    withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
+					    outerWidth = within.width,
+					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+					    overLeft = withinOffset - collisionPosLeft,
+					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
+					    newOverRight;
+
+					// Element is wider than within
+					if (data.collisionWidth > outerWidth) {
+
+						// Element is initially over the left side of within
+						if (overLeft > 0 && overRight <= 0) {
+							newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
+							position.left += overLeft - newOverRight;
+
+							// Element is initially over right side of within
+						} else if (overRight > 0 && overLeft <= 0) {
+							position.left = withinOffset;
+
+							// Element is initially over both left and right sides of within
+						} else {
+							if (overLeft > overRight) {
+								position.left = withinOffset + outerWidth - data.collisionWidth;
+							} else {
+								position.left = withinOffset;
+							}
+						}
+
+						// Too far left -> align with left edge
+					} else if (overLeft > 0) {
+						position.left += overLeft;
+
+						// Too far right -> align with right edge
+					} else if (overRight > 0) {
+						position.left -= overRight;
+
+						// Adjust based on position and margin
+					} else {
+						position.left = max(position.left - collisionPosLeft, position.left);
+					}
+				},
+				top: function top(position, data) {
+					var within = data.within,
+					    withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
+					    outerHeight = data.within.height,
+					    collisionPosTop = position.top - data.collisionPosition.marginTop,
+					    overTop = withinOffset - collisionPosTop,
+					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
+					    newOverBottom;
+
+					// Element is taller than within
+					if (data.collisionHeight > outerHeight) {
+
+						// Element is initially over the top of within
+						if (overTop > 0 && overBottom <= 0) {
+							newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
+							position.top += overTop - newOverBottom;
+
+							// Element is initially over bottom of within
+						} else if (overBottom > 0 && overTop <= 0) {
+							position.top = withinOffset;
+
+							// Element is initially over both top and bottom of within
+						} else {
+							if (overTop > overBottom) {
+								position.top = withinOffset + outerHeight - data.collisionHeight;
+							} else {
+								position.top = withinOffset;
+							}
+						}
+
+						// Too far up -> align with top
+					} else if (overTop > 0) {
+						position.top += overTop;
+
+						// Too far down -> align with bottom edge
+					} else if (overBottom > 0) {
+						position.top -= overBottom;
+
+						// Adjust based on position and margin
+					} else {
+						position.top = max(position.top - collisionPosTop, position.top);
+					}
+				}
+			},
+			flip: {
+				left: function left(position, data) {
+					var within = data.within,
+					    withinOffset = within.offset.left + within.scrollLeft,
+					    outerWidth = within.width,
+					    offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
+					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+					    overLeft = collisionPosLeft - offsetLeft,
+					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
+					    myOffset = data.my[0] === "left" ? -data.elemWidth : data.my[0] === "right" ? data.elemWidth : 0,
+					    atOffset = data.at[0] === "left" ? data.targetWidth : data.at[0] === "right" ? -data.targetWidth : 0,
+					    offset = -2 * data.offset[0],
+					    newOverRight,
+					    newOverLeft;
+
+					if (overLeft < 0) {
+						newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
+						if (newOverRight < 0 || newOverRight < abs(overLeft)) {
+							position.left += myOffset + atOffset + offset;
+						}
+					} else if (overRight > 0) {
+						newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
+						if (newOverLeft > 0 || abs(newOverLeft) < overRight) {
+							position.left += myOffset + atOffset + offset;
+						}
+					}
+				},
+				top: function top(position, data) {
+					var within = data.within,
+					    withinOffset = within.offset.top + within.scrollTop,
+					    outerHeight = within.height,
+					    offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
+					    collisionPosTop = position.top - data.collisionPosition.marginTop,
+					    overTop = collisionPosTop - offsetTop,
+					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
+					    top = data.my[1] === "top",
+					    myOffset = top ? -data.elemHeight : data.my[1] === "bottom" ? data.elemHeight : 0,
+					    atOffset = data.at[1] === "top" ? data.targetHeight : data.at[1] === "bottom" ? -data.targetHeight : 0,
+					    offset = -2 * data.offset[1],
+					    newOverTop,
+					    newOverBottom;
+					if (overTop < 0) {
+						newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
+						if (newOverBottom < 0 || newOverBottom < abs(overTop)) {
+							position.top += myOffset + atOffset + offset;
+						}
+					} else if (overBottom > 0) {
+						newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+						if (newOverTop > 0 || abs(newOverTop) < overBottom) {
+							position.top += myOffset + atOffset + offset;
+						}
+					}
+				}
+			},
+			flipfit: {
+				left: function left() {
+					$.ui.position.flip.left.apply(this, arguments);
+					$.ui.position.fit.left.apply(this, arguments);
+				},
+				top: function top() {
+					$.ui.position.flip.top.apply(this, arguments);
+					$.ui.position.fit.top.apply(this, arguments);
+				}
+			}
+		};
+	})();
+
+	return $.ui.position;
+});
+
+/***/ }),
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19415,7 +19345,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(22)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(14)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -19431,6 +19361,65 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 			var tabIndex = $.attr(element, "tabindex"),
 			    hasTabindex = tabIndex != null;
 			return (!hasTabindex || tabIndex >= 0) && $.ui.focusable(element, hasTabindex);
+		}
+	});
+});
+
+/***/ }),
+/* 36 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Unique ID 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: uniqueId
+//>>group: Core
+//>>description: Functions to generate and remove uniqueId's
+//>>docs: http://api.jqueryui.com/uniqueId/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.extend({
+		uniqueId: function () {
+			var uuid = 0;
+
+			return function () {
+				return this.each(function () {
+					if (!this.id) {
+						this.id = "ui-id-" + ++uuid;
+					}
+				});
+			};
+		}(),
+
+		removeUniqueId: function removeUniqueId() {
+			return this.each(function () {
+				if (/^ui-id-\d+$/.test(this.id)) {
+					$(this).removeAttr("id");
+				}
+			});
 		}
 	});
 });
