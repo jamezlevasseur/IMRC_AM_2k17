@@ -3,12 +3,18 @@
  * included in this file.
  */
 
+.ui-dialog {
+  z-index: 9999999;
+}
+.ui-dialog-titlebar-close {
+  display: none;
+}
+
 .res-toolbar {
   position: relative;
   width: 55vw;
   padding-bottom: 5px;
   margin-bottom: 10px;
-
 }
 
 .iw-contextMenu {

@@ -18,7 +18,7 @@ module.exports = {
                 presets: ['es2015']
             }
         }
-    ]
+    ],
   },
   devtool: 'source-map'
 };

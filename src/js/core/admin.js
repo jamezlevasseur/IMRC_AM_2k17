@@ -1117,7 +1117,7 @@ import { overridePrompt } from '../module/override';
 							editable: true,
 							durationEditable: true,
 							allDay: true,
-							defaultAllDayEventDuration: {days: thisRentalDays},
+							defaultAllDayEventDuration: {days: (parseInt(thisRentalDays) + 1 )},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
 								$(element).data('fullname', event.fullname);
@@ -1167,7 +1167,7 @@ import { overridePrompt } from '../module/override';
 								}
 								initContextMenu('rental');
 							},
-							eventDrop: function (event) {
+							eventDrop: function (event, d ,revert) {
 								if (eventFallsOnWeekend(event)) {
 									overridePrompt({
 										title: 'Confirm Override',
@@ -1179,8 +1179,8 @@ import { overridePrompt } from '../module/override';
 									updateEventsModified(event);
 								}
 							},
-							eventResize: function (event) {
-								if (eventIsLongerThan(e, (parseInt(thisRentalDays) + 1))) {
+							eventResize: function (event, d ,revert, jsevent) {
+								if (eventIsLongerThan(event, (parseInt(thisRentalDays) + 1))) {
 									overridePrompt({
 										title: 'Confirm Override',
 										body: 'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
