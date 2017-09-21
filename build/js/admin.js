@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
+/******/ 	return __webpack_require__(__webpack_require__.s = 8);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10102,9 +10102,39 @@ exports.handleServerResponse = handleServerResponse;
 exports.handleServerError = handleServerError;
 
 /***/ }),
-/* 5 */,
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+
+var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
+  var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+  var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+  //for now it ends at midnight of the following day
+  return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+};
+
+var eventIsLongerThan = function eventIsLongerThan(e, days) {
+  var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+  var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+  return end.diff(start, 'days') > days;
+};
+
+exports.ERinvalidTimePrompt = ERinvalidTimePrompt;
+exports.eventFallsOnWeekend = eventFallsOnWeekend;
+exports.eventIsLongerThan = eventIsLongerThan;
+
+/***/ }),
 /* 6 */,
-/* 7 */
+/* 7 */,
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10122,7 +10152,11 @@ var _textfieldlisteners = __webpack_require__(3);
 
 var _serverresponse = __webpack_require__(4);
 
-var _userfeedback = __webpack_require__(8);
+var _userfeedback = __webpack_require__(9);
+
+var _cal = __webpack_require__(5);
+
+var _override = __webpack_require__(10);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11088,6 +11122,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			refreshResCal();
 		};
 
+		var updateEventsModified = function updateEventsModified(event) {
+			if (typeof event.nid != 'undefined') eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+		};
+
 		var initRentalButton = function initRentalButton() {
 			if (erRentalDays == null) {
 				var erInfo = $('.iam-facility-data').data('facility');
@@ -11276,13 +11314,43 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						initContextMenu('rental');
 					},
 					eventDrop: function eventDrop(event) {
-						if (typeof event.nid != 'undefined') eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+						if ((0, _cal.eventFallsOnWeekend)(event)) {
+							(0, _override.overridePrompt)({
+								title: 'Confirm Override',
+								body: _cal.ERinvalidTimePrompt,
+								cancel: function cancel() {
+									revert();
+								},
+								override: function override() {
+									updateEventsModified(event);
+								}
+							});
+						} else {
+							updateEventsModified(event);
+						}
 					},
 					eventResize: function eventResize(event) {
-						$('.iam-cal').fullCalendar('rerenderEvents');
-						if (typeof event.nid != 'undefined') eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+						if ((0, _cal.eventIsLongerThan)(e, parseInt(thisRentalDays) + 1)) {
+							(0, _override.overridePrompt)({
+								title: 'Confirm Override',
+								body: 'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+								cancel: function cancel() {
+									revert();
+								},
+								override: function override() {
+									updateEventsModified(event);
+								}
+							});
+						} else {
+							updateEventsModified(event);
+						}
 					},
-					eventClick: function eventClick(event, jsEvent, view) {},
+					eventReceive: function eventReceive(e) {
+						if ((0, _cal.eventFallsOnWeekend)(e)) {
+							$('.iam-res-cal').fullCalendar('removeEvents', e._id);
+							return false;
+						}
+					},
 					events: ajaxurl + "?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name=" + equip_name
 				});
 			});
@@ -12869,7 +12937,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12896,6 +12964,47 @@ var submissionEnd = function submissionEnd() {
 
 exports.submissionStart = submissionStart;
 exports.submissionEnd = submissionEnd;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.overridePrompt = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function overridePrompt(args) {
+  if ((0, _jquery2.default)('#dialog-override').length < 1) (0, _jquery2.default)('body').append('<div id="dialog-override" title="' + args.title + '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>' + args.body + '</p></div>');
+
+  (0, _jquery2.default)("#dialog-override").dialog({
+    resizable: false,
+    height: "auto",
+    width: 400,
+    modal: true,
+    buttons: {
+      Override: function Override() {
+        if (typeof args.override != 'undefined') args.override();
+        (0, _jquery2.default)(this).dialog("close");
+      },
+      Cancel: function Cancel() {
+        if (typeof args.cancel != 'undefined') args.cancel();
+        (0, _jquery2.default)(this).dialog("close");
+      }
+    }
+  });
+}
+
+exports.overridePrompt = overridePrompt;
 
 /***/ })
 /******/ ]);

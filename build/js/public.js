@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10108,6 +10108,36 @@ exports.handleServerError = handleServerError;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+
+var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
+  var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+  var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+  //for now it ends at midnight of the following day
+  return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+};
+
+var eventIsLongerThan = function eventIsLongerThan(e, days) {
+  var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+  var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+  return end.diff(start, 'days') > days;
+};
+
+exports.ERinvalidTimePrompt = ERinvalidTimePrompt;
+exports.eventFallsOnWeekend = eventFallsOnWeekend;
+exports.eventIsLongerThan = eventIsLongerThan;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
@@ -10116,9 +10146,11 @@ var _utils = __webpack_require__(2);
 
 var _textfieldlisteners = __webpack_require__(3);
 
-var _cookie = __webpack_require__(6);
+var _cookie = __webpack_require__(7);
 
 var _serverresponse = __webpack_require__(4);
+
+var _cal = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10422,28 +10454,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			}
 		};
 
-		var ERinvalidTimePrompt = function ERinvalidTimePrompt() {
-			alert('Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.');
-		};
-
-		var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
-			var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-			var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-			//for now it ends at midnight of the following day
-			if (dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon') {
-				ERinvalidTimePrompt();
-				return true;
-			}
-			return false;
-		};
-
-		var eventIsLongerThan = function eventIsLongerThan(e, days) {
-			var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-			var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-			return end.diff(start, 'days') > days;
-		};
-
 		var initEquipmentButtonListener = function initEquipmentButtonListener() {
 
 			$('.iam-equipment-button').click(function (event) {
@@ -10503,16 +10513,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 							right: 'month'
 						},
 						eventReceive: function eventReceive(e) {
-							if (eventFallsOnWeekend(e)) {
+							if ((0, _cal.eventFallsOnWeekend)(e)) {
+								alert(_cal.ERinvalidTimePrompt);
 								$('.iam-res-cal').fullCalendar('removeEvents', e._id);
 								return false;
 							}
 						},
 						eventDrop: function eventDrop(e, d, revert) {
-							if (eventFallsOnWeekend(e)) revert();
+							if ((0, _cal.eventFallsOnWeekend)(e)) {
+								alert(_cal.ERinvalidTimePrompt);
+								revert();
+							}
 						},
 						eventResize: function eventResize(e, d, revert) {
-							if (eventIsLongerThan(e, parseInt(rental_period) + 1)) {
+							if ((0, _cal.eventIsLongerThan)(e, parseInt(rental_period) + 1)) {
 								alert('The maximum rental time for this equipment is ' + rental_period + ' days.');
 								revert();
 							}
@@ -11533,7 +11547,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

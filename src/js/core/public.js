@@ -5,6 +5,7 @@ import { isEmail, escapeHtml } from '../core/utils';
 import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
+import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../module/cal';
 
 (function( $ ) {
 
@@ -311,29 +312,6 @@ import { handleServerResponse, handleServerError } from '../module/serverrespons
 			}
 		}
 
-		var ERinvalidTimePrompt = function () {
-			alert('Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.');
-		}
-
-		var eventFallsOnWeekend = function (e) {
-			var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-			var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-			//for now it ends at midnight of the following day
-			if (dayOfWeekStart=='sat' || dayOfWeekStart=='sun'
-					|| dayOfWeekEnd=='sun' || dayOfWeekEnd=='mon') {
-				ERinvalidTimePrompt();
-				return true;
-			}
-			return false;
-		}
-
-		var eventIsLongerThan = function (e, days) {
-			var start = moment( e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
-			var end = moment( e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
-			return end.diff(start, 'days') > days;
-		}
-
 		var initEquipmentButtonListener = function () {
 
 			$('.iam-equipment-button').click(function(event) {
@@ -396,13 +374,16 @@ import { handleServerResponse, handleServerError } from '../module/serverrespons
 						},
 						eventReceive: function (e) {
 							if (eventFallsOnWeekend(e)) {
+								alert(ERinvalidTimePrompt);
 								$('.iam-res-cal').fullCalendar('removeEvents',e._id);
 								return false;
 							}
 						},
 						eventDrop: function (e, d, revert) {
-							if (eventFallsOnWeekend(e))
+							if (eventFallsOnWeekend(e)) {
+								alert(ERinvalidTimePrompt);
 								revert();
+							}
 						},
 						eventResize: function (e, d, revert) {
 							if (eventIsLongerThan(e, (parseInt(rental_period) + 1))) {

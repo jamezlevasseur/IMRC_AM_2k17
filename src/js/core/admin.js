@@ -4,7 +4,9 @@ import { rStr, isEmail, getSize } from '../core/utils';
 
 import { itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
-import {submissionStart, submissionEnd} from '../module/userfeedback';
+import { submissionStart, submissionEnd } from '../module/userfeedback';
+import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../module/cal';
+import { overridePrompt } from '../module/override';
 
 (function( $ ) {
 
@@ -973,6 +975,11 @@ import {submissionStart, submissionEnd} from '../module/userfeedback';
 					refreshResCal();
 				}
 
+				let updateEventsModified = function (event) {
+					if (typeof event.nid != 'undefined')
+						eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+				}
+
 				var initRentalButton = function () {
 					if (erRentalDays==null) {
 						var erInfo = $('.iam-facility-data').data('facility');
@@ -1161,15 +1168,36 @@ import {submissionStart, submissionEnd} from '../module/userfeedback';
 								initContextMenu('rental');
 							},
 							eventDrop: function (event) {
-								if (typeof event.nid != 'undefined')
-									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+								if (eventFallsOnWeekend(event)) {
+									overridePrompt({
+										title: 'Confirm Override',
+										body: ERinvalidTimePrompt,
+										cancel: () => { revert(); },
+										override: () => { updateEventsModified(event); }
+									});
+								} else {
+									updateEventsModified(event);
+								}
 							},
 							eventResize: function (event) {
-								$('.iam-cal').fullCalendar( 'rerenderEvents' );
-								if (typeof event.nid != 'undefined')
-									eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+								if (eventIsLongerThan(e, (parseInt(thisRentalDays) + 1))) {
+									overridePrompt({
+										title: 'Confirm Override',
+										body: 'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+										cancel: () => {
+											revert();
+										},
+										override: () => { updateEventsModified(event); }
+									});
+								} else {
+									updateEventsModified(event);
+								}
 							},
-							eventClick: function (event, jsEvent, view) {
+							eventReceive: function (e) {
+								if (eventFallsOnWeekend(e)) {
+									$('.iam-res-cal').fullCalendar('removeEvents',e._id);
+									return false;
+								}
 							},
 							events: ajaxurl+"?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name="+equip_name
 						});
