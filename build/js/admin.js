@@ -12623,7 +12623,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						if ((0, _cal.eventIsLongerThan)(event, parseInt(thisRentalDays) + 1)) {
 							(0, _override.overridePrompt)({
 								title: 'Confirm Override',
-								body: 'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+								body: _cal.ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
 								cancel: function cancel() {
 									revert();
 								},

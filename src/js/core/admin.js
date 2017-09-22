@@ -1200,7 +1200,7 @@ import { overridePrompt } from '../module/override';
 								if (eventIsLongerThan(event, (parseInt(thisRentalDays) + 1))) {
 									overridePrompt({
 										title: 'Confirm Override',
-										body: 'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+										body: ERinvalidTimePrompt,//'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
 										cancel: () => {
 											revert();
 										},
