@@ -11,8 +11,9 @@ class Reservations_Page
 
   		if (isset($_POST['modified'])) {
   			foreach ($_POST['modified'] as $key => $value) {
-  				if (in_array($key, $_POST['to_delete']))
-  					continue;
+          if (isset($_POST['to_delete']))
+  				    if (in_array($key, $_POST['to_delete']))
+  					       continue;
   				$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID, Equipment_ID, Start_Time FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s", IAM_Sec::textfield_cleaner($key)));
   				$iam_id = $reservation_results[0]->IAM_ID;
   				$equip_id = $reservation_results[0]->Equipment_ID;
