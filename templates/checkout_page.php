@@ -136,12 +136,12 @@ class IAM_Checkout_Page
 			}
 		}
 
-		
+
 		Utils_Public::late_reservations_check();
 		return $html;
 	}
 
-	public function update_appointment()
+	public static function update_appointment()
 	{
 		global $wpdb;
 		if ($_POST['status']==ACTIVE && is_numeric($_POST['status'])) {
@@ -154,7 +154,7 @@ class IAM_Checkout_Page
 		iam_throw_error(INVALID_INPUT_EXCEPTION.' ch-upa-1');
 	}
 
-	public function makeEquipmentScheduleList()
+	public static function makeEquipmentScheduleList()
 	{
 		global $wpdb;
 		$fab_lab_tags = [$wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",'Fab Lab'))[0]->Tag_ID];
