@@ -48,6 +48,9 @@ class IAM_Activator {
 			WP_Username varchar(60) NOT NULL,
 			Account_Type bigint(20) NOT NULL,
 			Balance decimal(6,2) NOT NULL,
+			Phone varchar(12) DEFAULT NULL,
+			School_ID varchar(32) DEFAULT NULL,
+			Drivers_License(32) DEFAULT NULL,
 			PRIMARY KEY(IAM_ID),
 			UNIQUE(NI_ID),
 			UNIQUE(WP_Username)
