@@ -315,6 +315,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_get_business_hours', 'Reservation_Public', 'get_business_hours_callback');
 		$this->loader->add_action('wp_ajax_nopriv_get_equipment_for_tag', 'Reservation_Public', 'get_equipment_for_tag_callback');
 		$this->loader->add_action('wp_ajax_nopriv_get_approval_hours', 'Reservation_Public', 'get_approval_hours');
+		$this->loader->add_action('wp_ajax_get_approval_hours', 'Reservation_Public', 'get_approval_hours');
 
 		$this->loader->add_action('wp_ajax_training_email', 'Training_Public', 'training_email_callback');
 
@@ -330,7 +331,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_checkout_submit', 'Checkout_Public', 'checkout_submit_callback');
 		$this->loader->add_action('wp_ajax_checkout_unlock', 'Checkout_Public', 'checkout_unlock_callback');
 		$this->loader->add_action('wp_ajax_checkout_content', 'Checkout_Public', 'checkout_content_callback');
-		$this->loader->add_action('wp_ajax_get_approval_hours', 'Reservation_Public', 'get_approval_hours');
+
 
 	}
 

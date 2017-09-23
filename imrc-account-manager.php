@@ -184,8 +184,9 @@ function iam_throw_error($message,$code='400')
 	$monolog->pushHandler(new StreamHandler(iam_dir().'logs/phplogs.log', Logger::WARNING));
 	$monolog->error($message);*/
 
-	throw new Exception($message);
-	//header('HTTP/1.1 '.$code.' '.$message);
+
+	header('HTTP/1.1 '.$code.' '.$message);
+  throw new Exception($message);
 	exit;
 }
 

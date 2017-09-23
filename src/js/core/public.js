@@ -1372,6 +1372,7 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 					type: 'GET',
 					data: {action: 'checkout_unlock', code: $('.iam-checkout-lock').val()},
 					success: function (data) {
+						console.log('some thing')
 						data = handleServerResponse(data);
 						createCookie(IPAD_LOCK_COOKIE,$('.iam-data').data('timestamp'),365);
 						$.ajax({
@@ -1385,11 +1386,13 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 								initCheckout();
 							},
 							error: function (data) {
+
 								handleServerError(data, new Error());
 							}
 						});
 					},
 					error: function (data) {
+						console.log('some thing else')
 						handleServerError(data, new Error());
 					}
 				});

@@ -11484,6 +11484,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					type: 'GET',
 					data: { action: 'checkout_unlock', code: $('.iam-checkout-lock').val() },
 					success: function success(data) {
+						console.log('some thing');
 						data = (0, _serverresponse.handleServerResponse)(data);
 						(0, _cookie.createCookie)(IPAD_LOCK_COOKIE, $('.iam-data').data('timestamp'), 365);
 						$.ajax({
@@ -11497,11 +11498,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 								initCheckout();
 							},
 							error: function error(data) {
+
 								(0, _serverresponse.handleServerError)(data, new Error());
 							}
 						});
 					},
 					error: function error(data) {
+						console.log('some thing else');
 						(0, _serverresponse.handleServerError)(data, new Error());
 					}
 				});
