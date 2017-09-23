@@ -20,7 +20,7 @@ class IAM_Cal
 		iam_respond(SUCCESS,$wpdb->get_results($wpdb->prepare("SELECT Appointment_Business_Hours FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=%d",$tag_id))[0]->Appointment_Business_Hours);
 	}
 
-	public static function get_irregular_hours_cal($equip_name) {
+	public static function get_irregular_hours_cal() {
 		global $wpdb;
 		if (!isset($_GET['facility'])) {
 			if (!isset($_GET['equip_name'])) {
