@@ -3,7 +3,7 @@
     <?php if ( $attributes['show_title'] ) : ?>
         <h3><?php _e( 'Register', 'personalize-login' ); ?></h3>
     <?php endif; ?>
- 
+
     <div id="signupform">
 
         <p class="form-row">
@@ -25,12 +25,27 @@
             <label for="password-confirm"><?php _e( 'Password-Confirm', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
             <input type="password" name="password-confirm" id="password-confirm">
         </p>
- 
+
         <p class="form-row">
             <label for="first_name"><?php _e( 'First name', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
             <input type="text" name="first_name" id="first-name">
         </p>
- 
+
+        <p class="form-row">
+            <label for="last_name"><?php _e( 'Last name', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
+            <input type="text" name="last_name" id="last-name">
+        </p>
+
+        <p class="form-row">
+            <label for="phone_num"><?php _e( 'Phone number', 'personalize-login' ); ?></label><br />
+            <input type="text" name="phone_num" id="phone-num">
+        </p>
+
+        <p class="form-row">
+            <label for="last_name"><?php _e( 'Last name', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
+            <input type="text" name="last_name" id="last-name">
+        </p>
+
         <p class="form-row">
             <label for="last_name"><?php _e( 'Last name', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
             <input type="text" name="last_name" id="last-name">
@@ -40,7 +55,7 @@
             <label for="account_type"><?php _e( 'Account Type', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label>
             <select type="text" name="account_type" id="account_type" style="display:block;">
                 <option selected disabled value="Select a Value">Select a Value</option>
-                <?php 
+                <?php
                 global $wpdb;
                 $account_type_results = $wpdb->get_results("SELECT * FROM ".IAM_ACCOUNT_TYPES_TABLE);
                 require_once iam_dir() . 'includes/IAM-sec.php';
@@ -61,7 +76,7 @@
         </p>
 
         <div class="g-recaptcha" data-sitekey="6Lfx8ScTAAAAAGjL7qQzDfH_U4OT8ghafFd3pyab"></div>
- 
+
         <p class="signup-submit">
             <button id="register-submit" type="button">Submit</button>
         </p>

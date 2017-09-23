@@ -139,7 +139,6 @@ class Utils_Public
             }
             date_default_timezone_set(IMRC_TIME_ZONE);
             $now = date("Y-m-d H:i:s");
-            iam_update_value(IAM_IP_LOGS,$user.'['.$now.']',get_client_ip(),true);
             $log = iam_get_value(IAM_LOGIN_LOGS,$user,true);
             if ($log===false) {
                 iam_update_value(IAM_LOGIN_LOGS,$user,json_encode(array('time'=>time(),'fail_count'=>1)));
