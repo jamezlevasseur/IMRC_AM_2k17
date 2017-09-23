@@ -119,6 +119,15 @@ function make_nid()
 	return md5(uniqid());
 }
 
+function make_phone_number_field()
+{
+	return '
+	<div class="iam-phone-num-grp">
+	<span>(&nbsp;</span><input type="text" name="phone-num-1" id="phone-num-1" maxlength="3" size="3"><span>&nbsp;)&nbsp;</span>
+	<input type="text" name="phone-num-2" id="phone-num-2" maxlength="3" size="3"><span>&nbsp;-&nbsp;</span>
+	<input type="text" name="phone-num-3" id="phone-num-3" maxlength="4" size="4"></div>';
+}
+
 function ordinal_format($number) {
     $ends = array('th','st','nd','rd','th','th','th','th','th','th');
     if ((($number % 100) >= 11) && (($number%100) <= 13))

@@ -88,14 +88,13 @@ class IAM_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-
 		wp_enqueue_style($this->plugin_name.'-slick', iam_url().'static/' . 'css/slick.css', $this->version, 'all' );
+
+		wp_enqueue_style($this->plugin_name.'-bootstrap-pub', iam_url().'static/' . 'css/bootstrap-pub.min.css', $this->version, 'all' );
 
 		wp_enqueue_style($this->plugin_name.'-slick-theme', iam_url().'static/' . 'css/slick-theme.css', $this->version, 'all' );
 
 		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', iam_url().'static/' . 'css/fullcalendar.min.css', $this->version, 'all' );
-
-		//wp_enqueue_style($this->plugin_name.'-fullcalendar-print', plugin_dir_url( __FILE__ ) . 'css/fullcalendar.print.css',array('iam_fullcalendar_css'),false,'media');
 
 		wp_enqueue_style( $this->plugin_name, iam_url().'src/css/public.css', array(), $this->version, 'all' );
 	}

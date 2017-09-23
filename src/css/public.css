@@ -6,6 +6,29 @@
 
  /*************************************** GENERAL *************************************************/
 
+.iam-form {
+   max-width:40vw;
+   margin:0 auto;
+   display:block;
+ }
+
+.iam-form label {
+   font-size: 18px;
+ }
+
+.iam-form input,  .iam-form select {
+   border-radius: 4px;
+   display: block;
+   font-size: 14px;
+   height: 30px;
+   padding: 0px 0;
+   width: 100%;
+ }
+
+.iam-form .iam-phone-num-grp input {
+   width: auto;
+   display: inline-block;
+ }
 
  .iam-not-checked-out-container {
 	 overflow-y: scroll;
