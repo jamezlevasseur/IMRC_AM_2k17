@@ -86,23 +86,46 @@ class IAM_User_Account_Page
 
 		$html = '
 		<div id="iam-account-balance">
-			<div id="iam-total-bal-left">
-				<div class="iam-total-bal-amount" style="background-repeat:no-repeat; background-position:center; background-image:url('.site_url('/wp-content/plugins/imrc-account-manager/assets/circle.svg').');">
-					'.iam_output($account_bal).'
+
+
+		  <!-- Nav tabs -->
+		  <ul class="nav nav-tabs" role="tablist">
+		    <li role="presentation" class="active"><a href="#account" aria-controls="account" role="tab" data-toggle="tab">Account</a></li>
+		    <li role="presentation"><a href="#transactions" aria-controls="transactions" role="tab" data-toggle="tab">Transactions</a></li>
+		  </ul>
+
+		  <!-- Tab panes -->
+		  <div class="tab-content">
+		    <div role="tabpanel" class="tab-pane active" id="account">a</div>
+		    <div role="tabpanel" class="tab-pane" id="transactions">
+
+					<div id="iam-total-bal-left">
+						<div class="iam-total-bal-amount" style="background-repeat:no-repeat; background-position:center; background-image:url('.site_url('/wp-content/plugins/imrc-account-manager/assets/circle.svg').');">
+							'.iam_output($account_bal).'
+						</div>
+						<p id="iam-available-bal-title">Available Balance</p>
+						<p id="iam-available-bal-title iam-discount">'.iam_output($discount).'% '.iam_output($account_type).' Discount</p>
+					</div>
+					<div id="iam-total-bal-right">
+						<p class="iam-account-activity-title">Account Activity</p>
+						<table class="iam-account-balance-table">
+							'.IAM_User_Account_Page::get_charge_table_head().'
+							<tbody>
+								'.$table_rows.'
+							</tbody>
+						</table>
+					</div>
+
 				</div>
-				<p id="iam-available-bal-title">Available Balance</p>
-				<p id="iam-available-bal-title iam-discount">'.iam_output($discount).'% '.iam_output($account_type).' Discount</p>
-			</div>
-			<div id="iam-total-bal-right">
-				<p class="iam-account-activity-title">Account Activity</p>
-				<table class="iam-account-balance-table">
-					'.IAM_User_Account_Page::get_charge_table_head().'
-					<tbody>
-						'.$table_rows.'
-					</tbody>
-				</table>
-			</div>
+		  </div>
+
+
 		</div>';
+
+/*
+
+*/
+
 		Utils_Public::render_page_for_login_status($html);
 	}
 

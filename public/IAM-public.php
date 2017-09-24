@@ -90,7 +90,9 @@ class IAM_Public {
 	public function enqueue_styles() {
 		wp_enqueue_style($this->plugin_name.'-slick', iam_url().'static/' . 'css/slick.css', $this->version, 'all' );
 
-		wp_enqueue_style($this->plugin_name.'-bootstrap-pub', iam_url().'static/' . 'css/bootstrap-pub.min.css', $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-bootstrap', iam_url().'static/' . 'css/bootstrap.min.css', $this->version, 'all' );
+
+		wp_enqueue_style($this->plugin_name.'-bootstrap-theme', iam_url().'static/' . 'css/bootstrap-theme.min.css', $this->version, 'all' );
 
 		wp_enqueue_style($this->plugin_name.'-slick-theme', iam_url().'static/' . 'css/slick-theme.css', $this->version, 'all' );
 
@@ -107,6 +109,8 @@ class IAM_Public {
 	public function enqueue_scripts() {
 
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', iam_url().'static/' . 'js/jquery-ui.custom.min.js', array('jquery'),$this->version, false);
+
+		wp_enqueue_script($this->plugin_name.'-bootstrap', iam_url().'static/' . 'js/bootstrap.min.js', array('jquery'),$this->version, false);
 
 		wp_enqueue_script($this->plugin_name.'slick-js', iam_url().'static/' . 'js/slick.min.js',array('jquery'), $this->version, false);
 

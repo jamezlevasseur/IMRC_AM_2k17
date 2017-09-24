@@ -100,7 +100,8 @@ class IAM_Admin {
 	 * @since    1.0.0
 	 */
 	public function enqueue_styles() {
-		wp_enqueue_style($this->plugin_name.'-bootstrap-css', iam_url().'static/' . 'css/bootstrap.min.css');
+		wp_enqueue_style($this->plugin_name.'-bootstrap', iam_url().'static/' . 'css/bootstrap.min.css', $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-bootstrap-theme', iam_url().'static/' . 'css/bootstrap-theme.min.css', $this->version, 'all' );
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css', iam_url().'static/' . 'css/jquery-ui.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-structure', iam_url().'static/' . 'css/jquery-ui.structure.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-theme', iam_url().'static/' . 'css/jquery-ui.theme.min.css');
@@ -117,10 +118,7 @@ class IAM_Admin {
 	 */
 	public function enqueue_scripts() {
 
-		wp_register_script($this->plugin_name.'popper-js','https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js',['jquery']);
-		wp_register_script($this->plugin_name.'bootstrap-js','https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js', ['jquery',$this->plugin_name.'popper-js']);
-
-
+		wp_enqueue_script($this->plugin_name.'-bootstrap', iam_url().'static/' . 'js/bootstrap.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'context-menu', iam_url().'static/' . 'js/contextMenu.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'popper-js');
 		wp_enqueue_script($this->plugin_name.'bootstrap-js');
