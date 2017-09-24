@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
-import { isEmail, escapeHtml } from '../core/utils';
+import { isEmail, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn } from '../core/utils';
+import { publicDebug } from '../core/debug';
 
 import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
@@ -1251,13 +1252,20 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
 					return;
 				}
+
+				//var phonenum = getPhoneNumberFromPage();
+				//console.log(phonenum);
+
+				var registerArgs = {action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'student-id': $('#student-id').val(), phonenum: getPhoneNumberFromPage(), 'password': $('#password').val(), 'key': $('#reg-key').val(),captcha:grecaptcha.getResponse()};
+
+				console.log(registerArgs);
+
 				$.ajax({
 					url: ajaxurl,
 					type: 'POST',
-					data: {action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'password': $('#password').val(), 'key': $('#reg-key').val(),captcha:grecaptcha.getResponse()},
+					data: registerArgs,
 					success: function (data) {
 						handleServerResponse(data);
-						redir();
 					},
 					error: function (data) {
 						handleServerError(data, new Error());
@@ -1327,7 +1335,6 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 					success: function (data) {
 						firstLoginAttempt = 0;
 						handleServerResponse(data);
-						redir();
 					},
 					error: function (data) {
 						if (firstLoginAttempt) {
@@ -1445,7 +1452,7 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
 		}
-		//reportBugListener();
-	});
 
+		publicDebug();
+	});
 })( jQuery );

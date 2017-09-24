@@ -10679,13 +10679,43 @@ module.exports = function (module) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-var rStr = function rStr(length) {
-  var str = '';
-  for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ */
+function detectIE() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
   }
-  return str;
-};
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+  }
+
+  // other browser
+  return false;
+}
 
 var isEmail = function isEmail(email) {
   var atpos = email.indexOf("@");
@@ -10719,10 +10749,38 @@ function escapeHtml(text) {
   });
 }
 
+var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
+
+function getPhoneNumberFromPage() {
+  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (!phoneNumberIsFilledIn()) {
+    if (!required) return '';
+    alert(plsFillInPhoneNum);
+    throw plsFillInPhoneNum;
+  }
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
+}
+
+function phoneNumberIsFilledIn() {
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
+}
+
+var rStr = function rStr(length) {
+  var str = '';
+  for (var i = 0; i < length; i++) {
+    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+  }
+  return str;
+};
+
 exports.rStr = rStr;
 exports.isEmail = isEmail;
 exports.getSize = getSize;
 exports.escapeHtml = escapeHtml;
+exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
+exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
+exports.detectIE = detectIE;
 
 /***/ }),
 /* 5 */
@@ -10740,25 +10798,9 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
+var _utils = __webpack_require__(4);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
-			if (!event.key.match(/^[0-9.]*$/)) {
-				return false;
-			}
-		}
-	});
-};
-
-var emailOnlyListener = function emailOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
-			return false;
-		}
-	});
-};
 
 var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
 	jqueryObject.keydown(function (event) {
@@ -10776,6 +10818,14 @@ var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
 	});
 };
 
+var emailOnlyListener = function emailOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
+			return false;
+		}
+	});
+};
+
 var itemNameListener = function itemNameListener(jqueryObject) {
 	jqueryObject.keydown(function (event) {
 		if (event.key.match(/^[;'_]*$/)) {
@@ -10785,9 +10835,21 @@ var itemNameListener = function itemNameListener(jqueryObject) {
 };
 
 var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
+	if ((0, _utils.detectIE)() === false) return false;
 	jqueryObject.keydown(function (event) {
 		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
 			return false;
+		}
+	});
+};
+
+var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
+			if (!event.key.match(/^[0-9.]*$/)) {
+				return false;
+			}
 		}
 	});
 };

@@ -8,32 +8,32 @@
         <h1>Register</h1>
         <p class="form-row">
             <label for="email"><?php _e( 'Email', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
-            <input  type="text" name="email" id="email">
+            <input type="text" name="email" id="email">
         </p>
 
         <p class="form-row">
             <label for="email-confirm"><?php _e( 'Email-Confirm', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
-            <input  type="text" name="email-confirm" id="email-confirm">
+            <input type="text" name="email-confirm" id="email-confirm">
         </p>
 
         <p class="form-row">
             <label for="password"><?php _e( 'Password', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
-            <input  type="password" name="password" id="password">
+            <input type="password" name="password" id="password">
         </p>
 
         <p class="form-row">
             <label for="password-confirm"><?php _e( 'Password-Confirm', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
-            <input  type="password" name="password-confirm" id="password-confirm">
+            <input type="password" name="password-confirm" id="password-confirm">
         </p>
 
         <p class="form-row">
             <label for="first_name"><?php _e( 'First name', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
-            <input  type="text" name="first_name" id="first-name">
+            <input type="text" name="first_name" id="first-name">
         </p>
 
         <p class="form-row">
             <label for="last_name"><?php _e( 'Last name', 'personalize-login' ); ?> <strong style="color:red;">*</strong></label><br />
-            <input  type="text" name="last_name" id="last-name">
+            <input type="text" name="last_name" id="last-name">
         </p>
 
         <p class="form-row">
@@ -43,7 +43,7 @@
 
         <p class="form-row">
             <label for="student_id"><?php _e( 'Student ID', 'personalize-login' ); ?></label><br />
-            <input  type="text" name="student_id" id="student-id">
+            <input type="text" name="student_id" id="student-id">
         </p>
 
         <p class="form-row">
@@ -63,7 +63,7 @@
 
         <p class="form-row">
             <label for="last_name">Registration Key (Optional)</label><br />
-            <input  type="text" name="reg_key" id="reg-key" >
+            <input type="text" name="reg_key" id="reg-key" >
         </p>
 
         <p class="form-row">

@@ -174,7 +174,7 @@ class Utils_Public
         }
 
         $captcha_request = json_decode( iam_make_post('https://www.google.com/recaptcha/api/siteverify',['secret'=>'6Lfx8ScTAAAAADJYqGEUMnV4ENmwgRyrUWEuMf5x','response'=>$_POST['captcha']]) );
-        if ($captcha_request->success==true && $captcha_request->hostname==$_SERVER['HTTP_HOST']) {
+        if ($captcha_request->success==true && $captcha_request->hostname==$_SERVER['HTTP_HOST'] || DEV_MODE===1) {
             $user_login = IAM_Sec::textfield_cleaner($_POST['first-name']).'.'.IAM_Sec::textfield_cleaner($_POST['last-name']);
             $user_email = IAM_Sec::textfield_cleaner(filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL));
             if ($user_email===false) {
@@ -205,6 +205,8 @@ class Utils_Public
                 $account_type = IAM_Sec::iamDecrypt($_POST['account_type']);
                 $starting_balance = 0.0;
                 $key = IAM_Sec::textfield_cleaner($_POST['key']);
+                $phone = IAM_Sec::textfield_cleaner($_POST['phonenum']);
+                $student_id = IAM_Sec::textfield_cleaner($_POST['student-id']);
                 $is_approved = false;
                 if (strlen($key)>0) {
                     $reg_key_results = $wpdb->get_results("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key='".REGISTRATION_KEY."'");
@@ -229,13 +231,18 @@ class Utils_Public
                 }
                 update_user_meta($wp_id,'first_name',IAM_Sec::textfield_cleaner($_POST['first-name']));
                 update_user_meta($wp_id,'last_name',IAM_Sec::textfield_cleaner($_POST['last-name']));
-                $sql_query = $wpdb->prepare("INSERT INTO ".IAM_USERS_TABLE." (WP_ID,NI_ID,WP_Username,Balance,Account_Type) VALUES (%d,%s,%s,%f,%s) ",$wp_id,$ni_id,$user_login,$starting_balance,$account_type);
+                $sql_query = $wpdb->prepare("INSERT INTO ".IAM_USERS_TABLE." (WP_ID,NI_ID,WP_Username,Balance,Account_Type,Phone,School_ID) VALUES (%d,%s,%s,%f,%s,%s,%s) ",$wp_id,$ni_id,$user_login,$starting_balance,$account_type,$phone,$student_id);
                 $result = $wpdb->query($sql_query);
                 if (!$is_approved) {
                     add_user_meta($wp_id, 'iam_need_admin_approval', 'yes');
                     iam_mail($user_email,'Welcome to the IMRC','<div style="color:black;">Welcome to the IMRC, <br /><br /> Your account is pending approval by an admin. You will be emailed when your account has been activated. <br /><br /> Sincerely, <br /><br /> The IMRC Team','Failed to send welcome email.');
                 }
                 $message = '';
+
+                if (empty($wpdb->get_results("SELECT * FROM ".IAM_USERS_TABLE." WHERE NI_ID='$ni_id'"))) {
+                  iam_throw_error('Unsuccessful enrollment. Contact your administrator.');
+                }
+
                 if (!$is_approved) {
                     $message = 'Your username is "'.$user_login.'". Your account is pending approval by a site admin.';
                     if (IAM::$status_message!='') {
