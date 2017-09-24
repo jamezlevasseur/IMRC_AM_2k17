@@ -34,7 +34,7 @@ class Public_Content
 
     public static function render_account_balances_page()
     {
-        echo IAM_Account_Balance_Page::get();
+        echo IAM_User_Account_Page::get();
     }
 
 }

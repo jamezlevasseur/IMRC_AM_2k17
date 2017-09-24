@@ -4,7 +4,7 @@
 *
 */
 
-class IAM_Account_Balance_Page
+class IAM_User_Account_Page
 {
 
 	public static function get_table_rows_for_id($id, $editable = false)
@@ -82,7 +82,7 @@ class IAM_Account_Balance_Page
       	$at_results = $wpdb->get_results($wpdb->prepare("SELECT Name,Discount FROM ".IAM_ACCOUNT_TYPES_TABLE." WHERE Account_Type_ID=%d",$user_results[0]->Account_Type));
       	$account_type = $at_results[0]->Name;
       	$discount = $at_results[0]->Discount;
-      	$table_rows = IAM_Account_Balance_Page::get_table_rows_for_id($iam_id);
+      	$table_rows = IAM_User_Account_Page::get_table_rows_for_id($iam_id);
 
 		$html = '
 		<div id="iam-account-balance">
@@ -96,7 +96,7 @@ class IAM_Account_Balance_Page
 			<div id="iam-total-bal-right">
 				<p class="iam-account-activity-title">Account Activity</p>
 				<table class="iam-account-balance-table">
-					'.IAM_Account_Balance_Page::get_charge_table_head().'
+					'.IAM_User_Account_Page::get_charge_table_head().'
 					<tbody>
 						'.$table_rows.'
 					</tbody>

@@ -76,7 +76,7 @@ class IAM_Public {
 
 		require_once iam_dir() . 'templates/checkout_page.php';
 
-		require_once iam_dir() . 'templates/account_balance_page.php';
+		require_once iam_dir() . 'templates/user_account_page.php';
 
 		require_once iam_dir() . 'public/content.php';
 	}

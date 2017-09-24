@@ -280,8 +280,8 @@ class Admin_Content
 			<div id="iam-bal-charges-table-container">
 				<table id="iam-user-charges-table" cellspacing="0">
 					<?php
-					require_once iam_dir() . 'templates/account_balance_page.php';
-					echo IAM_Account_Balance_Page::get_charge_table_head();
+					require_once iam_dir() . 'templates/user_account_page.php';
+					echo IAM_User_Account_Page::get_charge_table_head();
 					?>
 					<tbody>
 						<tr>
