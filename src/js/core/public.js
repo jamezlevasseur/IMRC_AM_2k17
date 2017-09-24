@@ -7,6 +7,7 @@ import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbers
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
 import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../module/cal';
+import { submissionStart, submissionEnd } from '../module/userfeedback';
 
 (function( $ ) {
 
@@ -1256,7 +1257,7 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 				//var phonenum = getPhoneNumberFromPage();
 				//console.log(phonenum);
 
-				var registerArgs = {action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'student-id': $('#student-id').val(), phonenum: getPhoneNumberFromPage(), 'password': $('#password').val(), 'key': $('#reg-key').val(),captcha:grecaptcha.getResponse()};
+				var registerArgs = {action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'school-id': $('#school-id').val(), phonenum: getPhoneNumberFromPage(), 'password': $('#password').val(), 'key': $('#reg-key').val(),captcha:grecaptcha.getResponse()};
 
 				console.log(registerArgs);
 
@@ -1452,7 +1453,29 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
 		} else if ($('#iam-user-account').length>0) {
-
+			$('.iam-user-info-form .iam-submit').click(function(event) {
+				submissionStart();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: {	action: 'user_update_account_info',
+									link: $('.iam-user-info-form').data('link'),
+									first_name: $('#first-name').val(),
+									last_name: $('#last-name').val(),
+									email: $('#email').val(),
+									phonenum: getPhoneNumberFromPage(),
+									school_id: $('#school-id').val()
+								},
+					success: function (data) {
+						handleServerResponse(data);
+						$('.iam-user-info-form .iam-submit').blur();
+						submissionEnd();
+					},
+					error: function (data) {
+						handleServerError(data, new Error());
+					}
+				});
+			});
 		}
 		console.log(ajaxurl)
 		publicDebug();

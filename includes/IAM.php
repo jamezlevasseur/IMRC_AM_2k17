@@ -332,7 +332,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_checkout_unlock', 'Checkout_Public', 'checkout_unlock_callback');
 		$this->loader->add_action('wp_ajax_checkout_content', 'Checkout_Public', 'checkout_content_callback');
 
-		$this->loader->add_action('wp_ajax_user_upload_avatar', 'Account_Public', 'user_upload_avatar');
+		$this->loader->add_action('wp_ajax_user_update_account_info', 'Account_Public', 'user_update_account_info');
 
 	}
 

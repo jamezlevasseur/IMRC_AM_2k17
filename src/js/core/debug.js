@@ -12,7 +12,7 @@ function registerDebug() {
       $('#password-confirm').val('Asdfasdf1');
       $('#first-name').val(rStr(12));
       $('#last-name').val(rStr(12));
-      $('#student-id').val(rStr(16));
+      $('#school-id').val(rStr(16));
       $('#phone-num-1').val('111');
       $('#phone-num-2').val('222');
       $('#phone-num-3').val('3333');
@@ -26,7 +26,7 @@ function publicDebug() {
     return;
 
   console.warn('debug mode active');
-  
+
   registerDebug();
 }
 

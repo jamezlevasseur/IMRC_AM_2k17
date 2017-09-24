@@ -42,8 +42,8 @@
         </p>
 
         <p class="form-row">
-            <label for="student_id"><?php _e( 'Student ID', 'personalize-login' ); ?></label><br />
-            <input type="text" name="student_id" id="student-id">
+            <label for="school_id"><?php _e( 'Student ID', 'personalize-login' ); ?></label><br />
+            <input type="text" name="school_id" id="school-id">
         </p>
 
         <p class="form-row">

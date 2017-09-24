@@ -55,3 +55,5 @@ function iam_remove_dashboard()
 }
 
 add_action('admin_menu', 'iam_remove_dashboard');
+
+add_filter( 'send_email_change_email', '__return_false' );

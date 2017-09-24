@@ -60,11 +60,12 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 11);
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ 0:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9897,313 +9898,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)(module)))
 
 /***/ }),
-/* 1 */,
-/* 2 */,
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * detect IE
- * returns version of IE or false, if browser is not Internet Explorer
- */
-function detectIE() {
-  var ua = window.navigator.userAgent;
-
-  var msie = ua.indexOf('MSIE ');
-  if (msie > 0) {
-    // IE 10 or older => return version number
-    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-  }
-
-  var trident = ua.indexOf('Trident/');
-  if (trident > 0) {
-    // IE 11 => return version number
-    var rv = ua.indexOf('rv:');
-    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-  }
-
-  var edge = ua.indexOf('Edge/');
-  if (edge > 0) {
-    // Edge (IE 12+) => return version number
-    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-  }
-
-  // other browser
-  return false;
-}
-
-var isEmail = function isEmail(email) {
-  var atpos = email.indexOf("@");
-  var dotpos = email.lastIndexOf(".");
-  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
-    return false;
-  }
-  return true;
-};
-
-var getSize = function getSize(obj) {
-  var size = 0,
-      key = void 0;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
-};
-
-function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-
-  return text.replace(/[&<>"']/g, function (m) {
-    return map[m];
-  });
-}
-
-var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
-
-function getPhoneNumberFromPage() {
-  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-  if (!phoneNumberIsFilledIn()) {
-    if (!required) return '';
-    alert(plsFillInPhoneNum);
-    throw plsFillInPhoneNum;
-  }
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
-}
-
-function phoneNumberIsFilledIn() {
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
-}
-
-var rStr = function rStr(length) {
-  var str = '';
-  for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
-  }
-  return str;
-};
-
-exports.rStr = rStr;
-exports.isEmail = isEmail;
-exports.getSize = getSize;
-exports.escapeHtml = escapeHtml;
-exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
-exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
-exports.detectIE = detectIE;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function () {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function get() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function get() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
-			return false;
-		}
-	});
-};
-
-var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z.]*$/)) {
-			return false;
-		}
-	});
-};
-
-var emailOnlyListener = function emailOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
-			return false;
-		}
-	});
-};
-
-var itemNameListener = function itemNameListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (event.key.match(/^[;'_]*$/)) {
-			return false;
-		}
-	});
-};
-
-var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
-	if ((0, _utils.detectIE)() === false) return false;
-	jqueryObject.keydown(function (event) {
-		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
-			return false;
-		}
-	});
-};
-
-var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
-	if ((0, _utils.detectIE)() === false) return false;
-	jqueryObject.keydown(function (event) {
-		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
-			if (!event.key.match(/^[0-9.]*$/)) {
-				return false;
-			}
-		}
-	});
-};
-
-exports.alphaNumericOnlyListener = alphaNumericOnlyListener;
-exports.alphaOnlyListener = alphaOnlyListener;
-exports.emailOnlyListener = emailOnlyListener;
-exports.itemNameListener = itemNameListener;
-exports.maxLengthListener = maxLengthListener;
-exports.numbersOnlyListener = numbersOnlyListener;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-var handleServerResponse = function handleServerResponse(r) {
-	var debug = window.location.href.indexOf('imrcaccounts') == -1;
-
-	if (debug) console.log(r);
-	if (typeof r === 'string') {
-		if (r.indexOf('Fatal error') != -1 && r.indexOf('Fatal error') < 32) {
-			//make sure fatal error isn't some incidental text in a json strong somewhere
-			alert(r.substring(r.indexOf('Uncaught Exception'), r.indexOf('in /')));
-			return;
-		}
-	}
-	try {
-		var _r = JSON.parse(r);
-		if (debug) console.log(_r);
-		if (_r.message != '') alert(_r.status.toUpperCase() + ": " + _r.message);
-		if (_r.redirect != '') window.location.href = _r.redirect;
-		return _r.content;
-	} catch (error) {
-		console.warn(error);
-		console.log('JS error occured when handling server response.');
-	}
-};
-
-var handleServerError = function handleServerError(e, err) {
-	console.log(e);
-	console.log(err);
-	alert(e.statusText + " \n Error Code:" + e.status);
-};
-
-exports.handleServerResponse = handleServerResponse;
-exports.handleServerError = handleServerError;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-
-var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
-  var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-  var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-  //for now it ends at midnight of the following day
-  return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-};
-
-var eventIsLongerThan = function eventIsLongerThan(e, days) {
-  var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-  var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-  return end.diff(start, 'days') > days;
-};
-
-exports.ERinvalidTimePrompt = ERinvalidTimePrompt;
-exports.eventFallsOnWeekend = eventFallsOnWeekend;
-exports.eventIsLongerThan = eventIsLongerThan;
-
-/***/ }),
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */
+/***/ 11:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10213,17 +9912,19 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(4);
 
-var _debug = __webpack_require__(16);
+var _debug = __webpack_require__(36);
 
-var _textfieldlisteners = __webpack_require__(5);
+var _textfieldlisteners = __webpack_require__(14);
 
-var _cookie = __webpack_require__(17);
+var _cookie = __webpack_require__(37);
 
-var _serverresponse = __webpack_require__(6);
+var _serverresponse = __webpack_require__(15);
 
-var _cal = __webpack_require__(7);
+var _cal = __webpack_require__(17);
+
+var _userfeedback = __webpack_require__(16);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11432,7 +11133,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				//var phonenum = getPhoneNumberFromPage();
 				//console.log(phonenum);
 
-				var registerArgs = { action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'student-id': $('#student-id').val(), phonenum: (0, _utils.getPhoneNumberFromPage)(), 'password': $('#password').val(), 'key': $('#reg-key').val(), captcha: grecaptcha.getResponse() };
+				var registerArgs = { action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'school-id': $('#school-id').val(), phonenum: (0, _utils.getPhoneNumberFromPage)(), 'password': $('#password').val(), 'key': $('#reg-key').val(), captcha: grecaptcha.getResponse() };
 
 				console.log(registerArgs);
 
@@ -11623,14 +11324,254 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		} else if ($('.error404').length > 0) {
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
-		} else if ($('#iam-user-account').length > 0) {}
+		} else if ($('#iam-user-account').length > 0) {
+			$('.iam-user-info-form .iam-submit').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'user_update_account_info',
+						link: $('.iam-user-info-form').data('link'),
+						first_name: $('#first-name').val(),
+						last_name: $('#last-name').val(),
+						email: $('#email').val(),
+						phonenum: (0, _utils.getPhoneNumberFromPage)(),
+						school_id: $('#school-id').val()
+					},
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						$('.iam-user-info-form .iam-submit').blur();
+						(0, _userfeedback.submissionEnd)();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		}
 		console.log(ajaxurl);
 		(0, _debug.publicDebug)();
 	});
 })(jQuery);
 
 /***/ }),
-/* 16 */
+
+/***/ 13:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function () {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function get() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function get() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+/***/ }),
+
+/***/ 14:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(4);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
+			return false;
+		}
+	});
+};
+
+var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z.]*$/)) {
+			return false;
+		}
+	});
+};
+
+var emailOnlyListener = function emailOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
+			return false;
+		}
+	});
+};
+
+var itemNameListener = function itemNameListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (event.key.match(/^[;'_]*$/)) {
+			return false;
+		}
+	});
+};
+
+var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
+			return false;
+		}
+	});
+};
+
+var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
+			if (!event.key.match(/^[0-9.]*$/)) {
+				return false;
+			}
+		}
+	});
+};
+
+exports.alphaNumericOnlyListener = alphaNumericOnlyListener;
+exports.alphaOnlyListener = alphaOnlyListener;
+exports.emailOnlyListener = emailOnlyListener;
+exports.itemNameListener = itemNameListener;
+exports.maxLengthListener = maxLengthListener;
+exports.numbersOnlyListener = numbersOnlyListener;
+
+/***/ }),
+
+/***/ 15:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var handleServerResponse = function handleServerResponse(r) {
+	var debug = window.location.href.indexOf('imrcaccounts') == -1;
+
+	if (debug) console.log(r);
+	if (typeof r === 'string') {
+		if (r.indexOf('Fatal error') != -1 && r.indexOf('Fatal error') < 32) {
+			//make sure fatal error isn't some incidental text in a json strong somewhere
+			alert(r.substring(r.indexOf('Uncaught Exception'), r.indexOf('in /')));
+			return;
+		}
+	}
+	try {
+		var _r = JSON.parse(r);
+		if (debug) console.log(_r);
+		if (_r.message != '') alert(_r.status.toUpperCase() + ": " + _r.message);
+		if (_r.redirect != '') window.location.href = _r.redirect;
+		return _r.content;
+	} catch (error) {
+		console.warn(error);
+		console.log('JS error occured when handling server response.');
+	}
+};
+
+var handleServerError = function handleServerError(e, err) {
+	console.log(e);
+	console.log(err);
+	alert(e.statusText + " \n Error Code:" + e.status);
+};
+
+exports.handleServerResponse = handleServerResponse;
+exports.handleServerError = handleServerError;
+
+/***/ }),
+
+/***/ 16:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.submissionEnd = exports.submissionStart = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var submissionStart = function submissionStart() {
+  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
+};
+
+var submissionEnd = function submissionEnd() {
+  (0, _jquery2.default)('.iam-loading-anim').remove();
+};
+
+exports.submissionStart = submissionStart;
+exports.submissionEnd = submissionEnd;
+
+/***/ }),
+
+/***/ 17:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+
+var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
+  var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+  var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+  //for now it ends at midnight of the following day
+  return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+};
+
+var eventIsLongerThan = function eventIsLongerThan(e, days) {
+  var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+  var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+  return end.diff(start, 'days') > days;
+};
+
+exports.ERinvalidTimePrompt = ERinvalidTimePrompt;
+exports.eventFallsOnWeekend = eventFallsOnWeekend;
+exports.eventIsLongerThan = eventIsLongerThan;
+
+/***/ }),
+
+/***/ 36:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11645,7 +11586,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11659,7 +11600,7 @@ function registerDebug() {
       (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
       (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
       (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#student-id').val((0, _utils.rStr)(16));
+      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
       (0, _jquery2.default)('#phone-num-1').val('111');
       (0, _jquery2.default)('#phone-num-2').val('222');
       (0, _jquery2.default)('#phone-num-3').val('3333');
@@ -11679,7 +11620,8 @@ function publicDebug() {
 exports.publicDebug = publicDebug;
 
 /***/ }),
-/* 17 */
+
+/***/ 37:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11722,6 +11664,121 @@ exports.createCookie = createCookie;
 exports.readCookie = readCookie;
 exports.eraseCookie = eraseCookie;
 
+/***/ }),
+
+/***/ 4:
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ */
+function detectIE() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+  }
+
+  // other browser
+  return false;
+}
+
+var isEmail = function isEmail(email) {
+  var atpos = email.indexOf("@");
+  var dotpos = email.lastIndexOf(".");
+  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+    return false;
+  }
+  return true;
+};
+
+var getSize = function getSize(obj) {
+  var size = 0,
+      key = void 0;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
+function escapeHtml(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function (m) {
+    return map[m];
+  });
+}
+
+var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
+
+function getPhoneNumberFromPage() {
+  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (!phoneNumberIsFilledIn()) {
+    if (!required) return '';
+    alert(plsFillInPhoneNum);
+    throw plsFillInPhoneNum;
+  }
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
+}
+
+function phoneNumberIsFilledIn() {
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
+}
+
+var rStr = function rStr(length) {
+  var str = '';
+  for (var i = 0; i < length; i++) {
+    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+  }
+  return str;
+};
+
+exports.rStr = rStr;
+exports.isEmail = isEmail;
+exports.getSize = getSize;
+exports.escapeHtml = escapeHtml;
+exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
+exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
+exports.detectIE = detectIE;
+
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=public.js.map

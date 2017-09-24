@@ -206,7 +206,7 @@ class Utils_Public
                 $starting_balance = 0.0;
                 $key = IAM_Sec::textfield_cleaner($_POST['key']);
                 $phone = IAM_Sec::textfield_cleaner($_POST['phonenum']);
-                $student_id = IAM_Sec::textfield_cleaner($_POST['student-id']);
+                $school_id = IAM_Sec::textfield_cleaner($_POST['school-id']);
                 $is_approved = false;
                 if (strlen($key)>0) {
                     $reg_key_results = $wpdb->get_results("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key='".REGISTRATION_KEY."'");
@@ -231,7 +231,7 @@ class Utils_Public
                 }
                 update_user_meta($wp_id,'first_name',IAM_Sec::textfield_cleaner($_POST['first-name']));
                 update_user_meta($wp_id,'last_name',IAM_Sec::textfield_cleaner($_POST['last-name']));
-                $sql_query = $wpdb->prepare("INSERT INTO ".IAM_USERS_TABLE." (WP_ID,NI_ID,WP_Username,Balance,Account_Type,Phone,School_ID) VALUES (%d,%s,%s,%f,%s,%s,%s) ",$wp_id,$ni_id,$user_login,$starting_balance,$account_type,$phone,$student_id);
+                $sql_query = $wpdb->prepare("INSERT INTO ".IAM_USERS_TABLE." (WP_ID,NI_ID,WP_Username,Balance,Account_Type,Phone,School_ID) VALUES (%d,%s,%s,%f,%s,%s,%s) ",$wp_id,$ni_id,$user_login,$starting_balance,$account_type,$phone,$school_id);
                 $result = $wpdb->query($sql_query);
                 if (!$is_approved) {
                     add_user_meta($wp_id, 'iam_need_admin_approval', 'yes');

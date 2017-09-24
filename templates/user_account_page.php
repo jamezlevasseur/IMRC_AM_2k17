@@ -104,7 +104,7 @@ class IAM_User_Account_Page
 		  <div class="tab-content">
 		    <div role="tabpanel" class="tab-pane active" id="account">
 
-					<div class="iam-form">
+					<div class="iam-form iam-user-info-form" data-link="'.IAM_Sec::iamEncrypt($user_results->IAM_ID).'">
 
 						<h1>Account Info</h1>
 
@@ -135,7 +135,7 @@ class IAM_User_Account_Page
 						</p>
 						<p class="form-row">
 						  <label>Student ID:</label>
-						  <input type="text" value="'.$user_results->Student_ID.'" id="student-id" />
+						  <input type="text" value="'.$user_results->School_ID.'" id="school-id" />
 						</p>
 						<p class="form-row">
 						  <button type="button" class="btn btn-success iam-submit">Save</button>
