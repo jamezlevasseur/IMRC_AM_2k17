@@ -1451,8 +1451,10 @@ import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../
 		} else if ($('.error404').length>0) {
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
-		}
+		} else if ($('#iam-user-account').length>0) {
 
+		}
+		console.log(ajaxurl)
 		publicDebug();
 	});
 })( jQuery );

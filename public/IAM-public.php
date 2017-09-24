@@ -110,7 +110,9 @@ class IAM_Public {
 
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', iam_url().'static/' . 'js/jquery-ui.custom.min.js', array('jquery'),$this->version, false);
 
-		wp_enqueue_script($this->plugin_name.'-bootstrap', iam_url().'static/' . 'js/bootstrap.min.js', array('jquery'),$this->version, false);
+		wp_enqueue_script($this->plugin_name.'-bootstrap-js', iam_url().'static/' . 'js/bootstrap.min.js', array('jquery'),$this->version, false);
+
+		wp_enqueue_script($this->plugin_name.'-dropzone', iam_url().'static/' . 'js/dropzone.js', array('jquery'),$this->version, false);
 
 		wp_enqueue_script($this->plugin_name.'slick-js', iam_url().'static/' . 'js/slick.min.js',array('jquery'), $this->version, false);
 

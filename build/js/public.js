@@ -11623,8 +11623,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		} else if ($('.error404').length > 0) {
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
-		}
-
+		} else if ($('#iam-user-account').length > 0) {}
+		console.log(ajaxurl);
 		(0, _debug.publicDebug)();
 	});
 })(jQuery);

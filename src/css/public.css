@@ -6,6 +6,37 @@
 
  /*************************************** GENERAL *************************************************/
 
+.edit-photo-block {
+  margin-top: 15px;
+}
+
+.edit-photo-block * {
+  display: block;
+  margin-bottom: 5px;
+}
+ .dropzone {
+   padding: 5px;
+   border: 2px #888 dashed;
+   color: #888;
+   text-align: center;
+   cursor: pointer;
+   display: block;
+ }
+
+ .dz-default.dz-message {
+   -webkit-touch-callout: none; /* iOS Safari */
+   -webkit-user-select: none;  /* Chrome all / Safari all */
+   -moz-user-select: none;     /* Firefox all */
+   -ms-user-select: none;      /* IE 10+ */
+   user-select: none;          /* Likely future */
+   cursor: pointer;
+ }
+
+.dropzone:hover, .dropzone:active {
+  border: 2px #0090ff dashed;
+  color: #0090ff;
+}
+
 .iam-form {
    max-width:40vw;
    margin:0 auto;

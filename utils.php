@@ -40,6 +40,12 @@ function get_full_name($wpid)
 	return ucwords($u->first_name.' '.$u->last_name);
 }
 
+function get_first_last_name($wpid)
+{
+	$u = get_userdata($wpid);
+	return ['first'=>ucwords($u->first_name), 'last'=>ucwords($u->last_name)];
+}
+
 function include_files_in($dir)
 {
 	$files = glob(iam_dir(). $dir . '/*.php');
@@ -126,6 +132,19 @@ function make_phone_number_field()
 	<span>(&nbsp;</span><input type="text" name="phone-num-1" id="phone-num-1" maxlength="3" size="3"><span>&nbsp;)&nbsp;</span>
 	<input type="text" name="phone-num-2" id="phone-num-2" maxlength="3" size="3"><span>&nbsp;-&nbsp;</span>
 	<input type="text" name="phone-num-3" id="phone-num-3" maxlength="4" size="4"></div>';
+}
+
+function make_phone_number_field_with($phonenum)
+{
+	if (empty($phonenum))
+		return make_phone_number_field();
+		
+	$parts = explode('-',$phonenum);
+	return '
+	<div class="iam-phone-num-grp">
+	<span>(&nbsp;</span><input type="text" value="'.$parts[0].'" name="phone-num-1" id="phone-num-1" maxlength="3" size="3"><span>&nbsp;)&nbsp;</span>
+	<input type="text" value="'.$parts[1].'" name="phone-num-2" id="phone-num-2" maxlength="3" size="3"><span>&nbsp;-&nbsp;</span>
+	<input type="text" value="'.$parts[2].'" name="phone-num-3" id="phone-num-3" maxlength="4" size="4"></div>';
 }
 
 function ordinal_format($number) {

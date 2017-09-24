@@ -74,18 +74,24 @@ class IAM_User_Account_Page
 	{
 		global $wpdb;
 		global $current_user;
-      	get_currentuserinfo();
-      	$user_results = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID,WP_Username,Balance,Account_Type FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$current_user->ID));
-      	$iam_id = $user_results[0]->IAM_ID;
-      	$username = $user_results[0]->WP_Username;
-				$account_bal = IAM_Funds_Handler::get_pending_bal($username);
-      	$at_results = $wpdb->get_results($wpdb->prepare("SELECT Name,Discount FROM ".IAM_ACCOUNT_TYPES_TABLE." WHERE Account_Type_ID=%d",$user_results[0]->Account_Type));
-      	$account_type = $at_results[0]->Name;
-      	$discount = $at_results[0]->Discount;
-      	$table_rows = IAM_User_Account_Page::get_table_rows_for_id($iam_id);
+  	get_currentuserinfo();
+  	$user_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$current_user->ID))[0];
+  	$iam_id = $user_results->IAM_ID;
+  	$username = $user_results->WP_Username;
+		$account_bal = IAM_Funds_Handler::get_pending_bal($username);
+  	$at_results = $wpdb->get_results($wpdb->prepare("SELECT Name,Discount FROM ".IAM_ACCOUNT_TYPES_TABLE." WHERE Account_Type_ID=%d",$user_results->Account_Type))[0];
+  	$account_type = $at_results->Name;
+  	$discount = $at_results->Discount;
+  	$table_rows = IAM_User_Account_Page::get_table_rows_for_id($iam_id);
+
+		$first_name = get_first_last_name($user_results->WP_ID);
+		$last_name = $first_name['last'];
+		$first_name = $first_name['first'];
+
+
 
 		$html = '
-		<div id="iam-account-balance">
+		<div id="iam-user-account">
 
 
 		  <!-- Nav tabs -->
@@ -96,7 +102,43 @@ class IAM_User_Account_Page
 
 		  <!-- Tab panes -->
 		  <div class="tab-content">
-		    <div role="tabpanel" class="tab-pane active" id="account">a</div>
+		    <div role="tabpanel" class="tab-pane active" id="account">
+
+					<div class="iam-form">
+
+						<h1>Account Info</h1>
+
+						<p class="form-row">
+						  <label>Username:</label>
+						  <input type="text" value="'.$user_results->WP_Username.'" disabled />
+						</p>
+						<p class="form-row">
+						  <label>Name:</label>
+						  <input type="text" id="first-name" value="'.$first_name.'" />
+						  <input type="text" id="last-name" value="'.$last_name.'" />
+						</p>
+						<p class="form-row">
+						  <label>Email:</label>
+						  <input type="text" value="'.get_email($user_results->IAM_ID).'" id="email" />
+						</p>
+						<p class="form-row">
+						  <label>Balance:</label>
+						  <input type="text" value="'.$user_results->Balance.'" disabled />
+						</p>
+						<p class="form-row">
+						  <label>Account Type:</label>
+						  <input type="text" value="'.$account_type.'" disabled />
+						</p>
+						<p class="form-row">
+						  <label>Phone Number:</label>
+						  '.make_phone_number_field_with($user_results->Phone).'
+						</p>
+						<p class="form-row">
+						  <label>Student ID:</label>
+						  <input type="text" value="'.$user_results->Student_ID.'" id="student-id" />
+						</p>
+					</div>
+				</div>
 		    <div role="tabpanel" class="tab-pane" id="transactions">
 
 					<div id="iam-total-bal-left">
