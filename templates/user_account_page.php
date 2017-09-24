@@ -113,9 +113,9 @@ class IAM_User_Account_Page
 						  <input type="text" value="'.$user_results->WP_Username.'" disabled />
 						</p>
 						<p class="form-row">
-						  <label>Name:</label>
-						  <input type="text" id="first-name" value="'.$first_name.'" />
-						  <input type="text" id="last-name" value="'.$last_name.'" />
+						  <label>Name:</label><br />
+						  <input type="text" class="half" id="first-name" value="'.$first_name.'" />
+						  <input type="text" class="half" id="last-name" value="'.$last_name.'" />
 						</p>
 						<p class="form-row">
 						  <label>Email:</label>
@@ -136,6 +136,9 @@ class IAM_User_Account_Page
 						<p class="form-row">
 						  <label>Student ID:</label>
 						  <input type="text" value="'.$user_results->Student_ID.'" id="student-id" />
+						</p>
+						<p class="form-row">
+						  <button type="button" class="btn btn-success iam-submit">Save</button>
 						</p>
 					</div>
 				</div>

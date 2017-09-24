@@ -56,6 +56,16 @@
    width: 100%;
  }
 
+ .iam-form input:disabled,  .iam-form select:disabled {
+    background: #ddd;
+    cursor: not-allowed;
+  }
+
+  .iam-form input.half{
+    display: inline-block;
+    width: 49%;
+  }
+
 .iam-form .iam-phone-num-grp input {
    width: auto;
    display: inline-block;
