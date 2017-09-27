@@ -135,7 +135,7 @@ class IAM_Admin {
     public function admin_setup_menu() {
 
         add_menu_page ( 'Fab Labs', 'Fab Labs', 'manage_options', 'imrc-fab-lab', array('Admin_Content','fab_lab_content'), 'http://jameslevasseur.com/imr-icon.png');
-        add_submenu_page ('imrc-fab-lab', 'Balances', 'Balances', 'manage_options', 'fl_balances', array('Admin_Content', 'balance_content') );
+        add_submenu_page ('imrc-fab-lab', 'Users', 'Users', 'manage_options', 'fl_users', array('Admin_Content', 'users_content') );
         add_submenu_page ('imrc-fab-lab', 'Equipment', 'Equipment', 'manage_options', 'fl_equipment', array('Admin_Content', 'fl_equipment_content') );
         add_submenu_page ('imrc-fab-lab', 'Certifications', 'Certifications', 'manage_options', 'fl_certifications', array('Admin_Content', 'certification_content') );
         add_submenu_page ('imrc-fab-lab', 'Reservations', 'Reservations', 'manage_options', 'fl_reservations', array('Admin_Content', 'fab_lab_reservation_content') );
@@ -148,7 +148,7 @@ class IAM_Admin {
 
 
         add_menu_page ( 'Equipment Room', 'Equipment Room', 'manage_options', 'imrc-equipment-room', array('Admin_Content','equipment_room_content'), 'http://jameslevasseur.com/imr-icon.png');
-        add_submenu_page ('imrc-equipment-room', 'Balances', 'Balances', 'manage_options', 'er_balances', array('Admin_Content', 'balance_content') );
+        add_submenu_page ('imrc-equipment-room', 'Users', 'Users', 'manage_options', 'er_users', array('Admin_Content', 'users_content') );
         add_submenu_page ('imrc-equipment-room', 'Equipment', 'Equipment', 'manage_options', 'er_equipment', array('Admin_Content', 'er_equipment_content') );
         add_submenu_page ('imrc-equipment-room', 'Certifications', 'Certifications', 'manage_options', 'er_certifications', array('Admin_Content', 'certification_content') );
         add_submenu_page ('imrc-equipment-room', 'Reservations', 'Reservations', 'manage_options', 'er_reservations', array('Admin_Content', 'equipment_room_reservation_content') );

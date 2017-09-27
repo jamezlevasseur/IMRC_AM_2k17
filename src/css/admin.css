@@ -3,6 +3,40 @@
  * included in this file.
  */
 
+ul.iam-scroll-list {
+  max-height: 500px;
+  overflow-y: scroll;
+  border: 1px solid #ccc;
+}
+
+ul.iam-scroll-list > li {
+  margin: 0;
+  padding: 3px 0 3px 3px;
+}
+
+ul.iam-scroll-list > li:hover {
+  background:lightblue;
+  cursor: pointer;
+}
+
+ul.iam-scroll-list > li:active {
+  background:lightgreen;
+}
+
+ul.iam-scroll-list > li.selected {
+  hover:lightgreen;
+}
+
+.iam-no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome and Opera */
+}
+
 .ui-dialog {
   z-index: 9999999;
 }

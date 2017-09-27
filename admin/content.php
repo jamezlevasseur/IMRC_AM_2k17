@@ -212,46 +212,29 @@ class Admin_Content
 	 * @return string
 	 */
 
-	public static function balance_content() {
+	public static function users_content() {
 	?>
-		<div class="wrap iam-balances-wrap">
-			<h1 class="iam-admin-header">Balances<div class="iam-button iam-add-funds-button" >Add Funds</div></h1>
-			<div class="iam-search-container">
-				<input type="search" placeholder="search..." class="iam-search iam-balances-search">
+		<div class="wrap iam-users-wrap">
+			<h1 class="iam-admin-header">Users</h1>
+			<div class="col-md-3">
+				<div class="iam-search-container">
+					<input type="search" placeholder="search..." class="iam-search iam-users-search">
+				</div>
+				<br>
+				<ul class="iam-users-list iam-scroll-list">
+					<?php
+					global $wpdb;
+					$results = $wpdb->get_results("SELECT WP_Username,Account_Type FROM ".IAM_USERS_TABLE." ORDER BY WP_Username ASC");
+					foreach($results as $row) {
+						echo '<li class="iam-no-select">'.iam_output( strtolower( $row->WP_Username ) ).'</li>';
+					}
+					?>
+				</ul>
 			</div>
-			<div class="iam-table-container" style="display: inline-block;vertical-align: top;max-height: 600px;overflow-y: scroll;">
+			<div class="col-md-9">
+			</div>
 
-			<table class="iam-table" id="iam-balances-table" style="display:inline-block;vertical-align:top;">
-				<colgroup>
-					<col width="100px">
-					<col width="125px">
-					<col width="50px">
-				</colgroup>
-				<thead>
-					<tr id="iam-title-row">
-						<th class="iam-balances-table-col1">Username</th>
-						<th class="iam-balances-table-col2" id="">Account Type</th>
-						<th class="iam-balances-table-col3">Balance (Pending Balance)</th>
-					</tr>
-				</thead>
-				<tbody>
-				<?php
-
-				global $wpdb;
-				$results = $wpdb->get_results("SELECT NI_ID,WP_Username,Balance,Account_Type FROM ".IAM_USERS_TABLE." ORDER BY WP_Username ASC");
-				foreach($results as $row) {
-					$account_type = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_ACCOUNT_TYPES_TABLE." WHERE Account_Type_ID=%d",$row->Account_Type))[0]->Name;
-					echo '
-					<tr class="iam-bal-user-row" data-nid="'.iam_output($row->NI_ID).'">
-						<td class="iam-bal-user-row-username iam-balances-table-col1">'.iam_output($row->WP_Username).'</td><td class="iam-bal-user-row-account-type iam-balances-table-col2">'.iam_output($account_type).'</td><td class="iam-bal-user-row-balance iam-balances-table-col3">'.IAM_Funds_Handler::update($row->WP_Username,true).'</td>
-					</tr>
-					';
-				}
-
-				?>
-				</tbody>
-			</table>
-		</div>
+			<!--
 			<div id="iam-admin-funds" style="display:inline-block;padding-left: 30px; vertical-align:top;">
 				<div class="iam-ninja iam-add-funds">
 					<p class="iam-form-row">
@@ -288,7 +271,7 @@ class Admin_Content
 							<td>no</td><td>activity</td><td>currently</td><td>found.</td>
 						</tr>
 					</tbody>
-				</table>
+				</table> -->
 			</div>
 
 		</div>

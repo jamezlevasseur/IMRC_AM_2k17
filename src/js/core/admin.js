@@ -2662,7 +2662,7 @@ import { overridePrompt } from '../module/override';
 				updateSearchOnLoad();
 				$(document).tooltip();
 				findItemAgain($('#iam-certifcation-list'));
-			} else if ( $('.iam-balances-wrap').length>0 ) {
+			} else if ( $('.iam-users-wrap').length>0 ) {
 				var addFundsHTML = $('.iam-add-funds').html(), fetchingChargeTable = false, currentBalRowNID;
 				$('.iam-add-funds').remove();
 				$('.iam-bal-user-row').click(function(event) {

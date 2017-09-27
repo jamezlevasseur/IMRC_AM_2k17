@@ -14137,7 +14137,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			updateSearchOnLoad();
 			$(document).tooltip();
 			findItemAgain($('#iam-certifcation-list'));
-		} else if ($('.iam-balances-wrap').length > 0) {
+		} else if ($('.iam-users-wrap').length > 0) {
 			var addFundsHTML = $('.iam-add-funds').html(),
 			    fetchingChargeTable = false,
 			    currentBalRowNID;
