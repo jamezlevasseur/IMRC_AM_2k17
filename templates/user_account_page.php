@@ -142,7 +142,7 @@ class IAM_User_Account_Page
 						</p>
 					</div>
 				</div>
-		    <div role="tabpanel" class="tab-pane" id="transactions">
+		    <div role="tabpanel" class="tab-pane" id="transactions" >
 
 					<div id="iam-total-bal-left">
 						<div class="iam-total-bal-amount" style="background-repeat:no-repeat; background-position:center; background-image:url('.site_url('/wp-content/plugins/imrc-account-manager/assets/circle.svg').');">
@@ -151,7 +151,7 @@ class IAM_User_Account_Page
 						<p id="iam-available-bal-title">Available Balance</p>
 						<p id="iam-available-bal-title iam-discount">'.iam_output($discount).'% '.iam_output($account_type).' Discount</p>
 					</div>
-					<div id="iam-total-bal-right">
+					<div id="iam-total-bal-right" style="margin-top:15px;">
 						<p class="iam-account-activity-title">Account Activity</p>
 						<table class="iam-account-balance-table">
 							'.IAM_User_Account_Page::get_charge_table_head().'
