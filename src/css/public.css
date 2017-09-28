@@ -685,21 +685,6 @@
 	min-height: 200px;
 }
 
-#iam-total-bal-right tr td:nth-child(1) {
-	white-space: nowrap;
-}
-
-#iam-total-bal-right td {
-	padding-left: 10px;
-}
-
-#iam-total-bal-right th {
-	padding-left: 10px;
-	vertical-align: top;
-	background-color: #ddd;
-	border: none;
-}
-
 .iam-total-bal-amount {
 	font-size: 35px;
 	min-width: 200px;
@@ -1072,4 +1057,32 @@ input.iam-username:disabled {
 
 .iam-checkout-add-mat, .iam-checkout-del-mat {
 	display: inline-block;
+}
+
+.iam-pretty-table {
+ border-collapse: collapse;
+}
+ .iam-pretty-table tr {
+ padding-top: 5px;
+ padding-bottom: 5px;
+}
+.iam-pretty-table td {
+ padding-left: 5px;
+}
+.iam-pretty-table th {
+ padding-left: 5px;
+ vertical-align: bottom;
+ background-color: #2261e8;
+ border: none;
+ margin: 0px;
+ padding: 15px;
+ font-weight: 400;
+ color: white;
+}
+.iam-pretty-table tbody tr {
+ cursor: pointer;
+ background: #f7f7f7;
+}
+.iam-pretty-table tbody tr:nth-child(even) {
+  background: #e8e8e8;
 }

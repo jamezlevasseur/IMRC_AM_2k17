@@ -205,7 +205,7 @@ class IAM {
 
 		$this->loader->add_action('wp_ajax_debug_make_res', 'Debug_Page', 'make_dummy_res');
 
-		$this->loader->add_action('wp_ajax_admin_balances_action', 'Users_Page', 'admin_balances_callback');
+		$this->loader->add_action('wp_ajax_add_charge_to_user', 'Users_Page', 'add_charge_to_user');
 		$this->loader->add_action('wp_ajax_get_user_charge_table', 'Users_Page', 'get_user_charge_table');
 		$this->loader->add_action('wp_ajax_get_user_info_html', 'Users_Page', 'get_user_info_html');
 		$this->loader->add_action('wp_ajax_user_update_account_info', 'IAM_User', 'user_update_account_info');

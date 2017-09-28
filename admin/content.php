@@ -253,9 +253,9 @@ class Admin_Content
 						<div class="modal-body">
 						</div>
 						<div class="modal-footer">
-							<input type="number" placeholder="0.00" style="width:10%; display:inline-block; float: left; vertical-align: middle; padding: 3px 0; margin-right: 5px;">
-							<input type="text" placeholder="Reason for adjusting funds." style="width:60%; display:inline-block; float: left; vertical-align: middle; padding: 3px 0; margin-right: 5px;">
-							<button type="button" class="btn btn-success" style="display:inline-block; float: left; vertical-align: middle;">Add Funds</button><button type="button" class="btn btn-primary iam-csv-button" style="display:inline-block; float: left; vertical-align: middle;">Generate CSV</button>
+							<input type="number" class="iam-add-funds-amount" placeholder="0.00" style="width:10%; display:inline-block; float: left; vertical-align: middle; padding: 3px 0; margin-right: 5px;">
+							<input type="text" class="iam-add-funds-reason" placeholder="Reason for adjusting funds." style="width:60%; display:inline-block; float: left; vertical-align: middle; padding: 3px 0; margin-right: 5px;">
+							<button type="button" class="btn btn-success iam-add-funds-btn" style="display:inline-block; float: left; vertical-align: middle;">Add Funds</button><button type="button" class="btn btn-primary iam-csv-button" style="display:inline-block; float: left; vertical-align: middle;">Generate CSV</button>
 						</div>
 					</div>
 				</div>

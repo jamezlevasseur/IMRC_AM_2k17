@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -9897,12 +9897,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ }),
 /* 1 */,
-/* 2 */,
-/* 3 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10015,7 +10014,79 @@ exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
 exports.detectIE = detectIE;
 
 /***/ }),
+/* 3 */,
 /* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var handleServerResponse = function handleServerResponse(r) {
+	var debug = window.location.href.indexOf('imrcaccounts') == -1;
+
+	if (debug) console.log(r);
+	if (typeof r === 'string') {
+		if (r.indexOf('Fatal error') != -1 && r.indexOf('Fatal error') < 32) {
+			//make sure fatal error isn't some incidental text in a json strong somewhere
+			alert(r.substring(r.indexOf('Uncaught Exception'), r.indexOf('in /')));
+			return;
+		}
+	}
+	try {
+		var _r = JSON.parse(r);
+		if (debug) console.log(_r);
+		if (_r.message != '') alert(_r.status.toUpperCase() + ": " + _r.message);
+		if (_r.redirect != '') window.location.href = _r.redirect;
+		return _r.content;
+	} catch (error) {
+		console.warn(error);
+		console.log('JS error occured when handling server response.');
+	}
+};
+
+var handleServerError = function handleServerError(e, err) {
+	console.log(e);
+	console.log(err);
+	alert(e.statusText + " \n Error Code:" + e.status);
+};
+
+exports.handleServerResponse = handleServerResponse;
+exports.handleServerError = handleServerError;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.submissionEnd = exports.submissionStart = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var submissionStart = function submissionStart() {
+  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
+};
+
+var submissionEnd = function submissionEnd() {
+  (0, _jquery2.default)('.iam-loading-anim').remove();
+};
+
+exports.submissionStart = submissionStart;
+exports.submissionEnd = submissionEnd;
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10045,7 +10116,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10060,7 +10131,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10124,49 +10195,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-var handleServerResponse = function handleServerResponse(r) {
-	var debug = window.location.href.indexOf('imrcaccounts') == -1;
-
-	if (debug) console.log(r);
-	if (typeof r === 'string') {
-		if (r.indexOf('Fatal error') != -1 && r.indexOf('Fatal error') < 32) {
-			//make sure fatal error isn't some incidental text in a json strong somewhere
-			alert(r.substring(r.indexOf('Uncaught Exception'), r.indexOf('in /')));
-			return;
-		}
-	}
-	try {
-		var _r = JSON.parse(r);
-		if (debug) console.log(_r);
-		if (_r.message != '') alert(_r.status.toUpperCase() + ": " + _r.message);
-		if (_r.redirect != '') window.location.href = _r.redirect;
-		return _r.content;
-	} catch (error) {
-		console.warn(error);
-		console.log('JS error occured when handling server response.');
-	}
-};
-
-var handleServerError = function handleServerError(e, err) {
-	console.log(e);
-	console.log(err);
-	alert(e.statusText + " \n Error Code:" + e.status);
-};
-
-exports.handleServerResponse = handleServerResponse;
-exports.handleServerError = handleServerError;
-
-/***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10196,35 +10225,6 @@ exports.eventFallsOnWeekend = eventFallsOnWeekend;
 exports.eventIsLongerThan = eventIsLongerThan;
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.submissionEnd = exports.submissionStart = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var submissionStart = function submissionStart() {
-  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
-};
-
-var submissionEnd = function submissionEnd() {
-  (0, _jquery2.default)('.iam-loading-anim').remove();
-};
-
-exports.submissionStart = submissionStart;
-exports.submissionEnd = submissionEnd;
-
-/***/ }),
 /* 9 */,
 /* 10 */,
 /* 11 */,
@@ -10232,7 +10232,8 @@ exports.submissionEnd = submissionEnd;
 /* 13 */,
 /* 14 */,
 /* 15 */,
-/* 16 */
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10242,19 +10243,19 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(2);
 
-var _debug = __webpack_require__(17);
+var _debug = __webpack_require__(18);
 
-var _textfieldlisteners = __webpack_require__(5);
+var _textfieldlisteners = __webpack_require__(7);
 
-var _cookie = __webpack_require__(18);
+var _cookie = __webpack_require__(19);
 
-var _serverresponse = __webpack_require__(6);
+var _serverresponse = __webpack_require__(4);
 
-var _cal = __webpack_require__(7);
+var _cal = __webpack_require__(8);
 
-var _userfeedback = __webpack_require__(8);
+var _userfeedback = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11685,7 +11686,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11700,7 +11701,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11734,7 +11735,7 @@ function publicDebug() {
 exports.publicDebug = publicDebug;
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

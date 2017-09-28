@@ -6,18 +6,18 @@
 class Users_Page
 {
 
-    public static function admin_balances_callback()
+    public static function add_charge_to_user()
     {
         global $wpdb;
-        $ni_id = md5(uniqid());
-        $username = IAM_Sec::textfield_cleaner($_POST['username']);
-        $iam_id = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_Username=%s",$username))[0]->IAM_ID;
+        $ni_id = make_nid();
+        $iam_id = IAM_Sec::iamDecrypt($_POST['link']);
+        $username = $wpdb->get_results("SELECT WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=$iam_id")[0]->WP_Username;
         $approver_username = wp_get_current_user()->user_login;
         date_default_timezone_set(IMRC_TIME_ZONE);
         $rightnowat = date('Y-m-d \a\t H:i:s');
         $rightnow = date('Y-m-d H:i:s');
         $charge_description = "Account funds for ".$username." adjusted on ".$rightnowat." by ".$approver_username;
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,WP_Username,Charge_Description,Status,Date,Amount,Comment,Approver) VALUES (%s,%s,%s,'1',%s,%f,%s,%s)",$ni_id,$username,$charge_description,$rightnow,IAM_Sec::textfield_cleaner($_POST['amount']),IAM_Sec::textfield_cleaner($_POST['comment']),$approver_username));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,WP_Username,Charge_Description,Status,Date,Amount,Comment,Approver) VALUES (%s,%s,%s,'1',%s,%f,%s,%s)",$ni_id,$username,$charge_description,$rightnow,IAM_Sec::textfield_cleaner($_POST['amount']),IAM_Sec::textfield_cleaner($_POST['reason']),$approver_username));
         IAM_Funds_Handler::update($username);
         iam_respond(SUCCESS);
     }

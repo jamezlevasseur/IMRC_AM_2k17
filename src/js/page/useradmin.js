@@ -9,12 +9,13 @@ export default class UserAdmin {
 
   constructor () {
     this.initUsersList();
+    this.initAddFunds();
   }
 
   initManageFunds () {
     let that = this;
     $('.manage-funds').click(function(event) {
-      that.updateModalWithUserChargeTable()
+      that.updateModalWithUserChargeTable();
     });
   }
 
@@ -61,6 +62,27 @@ export default class UserAdmin {
         }
       });
 
+    });
+  }
+
+  initAddFunds () {
+    let that = this;
+    $('.iam-add-funds-btn').click(function(event) {
+      submissionStart();
+      $.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {'action': 'add_charge_to_user', 'link': $('.iam-form').data('link'), 'amount': $('.iam-add-funds-amount').val(), 'reason': $('.iam-add-funds-reason').val()},
+        success: function (data) {
+          that.updateModalWithUserChargeTable();
+          $('.iam-add-funds-amount').val('');
+          $('.iam-add-funds-reason').val('');
+          submissionEnd();
+        },
+        error: function (data) {
+          handleServerError(data, new Error());
+        }
+      });
     });
   }
 

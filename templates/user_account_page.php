@@ -90,7 +90,7 @@ class IAM_User_Account_Page
 					</div>
 					<div id="iam-total-bal-right" style="margin-top:15px;">
 						<p class="iam-account-activity-title">Account Activity</p>
-						<table class="iam-account-balance-table">
+						<table class="iam-account-balance-table iam-pretty-table">
 							'.IAM_User::get_user_charge_table_head().'
 							<tbody>
 								'.$table_rows.'

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 20);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -9897,7 +9897,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ }),
 /* 1 */
@@ -9928,6 +9928,119 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ */
+function detectIE() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+  }
+
+  // other browser
+  return false;
+}
+
+var isEmail = function isEmail(email) {
+  var atpos = email.indexOf("@");
+  var dotpos = email.lastIndexOf(".");
+  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+    return false;
+  }
+  return true;
+};
+
+var getSize = function getSize(obj) {
+  var size = 0,
+      key = void 0;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
+function escapeHtml(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function (m) {
+    return map[m];
+  });
+}
+
+var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
+
+function getPhoneNumberFromPage() {
+  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (!phoneNumberIsFilledIn()) {
+    if (!required) return '';
+    alert(plsFillInPhoneNum);
+    throw plsFillInPhoneNum;
+  }
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
+}
+
+function phoneNumberIsFilledIn() {
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
+}
+
+var rStr = function rStr(length) {
+  var str = '';
+  for (var i = 0; i < length; i++) {
+    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+  }
+  return str;
+};
+
+exports.rStr = rStr;
+exports.isEmail = isEmail;
+exports.getSize = getSize;
+exports.escapeHtml = escapeHtml;
+exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
+exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
+exports.detectIE = detectIE;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10640,7 +10753,49 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 3 */
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+var handleServerResponse = function handleServerResponse(r) {
+	var debug = window.location.href.indexOf('imrcaccounts') == -1;
+
+	if (debug) console.log(r);
+	if (typeof r === 'string') {
+		if (r.indexOf('Fatal error') != -1 && r.indexOf('Fatal error') < 32) {
+			//make sure fatal error isn't some incidental text in a json strong somewhere
+			alert(r.substring(r.indexOf('Uncaught Exception'), r.indexOf('in /')));
+			return;
+		}
+	}
+	try {
+		var _r = JSON.parse(r);
+		if (debug) console.log(_r);
+		if (_r.message != '') alert(_r.status.toUpperCase() + ": " + _r.message);
+		if (_r.redirect != '') window.location.href = _r.redirect;
+		return _r.content;
+	} catch (error) {
+		console.warn(error);
+		console.log('JS error occured when handling server response.');
+	}
+};
+
+var handleServerError = function handleServerError(e, err) {
+	console.log(e);
+	console.log(err);
+	alert(e.statusText + " \n Error Code:" + e.status);
+};
+
+exports.handleServerResponse = handleServerResponse;
+exports.handleServerError = handleServerError;
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10649,7 +10804,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+exports.submissionEnd = exports.submissionStart = undefined;
 
 var _jquery = __webpack_require__(0);
 
@@ -10657,103 +10812,19 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * detect IE
- * returns version of IE or false, if browser is not Internet Explorer
- */
-function detectIE() {
-  var ua = window.navigator.userAgent;
-
-  var msie = ua.indexOf('MSIE ');
-  if (msie > 0) {
-    // IE 10 or older => return version number
-    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-  }
-
-  var trident = ua.indexOf('Trident/');
-  if (trident > 0) {
-    // IE 11 => return version number
-    var rv = ua.indexOf('rv:');
-    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-  }
-
-  var edge = ua.indexOf('Edge/');
-  if (edge > 0) {
-    // Edge (IE 12+) => return version number
-    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-  }
-
-  // other browser
-  return false;
-}
-
-var isEmail = function isEmail(email) {
-  var atpos = email.indexOf("@");
-  var dotpos = email.lastIndexOf(".");
-  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
-    return false;
-  }
-  return true;
+var submissionStart = function submissionStart() {
+  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
 };
 
-var getSize = function getSize(obj) {
-  var size = 0,
-      key = void 0;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
+var submissionEnd = function submissionEnd() {
+  (0, _jquery2.default)('.iam-loading-anim').remove();
 };
 
-function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-
-  return text.replace(/[&<>"']/g, function (m) {
-    return map[m];
-  });
-}
-
-var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
-
-function getPhoneNumberFromPage() {
-  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-  if (!phoneNumberIsFilledIn()) {
-    if (!required) return '';
-    alert(plsFillInPhoneNum);
-    throw plsFillInPhoneNum;
-  }
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
-}
-
-function phoneNumberIsFilledIn() {
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
-}
-
-var rStr = function rStr(length) {
-  var str = '';
-  for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
-  }
-  return str;
-};
-
-exports.rStr = rStr;
-exports.isEmail = isEmail;
-exports.getSize = getSize;
-exports.escapeHtml = escapeHtml;
-exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
-exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
-exports.detectIE = detectIE;
+exports.submissionStart = submissionStart;
+exports.submissionEnd = submissionEnd;
 
 /***/ }),
-/* 4 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10783,7 +10854,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10798,7 +10869,7 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10862,49 +10933,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-var handleServerResponse = function handleServerResponse(r) {
-	var debug = window.location.href.indexOf('imrcaccounts') == -1;
-
-	if (debug) console.log(r);
-	if (typeof r === 'string') {
-		if (r.indexOf('Fatal error') != -1 && r.indexOf('Fatal error') < 32) {
-			//make sure fatal error isn't some incidental text in a json strong somewhere
-			alert(r.substring(r.indexOf('Uncaught Exception'), r.indexOf('in /')));
-			return;
-		}
-	}
-	try {
-		var _r = JSON.parse(r);
-		if (debug) console.log(_r);
-		if (_r.message != '') alert(_r.status.toUpperCase() + ": " + _r.message);
-		if (_r.redirect != '') window.location.href = _r.redirect;
-		return _r.content;
-	} catch (error) {
-		console.warn(error);
-		console.log('JS error occured when handling server response.');
-	}
-};
-
-var handleServerError = function handleServerError(e, err) {
-	console.log(e);
-	console.log(err);
-	alert(e.statusText + " \n Error Code:" + e.status);
-};
-
-exports.handleServerResponse = handleServerResponse;
-exports.handleServerError = handleServerError;
-
-/***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10934,35 +10963,6 @@ exports.eventFallsOnWeekend = eventFallsOnWeekend;
 exports.eventIsLongerThan = eventIsLongerThan;
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.submissionEnd = exports.submissionStart = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var submissionStart = function submissionStart() {
-  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
-};
-
-var submissionEnd = function submissionEnd() {
-  (0, _jquery2.default)('.iam-loading-anim').remove();
-};
-
-exports.submissionStart = submissionStart;
-exports.submissionEnd = submissionEnd;
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10987,7 +10987,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(30), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(31), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -11499,10 +11499,74 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 16 */,
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initCSVAJAXButtonListener = exports.initCSVButtonListener = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _serverresponse = __webpack_require__(4);
+
+var _userfeedback = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initCSVButtonListener = function initCSVButtonListener(ignoreColumn, id) {
+  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
+    var csvText = 'data:text/csv;charset=utf-8,';
+    id = typeof id === 'undefined' ? '' : '#' + id + ' ';
+    (0, _jquery2.default)(id + 'th').each(function (index, el) {
+      csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
+    });
+    csvText = csvText.substring(0, csvText.length - 1) + '\n';
+    (0, _jquery2.default)(id + 'tr').each(function (index, el) {
+      (0, _jquery2.default)(this).children('td').each(function (i, e) {
+        if (i != ignoreColumn) csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
+      });
+      csvText = csvText.substring(0, csvText.length - 1) + '\n';
+    });
+    var encodedUri = encodeURI(csvText);
+    window.open(encodedUri);
+  });
+};
+
+var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
+  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
+    (0, _userfeedback.submissionStart)();
+    _jquery2.default.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: { action: ajaxaction },
+      success: function success(data) {
+        (0, _userfeedback.submissionEnd)();
+        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + (0, _serverresponse.handleServerResponse)(data));
+        window.open(encodedUri);
+      },
+      error: function error(data) {
+        (0, _userfeedback.submissionEnd)();
+        (0, _serverresponse.handleServerError)(data, new Error());
+      }
+    });
+  });
+};
+
+exports.initCSVButtonListener = initCSVButtonListener;
+exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
+
+/***/ }),
 /* 17 */,
 /* 18 */,
-/* 19 */
+/* 19 */,
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11514,21 +11578,21 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(2);
 
-var _textfieldlisteners = __webpack_require__(5);
+var _textfieldlisteners = __webpack_require__(7);
 
-var _serverresponse = __webpack_require__(6);
+var _serverresponse = __webpack_require__(4);
 
-var _userfeedback = __webpack_require__(8);
+var _userfeedback = __webpack_require__(5);
 
-var _cal = __webpack_require__(7);
+var _cal = __webpack_require__(8);
 
-var _override = __webpack_require__(20);
+var _override = __webpack_require__(21);
 
-var _uifunc = __webpack_require__(39);
+var _uifunc = __webpack_require__(16);
 
-var _useradmin = __webpack_require__(38);
+var _useradmin = __webpack_require__(39);
 
 var _useradmin2 = _interopRequireDefault(_useradmin);
 
@@ -14233,7 +14297,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14248,9 +14312,9 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(21);
-
 __webpack_require__(22);
+
+__webpack_require__(23);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14278,7 +14342,7 @@ function overridePrompt(args) {
 exports.overridePrompt = overridePrompt;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14294,7 +14358,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 })();
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14322,7 +14386,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(23), __webpack_require__(29), __webpack_require__(9), __webpack_require__(33), __webpack_require__(15), __webpack_require__(11), __webpack_require__(35), __webpack_require__(14), __webpack_require__(13), __webpack_require__(36), __webpack_require__(37), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(24), __webpack_require__(30), __webpack_require__(9), __webpack_require__(34), __webpack_require__(15), __webpack_require__(11), __webpack_require__(36), __webpack_require__(14), __webpack_require__(13), __webpack_require__(37), __webpack_require__(38), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15194,7 +15258,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15228,7 +15292,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(24), __webpack_require__(25), __webpack_require__(11), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(25), __webpack_require__(26), __webpack_require__(11), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15579,7 +15643,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15607,7 +15671,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15875,7 +15939,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15904,7 +15968,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(10), __webpack_require__(26), __webpack_require__(28), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(10), __webpack_require__(27), __webpack_require__(29), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16161,7 +16225,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16185,7 +16249,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(27), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(28), __webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16242,7 +16306,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16272,7 +16336,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16343,7 +16407,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16369,7 +16433,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(31), __webpack_require__(12), __webpack_require__(14), __webpack_require__(13), __webpack_require__(32), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(32), __webpack_require__(12), __webpack_require__(14), __webpack_require__(13), __webpack_require__(33), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -17481,7 +17545,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17507,7 +17571,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17556,7 +17620,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17608,7 +17672,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17636,7 +17700,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(34), __webpack_require__(12), __webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(35), __webpack_require__(12), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -18780,7 +18844,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18834,7 +18898,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19305,7 +19369,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19350,7 +19414,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19409,7 +19473,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19425,13 +19489,13 @@ var _jquery = __webpack_require__(0);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _serverresponse = __webpack_require__(6);
+var _serverresponse = __webpack_require__(4);
 
-var _userfeedback = __webpack_require__(8);
+var _userfeedback = __webpack_require__(5);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(2);
 
-var _uifunc = __webpack_require__(39);
+var _uifunc = __webpack_require__(16);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -19442,6 +19506,7 @@ var UserAdmin = function () {
     _classCallCheck(this, UserAdmin);
 
     this.initUsersList();
+    this.initAddFunds();
   }
 
   _createClass(UserAdmin, [{
@@ -19491,6 +19556,28 @@ var UserAdmin = function () {
             (0, _jquery2.default)('.iam-user-info-col').append((0, _serverresponse.handleServerResponse)(data));
             that.initUserUpdate();
             that.initManageFunds();
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'initAddFunds',
+    value: function initAddFunds() {
+      var that = this;
+      (0, _jquery2.default)('.iam-add-funds-btn').click(function (event) {
+        (0, _userfeedback.submissionStart)();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { 'action': 'add_charge_to_user', 'link': (0, _jquery2.default)('.iam-form').data('link'), 'amount': (0, _jquery2.default)('.iam-add-funds-amount').val(), 'reason': (0, _jquery2.default)('.iam-add-funds-reason').val() },
+          success: function success(data) {
+            that.updateModalWithUserChargeTable();
+            (0, _jquery2.default)('.iam-add-funds-amount').val('');
+            (0, _jquery2.default)('.iam-add-funds-reason').val('');
             (0, _userfeedback.submissionEnd)();
           },
           error: function error(data) {
@@ -19564,70 +19651,6 @@ var UserAdmin = function () {
 }();
 
 exports.default = UserAdmin;
-
-/***/ }),
-/* 39 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initCSVAJAXButtonListener = exports.initCSVButtonListener = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _serverresponse = __webpack_require__(6);
-
-var _userfeedback = __webpack_require__(8);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var initCSVButtonListener = function initCSVButtonListener(ignoreColumn, id) {
-  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
-    var csvText = 'data:text/csv;charset=utf-8,';
-    id = typeof id === 'undefined' ? '' : '#' + id + ' ';
-    (0, _jquery2.default)(id + 'th').each(function (index, el) {
-      csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
-    });
-    csvText = csvText.substring(0, csvText.length - 1) + '\n';
-    (0, _jquery2.default)(id + 'tr').each(function (index, el) {
-      (0, _jquery2.default)(this).children('td').each(function (i, e) {
-        if (i != ignoreColumn) csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
-      });
-      csvText = csvText.substring(0, csvText.length - 1) + '\n';
-    });
-    var encodedUri = encodeURI(csvText);
-    window.open(encodedUri);
-  });
-};
-
-var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
-  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
-    (0, _userfeedback.submissionStart)();
-    _jquery2.default.ajax({
-      url: ajaxurl,
-      type: 'POST',
-      data: { action: ajaxaction },
-      success: function success(data) {
-        (0, _userfeedback.submissionEnd)();
-        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + (0, _serverresponse.handleServerResponse)(data));
-        window.open(encodedUri);
-      },
-      error: function error(data) {
-        (0, _userfeedback.submissionEnd)();
-        (0, _serverresponse.handleServerError)(data, new Error());
-      }
-    });
-  });
-};
-
-exports.initCSVButtonListener = initCSVButtonListener;
-exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
 
 /***/ })
 /******/ ]);
