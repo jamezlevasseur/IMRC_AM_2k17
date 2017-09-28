@@ -203,8 +203,8 @@ class IAM {
 
 		$this->loader->add_action('wp_ajax_debug_make_res', 'Debug_Page', 'make_dummy_res');
 
-		$this->loader->add_action('wp_ajax_admin_balances_action', 'Balances_Page', 'admin_balances_callback');
-		$this->loader->add_action('wp_ajax_admin_get_charge_table', 'Balances_Page', 'admin_get_charge_table');
+		$this->loader->add_action('wp_ajax_admin_balances_action', 'Users_Page', 'admin_balances_callback');
+		$this->loader->add_action('wp_ajax_admin_get_charge_table', 'Users_Page', 'admin_get_charge_table');
 
 		$this->loader->add_action('wp_ajax_admin_delete_supporting_file', 'Certifications_Page', 'admin_delete_supporting_file');
 		$this->loader->add_action('wp_ajax_admin_update_existing_file_list', 'Certifications_Page', 'admin_update_existing_file_list');

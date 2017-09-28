@@ -232,50 +232,14 @@ class Admin_Content
 				</ul>
 			</div>
 			<div class="col-md-9">
-			</div>
 
-			<!--
-			<div id="iam-admin-funds" style="display:inline-block;padding-left: 30px; vertical-align:top;">
-				<div class="iam-ninja iam-add-funds">
-					<p class="iam-form-row">
-						<label for="username">Username: </label>
-						<select name="username" id="username">
-							<?php
-							foreach($results as $row) {
-								echo '<option value="'.iam_output($row->WP_Username).'">'.iam_output($row->WP_Username).'</option>';
-							}
-							 ?>
-						</select>
-					</p>
-					<p class="iam-form-row">
-						<label for="amount">Amount: </label>
-						<input name="amount" id="amount" type="number" step="any">
-					</p>
-					<p class="iam-form-row">
-						<label for="description">Description: </label>
-						<textarea name="description" id="description" rows="5" cols="40"></textarea>
-					</p>
-					<p class="iam-form-row">
-						<button class="iam-button iam-balances-button" type="button">Submit</button>
-					</p>
+				<div class="iam-form-placeholder">
+
 				</div>
-			</div>
-			<div id="iam-bal-charges-table-container">
-				<table id="iam-user-charges-table" cellspacing="0">
-					<?php
-					require_once iam_dir() . 'templates/user_account_page.php';
-					echo IAM_User_Account_Page::get_charge_table_head();
-					?>
-					<tbody>
-						<tr>
-							<td>no</td><td>activity</td><td>currently</td><td>found.</td>
-						</tr>
-					</tbody>
-				</table> -->
+
 			</div>
 
-		</div>
-
+			</div>
 		<?php
 
 	}

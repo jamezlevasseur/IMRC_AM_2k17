@@ -3,6 +3,53 @@
  * included in this file.
  */
 
+ .iam-form {
+    max-width:40vw;
+    margin:0 auto;
+    display:block;
+  }
+
+ .iam-form label {
+    font-size: 18px;
+  }
+
+ .iam-form input,  .iam-form select {
+    border-radius: 4px;
+    display: block;
+    font-size: 14px;
+    height: 30px;
+    padding: 0px 0;
+    width: 100%;
+  }
+
+  .iam-form input:disabled,  .iam-form select:disabled {
+     background: #ddd;
+     cursor: not-allowed;
+   }
+
+   .iam-form input.half{
+     display: inline-block;
+     width: 49%;
+   }
+
+ .iam-form .iam-phone-num-grp input {
+    width: auto;
+    display: inline-block;
+  }
+
+ .iam-form-placeholder {
+   border: 3px dashed #aaa;
+   padding: 300px 200px;
+   text-align: center;
+   font-size: 20px;
+   color: #aaa;
+
+ }
+
+.iam-form-placeholder::after {
+  content:"There's nothing here yet.";
+}
+
 ul.iam-scroll-list {
   max-height: 500px;
   overflow-y: scroll;
