@@ -7,6 +7,9 @@ import { handleServerResponse, handleServerError } from '../module/serverrespons
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../module/cal';
 import { overridePrompt } from '../module/override';
+import { initCSVButtonListener, initCSVAJAXButtonListener } from '../module/uifunc';
+
+import UserAdmin from '../page/useradmin';
 
 (function( $ ) {
 
@@ -1514,57 +1517,6 @@ import { overridePrompt } from '../module/override';
 				});
 			}
 
-			var initEditChargeRowListener = function () {
-				$('#iam-bal-charges-table-container table tr').each(function(index, el) {
-					//don't call on row with titles
-					if ($(this).children('td').length<5)
-						return;
-					if ($(this).children('.iam-charge-status').text()=='Canceled' || $(this).children('.iam-charge-status').text()=='Pending') {
-						$(this).children('td').children('.iam-edit-charge-row').text('approve');
-					} else {
-						$(this).children('td').children('.iam-edit-charge-row').text('cancel');
-					}
-				});
-				$('.iam-edit-charge-row').click(function(event) {
-					var that = this;
-					var thatId = $(this).data('relational-id');
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'admin_switch_charge_status',nid: $(this).data('nid')},
-						success: function (data) {
-							var newAmount = handleServerResponse(data);
-							$('.iam-bal-user-row').each(function(index, el) {
-								if ($(this).data('relational-id')==thatId) {
-									$($(this).children('td')[2]).text(newAmount);
-									return false;
-								}
-							});
-							fetchingChargeTable = true;
-							$.ajax({
-								url: ajaxurl,
-								type: 'GET',
-								data: {action: 'admin_get_charge_table', nid:currentBalRowNID},
-								success: function (data) {
-									$('#iam-bal-charges-table-container').empty();
-
-									$('#iam-bal-charges-table-container').append(handleServerResponse(data));
-									initEditChargeRowListener();
-									$('.iam-edit-charge-row').data('relational-id', thatId);
-									fetchingChargeTable = false;
-								},
-								error: function (data) {
-									handleServerError(data, new Error());
-									fetchingChargeTable = false;
-								}
-							});
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
-				});
-			}
 
 			//USER CERTIFICATION LISTENERS
 
@@ -2265,47 +2217,6 @@ import { overridePrompt } from '../module/override';
 				});
 			}
 
-			var initCSVAJAXButtonListener = function (ajaxaction) {
-				$('.iam-csv-button').click(function(event) {
-					submissionStart();
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: ajaxaction},
-						success: function (data) {
-							submissionEnd();
-							var encodedUri = encodeURI('data:text/csv;charset=utf-8,'+handleServerResponse(data));
-							window.open(encodedUri);
-						},
-						error: function (data) {
-							submissionEnd();
-							handleServerError(data, new Error());
-						}
-					});
-				});
-			}
-
-			var initCSVButtonListener = function (ignoreColumn,id) {
-				$('.iam-csv-button').click(function(event) {
-					var csvText = 'data:text/csv;charset=utf-8,';
-					id = typeof id === 'undefined' ? '' : '#'+id+' ';
-					$(id+'th').each(function(index, el) {
-						csvText+=$(this).text().replace(/(<([^>]+)>)/ig,"")+',';
-					});
-					csvText = csvText.substring(0,csvText.length-1)+'\n';
-					$(id+'tr').each(function(index, el) {
-						$(this).children('td').each(function(i, e) {
-							if (i!=ignoreColumn)
-								csvText+=$(this).text().replace(/(<([^>]+)>)/ig,"")+',';
-						});
-						csvText = csvText.substring(0,csvText.length-1)+'\n';
-					});
-					var encodedUri = encodeURI(csvText);
-					window.open(encodedUri);
-
-				});
-			}
-
 			//user registration wrap functions
 			var initRegKeyButtonListener = function () {
 				$('.iam-reg-key-button').click(function(event) {
@@ -2663,6 +2574,9 @@ import { overridePrompt } from '../module/override';
 				$(document).tooltip();
 				findItemAgain($('#iam-certifcation-list'));
 			} else if ( $('.iam-users-wrap').length>0 ) {
+				var useradmin = new UserAdmin();
+				initSearchListener('.iam-search','.iam-users-list li',0);
+				/*
 				var addFundsHTML = $('.iam-add-funds').html(), fetchingChargeTable = false, currentBalRowNID;
 				$('.iam-add-funds').remove();
 				$('.iam-bal-user-row').click(function(event) {
@@ -2706,7 +2620,7 @@ import { overridePrompt } from '../module/override';
 				initSearchListener('.iam-balances-search','.iam-bal-user-row-username',1);
 				updateSearchOnLoad();
 
-				findTableItemAgain($('#iam-balances-table'), 0);
+				findTableItemAgain($('#iam-balances-table'), 0);*/
 			} else if ($('.iam-registration-wrap').length>0) {
 				$('.iam-approve-account').click(function(event) {
 					$.ajax({

@@ -135,6 +135,8 @@ class IAM {
 
 		include_files_in('public/render');
 
+		include_files_in('includes/classes');
+
 		require_once iam_dir() . 'includes/IAM-sec.php';
 
 		require_once iam_dir() . 'admin/debug.php';
@@ -204,7 +206,9 @@ class IAM {
 		$this->loader->add_action('wp_ajax_debug_make_res', 'Debug_Page', 'make_dummy_res');
 
 		$this->loader->add_action('wp_ajax_admin_balances_action', 'Users_Page', 'admin_balances_callback');
-		$this->loader->add_action('wp_ajax_admin_get_charge_table', 'Users_Page', 'admin_get_charge_table');
+		$this->loader->add_action('wp_ajax_get_user_charge_table', 'Users_Page', 'get_user_charge_table');
+		$this->loader->add_action('wp_ajax_get_user_info_html', 'Users_Page', 'get_user_info_html');
+		$this->loader->add_action('wp_ajax_user_update_account_info', 'IAM_User', 'user_update_account_info');
 
 		$this->loader->add_action('wp_ajax_admin_delete_supporting_file', 'Certifications_Page', 'admin_delete_supporting_file');
 		$this->loader->add_action('wp_ajax_admin_update_existing_file_list', 'Certifications_Page', 'admin_update_existing_file_list');
@@ -332,7 +336,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_checkout_unlock', 'Checkout_Public', 'checkout_unlock_callback');
 		$this->loader->add_action('wp_ajax_checkout_content', 'Checkout_Public', 'checkout_content_callback');
 
-		$this->loader->add_action('wp_ajax_user_update_account_info', 'Account_Public', 'user_update_account_info');
+		$this->loader->add_action('wp_ajax_user_update_account_info', 'IAM_User', 'user_update_account_info');
 
 	}
 

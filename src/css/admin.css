@@ -3,6 +3,33 @@
  * included in this file.
  */
 
+ .iam-pretty-table {
+ 	border-collapse: collapse;
+ }
+  .iam-pretty-table tr {
+ 	padding-top: 5px;
+ 	padding-bottom: 5px;
+ }
+ .iam-pretty-table td {
+ 	padding-left: 5px;
+ }
+.iam-pretty-table th {
+ 	padding-left: 5px;
+ 	vertical-align: bottom;
+ 	background-color: #7db8f2;
+ 	border: none;
+  margin: 0px;
+  padding: 15px;
+  font-weight: 400;
+ }
+ .iam-pretty-table tbody tr {
+ 	cursor: pointer;
+  background: #f7f7f7;
+ }
+ .iam-pretty-table tbody tr:nth-child(even) {
+   background: #e8e8e8;
+ }
+
  .iam-form {
     max-width:40vw;
     margin:0 auto;
@@ -23,7 +50,7 @@
   }
 
   .iam-form input:disabled,  .iam-form select:disabled {
-     background: #ddd;
+     background: #eee;
      cursor: not-allowed;
    }
 
@@ -455,37 +482,6 @@ label.iam-was-late {
 
 /*//////////////////////////////////User Charges Table////////////////////////////////////*/
 
-#iam-user-charges-table {
-	border-collapse: collapse;
-}
-#iam-user-charges-table tr {
-	border-top: 2px solid #F1F1F1;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	background-color: #e5e5e5;
-}
-#iam-user-charges-table th {
-	margin: 0px;
-	padding: 15px;
-}
-#iam-user-charges-table td {
-	padding-left: 5px;
-}
-
-#iam-user-charges-table tr {
-	cursor: pointer;
-}
-
-#iam-user-charges-table tr:hover {
-	background-color: lightblue !important;
-}
-
-#iam-user-charges-table th {
-	padding-left: 5px;
-	vertical-align: top;
-	background-color: #ddd;
-	border: none;
-}
 .iam-add-funds-button {
 	float:right;
 	vertical-align:middle;

@@ -11526,6 +11526,12 @@ var _cal = __webpack_require__(7);
 
 var _override = __webpack_require__(20);
 
+var _uifunc = __webpack_require__(39);
+
+var _useradmin = __webpack_require__(38);
+
+var _useradmin2 = _interopRequireDefault(_useradmin);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 (function ($) {
@@ -13018,57 +13024,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
-		var initEditChargeRowListener = function initEditChargeRowListener() {
-			$('#iam-bal-charges-table-container table tr').each(function (index, el) {
-				//don't call on row with titles
-				if ($(this).children('td').length < 5) return;
-				if ($(this).children('.iam-charge-status').text() == 'Canceled' || $(this).children('.iam-charge-status').text() == 'Pending') {
-					$(this).children('td').children('.iam-edit-charge-row').text('approve');
-				} else {
-					$(this).children('td').children('.iam-edit-charge-row').text('cancel');
-				}
-			});
-			$('.iam-edit-charge-row').click(function (event) {
-				var that = this;
-				var thatId = $(this).data('relational-id');
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_switch_charge_status', nid: $(this).data('nid') },
-					success: function success(data) {
-						var newAmount = (0, _serverresponse.handleServerResponse)(data);
-						$('.iam-bal-user-row').each(function (index, el) {
-							if ($(this).data('relational-id') == thatId) {
-								$($(this).children('td')[2]).text(newAmount);
-								return false;
-							}
-						});
-						fetchingChargeTable = true;
-						$.ajax({
-							url: ajaxurl,
-							type: 'GET',
-							data: { action: 'admin_get_charge_table', nid: currentBalRowNID },
-							success: function success(data) {
-								$('#iam-bal-charges-table-container').empty();
-
-								$('#iam-bal-charges-table-container').append((0, _serverresponse.handleServerResponse)(data));
-								initEditChargeRowListener();
-								$('.iam-edit-charge-row').data('relational-id', thatId);
-								fetchingChargeTable = false;
-							},
-							error: function error(data) {
-								(0, _serverresponse.handleServerError)(data, new Error());
-								fetchingChargeTable = false;
-							}
-						});
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
 		//USER CERTIFICATION LISTENERS
 
 		var initSeeExistingCertificationsListener = function initSeeExistingCertificationsListener() {
@@ -13754,45 +13709,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
-		var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
-			$('.iam-csv-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: ajaxaction },
-					success: function success(data) {
-						(0, _userfeedback.submissionEnd)();
-						var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + (0, _serverresponse.handleServerResponse)(data));
-						window.open(encodedUri);
-					},
-					error: function error(data) {
-						(0, _userfeedback.submissionEnd)();
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var initCSVButtonListener = function initCSVButtonListener(ignoreColumn, id) {
-			$('.iam-csv-button').click(function (event) {
-				var csvText = 'data:text/csv;charset=utf-8,';
-				id = typeof id === 'undefined' ? '' : '#' + id + ' ';
-				$(id + 'th').each(function (index, el) {
-					csvText += $(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
-				});
-				csvText = csvText.substring(0, csvText.length - 1) + '\n';
-				$(id + 'tr').each(function (index, el) {
-					$(this).children('td').each(function (i, e) {
-						if (i != ignoreColumn) csvText += $(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
-					});
-					csvText = csvText.substring(0, csvText.length - 1) + '\n';
-				});
-				var encodedUri = encodeURI(csvText);
-				window.open(encodedUri);
-			});
-		};
-
 		//user registration wrap functions
 		var initRegKeyButtonListener = function initRegKeyButtonListener() {
 			$('.iam-reg-key-button').click(function (event) {
@@ -14092,7 +14008,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initApproval();
 			initScheduleSubmitListeners();
 		} else if ($('.iam-charge-sheet-wrap').length > 0) {
-			initCSVAJAXButtonListener('admin_get_all_charges_as_csv');
+			(0, _uifunc.initCSVAJAXButtonListener)('admin_get_all_charges_as_csv');
 			initChargeTable();
 			$(document).tooltip();
 		} else if ($('.iam-equipment-wrap').length > 0) {
@@ -14115,7 +14031,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			if ($('.iam-er').length > 0) {
 				initCheckinCheckout();
 			}
-			initCSVAJAXButtonListener('admin_equipment_csv');
+			(0, _uifunc.initCSVAJAXButtonListener)('admin_equipment_csv');
 			$(document).tooltip();
 			findItemAgain($('#iam-equipment-list'));
 		} else if ($('.iam-certification-wrap').length > 0) {
@@ -14138,49 +14054,47 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			$(document).tooltip();
 			findItemAgain($('#iam-certifcation-list'));
 		} else if ($('.iam-users-wrap').length > 0) {
-			var addFundsHTML = $('.iam-add-funds').html(),
-			    fetchingChargeTable = false,
-			    currentBalRowNID;
-			$('.iam-add-funds').remove();
-			$('.iam-bal-user-row').click(function (event) {
-				if (fetchingChargeTable) return;
-
-				currentBalRowNID = $(this).data('nid');
-
-				if (lastBalClick == currentBalRowNID) return;
-				lastBalClick = currentBalRowNID;
-
-				fetchingChargeTable = true;
-				var that = this;
-				selectedBalUser = $(this).children('.iam-bal-user-row-username').text();
-				$('.iam-bal-user-row').removeClass('iam-selected-row');
-				$(this).addClass('iam-selected-row');
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'admin_get_charge_table', nid: currentBalRowNID },
-					success: function success(data) {
-						$('#iam-bal-charges-table-container').empty();
-						$('#iam-bal-charges-table-container').append((0, _serverresponse.handleServerResponse)(data));
-						initEditChargeRowListener();
-						var id = (0, _utils.rStr)(30);
-						$(that).data('relational-id', id);
-						$('.iam-edit-charge-row').data('relational-id', id);
-						initCSVButtonListener(4, 'iam-user-charges-table');
-						fetchingChargeTable = false;
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-						fetchingChargeTable = false;
-					}
-				});
-			});
-
-			initAddFundsButtonListener();
-			initSearchListener('.iam-balances-search', '.iam-bal-user-row-username', 1);
-			updateSearchOnLoad();
-
-			findTableItemAgain($('#iam-balances-table'), 0);
+			var useradmin = new _useradmin2.default();
+			initSearchListener('.iam-search', '.iam-users-list li', 0);
+			/*
+   var addFundsHTML = $('.iam-add-funds').html(), fetchingChargeTable = false, currentBalRowNID;
+   $('.iam-add-funds').remove();
+   $('.iam-bal-user-row').click(function(event) {
+   	if (fetchingChargeTable)
+   		return;
+   		currentBalRowNID = $(this).data('nid');
+   		if (lastBalClick==currentBalRowNID)
+   		return;
+   	lastBalClick = currentBalRowNID;
+   		fetchingChargeTable = true;
+   	var that = this;
+   	selectedBalUser = $(this).children('.iam-bal-user-row-username').text();
+   	$('.iam-bal-user-row').removeClass('iam-selected-row');
+   	$(this).addClass('iam-selected-row');
+   	$.ajax({
+   		url: ajaxurl,
+   		type: 'GET',
+   		data: {action: 'admin_get_charge_table', nid: currentBalRowNID},
+   		success: function (data) {
+   			$('#iam-bal-charges-table-container').empty();
+   			$('#iam-bal-charges-table-container').append(handleServerResponse(data));
+   			initEditChargeRowListener();
+   			var id = rStr(30);
+   			$(that).data('relational-id', id);
+   			$('.iam-edit-charge-row').data('relational-id', id);
+   			initCSVButtonListener(4,'iam-user-charges-table');
+   			fetchingChargeTable = false;
+   		},
+   		error: function (data) {
+   			handleServerError(data, new Error());
+   			fetchingChargeTable = false;
+   		}
+   	});
+   	});
+   	initAddFundsButtonListener();
+   initSearchListener('.iam-balances-search','.iam-bal-user-row-username',1);
+   updateSearchOnLoad();
+   	findTableItemAgain($('#iam-balances-table'), 0);*/
 		} else if ($('.iam-registration-wrap').length > 0) {
 			$('.iam-approve-account').click(function (event) {
 				$.ajax({
@@ -14262,7 +14176,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initNewMaterialButtonListener();
 			initDeletePricingDropDownListener();
 			initPricingRowDeleteListener();
-			initCSVAJAXButtonListener('admin_pricing_csv');
+			(0, _uifunc.initCSVAJAXButtonListener)('admin_pricing_csv');
 		} else if ($('.iam-room-res-wrap').length > 0) {
 
 			resetEvents();
@@ -19493,6 +19407,227 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		}
 	});
 });
+
+/***/ }),
+/* 38 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _serverresponse = __webpack_require__(6);
+
+var _userfeedback = __webpack_require__(8);
+
+var _utils = __webpack_require__(3);
+
+var _uifunc = __webpack_require__(39);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UserAdmin = function () {
+  function UserAdmin() {
+    _classCallCheck(this, UserAdmin);
+
+    this.initUsersList();
+  }
+
+  _createClass(UserAdmin, [{
+    key: 'initManageFunds',
+    value: function initManageFunds() {
+      var that = this;
+      (0, _jquery2.default)('.manage-funds').click(function (event) {
+        that.updateModalWithUserChargeTable();
+      });
+    }
+  }, {
+    key: 'updateModalWithUserChargeTable',
+    value: function updateModalWithUserChargeTable() {
+      var that = this;
+      (0, _userfeedback.submissionStart)();
+      (0, _jquery2.default)('#myModal .modal-body').empty();
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'GET',
+        data: { 'action': 'get_user_charge_table', 'link': (0, _jquery2.default)('.iam-form').data('link') },
+        success: function success(data) {
+          (0, _jquery2.default)('#myModal .modal-body').append((0, _serverresponse.handleServerResponse)(data));
+          that.initEditChargeButtons();
+          (0, _jquery2.default)('.iam-csv-button').off();
+          (0, _uifunc.initCSVButtonListener)(4, 'iam-user-charges-table');
+          (0, _userfeedback.submissionEnd)();
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+    }
+  }, {
+    key: 'initUsersList',
+    value: function initUsersList() {
+      var that = this;
+      (0, _jquery2.default)('.iam-users-list li').click(function (event) {
+        (0, _userfeedback.submissionStart)();
+        (0, _jquery2.default)('.iam-user-info-col').empty();
+        var username = (0, _jquery2.default)(this).html();
+
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'GET',
+          data: { 'action': 'get_user_info_html', 'username': username },
+          success: function success(data) {
+            (0, _jquery2.default)('.iam-user-info-col').append((0, _serverresponse.handleServerResponse)(data));
+            that.initUserUpdate();
+            that.initManageFunds();
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'initUserUpdate',
+    value: function initUserUpdate() {
+      (0, _jquery2.default)('.iam-user-info-form .btn-success').click(function (event) {
+        (0, _userfeedback.submissionStart)();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { action: 'user_update_account_info',
+            link: (0, _jquery2.default)('.iam-user-info-form').data('link'),
+            first_name: (0, _jquery2.default)('#first-name').val(),
+            last_name: (0, _jquery2.default)('#last-name').val(),
+            email: (0, _jquery2.default)('#email').val(),
+            phonenum: (0, _utils.getPhoneNumberFromPage)(),
+            school_id: (0, _jquery2.default)('#school-id').val(),
+            account_type: (0, _jquery2.default)('#account_type').val()
+          },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            (0, _jquery2.default)('.iam-user-info-form .iam-submit').blur();
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'initEditChargeButtons',
+    value: function initEditChargeButtons() {
+      (0, _jquery2.default)('#myModal table tbody tr').each(function (index, el) {
+        if ((0, _jquery2.default)(this).children('.iam-charge-status').text() == 'Canceled' || (0, _jquery2.default)(this).children('.iam-charge-status').text() == 'Pending') {
+          (0, _jquery2.default)(this).children('td').children('.iam-edit-charge-row').text('approve');
+        } else {
+          (0, _jquery2.default)(this).children('td').children('.iam-edit-charge-row').text('cancel');
+        }
+      });
+      this.editChargeListeners();
+    }
+  }, {
+    key: 'editChargeListeners',
+    value: function editChargeListeners() {
+      var that = this;
+      (0, _jquery2.default)('.iam-edit-charge-row').click(function (event) {
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { action: 'admin_switch_charge_status', nid: (0, _jquery2.default)(this).data('nid') },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            that.updateModalWithUserChargeTable();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }]);
+
+  return UserAdmin;
+}();
+
+exports.default = UserAdmin;
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.initCSVAJAXButtonListener = exports.initCSVButtonListener = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _serverresponse = __webpack_require__(6);
+
+var _userfeedback = __webpack_require__(8);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var initCSVButtonListener = function initCSVButtonListener(ignoreColumn, id) {
+  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
+    var csvText = 'data:text/csv;charset=utf-8,';
+    id = typeof id === 'undefined' ? '' : '#' + id + ' ';
+    (0, _jquery2.default)(id + 'th').each(function (index, el) {
+      csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
+    });
+    csvText = csvText.substring(0, csvText.length - 1) + '\n';
+    (0, _jquery2.default)(id + 'tr').each(function (index, el) {
+      (0, _jquery2.default)(this).children('td').each(function (i, e) {
+        if (i != ignoreColumn) csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
+      });
+      csvText = csvText.substring(0, csvText.length - 1) + '\n';
+    });
+    var encodedUri = encodeURI(csvText);
+    window.open(encodedUri);
+  });
+};
+
+var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
+  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
+    (0, _userfeedback.submissionStart)();
+    _jquery2.default.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: { action: ajaxaction },
+      success: function success(data) {
+        (0, _userfeedback.submissionEnd)();
+        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + (0, _serverresponse.handleServerResponse)(data));
+        window.open(encodedUri);
+      },
+      error: function error(data) {
+        (0, _userfeedback.submissionEnd)();
+        (0, _serverresponse.handleServerError)(data, new Error());
+      }
+    });
+  });
+};
+
+exports.initCSVButtonListener = initCSVButtonListener;
+exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
 
 /***/ })
 /******/ ]);

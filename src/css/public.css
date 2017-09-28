@@ -57,7 +57,7 @@
  }
 
  .iam-form input:disabled,  .iam-form select:disabled {
-    background: #ddd;
+    background: #eee;
     cursor: not-allowed;
   }
 

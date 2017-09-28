@@ -140,6 +140,7 @@ class Admin_Content
 			    </div>
 			  </div>
 			</div>
+
 		</div>
 
 		<?php
@@ -231,7 +232,7 @@ class Admin_Content
 					?>
 				</ul>
 			</div>
-			<div class="col-md-9">
+			<div class="col-md-9 iam-user-info-col">
 
 				<div class="iam-form-placeholder">
 
@@ -239,6 +240,25 @@ class Admin_Content
 
 			</div>
 
+			</div>
+			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg" style="max-width:65vw;" role="document">
+					<div class="modal-content">
+						<div class="modal-header" style="min-height:24px;">
+							Manage User Funds
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+						</div>
+						<div class="modal-footer">
+							<input type="number" placeholder="0.00" style="width:10%; display:inline-block; float: left; vertical-align: middle; padding: 3px 0; margin-right: 5px;">
+							<input type="text" placeholder="Reason for adjusting funds." style="width:60%; display:inline-block; float: left; vertical-align: middle; padding: 3px 0; margin-right: 5px;">
+							<button type="button" class="btn btn-success" style="display:inline-block; float: left; vertical-align: middle;">Add Funds</button><button type="button" class="btn btn-primary iam-csv-button" style="display:inline-block; float: left; vertical-align: middle;">Generate CSV</button>
+						</div>
+					</div>
+				</div>
 			</div>
 		<?php
 
