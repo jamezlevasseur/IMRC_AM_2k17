@@ -19,8 +19,7 @@ class Debug_Page
         </div>
         <?php
         /** de bugs go here **/
-        require_once iam_dir().'public/render/utils_public.php';
-        Utils_Public::late_reservations_check(true);
+        print_r( get_list_of_tags_for(130,' & ') );
 
     }
 

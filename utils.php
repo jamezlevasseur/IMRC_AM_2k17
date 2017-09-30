@@ -11,6 +11,12 @@ function escape_CSV_quotes($str)
 	return str_replace('"','""',$str);
 }
 
+function ezget($string, ...$rest)
+{
+	global $wpdb;
+	return $wpdb->get_results($wpdb->prepare($string, $rest));
+}
+
 function get_rental_period($id)
 {
 	global $wpdb;
@@ -19,6 +25,48 @@ function get_rental_period($id)
 		return 0;
 	}
 	return json_decode($json[0]->Meta_Value)->duration;
+}
+
+function get_rental_type_for($id)
+{
+	global $wpdb;
+	$json = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$id));
+	if (count($json)==0) {
+		return 0;
+	}
+	return json_decode($json[0]->Meta_Value);
+}
+
+function get_tags_for_equipment($key,$val)
+{
+	global $wpdb;
+
+	if ($key!='Equipment_ID')
+		$e = ezget("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE $key=%s",$val)[0]->Equipment_ID;
+	else
+		$e = $val;
+
+	$tags = [];
+	$tag_results = ezget("SELECT Tag_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$e);
+
+	foreach ($tag_results as $row) {
+		$tags[] = ezget("SELECT * FROM ".IAM_TAGS_TABLE." WHERE Tag_ID=%d",$row->Tag_ID)[0];
+	}
+	
+	return $tags;
+}
+
+function get_list_of_tags_for($equipment_id,$delimiter)
+{
+	$tags = get_tags_for_equipment('Equipment_ID',$equipment_id);
+
+	$taglist = '';
+
+	for ($i=0; $i < count($tags); $i++) {
+		$taglist.=$tags[$i]->Tag.$delimiter;
+	}
+
+	return substr($taglist,0,-strlen($delimiter));
 }
 
 function get_email($iam_id)
@@ -138,7 +186,7 @@ function make_phone_number_field_with($phonenum)
 {
 	if (empty($phonenum))
 		return make_phone_number_field();
-		
+
 	$parts = explode('-',$phonenum);
 	return '
 	<div class="iam-phone-num-grp">
