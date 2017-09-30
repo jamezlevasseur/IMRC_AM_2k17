@@ -7,6 +7,8 @@ let initCSVButtonListener = function (ignoreColumn,id) {
   $('.iam-csv-button').click(function(event) {
     var csvText = 'data:text/csv;charset=utf-8,';
     id = typeof id === 'undefined' ? '' : '#'+id+' ';
+    if (id.substring(1,2)=='#')
+      id = id.substring(1,id.length);
     $(id+'th').each(function(index, el) {
       csvText+=$(this).text().replace(/(<([^>]+)>)/ig,"")+',';
     });
