@@ -10853,11 +10853,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				var day = checkoutBusinessHours[key];
 
 				if (key == dayOfWeek) {
-					//day of res == business hours day
-					if (day.start == '') {
-						alert('The IMRC is closed on this day');
-						return;
-					}
 					//add business hours event to event array
 					equip_and_business_schedule.push({
 						start: dateOf + ' 00:00:00',
