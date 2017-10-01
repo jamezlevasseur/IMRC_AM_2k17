@@ -1,6 +1,7 @@
 import $ from 'jquery';
 
 import { rStr, isEmail, getSize } from '../core/utils';
+import { publicDebug, debugWarn } from '../core/debug';
 
 import { itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
@@ -107,7 +108,7 @@ import UserAdmin from '../page/useradmin';
 						initSearchWithTableDataSetListener($('.iam-search'),data['data'], ['username','email','account_type','certifications','equipment_used','Charge_Description','date','approver','Comment','values'], function (searchResults) {
 							$('#iam-table-container').pagination({
 								position: 'top',
-								pageSize: 5,
+								pageSize: 10,
 								dataSource: searchResults,
 								callback: function (pgData, pagination) {
 									makeEditableTableBody(pgData,'#iam-table-container','iam-charge-table',chargeTableEditingCallback);
@@ -2760,5 +2761,5 @@ import UserAdmin from '../page/useradmin';
 				$(document).tooltip();
 			}
 	 });
-
+	 debugWarn();
 })( jQuery );

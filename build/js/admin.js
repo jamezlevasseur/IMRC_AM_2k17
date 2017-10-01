@@ -10861,6 +10861,63 @@ module.exports = function (module) {
 
 
 Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.debugWarn = exports.publicDebug = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function registerDebug() {
+  if ((0, _jquery2.default)('#signupform').length > 0) {
+    (0, _jquery2.default)('body').dblclick(function (event) {
+      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
+      (0, _jquery2.default)('#email').val(em);
+      (0, _jquery2.default)('#email-confirm').val(em);
+      (0, _jquery2.default)('#password').val('Asdfasdf1');
+      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
+      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
+      (0, _jquery2.default)('#phone-num-1').val('111');
+      (0, _jquery2.default)('#phone-num-2').val('222');
+      (0, _jquery2.default)('#phone-num-3').val('3333');
+      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
+    });
+  }
+}
+
+function inDebugMode() {
+  if (window.location.href.indexOf('imrcaccounts') != -1) return false;
+  return true;
+}
+
+function debugWarn() {
+  if (!inDebugMode()) return;
+  console.warn('debug mode active');
+}
+
+function publicDebug() {
+  if (!inDebugMode()) return;
+  registerDebug();
+}
+
+exports.publicDebug = publicDebug;
+exports.debugWarn = debugWarn;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
@@ -10933,7 +10990,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10963,7 +11020,7 @@ exports.eventFallsOnWeekend = eventFallsOnWeekend;
 exports.eventIsLongerThan = eventIsLongerThan;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11181,7 +11238,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11212,7 +11269,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11267,7 +11324,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11320,7 +11377,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11351,7 +11408,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11401,7 +11458,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11499,7 +11556,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11564,7 +11621,6 @@ exports.initCSVButtonListener = initCSVButtonListener;
 exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
 
 /***/ }),
-/* 17 */,
 /* 18 */,
 /* 19 */,
 /* 20 */
@@ -11581,17 +11637,19 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(2);
 
-var _textfieldlisteners = __webpack_require__(7);
+var _debug = __webpack_require__(7);
+
+var _textfieldlisteners = __webpack_require__(8);
 
 var _serverresponse = __webpack_require__(4);
 
 var _userfeedback = __webpack_require__(5);
 
-var _cal = __webpack_require__(8);
+var _cal = __webpack_require__(9);
 
 var _override = __webpack_require__(21);
 
-var _uifunc = __webpack_require__(16);
+var _uifunc = __webpack_require__(17);
 
 var _useradmin = __webpack_require__(39);
 
@@ -11714,7 +11772,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					initSearchWithTableDataSetListener($('.iam-search'), data['data'], ['username', 'email', 'account_type', 'certifications', 'equipment_used', 'Charge_Description', 'date', 'approver', 'Comment', 'values'], function (searchResults) {
 						$('#iam-table-container').pagination({
 							position: 'top',
-							pageSize: 5,
+							pageSize: 10,
 							dataSource: searchResults,
 							callback: function callback(pgData, pagination) {
 								makeEditableTableBody(pgData, '#iam-table-container', 'iam-charge-table', chargeTableEditingCallback);
@@ -14295,6 +14353,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			$(document).tooltip();
 		}
 	});
+	(0, _debug.debugWarn)();
 })(jQuery);
 
 /***/ }),
@@ -14387,7 +14446,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(24), __webpack_require__(30), __webpack_require__(9), __webpack_require__(34), __webpack_require__(15), __webpack_require__(11), __webpack_require__(36), __webpack_require__(14), __webpack_require__(13), __webpack_require__(37), __webpack_require__(38), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(24), __webpack_require__(30), __webpack_require__(10), __webpack_require__(34), __webpack_require__(16), __webpack_require__(12), __webpack_require__(36), __webpack_require__(15), __webpack_require__(14), __webpack_require__(37), __webpack_require__(38), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15293,7 +15352,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(25), __webpack_require__(26), __webpack_require__(11), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(25), __webpack_require__(26), __webpack_require__(12), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15969,7 +16028,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(10), __webpack_require__(27), __webpack_require__(29), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(11), __webpack_require__(27), __webpack_require__(29), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16361,7 +16420,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(10)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(11)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16434,7 +16493,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(32), __webpack_require__(12), __webpack_require__(14), __webpack_require__(13), __webpack_require__(33), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(10), __webpack_require__(32), __webpack_require__(13), __webpack_require__(15), __webpack_require__(14), __webpack_require__(33), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -17701,7 +17760,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(9), __webpack_require__(35), __webpack_require__(12), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(10), __webpack_require__(35), __webpack_require__(13), __webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -19394,7 +19453,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(15)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(0), __webpack_require__(1), __webpack_require__(16)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -19496,7 +19555,7 @@ var _userfeedback = __webpack_require__(5);
 
 var _utils = __webpack_require__(2);
 
-var _uifunc = __webpack_require__(16);
+var _uifunc = __webpack_require__(17);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

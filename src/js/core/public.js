@@ -1,7 +1,7 @@
 import $ from 'jquery';
 
 import { isEmail, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn } from '../core/utils';
-import { publicDebug } from '../core/debug';
+import { publicDebug, debugWarn } from '../core/debug';
 
 import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
@@ -576,6 +576,8 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				}
 			}
 
+			let warnOutsideOfHours = false;
+
 			for (var i=0; i<equip_and_business_schedule.length; i++) {
 				var obj = equip_and_business_schedule[i];
 
@@ -614,13 +616,13 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 					(moment(desired_appointment.end).isSame(obj.start) && (check1 == check2) && (check2==check4))==false &&
 
 					((check1 == check2) && (check2==check3) && (check3==check4))==false) {
-					if (obj.hasOwnProperty('businessHours')) {
-						alert('Your reservation is not during business hours, please reschedule.');
-					} else {
-						alert('Your reservation interferes with another. Please double check the calendar for today and refresh the page if necessary.');
-					}
-
-					return false;
+						if (obj.hasOwnProperty('businessHours') && !warnOutsideOfHours) {
+							warnOutsideOfHours = true;
+							alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+						} else {
+							alert('Your reservation interferes with another. Please double check the calendar for today and refresh the page if necessary.');
+							return false;
+						}
 				}
 			}
 			return true;
@@ -1477,7 +1479,7 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				});
 			});
 		}
-		console.log(ajaxurl)
+		debugWarn();
 		publicDebug();
 	});
 })( jQuery );

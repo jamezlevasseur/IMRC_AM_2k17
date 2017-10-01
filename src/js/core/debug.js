@@ -21,13 +21,22 @@ function registerDebug() {
   }
 }
 
-function publicDebug() {
+function inDebugMode() {
   if (window.location.href.indexOf('imrcaccounts')!=-1)
+    return false;
+  return true;
+}
+
+function debugWarn() {
+  if (!inDebugMode())
     return;
-
   console.warn('debug mode active');
+}
 
+function publicDebug() {
+  if (!inDebugMode())
+    return;
   registerDebug();
 }
 
-export { publicDebug };
+export { publicDebug, debugWarn };

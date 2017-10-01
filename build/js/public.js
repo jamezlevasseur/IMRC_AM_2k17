@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 17);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -10123,6 +10123,63 @@ module.exports = function (module) {
 
 
 Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.debugWarn = exports.publicDebug = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function registerDebug() {
+  if ((0, _jquery2.default)('#signupform').length > 0) {
+    (0, _jquery2.default)('body').dblclick(function (event) {
+      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
+      (0, _jquery2.default)('#email').val(em);
+      (0, _jquery2.default)('#email-confirm').val(em);
+      (0, _jquery2.default)('#password').val('Asdfasdf1');
+      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
+      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
+      (0, _jquery2.default)('#phone-num-1').val('111');
+      (0, _jquery2.default)('#phone-num-2').val('222');
+      (0, _jquery2.default)('#phone-num-3').val('3333');
+      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
+    });
+  }
+}
+
+function inDebugMode() {
+  if (window.location.href.indexOf('imrcaccounts') != -1) return false;
+  return true;
+}
+
+function debugWarn() {
+  if (!inDebugMode()) return;
+  console.warn('debug mode active');
+}
+
+function publicDebug() {
+  if (!inDebugMode()) return;
+  registerDebug();
+}
+
+exports.publicDebug = publicDebug;
+exports.debugWarn = debugWarn;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
@@ -10195,7 +10252,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10225,7 +10282,6 @@ exports.eventFallsOnWeekend = eventFallsOnWeekend;
 exports.eventIsLongerThan = eventIsLongerThan;
 
 /***/ }),
-/* 9 */,
 /* 10 */,
 /* 11 */,
 /* 12 */,
@@ -10233,7 +10289,8 @@ exports.eventIsLongerThan = eventIsLongerThan;
 /* 14 */,
 /* 15 */,
 /* 16 */,
-/* 17 */
+/* 17 */,
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10245,15 +10302,15 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(2);
 
-var _debug = __webpack_require__(18);
+var _debug = __webpack_require__(7);
 
-var _textfieldlisteners = __webpack_require__(7);
+var _textfieldlisteners = __webpack_require__(8);
 
 var _cookie = __webpack_require__(19);
 
 var _serverresponse = __webpack_require__(4);
 
-var _cal = __webpack_require__(8);
+var _cal = __webpack_require__(9);
 
 var _userfeedback = __webpack_require__(5);
 
@@ -10813,6 +10870,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				}
 			}
 
+			var warnOutsideOfHours = false;
+
 			for (var i = 0; i < equip_and_business_schedule.length; i++) {
 				var obj = equip_and_business_schedule[i];
 
@@ -10849,13 +10908,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
     			[event]
     */
 				(moment(desired_appointment.end).isSame(obj.start) && check1 == check2 && check2 == check4) == false && (check1 == check2 && check2 == check3 && check3 == check4) == false) {
-					if (obj.hasOwnProperty('businessHours')) {
-						alert('Your reservation is not during business hours, please reschedule.');
+					if (obj.hasOwnProperty('businessHours') && !warnOutsideOfHours) {
+						warnOutsideOfHours = true;
+						alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
 					} else {
 						alert('Your reservation interferes with another. Please double check the calendar for today and refresh the page if necessary.');
+						return false;
 					}
-
-					return false;
 				}
 			}
 			return true;
@@ -11680,59 +11739,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				});
 			});
 		}
-		console.log(ajaxurl);
+		(0, _debug.debugWarn)();
 		(0, _debug.publicDebug)();
 	});
 })(jQuery);
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.publicDebug = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function registerDebug() {
-  if ((0, _jquery2.default)('#signupform').length > 0) {
-    (0, _jquery2.default)('body').dblclick(function (event) {
-      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
-      (0, _jquery2.default)('#email').val(em);
-      (0, _jquery2.default)('#email-confirm').val(em);
-      (0, _jquery2.default)('#password').val('Asdfasdf1');
-      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
-      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
-      (0, _jquery2.default)('#phone-num-1').val('111');
-      (0, _jquery2.default)('#phone-num-2').val('222');
-      (0, _jquery2.default)('#phone-num-3').val('3333');
-      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
-    });
-  }
-}
-
-function publicDebug() {
-  if (window.location.href.indexOf('imrcaccounts') != -1) return;
-
-  console.warn('debug mode active');
-
-  registerDebug();
-}
-
-exports.publicDebug = publicDebug;
 
 /***/ }),
 /* 19 */
