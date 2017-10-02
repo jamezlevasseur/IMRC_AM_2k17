@@ -28,8 +28,6 @@ define('IAM_SUPPORTING_FILES_TABLE', IAM_PREFIX.'supporting_files');
 
 define('IAM_USER_CERTIFICATIONS_TABLE', IAM_PREFIX.'user_certifications');
 
-define('IAM_ROOM_TABLE', IAM_PREFIX.'room');
-
 define('IAM_FACILITY_TABLE', IAM_PREFIX.'facility');
 
 define('IAM_MATERIAL_EQUIPMENT_TABLE', IAM_PREFIX.'material_equipment');

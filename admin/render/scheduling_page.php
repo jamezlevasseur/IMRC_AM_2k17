@@ -9,11 +9,9 @@ class Scheduling_Page
     public static function admin_facility_schedule_callback()
     {
         global $wpdb;
-        if ($_POST['tag']=='Rooms') {
-            $tag_id = 0;
-        } else {
-            $tag_id = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",IAM_Sec::textfield_cleaner($_POST['tag'])))[0]->Tag_ID;
-        }
+
+        $tag_id = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",IAM_Sec::textfield_cleaner($_POST['tag'])))[0]->Tag_ID;
+
         if ($_POST['type']==='Rental') {
             if (count($wpdb->get_results($wpdb->prepare("SELECT Facility_ID FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=%d",$tag_id)))>0) {
                 $wpdb->query($wpdb->prepare("UPDATE ".IAM_FACILITY_TABLE." SET Schedule_Type='Rental', Rental_Days=%d, Rental_Hours_Description=%s WHERE Tag_ID=%d",$_POST['info']['rental_period'],IAM_Sec::textfield_cleaner($_POST['info']['rental_hours_description']),$tag_id));
@@ -212,32 +210,10 @@ class Scheduling_Page
         return $html_string;
     }
 
-    public static function admin_update_approval_hours()
-    {
-        global $wpdb;
-        $json = IAM_Sec::textfield_cleaner(json_encode($_POST['events']));
-        $name = IAM_Sec::textfield_cleaner($_POST['name']);
-        $id = $wpdb->get_results($wpdb->prepare("SELECT Room_ID FROM ".IAM_ROOM_TABLE." WHERE Name=%s",$name))[0]->Room_ID;
-        $id = $id.'_business_hours';
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$json,$id));
-        iam_respond(SUCCESS);
-    }
 
     public static function admin_get_approval_hours()
     {
         IAM_Cal::get_approval_hours();
-    }
-
-    public static function make_approval_block()
-    {
-        global $wpdb;
-        $r = $wpdb->get_results("SELECT Name,NI_ID FROM ".IAM_ROOM_TABLE);
-        $list = '';
-        foreach ($r as $row) {
-            $list.= '<option data-nid="'.$row->NI_ID.'">'.$row->Name.'</option>';
-        }
-        $scheduling_info = '<div class="iam-approval-hours-instructions">Instructions: Drag the event where desired to indicate when you are closed on that date for that time. <b>Shift + Click to delete events</b></div><div id="approval-external-events"><h4>Drag to Calendar</h4><div class="fc-event">closed</div><select class="iam-approval-room-select">'.$list.'</select></div><div class="iam-approval-hours-cal iam-cal"></div>';
-        return $scheduling_info;
     }
 
     public static function make_scheduling_block($row)

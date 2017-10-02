@@ -115,23 +115,6 @@ class IAM_Cal
 		}
 	}
 
-	public static function get_approval_hours()
-	{
-		global $wpdb;
-		$name = IAM_Sec::textfield_cleaner($_GET['name']);
-		$id = $wpdb->get_results($wpdb->prepare("SELECT Room_ID FROM ".IAM_ROOM_TABLE." WHERE Name=%s",$name))[0]->Room_ID;
-		$id = $id.'_business_hours';
-		$r = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",$id));
-		if (count($r)==0) {
-			$wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,'[]')",$id));
-			$json = '[]';
-		} else {
-			$json = $r[0]->Meta_Value;
-		}
-		echo $json;
-		exit;
-	}
-
 	public static function get_equipment_cal()
 	{
 		if (isset($_GET['name'])) {

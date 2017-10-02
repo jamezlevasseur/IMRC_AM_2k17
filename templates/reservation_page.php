@@ -194,11 +194,9 @@ class IAM_Reservation_Page
 		foreach ($reservation_results as $res_row) {
 			$equip_id = $res_row->Equipment_ID;
 			$equip_results;
-			if ($res_row->Is_Room && $res_row->Reservation_Status==1) {
-				$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_ROOM_TABLE." WHERE Room_ID=%d ",$equip_id));
-			} else {
-				$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d ",$equip_id));
-			}
+
+			$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d ",$equip_id));
+
 			$equip_name = $equip_results[0]->Name;
 			if ($equip_name===null || $equip_name===false) {
 				continue;
@@ -218,32 +216,6 @@ class IAM_Reservation_Page
 		}
 		if ($html=='') {
 			$html='<div class="iam-server-message">You have no reservations!</div>';
-		}
-		return $html;
-	}
-
-	public static function get_rooms()
-	{
-		global $wpdb;
-		$query = "SELECT * FROM ".IAM_ROOM_TABLE." ";
-		$results = $wpdb->get_results($query);
-		$html = "";
-		foreach ($results as $row) {
-			$photo_url = $row->Photo==null ? IAM_DEFAULT_LARGE_PICTURE : $row->Photo;
-			$out_of_order = $row->Out_Of_Order==1 ? '<div class="iam-out-of-order"><h2>OUT OF ORDER</h2><div class="iam-out-of-order-bg"></div></div>' : '';
-			$out_of_order_button_disable = $row->Out_Of_Order==1 ? 'disabled' : '';
-			$html .= 	'<div class="iam-equipment-block">
-							'.$out_of_order.'
-							<div class="iam-equipment-block-left">
-								<div class="iam-equipment-title">'.iam_output($row->Name).'</div>
-								<div class="iam-equipment-photo"><img width="200" src="'.iam_output($photo_url).'" alt="picture of '.iam_output($row->Name).'"></div>
-							</div>
-							<div class="iam-equipment-block-right">
-								<div class="iam-equipment-description iam-equipment-sub-block">'.iam_output($row->Description).'</div>
-								<div class="iam-equipment-pricing iam-equipment-sub-block">'.iam_output($row->Pricing_Description).'</div>
-							</div>
-							<div class="iam-equipment-block-button"><button class="iam-equipment-button iam-room" data-equiproot="Rooms" '.$out_of_order_button_disable.'>Select</button></div>
-						</div>';
 		}
 		return $html;
 	}
@@ -280,11 +252,8 @@ class IAM_Reservation_Page
 		$facility_names = '';
 		foreach ($facility_results as $row) {
 			$tag_id = $row->Tag_ID;
-			if ($tag_id==0) {
-				$tag = 'Rooms';
-			} else {
-				$tag = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
-			}
+			$tag = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
+
 			//make readable by javascript
 			$tag = strtolower(str_replace(' ', '_', $tag));
 			$facility_names.=$tag.',';
@@ -301,7 +270,7 @@ class IAM_Reservation_Page
 			<div id="iam-ref-crumb-buttons"><button class="iam-crumb-button">Equipment Room</button><button class="iam-crumb-button">Fab Lab</button></div><br>
 			<div class="iam-crumb-container"><div id="iam-crumb-root"></div><div id="iam-ref-crumb"></div></div>
 		</div>
-		<div class="iam-ref-left">'.IAM_Reservation_Page::get_equipment().IAM_Reservation_Page::get_rooms().'
+		<div class="iam-ref-left">'.IAM_Reservation_Page::get_equipment().'
 		</div>
 		<div id="iam-ref-right"><div id="iam-ref-right-title">Existing Reservations</div><div id="iam-existing-res-container">'.IAM_Reservation_Page::get_user_reservations().'</div></div>
 		</div>';

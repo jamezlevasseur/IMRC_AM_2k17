@@ -70,14 +70,6 @@ class Reservation_Public
         }
         $all_equipment = [];
         global $wpdb;
-        if ($tags[0]=='Rooms') {
-            $all_rooms = $wpdb->get_results("SELECT Name,Description,Pricing_Description,Photo FROM ".IAM_ROOM_TABLE);
-            foreach ($all_rooms as $row) {
-                $row->Manufacturer_Info = '';
-                $row->Root_Tag = 'Rooms';
-            }
-            iam_respond(SUCCESS,json_encode($all_rooms));
-        }
         for ($i=0; $i < count($tags); $i++) {
             $tag_id = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",$tags[$i]))[0]->Tag_ID;
             $equip_id_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Tag_ID=%d",$tag_id));
@@ -93,9 +85,4 @@ class Reservation_Public
         iam_respond(SUCCESS,json_encode($all_equipment));
     }
 
-    public static function get_rooms()
-    {
-        $html = IAM_Reservation_Page::get_rooms();
-        iam_respond(SUCCESS,$html);
-    }
 }

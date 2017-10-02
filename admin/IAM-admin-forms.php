@@ -42,14 +42,6 @@ class IAM_Admin_Forms
 	const EQUIPMENT_OUT_OF_ORDER = '<label style="display:inline;" for="out-of-order">Out of Order: </label>';
 	const EQUIPMENT_COMMENTS = '<label for="internal-comments">Internal Comments: </label>';
 
-	//room constants
-	const ROOM_PHOTO_LABEL = '<label for="photo">Room Photo:</label>';
-	const ROOM_NAME_LABEL = '<label for="name">Room Name <span style="background:none;" title="Does not accept underscores, semi-colons, or single quotes"><i style="font-size:20px;" class="fa fa-question-circle"></i></span>:</label>';
-	const ROOM_DESCRIPTION_LABEL = '<label for="description">Room Description:</label>';
-	const ROOM_PRICING_DESCRIPTION_LABEL = '<label for="pricing-description">Pricing Description:</label>';
-	const ROOM_OUT_OF_ORDER = '<label style="display:inline;" for="out-of-order">Out of order: </label>';
-
-
 	public static function update_existing_file_list()
 	{
 		global $wpdb;
@@ -93,8 +85,6 @@ class IAM_Admin_Forms
 	 		$html.= '<p class="iam-form-row"><div class="iam-delete-form iam-delete-button" style="margin-top:-10px;">Delete Certification</div></p>';
 	 	} else if ($type=='e' && !$new) {
 	 		$html.= '<p class="iam-form-row"><div class="iam-delete-form iam-delete-button" style="margin-top:-10px;">Delete Equipment</div></p>';
-	 	} else if ($type=='r' && !$new) {
-	 		$html.= '<p class="iam-form-row"><div class="iam-delete-form iam-delete-button" style="margin-top:-10px;">Delete Room</div></p>';
 	 	}
 	 	$html.='</form>';
 	 	return $html;
@@ -139,37 +129,6 @@ class IAM_Admin_Forms
 		//$required_val = $init_cert_results[0]->Required === 1 ? 'checked' : '' ;
 		//$update_cert_fields[] = IAM_Admin_Forms::CERTIFICATION_REQUIRED_LABEL.'<input type="checkbox" id="required" name="required" '.$required_val.'>';
 		return IAM_Admin_Forms::make_admin_form($update_cert_fields,'Update Existing Certification',false, false,'c');
-	}
-
-	public static function new_room_form()
-	{
-		global $wpdb;
-	 	$new_room_fields = [];
-		$new_room_fields[] = '<img class="iam-image" width="200" src="'.IAM_Admin_Forms::or_sample_large('').'" alt="" >';
-		$new_room_fields[] = IAM_Admin_Forms::ROOM_PHOTO_LABEL.'<input type="file" id="photo" name="photo" accept="image/*">';
-		$new_room_fields[] = IAM_Admin_Forms::ROOM_NAME_LABEL.'<input type="text" id="name" name="name" max="100" value="">';
-		$new_room_fields[] = IAM_Admin_Forms::ROOM_DESCRIPTION_LABEL.'<textarea id="description" name="description" rows="4" cols="50"></textarea>';
-	 	$new_room_fields[] = IAM_Admin_Forms::ROOM_PRICING_DESCRIPTION_LABEL.'<textarea id="pricing-description" name="pricing-description" rows="4" cols="50"></textarea>';
-	 	$new_room_fields[] = IAM_Admin_Forms::ROOM_OUT_OF_ORDER.'<input type="checkbox" id="out-of-order" name="out-of-order">';
-
-	 	return IAM_Admin_Forms::make_admin_form($new_room_fields,'Insert New Room',true,true,'r');
-	}
-
-	public static function update_room_form($selected_name)
-	{
-		global $wpdb;
-		$init_room_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_ROOM_TABLE." WHERE Name=%s ",$selected_name));
-
-		$update_room_fields = [];
-		$update_room_fields[] = '<input class="iam-ninja" name="x" id="x" value="'.iam_output($init_room_results[0]->NI_ID).'">';
-		$update_room_fields[] = '<img class="iam-image" width="200" src="'.IAM_Admin_Forms::or_sample_large($init_room_results[0]->Photo).'" alt="'.iam_output($init_room_results[0]->Name).'" >';
-		$update_room_fields[] = IAM_Admin_Forms::ROOM_PHOTO_LABEL.'<input type="file" id="photo" name="photo" accept="image/*">';
-		$update_room_fields[] = IAM_Admin_Forms::ROOM_NAME_LABEL.'<input type="text" id="name" name="name" max="100" value="'.iam_output($init_room_results[0]->Name).' ">';
-		$update_room_fields[] = IAM_Admin_Forms::ROOM_DESCRIPTION_LABEL.'<textarea id="description" name="description" rows="4" cols="50">'.iam_output($init_room_results[0]->Description).'</textarea>';
-	 	$update_room_fields[] = IAM_Admin_Forms::ROOM_PRICING_DESCRIPTION_LABEL.'<textarea id="pricing-description" name="pricing-description" rows="4" cols="50">'.iam_output($init_room_results[0]->Pricing_Description).'</textarea>';
-	 	$out_of_order_val = $init_room_results[0]->Out_Of_Order==1 ? 'checked' : '' ;
-	 	$update_room_fields[] = IAM_Admin_Forms::ROOM_OUT_OF_ORDER.'<input type="checkbox" id="out-of-order" name="out-of-order" '.$out_of_order_val.'>';
-	 	return IAM_Admin_Forms::make_admin_form($update_room_fields,'Update Existing Room',false,false,'r');
 	}
 
 	public static function make_rental_list($chosen=null)

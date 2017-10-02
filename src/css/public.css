@@ -505,16 +505,6 @@
 	color:grey;
 }
 
-#iam-rooms-button::before {
-	content: "Rooms";
-}
-
-#iam-rooms-button {
-	display: inline-block;
-	padding: 5px;
-	margin: 10px;
-}
-
 @media screen and (max-width: 700px) {
 	.iam-ref-left-top {
 		margin-left: 0px;

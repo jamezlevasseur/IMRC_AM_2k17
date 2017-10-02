@@ -264,52 +264,6 @@ class Admin_Content
 
 	}
 
-	public static function room_content()
-	{
-		?>
-		<div class="wrap iam-room-wrap">
-			<h1 class="iam-admin-header">Rooms</h1>
-			<div id="iam-admin-col-left">
-				<h3>Existing Rooms</h3>
-				<div class="iam-search-container">
-					<input type="search" placeholder="search..." class="iam-search iam-room-search">
-				</div>
-				<ul id="iam-room-list" class="iam-existing-list">
-					<?php
-						global $wpdb;
-						$room_query = "SELECT Name FROM ".IAM_ROOM_TABLE." ";
-						$room_results = $wpdb->get_results($room_query);
-						$empty = true;
-						$selected_name = "";
-						foreach ($room_results as $row) {
-							if ($empty) { //determines whether there is room & sets initial selected item
-								$empty = false;
-								$selected_name = $row->Name;
-								echo "<li selected>".iam_output($row->Name)."</li>";
-							} else {
-								echo "<li>".iam_output($row->Name)."</li>";
-							}
-						}
-						if ($empty) {
-							echo "<li>No rooms found! :(</li>";
-						}
-					 ?>
-				</ul>
-				<button id="iam-new-room-button" class="iam-secondary-button">New Room</button>
-			</div>
-			<div id="iam-admin-col-right">
-				<?php
-
-				if (!$empty)
-					echo IAM_Admin_Forms::update_room_form($selected_name);
-				echo IAM_Admin_Forms::new_room_form();
-
-				?>
-			</div>
-		</div>
-		<?php
-	}
-
 	public static function equipment_room_reservation_content()
 	{
 		echo Admin_Content::reservation_content('e');
@@ -566,13 +520,7 @@ class Admin_Content
 		foreach ($root_tags as $row) {
 			Scheduling_Page::make_scheduling_block($row);
 		}
-		//rooms has tag id of 0 since it doesn't have a tag
-		/*
-		$row = new StdClass;
-		$row->Tag_ID = 0;
-		$row->Tag = 'Rooms';
-		Scheduling_Page::make_scheduling_block($row);*/
-		 ?>
+		?>
 		</div>
 		<?php
 	}
@@ -677,45 +625,6 @@ class Admin_Content
 			<div class="iam-button iam-admin-submit-button">Save Changes</div><br />
 			<div class="iam-csv-button iam-secondary-button">Generate CSV</div>
 		</div>
-		<?php
-	}
-
-	public static function room_reservations_content()
-	{
-		global $wpdb;
-		$room_results = $wpdb->get_results("SELECT Name FROM ".IAM_ROOM_TABLE);
-		$list_html = '<ul class="iam-room-res-list iam-reservation-tab-list"><li class="iam-select-all-room-res"><input type="checkbox">Select All</li>';
-		foreach ($room_results as $row) {
-			$list_html.='<li><input type="checkbox">'.$row->Name.'</li>';
-		}
-		$list_html.='</ul>';
-		?>
-		<div class="wrap iam-room-res-wrap">
-			<div class="iam-tabs iam-room-res-tabs">
-				<span class="iam-tab iam-confirmed-tab">Confirmed</span><span class="iam-tab iam-pending-tab iam-selected-tab">Pending</span>
-				<span style="background:none;" title="Right click events to get options"><i style="font-size:20px;" class="fa fa-question-circle"></i></span>
-			</div>
-			<div class="iam-list-container iam-room-res-list-container"><?php echo $list_html; ?></div>
-			<div id="iam-res-cal-wrap">
-				<div class="iam-cal iam-room-res-cal">
-					<h1 class="iam-cal-placeholder">Select item(s)</h1>
-				</div>
-				<div class="iam-res-cal-instructions">
-					- Events marked red will be deleted <br />
-					- Events marked green will be confirmed <br />
-					- Events marked yellow will be reset to pending
-					<br />
-					<br />
-					<label style="color:red;">Send email alerting users of reservation changes: <input type="checkbox" class="iam-res-cal-send-emails" checked></label><br />
-					<textarea rows="8" cols="60" class="iam-res-cal-reason" placeholder="Reason changes were made to users reservation. This will be sent in an email to the users whose reservations have been altered. (Optional)"></textarea>
-					<div class="iam-res-cal-button-wrap">
-						<button class="iam-res-cal-cancel iam-delete-button" type="button">Cancel</button>
-						<button class="iam-res-cal-submit iam-button" type="button">Save Changes</button>
-					</div>
-				</div>
-			</div>
-		</div>
-
 		<?php
 	}
 

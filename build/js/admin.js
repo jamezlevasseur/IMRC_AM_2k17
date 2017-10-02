@@ -13037,75 +13037,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
-		//ROOM LISTENERS
-
-		var initNewRoomButtonListener = function initNewRoomButtonListener() {
-			$('#iam-new-room-button').click(function (event) {
-				make_form_visible('#iam-new-form');
-				prepare_new_form('#iam-new-form');
-			});
-		};
-
-		var initSubmitRoomFormListener = function initSubmitRoomFormListener() {
-			$('.iam-admin-submit-button').off();
-			$('.iam-admin-submit-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				var form = $(this).parent();
-				var method = form.attr('id') == 'iam-new-form' ? 'n' : 'u';
-				var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0;
-				var formData = new FormData();
-
-				if (form.children('.iam-form-row').children('#photo').val() != '') {
-					formData.append('photo', form.children('.iam-form-row').children('#photo').prop('files')[0]);
-				}
-				formData.append('method', method);
-				formData.append('action', 'admin_room_action');
-				formData.append('name', form.children('.iam-form-row').children('#name').val());
-				formData.append('description', form.children('.iam-form-row').children('#description').val());
-				formData.append('pricing-description', form.children('.iam-form-row').children('#pricing-description').val());
-				formData.append('out-of-order', outOfOrder);
-
-				if (method == 'u') formData.append('x', form.children('.iam-form-row').children('#x').val());
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: formData,
-					cache: false,
-					contentType: false,
-					processData: false,
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var initExistingRoomListItemsListener = function initExistingRoomListItemsListener() {
-			$('.iam-existing-list li').click(function (event) {
-				make_form_visible('#iam-update-form');
-				//if form is already present do not make a request
-				if ($(this).html() == $('#iam-update-form').children('.iam-form-row').children('#name').val()) return;
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'get_admin_forms', request: 'u_room', name: $(this).html() },
-					success: function success(data) {
-						$('#iam-update-form').replaceWith((0, _serverresponse.handleServerResponse)(data));
-						initTagAutoCompleteListener();
-						initSubmitRoomFormListener();
-						initDeleteFormListener('r');
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
 		//BAL LISTENERS
 
 		var initBalancesButtonListener = function initBalancesButtonListener() {
@@ -13469,41 +13400,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		//schedling wrap functions
 		var initScheduleTypeListeners = function initScheduleTypeListeners() {
-			/*
-   $('.iam-scheduling-type select').change(function(event) {
-   	var that = this;
-   	var schedulingInfoElement = $(this).parent('.iam-scheduling-type').parent('.iam-scheduling-block').children('.iam-scheduling-info');
-   	if ($(this).val()=='Rental') {
-   		$.ajax({
-   			url: ajaxurl,
-   			type: 'GET',
-   			data: {action: 'admin_get_rental_info_template'},
-   			success: function (data) {
-   				schedulingInfoElement.empty();
-   				schedulingInfoElement.html(handleServerResponse(data));
-   			},
-   			error: function (data) {
-   				handleServerError(data, new Error());
-   			}
-   		});
-   	} else if ($(this).val()=='Appointment') {
-   		$.ajax({
-   			url: ajaxurl,
-   			type: 'GET',
-   			data: {action: 'admin_get_appointment_info_template'},
-   			success: function (data) {
-   				schedulingInfoElement.empty();
-   				schedulingInfoElement.html(handleServerResponse(data));
-   			},
-   			error: function (data) {
-   				handleServerError(data, new Error());
-   			}
-   		});
-   		initIrregularHoursButtonListener();
-   	} else {
-   		schedulingInfoElement.empty;
-   	}
-   });*/
 			initIrregularHoursButtonListener();
 		};
 
@@ -13545,13 +13441,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
-		var initApprovalRoomSelectListener = function initApprovalRoomSelectListener() {
-			$('.iam-approval-room-select').change(function (event) {
-				$('.iam-approval-hours-cal').fullCalendar('removeEventSources');
-				$('.iam-approval-hours-cal').fullCalendar('addEventSource', ajaxurl + "?action=admin_get_approval_hours&name=" + $(this).val());
-			});
-		};
-
 		var updateApprovalCal = function updateApprovalCal() {
 			//submissionStart();
 			var e = $('.iam-approval-hours-cal').fullCalendar('clientEvents');
@@ -13578,68 +13467,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					}
 				}
 			}
-			var roomName = $('.iam-approval-room-select').val();
-			$.ajax({
-				url: ajaxurl,
-				type: 'POST',
-				data: { action: 'admin_update_approval_hours', events: a, name: roomName },
-				success: function success(data) {
-					(0, _serverresponse.handleServerResponse)(data);
-					window.location.reload();
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-					(0, _userfeedback.submissionEnd)();
-				}
-			});
-		};
-
-		var initApproval = function initApproval() {
-			$('#approval-external-events .fc-event').each(function () {
-
-				// store data so the calendar knows to render an event upon drop
-				$(this).data('event', {
-					title: 'closed', // use the element's text as the event title
-					stick: true, // maintain when user navigates (see docs on the renderEvent method)
-					editable: true,
-					color: '#4cad57',
-					className: 'iam-new-event'
-				});
-
-				// make the event draggable using jQuery UI
-				$(this).draggable({
-					zIndex: 999,
-					revert: true, // will cause the event to go back to its
-					revertDuration: 0 //  original position after the drag
-				});
-			});
-			var roomName = $('.iam-approval-room-select').val();
-			$('.iam-approval-hours-cal').fullCalendar({
-				header: {
-					left: '',
-					center: '',
-					right: 'agendaWeek'
-				},
-				eventClick: function eventClick(calEvent, jsEvent, view) {
-					if (jsEvent.shiftKey) {
-						$(this).remove();
-						calEvent.toDelete = 1;
-						updateApprovalCal();
-					}
-				},
-				droppable: true,
-				eventOverlap: false,
-				defaultDate: '1970-2-1',
-				allDaySlot: false,
-				height: 500,
-				forceEventDuration: true,
-				defaultView: 'agendaWeek',
-				editable: false, //new events will be made editable else where
-				eventLimit: true, // allow "more" link when too many events
-				title: 'closed',
-				events: ajaxurl + "?action=admin_get_approval_hours&name=" + roomName
-			});
-			initApprovalRoomSelectListener();
 		};
 
 		var initIrregularHoursButtonListener = function initIrregularHoursButtonListener() {
@@ -14054,19 +13881,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initAddRentalTypeButtonListener();
 			initRentalTypeRowListener();
 			initSubmitRentalTypeListener();
-		} else if ($('.iam-room-wrap').length > 0) {
-
-			//listeners
-			initExistingRoomListItemsListener();
-			initImageListener();
-			initNewRoomButtonListener();
-			initSubmitRoomFormListener();
-			initDeleteFormListener('r');
-			initSearchListener('.iam-room-search', '#iam-room-list li', 0);
-			(0, _textfieldlisteners.itemNameListener)($('#iam-new-form #name'));
-			(0, _textfieldlisteners.itemNameListener)($('#iam-update-form #name'));
-			updateSearchOnLoad();
-			$(document).tooltip();
 		} else if ($('.iam-reservation-wrap').length > 0) {
 			resetEvents();
 
@@ -14128,7 +13942,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		} else if ($('.iam-scheduling-wrap').length > 0) {
 
 			initScheduleTypeListeners();
-			initApproval();
 			initScheduleSubmitListeners();
 		} else if ($('.iam-charge-sheet-wrap').length > 0) {
 			(0, _uifunc.initCSVAJAXButtonListener)('admin_get_all_charges_as_csv');
@@ -14179,45 +13992,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		} else if ($('.iam-users-wrap').length > 0) {
 			var useradmin = new _useradmin2.default();
 			initSearchListener('.iam-search', '.iam-users-list li', 0);
-			/*
-   var addFundsHTML = $('.iam-add-funds').html(), fetchingChargeTable = false, currentBalRowNID;
-   $('.iam-add-funds').remove();
-   $('.iam-bal-user-row').click(function(event) {
-   	if (fetchingChargeTable)
-   		return;
-   		currentBalRowNID = $(this).data('nid');
-   		if (lastBalClick==currentBalRowNID)
-   		return;
-   	lastBalClick = currentBalRowNID;
-   		fetchingChargeTable = true;
-   	var that = this;
-   	selectedBalUser = $(this).children('.iam-bal-user-row-username').text();
-   	$('.iam-bal-user-row').removeClass('iam-selected-row');
-   	$(this).addClass('iam-selected-row');
-   	$.ajax({
-   		url: ajaxurl,
-   		type: 'GET',
-   		data: {action: 'admin_get_charge_table', nid: currentBalRowNID},
-   		success: function (data) {
-   			$('#iam-bal-charges-table-container').empty();
-   			$('#iam-bal-charges-table-container').append(handleServerResponse(data));
-   			initEditChargeRowListener();
-   			var id = rStr(30);
-   			$(that).data('relational-id', id);
-   			$('.iam-edit-charge-row').data('relational-id', id);
-   			initCSVButtonListener(4,'iam-user-charges-table');
-   			fetchingChargeTable = false;
-   		},
-   		error: function (data) {
-   			handleServerError(data, new Error());
-   			fetchingChargeTable = false;
-   		}
-   	});
-   	});
-   	initAddFundsButtonListener();
-   initSearchListener('.iam-balances-search','.iam-bal-user-row-username',1);
-   updateSearchOnLoad();
-   	findTableItemAgain($('#iam-balances-table'), 0);*/
 		} else if ($('.iam-registration-wrap').length > 0) {
 			$('.iam-approve-account').click(function (event) {
 				$.ajax({
@@ -14300,57 +14074,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initDeletePricingDropDownListener();
 			initPricingRowDeleteListener();
 			(0, _uifunc.initCSVAJAXButtonListener)('admin_pricing_csv');
-		} else if ($('.iam-room-res-wrap').length > 0) {
-
-			resetEvents();
-			initRoomResCalSubmitListener();
-			$('.iam-confirmed-tab').click(function (event) {
-				$(this).addClass('iam-selected-tab');
-				$('.iam-pending-tab').removeClass('iam-selected-tab');
-				roomResStatus = 1;
-				makeCalendarRoomRes('', 1);
-			});
-			$('.iam-pending-tab').click(function (event) {
-				$(this).addClass('iam-selected-tab');
-				$('.iam-confirmed-tab').removeClass('iam-selected-tab');
-				roomResStatus = 0;
-				makeCalendarRoomRes('', 0);
-			});
-			$('.iam-room-res-list-container ul li:not(.iam-select-all-room-res)').click(function (event) {
-				makeCalendarRoomRes($(this).text(), roomResStatus);
-				$(this).toggleClass('iam-highlighted');
-				if ($(this).hasClass('iam-highlighted')) $(this).children('input').prop('checked', true);else $(this).children('input').prop('checked', false);
-			});
-
-			//select all listener
-			$('.iam-select-all-room-res').click(function (event) {
-				$(this).toggleClass('iam-highlighted');
-				if ($(this).hasClass('iam-highlighted')) {
-					$(this).children('input').prop('checked', true);
-					var lastEquip = null;
-					$('.iam-room-res-list-container ul li:not(.iam-highlighted)').each(function (index, el) {
-						$(this).children('input').prop('checked', true);
-						$(this).addClass('iam-highlighted');
-						if (lastEquip == null) {
-							lastEquip = $(this).text();
-						} else {
-							roomResSources.push($(this).text());
-							roomResSourcesMap[$(this).text()] = roomResSources.length - 1;
-						}
-					});
-					makeCalendarRoomRes(lastEquip);
-				} else {
-					$(this).children('input').prop('checked', false);
-					$('.iam-room-res-list-container ul li.iam-highlighted').each(function (index, el) {
-						$(this).children('input').prop('checked', false);
-						$(this).removeClass('iam-highlighted');
-					});
-					roomResSources = [];
-					roomResSourcesMap = {};
-					$('.iam-cal').fullCalendar('removeEventSource', lastRoomResResource);
-				}
-			});
-			$(document).tooltip();
 		}
 	});
 	(0, _debug.debugWarn)();

@@ -6,11 +6,7 @@
     $facility_names = '';
     foreach ($facility_results as $row) {
         $tag_id = $row->Tag_ID;
-        if ($tag_id==0) {
-            $tag = 'Rooms';
-        } else {
-            $tag = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
-        }
+        $tag = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
         //make readable by javascript
         $tag = strtolower(str_replace(' ', '_', $tag));
         $facility_names.=$tag.',';
@@ -33,7 +29,6 @@
         <!--<div class="iam-secondary-button iam-discover-button" >Projector</div>-->
         <div class="iam-secondary-button iam-discover-button" >Monitor/TVs</div>
         <div class="iam-secondary-button iam-discover-button" >Equipment Room Miscellaneous</div>
-        <div class="iam-secondary-button iam-discover-button" >Rooms</div>
         <div class="iam-secondary-button iam-discover-button" >All</div>
     </div>
     <div class="iam-discover-block">

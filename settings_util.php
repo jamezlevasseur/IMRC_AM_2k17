@@ -66,7 +66,7 @@ function init_settings_iam($fresh = false)
 		$settings = fopen( plugin_dir_path( __FILE__ ) . "config/settings", "w");
 	}
 	$current_gmt_timestamp = time();
-	fwrite($settings, "fresh_install:true;init_tags:false;ipad_code:0000;ipad_code_updated:$current_gmt_timestamp;training_email:admin@".$_SERVER['HTTP_HOST'].";late_reservations_email:admin@".$_SERVER['HTTP_HOST'].";equipment_room_email:admin@".$_SERVER['HTTP_HOST'].";fab_lab_email:admin@".$_SERVER['HTTP_HOST'].";rooms_email:admin@".$_SERVER['HTTP_HOST'].";".LATE_CHARGE_FEE_KEY.":10;debug_log:none;");
+	fwrite($settings, "fresh_install:true;init_tags:false;ipad_code:0000;ipad_code_updated:$current_gmt_timestamp;training_email:admin@".$_SERVER['HTTP_HOST'].";late_reservations_email:admin@".$_SERVER['HTTP_HOST'].";equipment_room_email:admin@".$_SERVER['HTTP_HOST'].";fab_lab_email:admin@".$_SERVER['HTTP_HOST'].";".LATE_CHARGE_FEE_KEY.":10;debug_log:none;");
 }
 
 //updates a setting in config/settings to value

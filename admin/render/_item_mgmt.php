@@ -59,14 +59,7 @@ class Item_Mgmt
 
             if (  empty($wpdb->get_results("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Photo='$url'")) )
               unlink(WP_CONTENT_DIR.substr($url, strpos($url, '/uploads')));
-              
-        } else if ($type=='r') {
-            $room_results = $wpdb->get_results($wpdb->prepare("SELECT Room_ID,Photo FROM ".IAM_ROOM_TABLE." WHERE NI_ID=%s",$ni_id));
-            $room_id = $room_results[0]->Room_ID;
-            $url = $room_results[0]->Photo;
-            unlink(WP_CONTENT_DIR.substr($url, strpos($url, '/uploads')));
-            $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room=1",$room_id));
-            $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_ROOM_TABLE." WHERE NI_ID=%s",$ni_id));
+
         }
         iam_respond(SUCCESS);
     }

@@ -171,18 +171,6 @@ class IAM_Activator {
 			Certification_ID int(5) NOT NULL
 			) $charset_collate";
 
-		$queries[] = "CREATE TABLE IF NOT EXISTS ".IAM_ROOM_TABLE." (
-			Room_ID int(10) NOT NULL AUTO_INCREMENT,
-			NI_ID varchar(200) NOT NULL,
-			Name varchar(200) NOT NULL,
-			Description text DEFAULT NULL,
-			Pricing_Description text DEFAULT NULL,
-			Photo text DEFAULT NULL,
-			Out_Of_Order tinyint(1) DEFAULT 0,
-			PRIMARY KEY(Room_ID),
-			UNIQUE(Name)
-			) $charset_collate";
-
 		$queries[] = "CREATE TABLE IF NOT EXISTS ".IAM_FACILITY_TABLE." (
 			Facility_ID bigint(20) NOT NULL AUTO_INCREMENT,
 			Tag_ID bigint(20) NOT NULL,
@@ -275,7 +263,6 @@ class IAM_Activator {
 		//for fresh install only
 		if (get_setting_iam('fresh_install')=='true') {
 			update_settings_iam('fresh_install','false');
-			//insert rooms into facility table, kind of a hack since rooms has no tags will introduce proper solution later
 			$wpdb->query("INSERT INTO ".IAM_FACILITY_TABLE." (Tag_ID,Schedule_Type) VALUES (0,'Appointment')");
 			//default material
 			$timenid = uniqid();
@@ -283,14 +270,10 @@ class IAM_Activator {
 
 			require_once iam_dir() . 'tables/wp_iam_equipment.php';
 			require_once iam_dir() . 'tables/wp_iam_certification.php';
-			require_once iam_dir() . 'tables/wp_iam_room.php';
 			require_once iam_dir() . 'tables/wp_iam_tags_equipment.php';
 			$relational_array = [];
 			$equip_dictionary = [];
 			$cert_dictionary = [];
-			foreach ($wp_iam_room as $row) {
-				$wpdb->query($wpdb->prepare("INSERT INTO ".IAM_ROOM_TABLE." (NI_ID,Name,Description,Pricing_Description,Photo,Out_Of_Order) VALUES (%s,%s,%s,%s,%s,%d)",$row->NI_ID,$row->Name,$row->Description,$row->Pricing_Description,$row->Photo,$row->Out_Of_Order));
-			}
 			foreach ($wp_iam_certification as $row) {
 				$cert_dictionary[$row['Certification_ID']] = $row['Name'];
 			}

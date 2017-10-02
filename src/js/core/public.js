@@ -58,11 +58,8 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 			});
 		}
 
-		var convertBusinessHours = function (jsonString,isRoom) {
+		var convertBusinessHours = function (jsonString) {
 			var json = typeof jsonString==='string' ? JSON.parse(jsonString) : jsonString;
-			if (isRoom) {
-				return json;
-			}
 			var converted = [];
 			var counter = 1;
 			for (var key in json) {
@@ -159,32 +156,6 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				initCrumbListener();
 				initCrumbButtonListener();
 			});
-			if ($('#iam-rooms-button').length>0) {
-				$('#iam-rooms-button').click(function(event) {
-					breadcrumbTrail.push($(this).text());
-					updatePageForRoomsCrumb();
-					$('#iam-ref-crumb-buttons').empty();
-				});
-			}
-		}
-
-		var updatePageForRoomsCrumb = function () {
-			if (breadcrumbTrail.length<1)
-				return;
-			$('.iam-ref-left').empty();
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				async: false,
-				data: {action: 'get_rooms'},
-				success: function (data) {
-					var content = handleServerResponse(data);
-					newDataToRefLeft(content);
-				},
-				error: function (data) {
-					handleServerError(data, new Error());
-				}
-			});
 		}
 
 		var updateCrumbButtons = function () {
@@ -249,11 +220,11 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 			});
 			//empty buttons
 			$('#iam-ref-crumb-buttons').empty();
-			//root buttons
+
 			for (var i = 0; i < root_tags.length; i++) {
 				$('#iam-ref-crumb-buttons').append('<button class="iam-crumb-button">'+root_tags[i]+'</button>');
 			}
-			//$('#iam-ref-crumb-buttons').append('<button id="iam-rooms-button"></button>');
+
 			initCrumbListener();
 			initCrumbButtonListener();
 		}
@@ -331,10 +302,6 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				$('.iam-res-popup-header').append(equip_name);
 				equip_name = equip_name.replace(/ /g, '_');
 				var event_data = [];
-				var isRoom = $(this).hasClass('iam-room') ? 1 : 0;
-				if (isRoom==1) {
-					$('.iam-res-popup-body').after('<p class="iam-room-note" style="color:red;">Room reservations must be approved by admin via email before official added to the calendar.</p><p class="iam-room-note" style="">Reservations in grey are pending approval.</p>')
-				}
 
 				var wknd = false;
 				var d = moment().day();
@@ -502,7 +469,7 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 						url: ajaxurl,
 						type: 'POST',
 						async: false,
-						data: {action: 'submit_reservation', equipment: equip_name, events: newEvents, room: isRoom},
+						data: {action: 'submit_reservation', equipment: equip_name, events: newEvents},
 						success: function (data) {
 							handleServerResponse(data);
 							$('.iam-res-popup').remove();
@@ -1018,9 +985,6 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				equip_name = equip_name.replace(/ /g, '_');
 				var event_data = [];
 
-				if (isRoom==1) {
-					$('.iam-res-popup-body').after('<p class="iam-room-note" style="color:red;">Reservations in grey have not been approved yet.</p>');
-				}
 				current_root_tag = $('.iam-discover-data').data('equiproot').replace(' ','_').toLowerCase();
 				var wknd = false;
 				var d = moment().day();
@@ -1158,11 +1122,6 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				buildDiscoverBlock(cachedDiscoverData[tag]);
 				return;
 			}
-			if (tag=='Rooms') {
-				isRoom=1;
-			} else {
-				isRoom=0;
-			}
 			$.ajax({
 				url: ajaxurl,
 				type: 'GET',
@@ -1251,12 +1210,7 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 					return;
 				}
 
-				//var phonenum = getPhoneNumberFromPage();
-				//console.log(phonenum);
-
 				var registerArgs = {action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'school-id': $('#school-id').val(), phonenum: getPhoneNumberFromPage(), 'password': $('#password').val(), 'key': $('#reg-key').val(),captcha:grecaptcha.getResponse()};
-
-				console.log(registerArgs);
 
 				$.ajax({
 					url: ajaxurl,
@@ -1274,7 +1228,7 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 			});
 		} else if ($('.login-form-container').length>0) {
 			removeNav();
-			var res_form, current_root_tag, isRoom;
+			var res_form, current_root_tag;
 			var facilities = $('.iam-cal-data').data('names').split(',');
 			var facility_info = {};
 			for (var i = 0; i < facilities.length; i++) {
