@@ -173,12 +173,12 @@ class IAM_Activator {
 
 		$queries[] = "CREATE TABLE IF NOT EXISTS ".IAM_FACILITY_TABLE." (
 			Facility_ID bigint(20) NOT NULL AUTO_INCREMENT,
+			Name varchar(64) NOT NULL,
 			Tag_ID bigint(20) NOT NULL,
-			Schedule_Type varchar(60) NOT NULL,
-			Rental_Days int (3) DEFAULT NULL,
-			Rental_Hours_Description text DEFAULT NULL,
-			Appointment_Business_Hours text DEFAULT '',
+			Schedule text NOT NULL,
+			Description text DEFAULT NULL,
 			PRIMARY KEY(Facility_ID),
+			UNIQUE(Name),
 			UNIQUE(Tag_ID)
 			) $charset_collate";
 
@@ -222,9 +222,9 @@ class IAM_Activator {
 		if (get_setting_iam('init_tags')=='false') {
 
 			//insert required tags
-			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag) VALUES ('Fab Lab')");
-			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag) VALUES ('Equipment Room')");
-
+			Facility::create(['name'=>'Fab Lab','type'=>'a']);
+			Facility::create(['name'=>'Equipment Room','type'=>'r']);
+			
 			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES ('3D Printer','Fab Lab')");
 			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES ('Extrusion','3D Printer')");
 			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES ('Powder','3D Printer')");

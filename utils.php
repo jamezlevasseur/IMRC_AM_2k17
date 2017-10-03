@@ -17,6 +17,13 @@ function ezget($string, ...$rest)
 	return $wpdb->get_results($wpdb->prepare($string, $rest));
 }
 
+function ezquery($string, ...$rest)
+{
+	global $wpdb;
+	//echo $wpdb->prepare($string, $rest).'<br>';
+	return $wpdb->query($wpdb->prepare($string, $rest));
+}
+
 function get_rental_period($id)
 {
 	global $wpdb;
@@ -52,7 +59,7 @@ function get_tags_for_equipment($key,$val)
 	foreach ($tag_results as $row) {
 		$tags[] = ezget("SELECT * FROM ".IAM_TAGS_TABLE." WHERE Tag_ID=%d",$row->Tag_ID)[0];
 	}
-	
+
 	return $tags;
 }
 
