@@ -121,7 +121,6 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 
 		//breadcrumb
 		var breadcrumbTrail = [];
-		var root_tags = ['Fab Lab', 'Equipment Room'];
 
 		var updateTrail = function () {
 			$('#iam-ref-crumb').empty();
@@ -209,7 +208,7 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				url: ajaxurl,
 				type: 'GET',
 				async: false,
-				data: {action: 'get_equipment_for_tags',tags:root_tags},
+				data: {action: 'get_equipment_for_tags',tags:facilities},
 				success: function (data) {
 					var content = handleServerResponse(data);
 					newDataToRefLeft(content, true);
@@ -221,8 +220,8 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 			//empty buttons
 			$('#iam-ref-crumb-buttons').empty();
 
-			for (var i = 0; i < root_tags.length; i++) {
-				$('#iam-ref-crumb-buttons').append('<button class="iam-crumb-button">'+root_tags[i]+'</button>');
+			for (var i = 0; i < facilities.length; i++) {
+				$('#iam-ref-crumb-buttons').append('<button class="iam-crumb-button">'+facilities[i]+'</button>');
 			}
 
 			initCrumbListener();
@@ -1164,6 +1163,7 @@ import { submissionStart, submissionEnd } from '../module/userfeedback';
 				}
 			});
 			//listeners
+
 			init_res_delete();
 			initCrumbListener();
 			initCrumbButtonListener();

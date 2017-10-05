@@ -248,6 +248,7 @@ class IAM_Reservation_Page
 			}
 		}
 		$facility_results = $wpdb->get_results("SELECT * FROM ".IAM_FACILITY_TABLE);
+		$facility_crumb_buttons = '';
 		$facility_html = '';
 		$facility_names = '';
 		foreach ($facility_results as $row) {
@@ -258,6 +259,8 @@ class IAM_Reservation_Page
 			$tag = strtolower(str_replace(' ', '_', $tag));
 			$facility_names.=$tag.',';
 			$facility_html.='data-'.$tag.'="'.iam_output(json_encode(['schedule_type'=>$row->Schedule_Type,'rental_period'=>$row->Rental_Days,'rental_hours_description'=>$row->Rental_Hours_Description,'appointment_business_hours'=>$row->Appointment_Business_Hours])).'" ';
+
+			$facility_crumb_buttons .= '<button class="iam-crumb-button">'.$row->Name.'</button>';
 		}
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
 		$html = '<div id="iam-ref">'.IAM_Reservation_Page::res_banner().'
@@ -267,7 +270,7 @@ class IAM_Reservation_Page
 			<div class="iam-search-container">
 				<input type="search" placeholder="search..." class="iam-search iam-reservations-search">
 			</div>
-			<div id="iam-ref-crumb-buttons"><button class="iam-crumb-button">Equipment Room</button><button class="iam-crumb-button">Fab Lab</button></div><br>
+			<div id="iam-ref-crumb-buttons">'.$facility_crumb_buttons.'</div><br>
 			<div class="iam-crumb-container"><div id="iam-crumb-root"></div><div id="iam-ref-crumb"></div></div>
 		</div>
 		<div class="iam-ref-left">'.IAM_Reservation_Page::get_equipment().'

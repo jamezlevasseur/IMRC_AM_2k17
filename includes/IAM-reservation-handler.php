@@ -9,10 +9,7 @@ class IAM_Reservation_Handler
 	public static function run()
 	{
 		global $wpdb;
-		$_POST['room'] = isset($_POST['room']) ? $_POST['room'] : 0;
-		if (!is_numeric($_POST['room'])) {
-			iam_throw_error(INVALID_INPUT_EXCEPTION.' rh1');
-		}
+
 		$events = $_POST['events'];
 		$equip_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner($_POST['equipment']));
 		$root_tag = '';
@@ -35,13 +32,14 @@ class IAM_Reservation_Handler
 			$format_start = $format_start->format('M d, Y \a\t g:i a');
 			$format_end = $format_end->format('M d, Y \a\t g:i a');
 
-
 			$wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (IAM_ID,NI_ID,Equipment_ID,Start_Time,End_Time,Comment) VALUES (%d,%s,%d,%s,%s,%s) ",$iam_id,$ni_id,$equip_id,$start,$end,$comment));
-			if ($root_tag=='Equipment Room') {
-				iam_mail(get_setting_iam('equipment_room_email'),'A New IMRC Equipment Room Reservation','A new reservation for the '.$equip_name.' has been made for '.$format_start.' to '.$format_end.' by user: '.$user,'Failed to send notification.');
-			} else if ($root_tag=='Fab Lab') {
-				iam_mail(get_setting_iam('fab_lab_email'),'A New IMRC Fab Lab Reservation','A new reservation for the '.$equip_name.' has been made for '.$format_start.' to '.$format_end.' by user: '.$user,'Failed to send notification.');
-			}
+
+			Facility::send_facility_new_res_email($root_tag,
+																						[ 'equipment'=>$equip_name,
+																							'username'=>$user,
+																							'start'=>$format_start,
+																							'end'=>$format_end
+																						]);
 
 		}
 		iam_respond(SUCCESS,'',IAM::$status_message);

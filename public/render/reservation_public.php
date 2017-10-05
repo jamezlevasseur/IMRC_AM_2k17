@@ -66,7 +66,11 @@ class Reservation_Public
         $tags = [IAM_Sec::textfield_cleaner($_GET['tag'])];
 
         if ($tags[0]=='All') {
-            $tags = ['Equipment Room','Fab Lab'];
+          $tags_get = ezget("SELECT Name FROM ".IAM_FACILITY_TABLE);
+          $tags = [];
+          foreach ($tags_get as $row) {
+            $tags[] = $row->Name;
+          }
         }
         $all_equipment = [];
         global $wpdb;

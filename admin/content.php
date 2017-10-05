@@ -14,27 +14,40 @@ class Admin_Content
 	 * @return string
 	 */
 
-	 public static function info_content()
+	 function __construct($facility)
+	 {
+	 	$this->facility = $facility;
+		$this->schedule = json_decode($this->facility->Schedule);
+		$name = $this->facility->Name;
+		$slug = 'imrc-'.iam_slugify($name);
+		$_slug = iam_slugify($name,'_');
+
+		add_menu_page ( $name, $name, 'manage_options', $slug, array($this, 'content'), 'http://jameslevasseur.com/imr-icon.png');
+		add_submenu_page ($slug, 'Users', 'Users', 'manage_options', $_slug.'_users', array($this, 'users_content') );
+		add_submenu_page ($slug, 'Equipment', 'Equipment', 'manage_options', $_slug.'_equipment', array($this, 'equipment_content') );
+		add_submenu_page ($slug, 'Certifications', 'Certifications', 'manage_options', $_slug.'_certifications', array($this, 'certification_content') );
+		add_submenu_page ($slug, 'Reservations', 'Reservations', 'manage_options', $_slug.'_reservations', array($this, 'reservation_content') );
+		add_submenu_page ($slug, 'User Certifications', 'User Certifications', 'manage_options', $_slug.'_user_certifications', array($this, 'user_certification_content') );
+		add_submenu_page ($slug, 'Charge Sheet', 'Charge Sheet', 'manage_options', $_slug.'_charge_sheet', array($this, 'charge_sheet_content') );
+		add_submenu_page ($slug, 'Registration', 'Registration', 'manage_options', $_slug.'_registration', array($this, 'registration_content') );
+		add_submenu_page ($slug, 'Scheduling', 'Scheduling', 'manage_options', $_slug.'_scheduling', array($this, 'scheduling_content') );
+		add_submenu_page ($slug, 'User Privileges', 'User Privileges', 'manage_options', $_slug.'_user_privileges', array($this, 'user_privileges_content') );
+		if ($this->schedule->type=='appointment')
+			add_submenu_page ($slug, 'Pricing', 'Pricing', 'manage_options', $_slug.'_pricing', array($this, 'pricing_content') );
+	 }
+
+	 public function info_content()
 	 {
 		 ?>
 		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
 	 <?php
 	 }
 
-	 public static function er_equipment_content()
-	 {
-	 	Admin_Content::equipment_content('e');
-	 }
-
-	 public static function fl_equipment_content()
-	 {
-	 	Admin_Content::equipment_content('f');
-	 }
-
-	public static function equipment_content($dept)
+	public function equipment_content()
 	{
 		global $wpdb;
-		$c = $dept=='e' ? 'iam-er' : 'iam-fl';
+
+		$c = 'iam-'.iam_slugify($this->facility->Name);
 
 		$users = $wpdb->get_results("SELECT WP_ID,Balance FROM ".IAM_USERS_TABLE);
 		$emails = [];
@@ -58,8 +71,8 @@ class Admin_Content
 				<ul id="iam-equipment-list" class="iam-existing-list">
 					<?php
 
-						$dept_cond = $dept=='e' ? "WHERE Root_Tag!='Fab Lab'" : "WHERE Root_Tag!='Equipment Room'" ;
-						$equipment_query = "SELECT Name,Checked_Out FROM ".IAM_EQUIPMENT_TABLE." ".$dept_cond;
+						$facility_cond = "WHERE Root_Tag='{$this->facility->Name}' OR Root_Tag=''";
+						$equipment_query = "SELECT Name,Checked_Out FROM ".IAM_EQUIPMENT_TABLE." ".$facility_cond;
 						$equipment_results = $wpdb->get_results($equipment_query);
 						$empty = true;
 						$selected_name = "";
@@ -91,8 +104,8 @@ class Admin_Content
 				<?php
 
 				if (!$empty)
-					echo IAM_Admin_Forms::update_equipment_form($selected_name, $dept);
-				echo IAM_Admin_Forms::new_equipment_form($dept);
+					echo IAM_Admin_Forms::update_equipment_form($selected_name, $this->schedule->type);
+				echo IAM_Admin_Forms::new_equipment_form($this->schedule->type);
 
 				?>
 			</div>
@@ -105,7 +118,7 @@ class Admin_Content
 					<br />
 					<button class="iam-secondary-button iam-csv-button">Generate CSV</button>
 				</div>
-				<?php if ($dept=='e') { ?>
+				<?php if ($this->schedule->type=='rental') { ?>
 				<div class="rent-box">
 					<h3 style="margin:0;color:#666;">Rental</h3>
 					<input type="text" class="iam-er-user-emails" placeholder="user email">
@@ -115,11 +128,9 @@ class Admin_Content
 				<?php } ?>
 			</div>
 			<?php
-			$er_tag_id = $wpdb->get_results("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag='Equipment Room'")[0]->Tag_ID;
 
-			$er_info = $wpdb->get_results("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=".$er_tag_id)[0];
-
-			echo '<div class="iam-ninja iam-facility-data" '.'data-facility="'.iam_output(json_encode(['schedule_type'=>$er_info->Schedule_Type,'rental_period'=>$er_info->Rental_Days,'rental_hours_description'=>$er_info->Rental_Hours_Description,'appointment_business_hours'=>$er_info->Appointment_Business_Hours])).'" ></div>';
+			if ($this->schedule->type=='rental')
+				echo '<div class="iam-ninja iam-facility-data" '.'data-facility="'.iam_output($facility->Schedule).'" ></div>';
 			 ?>
 
 			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -156,7 +167,7 @@ class Admin_Content
 	 * @return string
 	 */
 
-	public static function certification_content()
+	public function certification_content()
 	{
 	 	?>
 	 	<div class="wrap iam-certification-wrap">
@@ -213,7 +224,7 @@ class Admin_Content
 	 * @return string
 	 */
 
-	public static function users_content() {
+	public function users_content() {
 	?>
 		<div class="wrap iam-users-wrap">
 			<h1 class="iam-admin-header">Users</h1>
@@ -264,25 +275,13 @@ class Admin_Content
 
 	}
 
-	public static function equipment_room_reservation_content()
-	{
-		echo Admin_Content::reservation_content('e');
-		require_once iam_dir().'public/render/utils_public.php';
-		Utils_Public::late_reservations_check();
-	}
-
-	public static function fab_lab_reservation_content()
-	{
-		echo Admin_Content::reservation_content('f');
-	}
-
-	public static function reservation_content($dept)
+	public function reservation_content()
 	{
 		?>
-			<div class="wrap iam-reservation-wrap" data-facility="<?php echo $dept=='e' ? 'Equipment Room' : 'Fab Lab'; ?>">
+			<div class="wrap iam-reservation-wrap" data-facility="<?php echo $this->facility->Name; ?>">
 				<h1 class="iam-admin-header">Reservations</h1>
 				<div class="res-col-left">
-					<h3 style ="margin-top:0 !important;"> <?php if ($dept=='e') {echo 'Equpment Room';} else if ($dept=='f') {echo 'Fab Labs';} else {echo 'ERROR';} ?></h3>
+					<h3 style ="margin-top:0 !important;"> <?php echo $this->facility->Name; ?></h3>
 					<div class="iam-res-search-container">
 						<input type="search" placeholder="search..." class="iam-search">
 					</div>
@@ -292,8 +291,7 @@ class Admin_Content
 					<div class="iam-reservation-list">
 						<?php
                 global $wpdb;
-                $dept_tag = $dept == 'e' ? 'Equipment Room' : 'Fab Lab' ;
-								$equip_results = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Root_Tag='$dept_tag' ORDER BY Name ASC");
+								$equip_results = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Root_Tag='{$this->facility->Name}' ORDER BY Name ASC");
 
                 foreach ($equip_results as $row) {
 										if (trim($row->Name)=='')
@@ -315,12 +313,12 @@ class Admin_Content
 							<label class="iam-status-label iam-completed">completed: <input type="checkbox" name="completed"></label>
 							<label class="iam-status-label iam-no-show">no show: <input type="checkbox" name="no-show"></label>
 							<?php
-								if ($dept=='e') {
+								if ($this->schedule->type=='rental') {
 									?>
 									<label class="iam-status-label iam-is-late">is late <input type="checkbox" name="is-late"></label>
 									<label class="iam-status-label iam-was-late">returned late <input type="checkbox" name="was-late"></label>
 									<?php
-								} else {
+								} if ($this->schedule->type=='appointment') {
 									?>
 									<label class="iam-status-label iam-no-pay">didn't pay: <input type="checkbox" name="no-pay"></label>
 									<?php
@@ -341,9 +339,12 @@ class Admin_Content
 				</div>
 			</div>
 		<?php
+		//TODO remove after cron is in place
+		require_once iam_dir().'public/render/utils_public.php';
+		Utils_Public::late_reservations_check();
 	}
 
-	public static function user_certification_content()
+	public function user_certification_content()
 	{
 		?>
 			<div class="wrap iam-user-certification-wrap">
@@ -400,7 +401,7 @@ class Admin_Content
 		<?php
 	}
 
-	public static function charge_sheet_content()
+	public function charge_sheet_content()
 	{
 		?>
 			<div class="wrap iam-charge-sheet-wrap">
@@ -425,7 +426,7 @@ class Admin_Content
 	}
 
 
-	public static function registration_content()
+	public function registration_content()
 	{
 		global $wpdb;
 		$new_user_results = $wpdb->get_results("SELECT user_id FROM ".$wpdb->prefix."usermeta WHERE meta_key='iam_need_admin_approval'");
@@ -507,7 +508,7 @@ class Admin_Content
 		<?php
 	}
 
-	public static function scheduling_content()
+	public function scheduling_content()
 	{
 		global $wpdb;
 		$root_tags = $wpdb->get_results("SELECT * FROM ".IAM_TAGS_TABLE." WHERE Parent IS NULL");
@@ -525,7 +526,7 @@ class Admin_Content
 		<?php
 	}
 
-	public static function user_privileges_content()
+	public function user_privileges_content()
 	{
 		global $wpdb;
 		$user_results = $wpdb->get_results("SELECT WP_ID,WP_Username From ".IAM_USERS_TABLE." ORDER BY WP_Username ASC");
@@ -561,7 +562,7 @@ class Admin_Content
 		<?php
 	}
 
-	public static function pricing_content()
+	public function pricing_content()
 	{
 		?>
 
@@ -628,16 +629,10 @@ class Admin_Content
 		<?php
 	}
 
-	/**
-	 * Function that provides content for the admin plugin menu
-	 *
-	 * @since v.0.2
-	 *
-	 * @return void
-	 */
-	public static function fab_lab_content()
+	public function content()
 	{
 		global $wpdb;
+		if ($this->schedule->type=='appointment') {
 		?>
 		<div class="wrap iam-main-menu-wrap">
 			<h1 class="iam-admin-header">Settings</h1>
@@ -661,11 +656,11 @@ class Admin_Content
 								<td><input type="text" class="iam-training-page-email" value="<?php echo get_setting_iam('training_email') ?>"></td>
 							</tr>
 							<tr>
-								<td><label>Failure to Check Out (Fab Lab)</label></td>
+								<td><label>Failure to Check Out</label></td>
 								<td><input type="text" class="iam-late-reservations-email" value="<?php echo get_setting_iam('late_reservations_email') ?>"></td>
 							</tr>
 							<tr>
-								<td><label>Fab Lab Reservation</label></td>
+								<td><label>Reservations</label></td>
 								<td><input type="text" class="iam-fab-lab-email" value="<?php echo get_setting_iam('fab_lab_email') ?>"></td>
 							</tr>
 						</tbody>
@@ -703,73 +698,63 @@ class Admin_Content
 			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
 		</div>
 		<?php
-	}
+		} else if ($this->schedule->type=='rental') {
+			if (get_setting_iam(LATE_CHARGE_FEE_KEY)===false)
+				update_settings_iam(LATE_CHARGE_FEE_KEY,10);
+			?>
+			<div class="wrap iam-main-menu-wrap">
+				<h1 class="iam-admin-header">Settings</h1>
+				<section class="iam-settings-container">
+					<form accept-charset="utf-8" class="iam-settings-form">
+						<table>
+							<tbody>
+								<tr>
+									<td><h1>Misc Settings</h1></td>
+								</tr>
+								<tr>
+									<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
+								</tr>
 
-	/**
-	 * Function that provides content for the admin plugin menu
-	 *
-	 * @since v.0.2
-	 *
-	 * @return void
-	 */
-	public static function equipment_room_content()
-	{
-		global $wpdb;
-		if (get_setting_iam(LATE_CHARGE_FEE_KEY)===false)
-			update_settings_iam(LATE_CHARGE_FEE_KEY,10);
-		?>
-		<div class="wrap iam-main-menu-wrap">
-			<h1 class="iam-admin-header">Settings</h1>
-			<section class="iam-settings-container">
-				<form accept-charset="utf-8" class="iam-settings-form">
-					<table>
-						<tbody>
-							<tr>
-								<td><h1>Misc Settings</h1></td>
-							</tr>
-							<tr>
-								<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
-							</tr>
+								<tr>
+									<td><h1>Email Notifications</h1></td>
+								</tr>
+								<tr>
+									<td><label>Training Page Inquiry</label></td>
+									<td><input type="text" class="iam-training-page-email" value="<?php echo get_setting_iam('training_email') ?>"></td>
+								</tr>
+								<tr>
+									<td><label>Equipment Room Reservation </label></td>
+									<td><input type="text" class="iam-equipment-room-email" value="<?php echo get_setting_iam('equipment_room_email') ?>"></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="iam-settings-submit iam-save iam-button"></div>
 
-							<tr>
-								<td><h1>Email Notifications</h1></td>
-							</tr>
-							<tr>
-								<td><label>Training Page Inquiry</label></td>
-								<td><input type="text" class="iam-training-page-email" value="<?php echo get_setting_iam('training_email') ?>"></td>
-							</tr>
-							<tr>
-								<td><label>Equipment Room Reservation </label></td>
-								<td><input type="text" class="iam-equipment-room-email" value="<?php echo get_setting_iam('equipment_room_email') ?>"></td>
-							</tr>
-						</tbody>
-					</table>
-					<div class="iam-settings-submit iam-save iam-button"></div>
-
-				<h1>Rental Types</h1>
-				<form accept-charset="utf-8" class="iam-rental-type-form">
-					<table>
-						<tbody>
-								<?php
-									$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
-									if (count($rental_types)==0) {
-										echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
-									}
-									foreach ($rental_types as $row) {
-										$r = json_decode($row->Meta_Value);
-										echo '<tr data-id="'.$r->id.'"><td><label>Label: <input type="text" class="rental-label" value="'.$r->label.'"></label></td><td><label>Duration (in days): <input type="number" class="rental-duration" value="'.$r->duration.'"></label></td><td><i class="iam-delete-rental-type fa fa-close fa-3"></i></td></tr>';
-									}
-									?>
-						</tbody>
-					</table>
-					<div class="iam-secondary-button iam-add-rental-type">add new</div>
-					<div class="iam-rental-types-submit iam-save iam-button"></div>
-				</form>
-			</section>
-			<hr>
-			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
-		</div>
-		<?php
+					<h1>Rental Types</h1>
+					<form accept-charset="utf-8" class="iam-rental-type-form">
+						<table>
+							<tbody>
+									<?php
+										$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
+										if (count($rental_types)==0) {
+											echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
+										}
+										foreach ($rental_types as $row) {
+											$r = json_decode($row->Meta_Value);
+											echo '<tr data-id="'.$r->id.'"><td><label>Label: <input type="text" class="rental-label" value="'.$r->label.'"></label></td><td><label>Duration (in days): <input type="number" class="rental-duration" value="'.$r->duration.'"></label></td><td><i class="iam-delete-rental-type fa fa-close fa-3"></i></td></tr>';
+										}
+										?>
+							</tbody>
+						</table>
+						<div class="iam-secondary-button iam-add-rental-type">add new</div>
+						<div class="iam-rental-types-submit iam-save iam-button"></div>
+					</form>
+				</section>
+				<hr>
+				<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
+			</div>
+			<?php
+		}
 	}
 
 }

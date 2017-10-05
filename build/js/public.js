@@ -10430,7 +10430,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		//breadcrumb
 		var breadcrumbTrail = [];
-		var root_tags = ['Fab Lab', 'Equipment Room'];
 
 		var updateTrail = function updateTrail() {
 			$('#iam-ref-crumb').empty();
@@ -10515,7 +10514,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				url: ajaxurl,
 				type: 'GET',
 				async: false,
-				data: { action: 'get_equipment_for_tags', tags: root_tags },
+				data: { action: 'get_equipment_for_tags', tags: facilities },
 				success: function success(data) {
 					var content = (0, _serverresponse.handleServerResponse)(data);
 					newDataToRefLeft(content, true);
@@ -10527,8 +10526,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			//empty buttons
 			$('#iam-ref-crumb-buttons').empty();
 
-			for (var i = 0; i < root_tags.length; i++) {
-				$('#iam-ref-crumb-buttons').append('<button class="iam-crumb-button">' + root_tags[i] + '</button>');
+			for (var i = 0; i < facilities.length; i++) {
+				$('#iam-ref-crumb-buttons').append('<button class="iam-crumb-button">' + facilities[i] + '</button>');
 			}
 
 			initCrumbListener();
@@ -11432,6 +11431,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				}
 			});
 			//listeners
+
 			init_res_delete();
 			initCrumbListener();
 			initCrumbButtonListener();

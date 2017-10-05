@@ -68,21 +68,32 @@ class Utils_Public
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent=%d WHERE Reservation_ID=%d",$notifcation_num,$entry->Reservation_ID));
 
+/*
         $tech_email_body = 'User: '.$user->WP_Username.' was due to check in the '.$eq->Name.' yesterday. <br /> An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent. This is their '.ordinal_format($notifcation_num).' notification.';
 
-        $user_email_body = 'Greetings, <br /><br /> You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible.<br /><br /> The hours of operations are "'.$hours.'". <br /><br /> Thank you, <br /><br /> - The IMRC Team';
+        $user_email_body = 'Greetings, <br /><br /> You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible.<br /><br /> The hours of operations are "'.$hours.'". <br /><br /> Thank you, <br /><br /> - The IMRC Team';*/
 
-        send_to_debug_file( $tech_email_body );
-        send_to_debug_file( get_email($user->IAM_ID) );
-        send_to_debug_file( $user_email_body );
+        Facility::send_admin_late_res_email( $facility_name,
+                                            [ 'equipment'=>$eq->Name,
+                                              'fee'=>cash_format($fee),
+                                              'username'=>$user->WP_Username,
+                                              'notification_num'=>ordinal_format($notifcation_num)
+                                            ]);
 
+        Facility::send_user_late_res_email( $facility_name,
+                                            [ 'user_email'=>get_email($user->IAM_ID),
+                                              'equipment'=>$eq->Name,
+                                              'fee'=>cash_format($fee),
+                                              'schedule_description'=>$hours
+                                            ]);
+/*
         iam_mail(get_setting_iam('equipment_room_email'),
                 'Reservation: '.$user->WP_Username.' renting '.$eq->Name.' is late',
                 $tech_email_body);
 
         iam_mail(get_email($user->IAM_ID),
                 'Your rental of '.$eq->Name.' is late',
-                $user_email_body);
+                $user_email_body);*/
 
         if ($entry->Status!=IS_LATE)
           $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%s WHERE Reservation_ID=%d",IS_LATE,$entry->Reservation_ID));

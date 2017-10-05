@@ -149,7 +149,7 @@ class IAM_Admin_Forms
 		return $rental_list;
 	}
 
-		public static function new_equipment_form($dept)
+		public static function new_equipment_form($schedule_type)
 	{
 		global $wpdb;
 		$certifications_query = "SELECT Certification_ID,Name FROM ".IAM_CERTIFICATION_TABLE." ";
@@ -174,7 +174,7 @@ class IAM_Admin_Forms
 		}
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_CERTICATION_LABEL.'<select id="certification" name="certification">'.$list_html.'</select>';
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_TAGS_LABEL.'<input class="tags" size="50">';
-		if ($dept=='e') {
+		if ($schedule_type=='rental') {
 			$new_equipment_fields[] = '<label>Rental_Type: </label>'.IAM_Admin_Forms::make_rental_list();
 		}
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_ON_SLIDE_SHOW.'<input type="checkbox" id="slide-show" name="slide-show">';
@@ -185,14 +185,11 @@ class IAM_Admin_Forms
 	 	return IAM_Admin_Forms::make_admin_form($new_equipment_fields,'Insert New Equipment',true,true,'e');
 	}
 
-	public static function update_equipment_form($selected_name, $dept)
+	public static function update_equipment_form($selected_name, $schedule_type)
 	{
 		global $wpdb;
 		$selected_name = stripslashes($selected_name);
 		$init_equipment_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s ",$selected_name));
-		if ($init_equipment_results[0]->Root_Tag=='Equipment Room') {
-			$dept='e';
-		}
 		$certifications_results = $wpdb->get_results("SELECT Certification_ID,Name FROM ".IAM_CERTIFICATION_TABLE." ");
 		$current_cert = 'None';
 		$cert_list = [];
@@ -233,7 +230,7 @@ class IAM_Admin_Forms
 	 	$slide_show_val = $init_equipment_results[0]->On_Slide_Show==1 ? 'checked' : '' ;
 	 	$out_of_order_val = $init_equipment_results[0]->Out_Of_Order==1 ? 'checked' : '' ;
 
-		if ($dept=='e') {
+		if ($schedule_type=='rental') {
 			$update_equipment_fields[] = '<label>Rental_Type: </label>'.IAM_Admin_Forms::make_rental_list($init_equipment_results[0]->Rental_Type);
 		}
 

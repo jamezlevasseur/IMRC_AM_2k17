@@ -82,7 +82,7 @@ class IAM_Cal
 			$noshow_condition = $is_admin ? "" : " AND Status!=".NO_SHOW;
 			$res_result = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Equipment_ID=%d AND Is_Room='0'".$date_condition.$noshow_condition, $equip_id));
 			$formatted_events = [];
-			if(res_result===null && gettype($res_result)!='array') {
+			if($res_result===null && gettype($res_result)!='array') {
 				iam_throw_error('BAD QUERY');
 			} else {
 				foreach ($res_result as $row) {

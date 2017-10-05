@@ -210,6 +210,22 @@ function ordinal_format($number) {
         return $number. $ends[$number % 10];
 }
 
+function iam_slugify($string,$delimiter='-')
+{
+	$s = strtolower(trim($string));
+	$s = str_replace(' ',$delimiter,$s);
+	$s = str_replace('_',$delimiter,$s);
+	$s = str_replace('-',$delimiter,$s);
+	return $s;
+}
+
+function show_all_errors()
+{
+	ini_set('display_errors', 1);
+	ini_set('display_startup_errors', 1);
+	error_reporting(E_ALL);
+}
+
 function iam_validate_query($results, $location='', $fail_on_zero=false)
 {
 	if ($results===false) {

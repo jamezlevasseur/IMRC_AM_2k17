@@ -35,4 +35,91 @@ class Facility
     ezquery("INSERT INTO ".IAM_FACILITY_TABLE." (Name,Tag_ID,Description,Schedule) VALUES (%s,%d,%s,%s)",$name,$tag_id,$description,json_encode($schedule));
   }
 
+  public static function get_facility_by_tag($tag)
+  {
+    $f = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name=%s",$tag);
+
+    if (empty($f)) {
+      //TODO add recursive get root tag
+      return false;
+    }
+
+    return $f[0];
+  }
+
+  public static function send_admin_late_res_email($facility_name, $email_args)
+  {
+    $email_info = ezget("SELECT Facility_Email,Late_Reservation_Admin_Email_Body,Late_Reservation_Admin_Email_Subject FROM ".IAM_FACILITY_TABLE." WHERE Name=%s",$facility_name)[0];
+
+    $email_template = $email_info->New_Reservation_Email_Body;
+
+    if (isset($email_args['fee'])) {
+      $email_template = str_replace('%fee%',$email_args['fee'],$email_template);
+    }
+    if (isset($email_args['schedule_description'])) {
+      $email_template = str_replace('%schedule_description%',$email_args['schedule_description'],$email_template);
+    }
+    if (isset($email_args['equipment'])) {
+      $email_template = str_replace('%equipment%',$email_args['equipment'],$email_template);
+    }
+
+    iam_mail( $email_info->Facility_Email,
+              $email_info->New_Reservation_Email_Subject,
+              $email_template,
+              'Failed to send notification.' );
+
+    send_to_debug_file( get_email($user->IAM_ID) );
+    send_to_debug_file( $email_template );
+  }
+
+  public static function send_user_late_res_email($facility_name, $email_args)
+  {
+    $email_info = ezget("SELECT Facility_Email,Late_Reservation_User_Email_Body,Late_Reservation_User_Email_Subject FROM ".IAM_FACILITY_TABLE." WHERE Name=%s",$facility_name)[0];
+
+    $email_template = $email_info->New_Reservation_Email_Body;
+
+    if (isset($email_args['fee'])) {
+      $email_template = str_replace('%fee%',$email_args['fee'],$email_template);
+    }
+    if (isset($email_args['schedule_description'])) {
+      $email_template = str_replace('%schedule_description%',$email_args['schedule_description'],$email_template);
+    }
+    if (isset($email_args['equipment'])) {
+      $email_template = str_replace('%equipment%',$email_args['equipment'],$email_template);
+    }
+
+    iam_mail( $email_args['user_email'],
+              $email_info->New_Reservation_Email_Subject,
+              $email_template,
+              'Failed to send notification.' );
+
+    send_to_debug_file( get_email($user->IAM_ID) );
+    send_to_debug_file( $email_template );
+  }
+
+  public static function send_facility_new_res_email($facility_name, $email_args)
+  {
+    $email_info = ezget("SELECT Facility_Email,New_Reservation_Email_Body,New_Reservation_Email_Subject FROM ".IAM_FACILITY_TABLE." WHERE Name=%s",$facility_name)[0];
+
+    $email_template = $email_info->New_Reservation_Email_Body;
+
+    if (isset($email_args['username'])) {
+      $email_template = str_replace('%username%',$email_args['username'],$email_template);
+    }
+    if (isset($email_args['start'])) {
+      $email_template = str_replace('%start_time%',$email_args['start'],$email_template);
+    }
+    if (isset($email_args['end'])) {
+      $email_template = str_replace('%end_time%',$email_args['end'],$email_template);
+    }
+    if (isset($email_args['equipment'])) {
+      $email_template = str_replace('%equipment%',$email_args['equipment'],$email_template);
+    }
+
+    iam_mail( $email_info->Facility_Email,
+              $email_info->New_Reservation_Email_Subject,
+              $email_template,
+              'Failed to send notification.' );
+  }
+
 }
