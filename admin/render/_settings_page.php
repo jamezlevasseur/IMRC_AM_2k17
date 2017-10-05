@@ -100,4 +100,161 @@ class Settings_Page
         wp_mail('james.levasseur@maine.edu', 'Bug Report', $message);
         exit;
     }
+
+    public static function make_scheduling_ui($facility)
+    {
+      $scheduling = json_decode($facility->Schedule);
+      if ($scheduling->type == 'Rental') {
+          $scheduling_type_options = '
+              <option value="Not a Facility">Not a Facility</option>
+              <option value="Rental" selected>Rental</option>
+              <option value="Appointment">Appointment</option>';
+      } else if ($scheduling->type == 'Appointment') {
+          $scheduling_type_options = '
+              <option value="Not a Facility">Not a Facility</option>
+              <option value="Rental">Rental</option>
+              <option value="Appointment" selected>Appointment</option>
+          ';
+      }
+      $hours_ui = self::make_hours_ui($facility, $scheduling);
+      echo '
+      <div class="iam-scheduling-block">
+          <div class="iam-scheduling-type">
+              <label>Schedule Type: </label>
+              <select class="scheduling-type" disabled>
+                  '.$scheduling_type_options.'
+                  Late check time: <div class="timepicker late-check-time"></div>
+                  <button type="button" class="btn btn-primary">Irregular Hours</button>
+                  '.$hours_ui.'
+                  <textarea class="scheduling-description"></textarea>
+                  <button type="button" class="btn btn-success">Save</button>
+              </select>
+          </div>
+          <div class="iam-scheduling-info">
+              '.$scheduling_ui.'
+          </div>
+          <input type="submit" class="iam-button iam-schedule-submit-button" value="Save Changes">
+      </div>';
+    }
+
+    public static function make_hours_ui($scheduling='')
+    {
+        $td_days = self::make_hours_table($scheduling);
+        $scheduling_info = '<table class="iam-appointment-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Sunday</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="iam-opening-row">
+                    <td class="heading-data">Open at</td>
+                    '.$td_days[0].'
+                </tr>
+                <tr class="iam-closing-row">
+                    <td class="heading-data">Close at</td>
+                    '.$td_days[1].'
+                </tr>
+            </tbody>
+        </table>';
+        return $scheduling_info;
+    }
+
+    public static function make_hours_table($json)
+    {
+        if ($json=='') {
+            $json = '{
+                "sun": {
+                    "start": "",
+                    "end": ""
+                },
+                "mon": {
+                    "start": "09:00:00 am",
+                    "end": "05:00:00 pm"
+                },
+                "tue": {
+                    "start": "09:00:00 am",
+                    "end": "05:00:00 pm"
+                },
+                "wed": {
+                    "start": "09:00:00 am",
+                    "end": "05:00:00 pm"
+                },
+                "thu": {
+                    "start": "09:00:00 am",
+                    "end": "05:00:00 pm"
+                },
+                "fri": {
+                    "start": "09:00:00 am",
+                    "end": "05:00:00 pm"
+                },
+                "sat": {
+                    "start": "",
+                    "end": ""
+                }
+            }';
+        }
+        $html = ['',''];
+        $json = json_decode($json);
+        foreach ($json as $key => $value) {
+            $closed = false;
+            if ($value->start == $value->end)
+                $closed = true;
+            $html[0] .= self::make_schedule_input($value->start,true,$closed);
+            $html[1] .= self::make_schedule_input($value->end,false,$closed);
+        }
+
+        return $html;
+    }
+
+    public static function make_schedule_input($time_obj, $start, $closed)
+    {
+        $class_type = $start ? 'open' : 'close';
+        if ($time_obj=='' && $start || $closed && $start) {
+            $html_string = '<td><label>Closed: <input class="iam-closed-checkbox" type="checkbox" checked></label><br />';
+        } else if ($start) {
+            $html_string = '<td><label>Closed: <input class="iam-closed-checkbox" type="checkbox"></label><br />';
+        } else {
+            $html_string = '<td>';
+        }
+        $html_string.= '<select class="iam-'.$class_type.'-hour">';
+        if ($time_obj=='') {
+            $time_hour = '';
+        } else {
+            $time_hour = (int)substr($time_obj, 0,2);
+            if (substr($time_obj, -2)=='pm')
+                $pm = true;
+            else
+                $pm = false;
+        }
+
+        for ($i=1; $i < 13; $i++) {
+            if ($time_hour==$i)
+                $html_string.='<option value="'.sprintf("%02d", $i).'" selected>'.sprintf("%02d", $i).'</option>';
+            else
+                $html_string.='<option value="'.sprintf("%02d", $i).'">'.sprintf("%02d", $i).'</option>';
+        }
+        $html_string.='</select><select class="iam-'.$class_type.'-min">';
+        $time_min = $time_obj=='' ? '' : (int)substr($time_obj,3,5);
+        for ($i=0; $i < 61; $i+=5) {
+            if ($time_min==$i)
+                $html_string.='<option value="'.sprintf("%02d", $i).'" selected>'.sprintf("%02d", $i).'</option>';
+            else
+                $html_string.='<option value="'.sprintf("%02d", $i).'">'.sprintf("%02d", $i).'</option>';
+        }
+        $html_string.='</select><select class="iam-'.$class_type.'-am-pm">';
+        if ($pm)
+            $html_string.='<option value="am">am</option><option value="pm" selected>pm</option>';
+        else
+            $html_string.='<option value="am" selected>am</option><option value="pm">pm</option>';
+        $html_string.="</selected></td>";
+        return $html_string;
+    }
 }

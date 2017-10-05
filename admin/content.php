@@ -30,7 +30,7 @@ class Admin_Content
 		add_submenu_page ($slug, 'User Certifications', 'User Certifications', 'manage_options', $_slug.'_user_certifications', array($this, 'user_certification_content') );
 		add_submenu_page ($slug, 'Charge Sheet', 'Charge Sheet', 'manage_options', $_slug.'_charge_sheet', array($this, 'charge_sheet_content') );
 		add_submenu_page ($slug, 'Registration', 'Registration', 'manage_options', $_slug.'_registration', array($this, 'registration_content') );
-		add_submenu_page ($slug, 'Scheduling', 'Scheduling', 'manage_options', $_slug.'_scheduling', array($this, 'scheduling_content') );
+		//add_submenu_page ($slug, 'Scheduling', 'Scheduling', 'manage_options', $_slug.'_scheduling', array($this, 'scheduling_content') );
 		add_submenu_page ($slug, 'User Privileges', 'User Privileges', 'manage_options', $_slug.'_user_privileges', array($this, 'user_privileges_content') );
 		if ($this->schedule->type=='appointment')
 			add_submenu_page ($slug, 'Pricing', 'Pricing', 'manage_options', $_slug.'_pricing', array($this, 'pricing_content') );
@@ -632,79 +632,149 @@ class Admin_Content
 	public function content()
 	{
 		global $wpdb;
-		if ($this->schedule->type=='appointment') {
+		if (get_setting_iam(LATE_CHARGE_FEE_KEY)===false)
+			update_settings_iam(LATE_CHARGE_FEE_KEY,10);
 		?>
 		<div class="wrap iam-main-menu-wrap">
-			<h1 class="iam-admin-header">Settings</h1>
+			<h1 class="iam-admin-header">Facility Settings</h1>
 
 			<section class="iam-settings-container">
-				<form accept-charset="utf-8" class="iam-settings-form">
-					<table>
-						<tbody>
-							<tr>
-								<td><h1>Misc Settings</h1><hr></td>
-							</tr>
-							<tr>
-								<td><label>iPad Lock Code</label></td>
-								<td><input type="number" class="iam-ipad-code" width="50" value="<?php echo get_setting_iam('ipad_code') ?>"></td>
-							</tr>
-							<tr>
-								<td><h1>Email Notifications</h1></td>
-							</tr>
-							<tr>
-								<td><label>Training Page Inquiry</label></td>
-								<td><input type="text" class="iam-training-page-email" value="<?php echo get_setting_iam('training_email') ?>"></td>
-							</tr>
-							<tr>
-								<td><label>Failure to Check Out</label></td>
-								<td><input type="text" class="iam-late-reservations-email" value="<?php echo get_setting_iam('late_reservations_email') ?>"></td>
-							</tr>
-							<tr>
-								<td><label>Reservations</label></td>
-								<td><input type="text" class="iam-fab-lab-email" value="<?php echo get_setting_iam('fab_lab_email') ?>"></td>
-							</tr>
-						</tbody>
-					</table>
-					<div class="iam-settings-submit iam-save iam-button"></div>
-					<hr>
-				</form>
-				<h1>Account Types &amp; Discounts</h1>
-				<form accept-charset="utf-8" class="iam-account-type-form">
-					<table>
-						<tbody>
-								<?php
-								$account_types_results = $wpdb->get_results("SELECT * FROM ".IAM_ACCOUNT_TYPES_TABLE);
-								foreach ($account_types_results as $row) {
-									echo '<tr data-nid="'.IAM_Sec::iamEncrypt($row->Account_Type_ID).'">
-									<td class="iam-account-type-label"><label>Type</label>
-									<br />
-									<label>Discount (0-100%)</label></td>
-									<td><input type="text" placeholder="example: student, faculty, alumni" class="iam-account-type" value="'.iam_output($row->Name).'">
-									<br />
-									<input type="number" class="iam-account-discount" value="'.iam_output($row->Discount).'"></td>
-									<td><i class="iam-delete-account-type fa fa-close fa-3"></i></td></tr>';
-								}
-								if (count($account_types_results)<1) {
-									echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
-								}
-								?>
-						</tbody>
-					</table>
-					<div class="iam-secondary-button iam-add-account-type">add new</div>
-					<div class="iam-account-types-submit iam-save iam-button"></div>
-				</form>
-			</section>
-			<hr>
-			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
-		</div>
-		<?php
-		} else if ($this->schedule->type=='rental') {
-			if (get_setting_iam(LATE_CHARGE_FEE_KEY)===false)
-				update_settings_iam(LATE_CHARGE_FEE_KEY,10);
-			?>
-			<div class="wrap iam-main-menu-wrap">
-				<h1 class="iam-admin-header">Settings</h1>
-				<section class="iam-settings-container">
+				<section>
+					<div class="iam-form">
+						<label>Facility Email: <input type="text" class="facility-name" value="<?php echo $this->facility->Name; ?>"></label>
+					</div>
+				</section>
+				<section>
+					<h1>Email</h1>
+					<div class="iam-form">
+						<label>Facility Name: <input type="text" class="facility-email" value="<?php echo $this->facility->Email; ?>"></label>
+					</div>
+					<div class="panel-group" id="accordion">
+					  <div class="panel panel-default new-res-email-panel">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+					        New Reservation Email</a>
+					      </h4>
+					    </div>
+					    <div id="collapse1" class="panel-collapse collapse in">
+					      <div class="panel-body">
+									<p>This email will be sent to the facility email when a new reservation is made.</p>
+									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
+									<p>%username% - The username of the user who made a reservation.</p>
+									<p>%start_time% - The start data and time of the reservation.</p>
+									<p>%end_time% - The end data and time of the reservation.</p>
+									<p>%equipment% - The piece of equipment being reserved.</p>
+									<input type="text" class="email-subject" value="<?php echo $this->facility->New_Reservation_Email_Subject; ?>" placeholder="Subject">
+									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->New_Reservation_Email_Body; ?></textarea>
+									<button type="button" class="btn btn-success">Save</button>
+								</div>
+					    </div>
+					  </div>
+					  <div class="panel panel-default late-res-admin-email-panel">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+					        Late Reservation Email to Admin</a>
+					      </h4>
+					    </div>
+					    <div id="collapse2" class="panel-collapse collapse">
+					      <div class="panel-body">
+									<p>This email will be sent to the facility email when a user does not complete a reservation on time.</p>
+									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
+									<?php if ($this->schedule->type=='rental') { ?>
+									<p>%fee% - The late fee applied to a users account.</p>
+									<?php } ?>
+									<p>%time_of_reservation% - The start data and time of the reservation.</p>
+									<p>%schedule_description% - The end data and time of the reservation.</p>
+									<p>%equipment% - The piece of equipment being reserved.</p>
+									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_Admin_Email_Subject; ?>" placeholder="Subject">
+									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_Admin_Email_Body; ?></textarea>
+									<button type="button" class="btn btn-success">Save</button>
+								</div>
+					    </div>
+					  </div>
+					  <div class="panel panel-default late-res-user-email-panel">
+					    <div class="panel-heading">
+					      <h4 class="panel-title">
+					        <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+					        Late Reservation Email to User</a>
+					      </h4>
+					    </div>
+					    <div id="collapse3" class="panel-collapse collapse">
+					      <div class="panel-body">
+									<p>This email will be sent to the facility email when a new reservation is made.</p>
+									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
+									<?php if ($this->schedule->type=='rental') { ?>
+									<p>%fee% - The late fee applied to a users account.</p>
+									<?php } ?>
+									<p>%time_of_reservation% - The start data and time of the reservation.</p>
+									<p>%schedule_description% - The end data and time of the reservation.</p>
+									<p>%equipment% - The piece of equipment being reserved.</p>
+									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_User_Email_Subject; ?>" placeholder="Subject">
+									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_User_Email_Body; ?></textarea>
+									<button type="button" class="btn btn-success">Save</button>
+								</div>
+					    </div>
+					  </div>
+					</div>
+				</section>
+				<section>
+					<h1>Scheduling</h1>
+					<?php Settings_Page::make_scheduling_ui($this->facility); ?>
+				</section>
+				<?php if ($this->schedule->type=='appointment') { ?>
+				<section>
+					<h1>Misc Settings</h1>
+					<form accept-charset="utf-8" class="iam-settings-form">
+						<table>
+							<tbody>
+								<tr>
+									<td><label>iPad Lock Code</label></td>
+									<td><input type="number" class="iam-ipad-code" width="50" value="<?php echo get_setting_iam('ipad_code') ?>"></td>
+								</tr>
+								<tr>
+									<td><label>Training Page Inquiry</label></td>
+									<td><input type="text" class="iam-training-page-email" value="<?php echo get_setting_iam('training_email') ?>"></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="iam-settings-submit iam-save iam-button"></div>
+						<hr>
+					</form>
+				</section>
+				<section>
+					<h1>Account Types &amp; Discounts</h1>
+					<form accept-charset="utf-8" class="iam-account-type-form">
+						<table>
+							<tbody>
+									<?php
+									$account_types_results = $wpdb->get_results("SELECT * FROM ".IAM_ACCOUNT_TYPES_TABLE);
+									foreach ($account_types_results as $row) {
+										echo '<tr data-nid="'.IAM_Sec::iamEncrypt($row->Account_Type_ID).'">
+										<td class="iam-account-type-label"><label>Type</label>
+										<br />
+										<label>Discount (0-100%)</label></td>
+										<td><input type="text" placeholder="example: student, faculty, alumni" class="iam-account-type" value="'.iam_output($row->Name).'">
+										<br />
+										<input type="number" class="iam-account-discount" value="'.iam_output($row->Discount).'"></td>
+										<td><i class="iam-delete-account-type fa fa-close fa-3"></i></td></tr>';
+									}
+									if (count($account_types_results)<1) {
+										echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
+									}
+									?>
+							</tbody>
+						</table>
+						<div class="iam-secondary-button iam-add-account-type">add new</div>
+						<div class="iam-account-types-submit iam-save iam-button"></div>
+					</form>
+				</section>
+			<?php } //if appointment
+				if ($this->schedule->type=='rental') {
+			 ?>
+				<section>
+					<h1>Misc Settings</h1>
 					<form accept-charset="utf-8" class="iam-settings-form">
 						<table>
 							<tbody>
@@ -714,22 +784,11 @@ class Admin_Content
 								<tr>
 									<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
 								</tr>
-
-								<tr>
-									<td><h1>Email Notifications</h1></td>
-								</tr>
-								<tr>
-									<td><label>Training Page Inquiry</label></td>
-									<td><input type="text" class="iam-training-page-email" value="<?php echo get_setting_iam('training_email') ?>"></td>
-								</tr>
-								<tr>
-									<td><label>Equipment Room Reservation </label></td>
-									<td><input type="text" class="iam-equipment-room-email" value="<?php echo get_setting_iam('equipment_room_email') ?>"></td>
-								</tr>
 							</tbody>
 						</table>
 						<div class="iam-settings-submit iam-save iam-button"></div>
-
+				</section>
+				<section>
 					<h1>Rental Types</h1>
 					<form accept-charset="utf-8" class="iam-rental-type-form">
 						<table>
@@ -750,11 +809,12 @@ class Admin_Content
 						<div class="iam-rental-types-submit iam-save iam-button"></div>
 					</form>
 				</section>
-				<hr>
-				<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
-			</div>
-			<?php
-		}
+			<?php }//if rental ?>
+			</section>
+			<hr>
+			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
+		</div>
+		<?php
 	}
 
 }

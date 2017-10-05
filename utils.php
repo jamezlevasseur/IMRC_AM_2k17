@@ -180,6 +180,11 @@ function make_nid()
 	return md5(uniqid());
 }
 
+function make_tooltip($text)
+{
+	return '<span style="background:none;" title="'.$text.'"><i style="font-size:20px;" class="fa fa-question-circle"></i></span>';
+}
+
 function make_phone_number_field()
 {
 	return '
