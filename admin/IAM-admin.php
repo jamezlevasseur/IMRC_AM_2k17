@@ -106,6 +106,7 @@ class IAM_Admin {
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-structure', iam_url().'static/' . 'css/jquery-ui.structure.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-theme', iam_url().'static/' . 'css/jquery-ui.theme.min.css');
 		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', iam_url().'static/' . 'css/fullcalendar.min.css', $this->version, 'all' );
+		wp_enqueue_style($this->plugin_name.'-timepicker-css', iam_url().'static/' . 'css/timepicker.min.css', $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name.'font-awesome', iam_url().'static/' . 'css/font-awesome.min.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name.'context-menu-css', iam_url().'static/' . 'css/contextMenu.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, iam_url().'src/css/admin.css', array(), $this->version, 'all' );
@@ -125,7 +126,7 @@ class IAM_Admin {
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', iam_url().'static/'. 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'-moment', iam_url().'static/'. 'js/moment.min.js', array(),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'pagination-js', iam_url().'static/' . 'js/pagination.min.js',array('jquery'), $this->version, false);
-
+		wp_enqueue_script($this->plugin_name.'timepicker-js', iam_url().'static/' . 'js/jquery.timepicker.min.js',array('jquery'), $this->version, false);
 		wp_enqueue_script($this->plugin_name.'fullcalendar-js', iam_url().'static/' . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
 
 		wp_enqueue_script( $this->plugin_name, iam_url() . 'build/js/admin.js', array( 'jquery' ), $this->version, false );

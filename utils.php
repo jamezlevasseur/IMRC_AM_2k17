@@ -20,7 +20,7 @@ function ezget($string, ...$rest)
 function ezquery($string, ...$rest)
 {
 	global $wpdb;
-	//echo $wpdb->prepare($string, $rest).'<br>';
+	//echo $wpdb->prepare($string, $rest).'<br>';exit;
 	return $wpdb->query($wpdb->prepare($string, $rest));
 }
 

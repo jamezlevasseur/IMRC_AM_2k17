@@ -11,6 +11,7 @@ import { overridePrompt } from '../module/override';
 import { initCSVButtonListener, initCSVAJAXButtonListener } from '../module/uifunc';
 
 import UserAdmin from '../page/useradmin';
+import SettingsAdmin from '../page/settingsadmin';
 
 (function( $ ) {
 
@@ -766,63 +767,6 @@ import UserAdmin from '../page/useradmin';
 		  			});
 		  		});
 		  	}
-/*
-		  	var reportBugListener = function () {
-				$('.iam-report-bug-box input[type=submit]').click(function(event) {
-					submissionStart();
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'admin_report_bug', from: $('.iam-report-bug-from').val(), subject: $('.iam-report-bug-subject').val(), message: $('.iam-report-bug-message').val()},
-						success: function (data) {
-							submissionEnd();
-							$('.iam-report-bug-box').html('<h1>Report a Bug</h1><input type="text" class="iam-report-bug-from" placeholder="From"><br><input type="text" class="iam-report-bug-subject" placeholder="Subject"><br><textarea class="iam-report-bug-message" placeholder="Describe the bug here." cols="50" rows="5"></textarea><br><input type="submit">');
-							reportBugListener();
-							alert("sent!");
-
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
-				});
-			}*/
-
-			var adminSettingsListener = function () {
-				$('.iam-settings-submit').click(function(event) {
-					submissionStart();
-					if (!isEmail($('.iam-training-page-email').val())) {
-						alert('Please enter a valid email address.');
-						submissionEnd();
-						return;
-					}
-					var newSettings = {action:'admin_update_settings'};
-					if ($('.iam-late-charge-fee').length>0)
-						newSettings.late_charge_fee = $('.iam-late-charge-fee').val()
-					if ($('.iam-ipad-code').length>0)
-						newSettings.ipad_code = $('.iam-ipad-code').val();
-					if ($('.iam-training-page-email').length>0)
-						newSettings.training_email = $('.iam-training-page-email').val();
-					if ($('.iam-late-reservations-email').length>0)
-						newSettings.late_reservations_email = $('.iam-late-reservations-email').val();
-					if ($('.iam-fab-lab-email').length>0)
-						newSettings.fab_lab_email = $('.iam-fab-lab-email').val();
-					if ($('.iam-equipment-room-email').length>0)
-						newSettings.equipment_room_email = $('.iam-equipment-room-email').val();
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: newSettings,
-					success: function (data) {
-						handleServerResponse(data);
-						submissionEnd();
-					},
-					error: function (data) {
-						handleServerError(data, new Error());
-					}
-					});
-				});
-			}
 
 			//EQUIPMENT LISTENERS
 
@@ -1929,86 +1873,6 @@ import UserAdmin from '../page/useradmin';
 				});
 			}
 
-			var initScheduleSubmitListeners = function () {
-				$('.iam-scheduling-block input[type=submit]').off();
-				$('.iam-scheduling-block input[type=submit]').click(function(event) {
-					var block  = $(this).parent('.iam-scheduling-block');
-					var scheduleInfo = {};
-					var validDates = true;
-					var scheduleType = block.children('.iam-scheduling-type').children('select').val();
-					if (scheduleType=='Rental') {
-						scheduleInfo.rental_period = block.children('.iam-scheduling-info').children('label').children('.iam-rental-period').val();
-						scheduleInfo.rental_hours_description = block.children('.iam-scheduling-info').children('.iam-rental-hours-description').val();
-					} else if (scheduleType=='Appointment') {
-						var days = ['sun','mon','tue','wed','thu','fri','sat'];
-						var full_days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-						var businessHours = {};
-						block.children('.iam-scheduling-info').children('table').children('tbody').children('.iam-opening-row').children('td').each(function(index, el) {
-							if (index!=0) {
-								if ($(this).children('label').children('.iam-closed-checkbox').is(':checked')) {
-									businessHours[days[index-1]] = {start:'',end:''};
-								} else {
-									var openTime = $(this).children('.iam-open-hour').val()+':'+$(this).children('.iam-open-min').val()+':'+$(this).children('.iam-open-am-pm').val();
-									businessHours[days[index-1]] = {start:openTime};
-								}
-							}
-						});
-						block.children('.iam-scheduling-info').children('table').children('tbody').children('.iam-closing-row').children('td').each(function(index, el) {
-							if (index!=0) {
-								if (businessHours[days[index-1]].start!='') {
-									var closeTime = $(this).children('.iam-close-hour').val()+':'+$(this).children('.iam-close-min').val()+':'+$(this).children('.iam-close-am-pm').val();
-									if (moment('2016-1-1 '+businessHours[days[index-1]].start).isAfter('2016-1-1 '+closeTime)) {
-										alert ('Your opening time for '+full_days[index-1]+' is after this closing time, please correct this.');
-										validDates = false;
-									}
-									businessHours[days[index-1]].end = closeTime;
-								}
-							}
-						});
-						scheduleInfo.businessHours = businessHours;
-					} else if (scheduleType=='Approval') {
-						updateApprovalCal();
-						return;
-					} else {
-						if (!confirm("This will disable reservations for this facility. Do you want to continue?")) {
-							return;
-						} else {
-							$.ajax({
-								url: ajaxurl,
-								type: 'POST',
-								data: {action: 'admin_facility_schedule', type: block.children('.iam-scheduling-type').children('select').val(), tag: block.children('.iam-scheduling-name').text()},
-								success: function (data) {
-									handleServerResponse(data);
-									window.location.reload();
-								},
-								error: function (data) {
-									handleServerError(data, new Error());
-								}
-							});
-						}
-						return;
-					}
-					if (!validDates) {
-						return;
-					}
-					submissionStart();
-
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'admin_facility_schedule', type: block.children('.iam-scheduling-type').children('select').val(), info: scheduleInfo, tag: block.children('.iam-scheduling-name').text()},
-						success: function (data) {
-							handleServerResponse(data);
-							window.location.reload();
-							submissionEnd();
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
-				});
-			}
-
 			//charge sheet wrap functions
 			var initApproveChargeButtonListener = function () {
 				$('.iam-approve-charge-button').off();
@@ -2259,17 +2123,15 @@ import UserAdmin from '../page/useradmin';
 			//run time
 			if ( $('.iam-main-menu-wrap').length>0 ) {
 
-				//reportBugListener();
-				numbersOnlyListener($('.iam-ipad-code'));
+				var settingsAdmin = new SettingsAdmin();
 
-				adminSettingsListener();
 				initAddAccountTypeButtonListener();
-				initAccountTypeRowListener();
-				initSubmitAccountTypeListener();
+		    initAccountTypeRowListener();
+		    initSubmitAccountTypeListener();
 
-				initAddRentalTypeButtonListener();
-				initRentalTypeRowListener();
-				initSubmitRentalTypeListener();
+		    initAddRentalTypeButtonListener();
+		    initRentalTypeRowListener();
+		    initSubmitRentalTypeListener();
 
 			} else if ( $('.iam-reservation-wrap').length>0 ) {
 				resetEvents();

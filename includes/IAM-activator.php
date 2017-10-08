@@ -175,8 +175,15 @@ class IAM_Activator {
 			Facility_ID bigint(20) NOT NULL AUTO_INCREMENT,
 			Name varchar(64) NOT NULL,
 			Tag_ID bigint(20) NOT NULL,
-			Schedule text NOT NULL,
+			Schedule varchar(3200) DEFAULT '{\"business_hours\": \"\", \"late_check_time\": \"12:00 am\", \"type\": \"appointment\", \"description\": \"\"}',
 			Description text DEFAULT NULL,
+			Email varchar(64) DEFAULT NULL,
+			Late_Reservation_Admin_Email_Subject varchar(64) DEFAULT NULL,
+			Late_Reservation_Admin_Email_Body varchar(64) DEFAULT NULL,
+			Late_Reservation_User_Email_Subject varchar(64) DEFAULT NULL,
+			Late_Reservation_User_Email_Body varchar(64) DEFAULT NULL,
+			New_Reservation_Email_Subject varchar(64) DEFAULT NULL,
+			New_Reservation_Email_Body varchar(64) DEFAULT NULL,
 			PRIMARY KEY(Facility_ID),
 			UNIQUE(Name),
 			UNIQUE(Tag_ID)
@@ -224,7 +231,7 @@ class IAM_Activator {
 			//insert required tags
 			Facility::create(['name'=>'Fab Lab','type'=>'a']);
 			Facility::create(['name'=>'Equipment Room','type'=>'r']);
-			
+
 			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES ('3D Printer','Fab Lab')");
 			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES ('Extrusion','3D Printer')");
 			$wpdb->query("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES ('Powder','3D Printer')");

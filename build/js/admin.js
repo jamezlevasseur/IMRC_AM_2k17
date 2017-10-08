@@ -9897,7 +9897,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
 
 /***/ }),
 /* 1 */
@@ -10830,93 +10830,6 @@ exports.submissionEnd = submissionEnd;
 "use strict";
 
 
-module.exports = function (module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function () {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function get() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function get() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.debugWarn = exports.publicDebug = undefined;
-
-var _jquery = __webpack_require__(0);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function registerDebug() {
-  if ((0, _jquery2.default)('#signupform').length > 0) {
-    (0, _jquery2.default)('body').dblclick(function (event) {
-      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
-      (0, _jquery2.default)('#email').val(em);
-      (0, _jquery2.default)('#email-confirm').val(em);
-      (0, _jquery2.default)('#password').val('Asdfasdf1');
-      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
-      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
-      (0, _jquery2.default)('#phone-num-1').val('111');
-      (0, _jquery2.default)('#phone-num-2').val('222');
-      (0, _jquery2.default)('#phone-num-3').val('3333');
-      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
-    });
-  }
-}
-
-function inDebugMode() {
-  if (window.location.href.indexOf('imrcaccounts') != -1) return false;
-  return true;
-}
-
-function debugWarn() {
-  if (!inDebugMode()) return;
-  console.warn('debug mode active');
-}
-
-function publicDebug() {
-  if (!inDebugMode()) return;
-  registerDebug();
-}
-
-exports.publicDebug = publicDebug;
-exports.debugWarn = debugWarn;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
@@ -10988,6 +10901,93 @@ exports.emailOnlyListener = emailOnlyListener;
 exports.itemNameListener = itemNameListener;
 exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function () {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function get() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function get() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.debugWarn = exports.publicDebug = undefined;
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function registerDebug() {
+  if ((0, _jquery2.default)('#signupform').length > 0) {
+    (0, _jquery2.default)('body').dblclick(function (event) {
+      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
+      (0, _jquery2.default)('#email').val(em);
+      (0, _jquery2.default)('#email-confirm').val(em);
+      (0, _jquery2.default)('#password').val('Asdfasdf1');
+      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
+      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
+      (0, _jquery2.default)('#phone-num-1').val('111');
+      (0, _jquery2.default)('#phone-num-2').val('222');
+      (0, _jquery2.default)('#phone-num-3').val('3333');
+      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
+    });
+  }
+}
+
+function inDebugMode() {
+  if (window.location.href.indexOf('imrcaccounts') != -1) return false;
+  return true;
+}
+
+function debugWarn() {
+  if (!inDebugMode()) return;
+  console.warn('debug mode active');
+}
+
+function publicDebug() {
+  if (!inDebugMode()) return;
+  registerDebug();
+}
+
+exports.publicDebug = publicDebug;
+exports.debugWarn = debugWarn;
 
 /***/ }),
 /* 9 */
@@ -11637,9 +11637,9 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(2);
 
-var _debug = __webpack_require__(7);
+var _debug = __webpack_require__(8);
 
-var _textfieldlisteners = __webpack_require__(8);
+var _textfieldlisteners = __webpack_require__(6);
 
 var _serverresponse = __webpack_require__(4);
 
@@ -11654,6 +11654,10 @@ var _uifunc = __webpack_require__(17);
 var _useradmin = __webpack_require__(39);
 
 var _useradmin2 = _interopRequireDefault(_useradmin);
+
+var _settingsadmin = __webpack_require__(40);
+
+var _settingsadmin2 = _interopRequireDefault(_settingsadmin);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12410,57 +12414,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					url: ajaxurl,
 					type: 'POST',
 					data: { action: 'admin_update_account_type', updated_account_types: updatedAccountTypes, new_account_types: newAccountTypes },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-		/*
-  		  	var reportBugListener = function () {
-  				$('.iam-report-bug-box input[type=submit]').click(function(event) {
-  					submissionStart();
-  					$.ajax({
-  						url: ajaxurl,
-  						type: 'POST',
-  						data: {action: 'admin_report_bug', from: $('.iam-report-bug-from').val(), subject: $('.iam-report-bug-subject').val(), message: $('.iam-report-bug-message').val()},
-  						success: function (data) {
-  							submissionEnd();
-  							$('.iam-report-bug-box').html('<h1>Report a Bug</h1><input type="text" class="iam-report-bug-from" placeholder="From"><br><input type="text" class="iam-report-bug-subject" placeholder="Subject"><br><textarea class="iam-report-bug-message" placeholder="Describe the bug here." cols="50" rows="5"></textarea><br><input type="submit">');
-  							reportBugListener();
-  							alert("sent!");
-  
-  						},
-  						error: function (data) {
-  							handleServerError(data, new Error());
-  						}
-  					});
-  				});
-  			}*/
-
-		var adminSettingsListener = function adminSettingsListener() {
-			$('.iam-settings-submit').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				if (!(0, _utils.isEmail)($('.iam-training-page-email').val())) {
-					alert('Please enter a valid email address.');
-					(0, _userfeedback.submissionEnd)();
-					return;
-				}
-				var newSettings = { action: 'admin_update_settings' };
-				if ($('.iam-late-charge-fee').length > 0) newSettings.late_charge_fee = $('.iam-late-charge-fee').val();
-				if ($('.iam-ipad-code').length > 0) newSettings.ipad_code = $('.iam-ipad-code').val();
-				if ($('.iam-training-page-email').length > 0) newSettings.training_email = $('.iam-training-page-email').val();
-				if ($('.iam-late-reservations-email').length > 0) newSettings.late_reservations_email = $('.iam-late-reservations-email').val();
-				if ($('.iam-fab-lab-email').length > 0) newSettings.fab_lab_email = $('.iam-fab-lab-email').val();
-				if ($('.iam-equipment-room-email').length > 0) newSettings.equipment_room_email = $('.iam-equipment-room-email').val();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: newSettings,
 					success: function success(data) {
 						(0, _serverresponse.handleServerResponse)(data);
 						(0, _userfeedback.submissionEnd)();
@@ -13546,86 +13499,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
-		var initScheduleSubmitListeners = function initScheduleSubmitListeners() {
-			$('.iam-scheduling-block input[type=submit]').off();
-			$('.iam-scheduling-block input[type=submit]').click(function (event) {
-				var block = $(this).parent('.iam-scheduling-block');
-				var scheduleInfo = {};
-				var validDates = true;
-				var scheduleType = block.children('.iam-scheduling-type').children('select').val();
-				if (scheduleType == 'Rental') {
-					scheduleInfo.rental_period = block.children('.iam-scheduling-info').children('label').children('.iam-rental-period').val();
-					scheduleInfo.rental_hours_description = block.children('.iam-scheduling-info').children('.iam-rental-hours-description').val();
-				} else if (scheduleType == 'Appointment') {
-					var days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
-					var full_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-					var businessHours = {};
-					block.children('.iam-scheduling-info').children('table').children('tbody').children('.iam-opening-row').children('td').each(function (index, el) {
-						if (index != 0) {
-							if ($(this).children('label').children('.iam-closed-checkbox').is(':checked')) {
-								businessHours[days[index - 1]] = { start: '', end: '' };
-							} else {
-								var openTime = $(this).children('.iam-open-hour').val() + ':' + $(this).children('.iam-open-min').val() + ':' + $(this).children('.iam-open-am-pm').val();
-								businessHours[days[index - 1]] = { start: openTime };
-							}
-						}
-					});
-					block.children('.iam-scheduling-info').children('table').children('tbody').children('.iam-closing-row').children('td').each(function (index, el) {
-						if (index != 0) {
-							if (businessHours[days[index - 1]].start != '') {
-								var closeTime = $(this).children('.iam-close-hour').val() + ':' + $(this).children('.iam-close-min').val() + ':' + $(this).children('.iam-close-am-pm').val();
-								if (moment('2016-1-1 ' + businessHours[days[index - 1]].start).isAfter('2016-1-1 ' + closeTime)) {
-									alert('Your opening time for ' + full_days[index - 1] + ' is after this closing time, please correct this.');
-									validDates = false;
-								}
-								businessHours[days[index - 1]].end = closeTime;
-							}
-						}
-					});
-					scheduleInfo.businessHours = businessHours;
-				} else if (scheduleType == 'Approval') {
-					updateApprovalCal();
-					return;
-				} else {
-					if (!confirm("This will disable reservations for this facility. Do you want to continue?")) {
-						return;
-					} else {
-						$.ajax({
-							url: ajaxurl,
-							type: 'POST',
-							data: { action: 'admin_facility_schedule', type: block.children('.iam-scheduling-type').children('select').val(), tag: block.children('.iam-scheduling-name').text() },
-							success: function success(data) {
-								(0, _serverresponse.handleServerResponse)(data);
-								window.location.reload();
-							},
-							error: function error(data) {
-								(0, _serverresponse.handleServerError)(data, new Error());
-							}
-						});
-					}
-					return;
-				}
-				if (!validDates) {
-					return;
-				}
-				(0, _userfeedback.submissionStart)();
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_facility_schedule', type: block.children('.iam-scheduling-type').children('select').val(), info: scheduleInfo, tag: block.children('.iam-scheduling-name').text() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
 		//charge sheet wrap functions
 		var initApproveChargeButtonListener = function initApproveChargeButtonListener() {
 			$('.iam-approve-charge-button').off();
@@ -13870,10 +13743,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		//run time
 		if ($('.iam-main-menu-wrap').length > 0) {
 
-			//reportBugListener();
-			(0, _textfieldlisteners.numbersOnlyListener)($('.iam-ipad-code'));
+			var settingsAdmin = new _settingsadmin2.default();
 
-			adminSettingsListener();
 			initAddAccountTypeButtonListener();
 			initAccountTypeRowListener();
 			initSubmitAccountTypeListener();
@@ -19434,6 +19305,233 @@ var UserAdmin = function () {
 }();
 
 exports.default = UserAdmin;
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(0);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(2);
+
+var _textfieldlisteners = __webpack_require__(6);
+
+var _serverresponse = __webpack_require__(4);
+
+var _userfeedback = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var SettingsAdmin = function () {
+  function SettingsAdmin() {
+    _classCallCheck(this, SettingsAdmin);
+
+    this.link = (0, _jquery2.default)('.iam-link').data('link');
+    (0, _jquery2.default)('.iam-link').remove();
+
+    (0, _textfieldlisteners.numbersOnlyListener)((0, _jquery2.default)('.iam-ipad-code'));
+
+    this.adminSettingsListener();
+    this.facilityNameListener();
+    this.facilityEmailListener();
+    this.notificationEmailListeners();
+    this.initScheduleSubmitListeners();
+  }
+
+  _createClass(SettingsAdmin, [{
+    key: 'getTimePickerVal',
+    value: function getTimePickerVal($container) {
+      return $container.children('.iam-hour-select').val() + ':' + $container.children('.iam-min-select').val() + ' ' + $container.children('.iam-am-pm-select').val();
+    }
+  }, {
+    key: 'makeBusinessHours',
+    value: function makeBusinessHours() {
+      var that = this;
+      var block = (0, _jquery2.default)('.iam-scheduling-block');
+      var days = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      var full_days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+      var businessHours = {};
+
+      block.find('.iam-opening-row').children('td').each(function (index, el) {
+        if (index != 0) {
+          if ((0, _jquery2.default)(this).children('label').children('.iam-closed-checkbox').is(':checked')) {
+            businessHours[days[index - 1]] = { start: '', end: '' };
+          } else {
+            businessHours[days[index - 1]] = { start: that.getTimePickerVal((0, _jquery2.default)(this)) };
+          }
+        }
+      });
+
+      block.find('.iam-closing-row').children('td').each(function (index, el) {
+        if (index != 0) {
+          if (businessHours[days[index - 1]].start != '') {
+            var closeTime = that.getTimePickerVal((0, _jquery2.default)(this));
+            if (moment('2016-1-1 ' + businessHours[days[index - 1]].start).isAfter('2016-1-1 ' + closeTime)) {
+              var errormsg = 'Your opening time for ' + full_days[index - 1] + ' is after this closing time, please correct this.';
+              alert(errormsg);
+              throw errormsg;
+            }
+            businessHours[days[index - 1]].end = closeTime;
+          }
+        }
+      });
+
+      return businessHours;
+    }
+  }, {
+    key: 'initScheduleSubmitListeners',
+    value: function initScheduleSubmitListeners() {
+      var that = this;
+      (0, _jquery2.default)('.iam-scheduling-block .btn-success').off();
+      (0, _jquery2.default)('.iam-scheduling-block .btn-success').click(function (event) {
+        var businessHours = that.makeBusinessHours();
+        console.log(businessHours);
+
+        (0, _userfeedback.submissionStart)();
+
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { 'action': 'update_facility_schedule',
+            'link': that.link,
+            'business_hours': businessHours,
+            'description': (0, _jquery2.default)('.scheduling-description').val(),
+            'late_check_time': that.getTimePickerVal((0, _jquery2.default)('.late-check-time'))
+          },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'facilityNameListener',
+    value: function facilityNameListener() {
+      var that = this;
+      (0, _jquery2.default)('.facility-name').change(function (event) {
+        (0, _userfeedback.submissionStart)();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { 'action': 'facility_name_change',
+            'link': that.link,
+            'new_name': (0, _jquery2.default)('.facility-name').val() },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'facilityEmailListener',
+    value: function facilityEmailListener() {
+      var that = this;
+      (0, _jquery2.default)('.facility-email').change(function (event) {
+        (0, _userfeedback.submissionStart)();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { 'action': 'facility_email_change',
+            'link': that.link,
+            'new_email': (0, _jquery2.default)('.facility-email').val() },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'notificationEmailListeners',
+    value: function notificationEmailListeners() {
+      var that = this;
+
+      (0, _jquery2.default)('.new-res-email .btn-success').click(function (event) {
+        that.updateNotificationEmail('new_res_email_change', (0, _jquery2.default)(this).parent());
+      });
+      (0, _jquery2.default)('.late-res-admin-email .btn-success').click(function (event) {
+        that.updateNotificationEmail('late_res_admin_email_change', (0, _jquery2.default)(this).parent());
+      });
+      (0, _jquery2.default)('.late-res-user-email .btn-success').click(function (event) {
+        that.updateNotificationEmail('late_res_user_email_change', (0, _jquery2.default)(this).parent());
+      });
+    }
+  }, {
+    key: 'updateNotificationEmail',
+    value: function updateNotificationEmail(action, $panelBody) {
+      console.log($panelBody);
+      var that = this;
+      (0, _userfeedback.submissionStart)();
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: { 'action': action,
+          'subject': $panelBody.find('.email-subject').val(),
+          'body': $panelBody.find('.email-body').val(),
+          'link': that.link
+        },
+        success: function success(data) {
+          (0, _serverresponse.handleServerResponse)(data);
+          (0, _userfeedback.submissionEnd)();
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+    }
+  }, {
+    key: 'adminSettingsListener',
+    value: function adminSettingsListener() {
+      (0, _jquery2.default)('.iam-settings-submit').click(function (event) {
+        (0, _userfeedback.submissionStart)();
+        var newSettings = { action: 'admin_update_settings' };
+        if ((0, _jquery2.default)('.iam-late-charge-fee').length > 0) newSettings.late_charge_fee = (0, _jquery2.default)('.iam-late-charge-fee').val();
+        if ((0, _jquery2.default)('.iam-ipad-code').length > 0) newSettings.ipad_code = (0, _jquery2.default)('.iam-ipad-code').val();
+        if ((0, _jquery2.default)('.iam-training-page-email').length > 0) newSettings.training_email = (0, _jquery2.default)('.iam-training-page-email').val();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: newSettings,
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }]);
+
+  return SettingsAdmin;
+}();
+
+exports.default = SettingsAdmin;
 
 /***/ })
 /******/ ]);

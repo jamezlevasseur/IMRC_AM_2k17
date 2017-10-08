@@ -19,7 +19,7 @@ class Admin_Content
 	 	$this->facility = $facility;
 		$this->schedule = json_decode($this->facility->Schedule);
 		$name = $this->facility->Name;
-		$slug = 'imrc-'.iam_slugify($name);
+		$slug = md5($this->facility->Facility_ID);
 		$_slug = iam_slugify($name,'_');
 
 		add_menu_page ( $name, $name, 'manage_options', $slug, array($this, 'content'), 'http://jameslevasseur.com/imr-icon.png');
@@ -636,18 +636,19 @@ class Admin_Content
 			update_settings_iam(LATE_CHARGE_FEE_KEY,10);
 		?>
 		<div class="wrap iam-main-menu-wrap">
+			<div class="iam-ninja iam-link" data-link="<?php echo IAM_Sec::iamEncrypt($this->facility->Facility_ID); ?>"></div>
 			<h1 class="iam-admin-header">Facility Settings</h1>
 
 			<section class="iam-settings-container">
 				<section>
-					<div class="iam-form">
-						<label>Facility Email: <input type="text" class="facility-name" value="<?php echo $this->facility->Name; ?>"></label>
+					<div class="iam-form iam-form-left">
+						<label>Facility Name: <input type="text" class="facility-name" value="<?php echo $this->facility->Name; ?>"></label>
 					</div>
 				</section>
 				<section>
 					<h1>Email</h1>
-					<div class="iam-form">
-						<label>Facility Name: <input type="text" class="facility-email" value="<?php echo $this->facility->Email; ?>"></label>
+					<div class="iam-form iam-form-left">
+						<label>Facility Email: <input type="text" class="facility-email" value="<?php echo $this->facility->Email; ?>"></label>
 					</div>
 					<div class="panel-group" id="accordion">
 					  <div class="panel panel-default new-res-email-panel">
@@ -657,17 +658,14 @@ class Admin_Content
 					        New Reservation Email</a>
 					      </h4>
 					    </div>
-					    <div id="collapse1" class="panel-collapse collapse in">
-					      <div class="panel-body">
-									<p>This email will be sent to the facility email when a new reservation is made.</p>
+					    <div id="collapse1" class="panel-collapse collapse">
+					      <div class="panel-body new-res-email">
+									<p>This email will be sent to the facility email when a new reservation is made.<?php Settings_Page::email_guidelines(); ?></p>
 									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
-									<p>%username% - The username of the user who made a reservation.</p>
-									<p>%start_time% - The start data and time of the reservation.</p>
-									<p>%end_time% - The end data and time of the reservation.</p>
-									<p>%equipment% - The piece of equipment being reserved.</p>
-									<input type="text" class="email-subject" value="<?php echo $this->facility->New_Reservation_Email_Subject; ?>" placeholder="Subject">
-									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->New_Reservation_Email_Body; ?></textarea>
-									<button type="button" class="btn btn-success">Save</button>
+									<?php Settings_Page::email_tags_list(); ?>
+									<input type="text" class="email-subject" value="<?php echo $this->facility->New_Reservation_Email_Subject; ?>" placeholder="Subject"><br>
+									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->New_Reservation_Email_Body; ?></textarea><br>
+									<button type="button" class="btn btn-success">Save</button>&nbsp;<button type="button" class="btn btn-warning">Test Email</button>
 								</div>
 					    </div>
 					  </div>
@@ -679,18 +677,13 @@ class Admin_Content
 					      </h4>
 					    </div>
 					    <div id="collapse2" class="panel-collapse collapse">
-					      <div class="panel-body">
-									<p>This email will be sent to the facility email when a user does not complete a reservation on time.</p>
+					      <div class="panel-body late-res-admin-email">
+									<p>This email will be sent to the facility email when a user does not complete a reservation on time.<?php Settings_Page::email_guidelines(); ?></p>
 									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
-									<?php if ($this->schedule->type=='rental') { ?>
-									<p>%fee% - The late fee applied to a users account.</p>
-									<?php } ?>
-									<p>%time_of_reservation% - The start data and time of the reservation.</p>
-									<p>%schedule_description% - The end data and time of the reservation.</p>
-									<p>%equipment% - The piece of equipment being reserved.</p>
-									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_Admin_Email_Subject; ?>" placeholder="Subject">
-									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_Admin_Email_Body; ?></textarea>
-									<button type="button" class="btn btn-success">Save</button>
+									<?php Settings_Page::email_tags_list(); ?>
+									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_Admin_Email_Subject; ?>" placeholder="Subject"><br>
+									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_Admin_Email_Body; ?></textarea><br>
+									<button type="button" class="btn btn-success">Save</button>&nbsp;<button type="button" class="btn btn-warning">Test Email</button>
 								</div>
 					    </div>
 					  </div>
@@ -702,18 +695,13 @@ class Admin_Content
 					      </h4>
 					    </div>
 					    <div id="collapse3" class="panel-collapse collapse">
-					      <div class="panel-body">
-									<p>This email will be sent to the facility email when a new reservation is made.</p>
+					      <div class="panel-body late-res-user-email">
+									<p>This email will be sent to the users email when that user does not complete a reservation on time. <?php Settings_Page::email_guidelines(); ?></p>
 									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
-									<?php if ($this->schedule->type=='rental') { ?>
-									<p>%fee% - The late fee applied to a users account.</p>
-									<?php } ?>
-									<p>%time_of_reservation% - The start data and time of the reservation.</p>
-									<p>%schedule_description% - The end data and time of the reservation.</p>
-									<p>%equipment% - The piece of equipment being reserved.</p>
-									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_User_Email_Subject; ?>" placeholder="Subject">
-									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_User_Email_Body; ?></textarea>
-									<button type="button" class="btn btn-success">Save</button>
+									<?php Settings_Page::email_tags_list(); ?>
+									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_User_Email_Subject; ?>" placeholder="Subject"><br>
+									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_User_Email_Body; ?></textarea><br>
+									<button type="button" class="btn btn-success">Save</button>&nbsp;<button type="button" class="btn btn-warning">Test Email</button>
 								</div>
 					    </div>
 					  </div>
@@ -740,7 +728,6 @@ class Admin_Content
 							</tbody>
 						</table>
 						<div class="iam-settings-submit iam-save iam-button"></div>
-						<hr>
 					</form>
 				</section>
 				<section>
@@ -778,9 +765,6 @@ class Admin_Content
 					<form accept-charset="utf-8" class="iam-settings-form">
 						<table>
 							<tbody>
-								<tr>
-									<td><h1>Misc Settings</h1></td>
-								</tr>
 								<tr>
 									<td><label>Late Charge Fee: <input value="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" type="number" class="iam-late-charge-fee"></label></td>
 								</tr>

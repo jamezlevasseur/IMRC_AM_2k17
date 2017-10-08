@@ -37,6 +37,10 @@
     display:block;
   }
 
+  .iam-form-left {
+    margin: 0;
+  }
+
  .iam-form label {
     font-size: 18px;
   }

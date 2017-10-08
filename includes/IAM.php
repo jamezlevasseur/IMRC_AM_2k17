@@ -223,13 +223,15 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_get_pagination_max', 'Charge_Sheet_Page', 'admin_get_pagination_max');
 		$this->loader->add_action('wp_ajax_admin_get_all_charges_as_csv', 'Charge_Sheet_Page', 'get_all_charges_as_csv');
 
-
 		$this->loader->add_action('wp_ajax_admin_equipment_action', 'Equipment_Page', 'admin_equipment_callback');
 		$this->loader->add_action('wp_ajax_admin_get_tags', 'Equipment_Page', 'admin_get_tags_callback');
 		$this->loader->add_action('wp_ajax_admin_bind_rental', 'Equipment_Page', 'admin_bind_rental');
 		$this->loader->add_action('wp_ajax_admin_end_rental', 'Equipment_Page', 'admin_end_rental');
 		$this->loader->add_action('wp_ajax_admin_equipment_csv', 'Equipment_Page', 'equipment_csv');
 		$this->loader->add_action('wp_ajax_duplicate_equipment', 'Equipment_Page', 'duplicate_equipment');
+
+		$this->loader->add_action('wp_ajax_get_admin_forms', 'Item_Mgmt', 'get_admin_forms_callback');
+		$this->loader->add_action('wp_ajax_admin_delete_form', 'Item_Mgmt', 'admin_delete_form');
 
 		$this->loader->add_action('wp_ajax_admin_pricing', 'Pricing_Page', 'admin_pricing_callback');
 		$this->loader->add_action('wp_ajax_admin_get_pricing_dropdowns', 'Pricing_Page', 'admin_get_pricing_dropdowns_callback');
@@ -247,22 +249,26 @@ class IAM {
 
 		$this->loader->add_action('wp_ajax_admin_get_appointment_info_template', 'Scheduling_Page', 'admin_get_appointment_info_template_callback');
 		$this->loader->add_action('wp_ajax_admin_get_rental_info_template', 'Scheduling_Page', 'admin_get_rental_info_template_callback');
-		$this->loader->add_action('wp_ajax_admin_facility_schedule', 'Scheduling_Page', 'admin_facility_schedule_callback');
+
 		$this->loader->add_action('wp_ajax_admin_get_irregular_hours', 'Scheduling_Page', 'admin_get_irregular_hours_callback');
 		$this->loader->add_action('wp_ajax_admin_update_irregular_hours', 'Scheduling_Page', 'admin_update_irregular_hours_callback');
 		$this->loader->add_action('wp_ajax_admin_delete_irregular_hours', 'Scheduling_Page', 'admin_delete_irregular_hours_callback');
 		$this->loader->add_action('wp_ajax_admin_update_approval_hours', 'Scheduling_Page', 'admin_update_approval_hours');
 		$this->loader->add_action('wp_ajax_admin_get_approval_hours', 'Scheduling_Page', 'admin_get_approval_hours');
 
-		$this->loader->add_action('wp_ajax_get_admin_forms', 'Item_Mgmt', 'get_admin_forms_callback');
-		$this->loader->add_action('wp_ajax_admin_delete_form', 'Item_Mgmt', 'admin_delete_form');
-
-		$this->loader->add_action('wp_ajax_admin_report_bug', 'Settings_Page', 'admin_report_bug_callback');
 		$this->loader->add_action('wp_ajax_admin_update_settings', 'Settings_Page', 'admin_update_settings_callback');
 		$this->loader->add_action('wp_ajax_admin_update_account_type', 'Settings_Page', 'admin_update_account_type_callback');
 		$this->loader->add_action('wp_ajax_admin_delete_account_type', 'Settings_Page', 'admin_delete_account_type_callback');
 		$this->loader->add_action('wp_ajax_admin_update_rental_type', 'Settings_Page', 'admin_update_rental_type_callback');
 		$this->loader->add_action('wp_ajax_admin_delete_rental_type', 'Settings_Page', 'admin_delete_rental_type_callback');
+		$this->loader->add_action('wp_ajax_facility_name_change', 'Settings_Page', 'facility_name_change');
+		$this->loader->add_action('wp_ajax_facility_email_change', 'Settings_Page', 'facility_email_change');
+		$this->loader->add_action('wp_ajax_new_res_email_change', 'Settings_Page', 'new_res_email_change');
+		$this->loader->add_action('wp_ajax_late_res_admin_email_change', 'Settings_Page', 'late_res_admin_email_change');
+		$this->loader->add_action('wp_ajax_late_res_user_email_change', 'Settings_Page', 'late_res_user_email_change');
+		$this->loader->add_action('wp_ajax_test_email', 'Settings_Page', 'test_email');
+		$this->loader->add_action('wp_ajax_update_facility_schedule', 'Settings_Page', 'update_facility_schedule');
+
 
 		$this->loader->add_action('wp_ajax_admin_get_user_certifications', 'User_Certifications_Page', 'admin_get_user_certifications_callback');
 		$this->loader->add_action('wp_ajax_admin_add_certifications_to_users', 'User_Certifications_Page', 'admin_add_certifications_to_users_callback');

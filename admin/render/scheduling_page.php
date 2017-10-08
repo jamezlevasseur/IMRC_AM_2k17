@@ -6,31 +6,6 @@
 class Scheduling_Page
 {
 
-    public static function admin_facility_schedule_callback()
-    {
-        global $wpdb;
-
-        $tag_id = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",IAM_Sec::textfield_cleaner($_POST['tag'])))[0]->Tag_ID;
-
-        if ($_POST['type']==='Rental') {
-            if (count($wpdb->get_results($wpdb->prepare("SELECT Facility_ID FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=%d",$tag_id)))>0) {
-                $wpdb->query($wpdb->prepare("UPDATE ".IAM_FACILITY_TABLE." SET Schedule_Type='Rental', Rental_Days=%d, Rental_Hours_Description=%s WHERE Tag_ID=%d",$_POST['info']['rental_period'],IAM_Sec::textfield_cleaner($_POST['info']['rental_hours_description']),$tag_id));
-            } else {
-                $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_FACILITY_TABLE." (Tag_ID,Rental_Days, Rental_Hours_Description,Schedule_Type) VALUES (%d,%d,%s,'Rental')",$tag_id,$_POST['info']['rental_period'],IAM_Sec::textfield_cleaner($_POST['info']['rental_hours_description'])));
-            }
-        } else if ($_POST['type']==='Appointment') {
-            $business_hours = IAM_Sec::textfield_cleaner( json_encode($_POST['info']['businessHours']) );
-            if (count($wpdb->get_results($wpdb->prepare("SELECT Facility_ID FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=%d",$tag_id)))>0) {
-                $wpdb->query($wpdb->prepare("UPDATE ".IAM_FACILITY_TABLE." SET Schedule_Type='Appointment', Appointment_Business_Hours=%s WHERE Tag_ID=%d",$business_hours,$tag_id));
-            } else {
-                $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_FACILITY_TABLE." (Tag_ID,Appointment_Business_Hours,Schedule_Type) VALUES (%d,%s,'Appointment')",$tag_id,$business_hours));
-            }
-        } else if ($_POST['type']==='Not a Facility') {
-            $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_FACILITY_TABLE." WHERE Tag_ID=%d",$tag_id));
-        }
-        iam_respond(SUCCESS);
-    }
-
     public static function admin_get_irregular_hours_callback()
     {
         global $wpdb;
