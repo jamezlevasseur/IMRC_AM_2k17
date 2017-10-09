@@ -22,25 +22,69 @@ class Settings_Page
         iam_respond(SUCCESS);
     }
 
+    public static function make_rental_seg($args=[])
+    {
+      $defaultArgs = ['id'=>'','label'=>'','duration'=>'','default'=>'','class'=>''];
+      $args = array_merge($defaultArgs, $args);
+      return '<div data-id="'.$args['id'].'" style="border-bottom:1px solid #ddd;padding:5px 0;margin-bottom:5px;" class="rental-period-container '.$args['class'].'"><span><label>Label: <input type="text" class="rental-label" value="'.$args['label'].'"></label></span><span><label>Duration (in days): <input type="number" class="rental-duration" value="'.$args['duration'].'"></label></span><span><i class="iam-delete-rental-type fa fa-close fa-3"></i><br /><label style="display:block;">Default Rental Type: <input type="radio" name="default-rental" class="default-rental-type" '.$args['default'].' ></label></span></div>';
+    }
+
+    public static function reset_rental_default()
+    {
+      $rental_types = ezget(RENTAL_ALL_QUERY);
+      foreach ($rental_types as $row) {
+        $val = json_decode($row->Meta_Value);
+        $val->default = 0;
+        ezquery("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",json_encode($val),RENTAL_PREFIX.$val->id);
+      }
+    }
+
+    public static function set_new_default_rental($vals)
+    {
+      $default = ezget("SELECT * FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",DEFAULT_RENTAL_TYPE_KEY);
+      if (empty($default)) {
+        ezquery(" INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)", DEFAULT_RENTAL_TYPE_KEY, json_encode($vals));
+        return;
+      }
+      ezquery(" UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s", json_encode($vals), DEFAULT_RENTAL_TYPE_KEY);
+    }
+
     public static function admin_update_rental_type_callback()
     {
         global $wpdb;
-        $updated_vals = $_POST['updated_rental_types'];
-        $new_vals = $_POST['new_rental_types'];
+        $updated_vals = isset($_POST['updated_rental_types']) ? $_POST['updated_rental_types'] : [] ;
+        $new_vals = isset($_POST['new_rental_types']) ? $_POST['new_rental_types'] : [] ;
         foreach ($updated_vals as $key => $value) {
 
             if (!is_numeric($value['duration'])) {
                 iam_throw_error(INVALID_INPUT_EXCEPTION);
             }
-            $new_json = json_encode(['id'=>$key, 'duration'=>$value['duration'], 'label'=>IAM_Sec::textfield_cleaner($value['label']) ]);
+            if ($value['default']==1) {
+              self::reset_rental_default();
+              self::set_new_default_rental(['id'=>$key, 'duration'=>$value['duration']]);
+            }
+            $new_json = json_encode([ 'id'=>$key,
+                                      'duration'=>$value['duration'],
+                                      'label'=>IAM_Sec::textfield_cleaner($value['label']),
+                                      'default'=>$value['default']
+                                     ]);
             $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$new_json,RENTAL_PREFIX.$key));
+
         }
         foreach ($new_vals as $entry) {
             if (!is_numeric($entry['duration'])) {
                 iam_throw_error(INVALID_INPUT_EXCEPTION);
             }
+            if ($entry['default']==1) {
+              self::reset_rental_default();
+              self::set_new_default_rental(['id'=>$id, 'duration'=>$entry['duration']]);
+            }
             $id = make_nid();
-            $val = json_encode(['id'=>$id, 'duration'=>$entry['duration'], 'label'=>IAM_Sec::textfield_cleaner($entry['label']) ]);
+            $val = json_encode(['id'=>$id,
+                                'duration'=>$entry['duration'],
+                                'label'=>IAM_Sec::textfield_cleaner($entry['label']),
+                                'default'=>$entry['default']
+                              ]);
             $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",RENTAL_PREFIX.$id,$val));
         }
         iam_respond(SUCCESS);
@@ -49,11 +93,15 @@ class Settings_Page
     public static function admin_delete_rental_type_callback()
     {
         global $wpdb;
-        $replacement = IAM_Sec::textfield_cleaner($_POST['replacement']);
         $to_delete = IAM_Sec::textfield_cleaner($_POST['toDelete']);
 
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=%s WHERE Rental_Type=%s",$replacement,$to_delete));
+        $gonna_delete = ezget("SELECT * FROM ".IAM_META_TABLE." WHERE Meta_Key=%s", RENTAL_PREFIX.$to_delete)[0];
 
+        if (json_decode($gonna_delete)->default==1)
+          iam_throw_error("Cannot delete the default rental type.");
+
+        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=0 WHERE Rental_Type=%s",$to_delete);
+        
         $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$to_delete));
         iam_respond(SUCCESS);
     }

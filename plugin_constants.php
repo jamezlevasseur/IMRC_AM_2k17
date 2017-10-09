@@ -98,6 +98,9 @@ define('HOUR_FORMAT', 'G:i');
 
 define('RENTAL_PREFIX', 'rental_type_');
 
+define('DEFAULT_RENTAL_TYPE_KEY', 'default_rental_type');
+
+
 define('LAST_ER_CHECK_PREFIX', 'last_er_check_');
 
 define('RENTAL_ALL_QUERY', "SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key LIKE '".RENTAL_PREFIX."%'");

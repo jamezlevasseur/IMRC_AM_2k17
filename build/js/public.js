@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 136);
+/******/ 	return __webpack_require__(__webpack_require__.s = 125);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1893,7 +1893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (!locales[name] && typeof module !== 'undefined' && module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
-                __webpack_require__(128)("./" + name);
+                __webpack_require__(130)("./" + name);
                 // because defineLocale currently also sets the global locale, we
                 // want to undo that for lazy loaded locales
                 getSetGlobalLocale(oldLocale);
@@ -4425,7 +4425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     return hooks;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ }),
 /* 1 */
@@ -14261,7 +14261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(6)(module)))
 
 /***/ }),
 /* 2 */
@@ -14414,719 +14414,6 @@ exports.doError = doError;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Widget 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Widget
-//>>group: Core
-//>>description: Provides a factory for creating stateful widgets with a common API.
-//>>docs: http://api.jqueryui.com/jQuery.widget/
-//>>demos: http://jqueryui.com/widget/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	var widgetUuid = 0;
-	var widgetSlice = Array.prototype.slice;
-
-	$.cleanData = function (orig) {
-		return function (elems) {
-			var events, elem, i;
-			for (i = 0; (elem = elems[i]) != null; i++) {
-				try {
-
-					// Only trigger remove when necessary to save time
-					events = $._data(elem, "events");
-					if (events && events.remove) {
-						$(elem).triggerHandler("remove");
-					}
-
-					// Http://bugs.jquery.com/ticket/8235
-				} catch (e) {}
-			}
-			orig(elems);
-		};
-	}($.cleanData);
-
-	$.widget = function (name, base, prototype) {
-		var existingConstructor, constructor, basePrototype;
-
-		// ProxiedPrototype allows the provided prototype to remain unmodified
-		// so that it can be used as a mixin for multiple widgets (#8876)
-		var proxiedPrototype = {};
-
-		var namespace = name.split(".")[0];
-		name = name.split(".")[1];
-		var fullName = namespace + "-" + name;
-
-		if (!prototype) {
-			prototype = base;
-			base = $.Widget;
-		}
-
-		if ($.isArray(prototype)) {
-			prototype = $.extend.apply(null, [{}].concat(prototype));
-		}
-
-		// Create selector for plugin
-		$.expr[":"][fullName.toLowerCase()] = function (elem) {
-			return !!$.data(elem, fullName);
-		};
-
-		$[namespace] = $[namespace] || {};
-		existingConstructor = $[namespace][name];
-		constructor = $[namespace][name] = function (options, element) {
-
-			// Allow instantiation without "new" keyword
-			if (!this._createWidget) {
-				return new constructor(options, element);
-			}
-
-			// Allow instantiation without initializing for simple inheritance
-			// must use "new" keyword (the code above always passes args)
-			if (arguments.length) {
-				this._createWidget(options, element);
-			}
-		};
-
-		// Extend with the existing constructor to carry over any static properties
-		$.extend(constructor, existingConstructor, {
-			version: prototype.version,
-
-			// Copy the object used to create the prototype in case we need to
-			// redefine the widget later
-			_proto: $.extend({}, prototype),
-
-			// Track widgets that inherit from this widget in case this widget is
-			// redefined after a widget inherits from it
-			_childConstructors: []
-		});
-
-		basePrototype = new base();
-
-		// We need to make the options hash a property directly on the new instance
-		// otherwise we'll modify the options hash on the prototype that we're
-		// inheriting from
-		basePrototype.options = $.widget.extend({}, basePrototype.options);
-		$.each(prototype, function (prop, value) {
-			if (!$.isFunction(value)) {
-				proxiedPrototype[prop] = value;
-				return;
-			}
-			proxiedPrototype[prop] = function () {
-				function _super() {
-					return base.prototype[prop].apply(this, arguments);
-				}
-
-				function _superApply(args) {
-					return base.prototype[prop].apply(this, args);
-				}
-
-				return function () {
-					var __super = this._super;
-					var __superApply = this._superApply;
-					var returnValue;
-
-					this._super = _super;
-					this._superApply = _superApply;
-
-					returnValue = value.apply(this, arguments);
-
-					this._super = __super;
-					this._superApply = __superApply;
-
-					return returnValue;
-				};
-			}();
-		});
-		constructor.prototype = $.widget.extend(basePrototype, {
-
-			// TODO: remove support for widgetEventPrefix
-			// always use the name + a colon as the prefix, e.g., draggable:start
-			// don't prefix for widgets that aren't DOM-based
-			widgetEventPrefix: existingConstructor ? basePrototype.widgetEventPrefix || name : name
-		}, proxiedPrototype, {
-			constructor: constructor,
-			namespace: namespace,
-			widgetName: name,
-			widgetFullName: fullName
-		});
-
-		// If this widget is being redefined then we need to find all widgets that
-		// are inheriting from it and redefine all of them so that they inherit from
-		// the new version of this widget. We're essentially trying to replace one
-		// level in the prototype chain.
-		if (existingConstructor) {
-			$.each(existingConstructor._childConstructors, function (i, child) {
-				var childPrototype = child.prototype;
-
-				// Redefine the child widget using the same prototype that was
-				// originally used, but inherit from the new version of the base
-				$.widget(childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto);
-			});
-
-			// Remove the list of existing child constructors from the old constructor
-			// so the old child constructors can be garbage collected
-			delete existingConstructor._childConstructors;
-		} else {
-			base._childConstructors.push(constructor);
-		}
-
-		$.widget.bridge(name, constructor);
-
-		return constructor;
-	};
-
-	$.widget.extend = function (target) {
-		var input = widgetSlice.call(arguments, 1);
-		var inputIndex = 0;
-		var inputLength = input.length;
-		var key;
-		var value;
-
-		for (; inputIndex < inputLength; inputIndex++) {
-			for (key in input[inputIndex]) {
-				value = input[inputIndex][key];
-				if (input[inputIndex].hasOwnProperty(key) && value !== undefined) {
-
-					// Clone objects
-					if ($.isPlainObject(value)) {
-						target[key] = $.isPlainObject(target[key]) ? $.widget.extend({}, target[key], value) :
-
-						// Don't extend strings, arrays, etc. with objects
-						$.widget.extend({}, value);
-
-						// Copy everything else by reference
-					} else {
-						target[key] = value;
-					}
-				}
-			}
-		}
-		return target;
-	};
-
-	$.widget.bridge = function (name, object) {
-		var fullName = object.prototype.widgetFullName || name;
-		$.fn[name] = function (options) {
-			var isMethodCall = typeof options === "string";
-			var args = widgetSlice.call(arguments, 1);
-			var returnValue = this;
-
-			if (isMethodCall) {
-
-				// If this is an empty collection, we need to have the instance method
-				// return undefined instead of the jQuery instance
-				if (!this.length && options === "instance") {
-					returnValue = undefined;
-				} else {
-					this.each(function () {
-						var methodValue;
-						var instance = $.data(this, fullName);
-
-						if (options === "instance") {
-							returnValue = instance;
-							return false;
-						}
-
-						if (!instance) {
-							return $.error("cannot call methods on " + name + " prior to initialization; " + "attempted to call method '" + options + "'");
-						}
-
-						if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
-							return $.error("no such method '" + options + "' for " + name + " widget instance");
-						}
-
-						methodValue = instance[options].apply(instance, args);
-
-						if (methodValue !== instance && methodValue !== undefined) {
-							returnValue = methodValue && methodValue.jquery ? returnValue.pushStack(methodValue.get()) : methodValue;
-							return false;
-						}
-					});
-				}
-			} else {
-
-				// Allow multiple hashes to be passed on init
-				if (args.length) {
-					options = $.widget.extend.apply(null, [options].concat(args));
-				}
-
-				this.each(function () {
-					var instance = $.data(this, fullName);
-					if (instance) {
-						instance.option(options || {});
-						if (instance._init) {
-							instance._init();
-						}
-					} else {
-						$.data(this, fullName, new object(options, this));
-					}
-				});
-			}
-
-			return returnValue;
-		};
-	};
-
-	$.Widget = function () /* options, element */{};
-	$.Widget._childConstructors = [];
-
-	$.Widget.prototype = {
-		widgetName: "widget",
-		widgetEventPrefix: "",
-		defaultElement: "<div>",
-
-		options: {
-			classes: {},
-			disabled: false,
-
-			// Callbacks
-			create: null
-		},
-
-		_createWidget: function _createWidget(options, element) {
-			element = $(element || this.defaultElement || this)[0];
-			this.element = $(element);
-			this.uuid = widgetUuid++;
-			this.eventNamespace = "." + this.widgetName + this.uuid;
-
-			this.bindings = $();
-			this.hoverable = $();
-			this.focusable = $();
-			this.classesElementLookup = {};
-
-			if (element !== this) {
-				$.data(element, this.widgetFullName, this);
-				this._on(true, this.element, {
-					remove: function remove(event) {
-						if (event.target === element) {
-							this.destroy();
-						}
-					}
-				});
-				this.document = $(element.style ?
-
-				// Element within the document
-				element.ownerDocument :
-
-				// Element is window or document
-				element.document || element);
-				this.window = $(this.document[0].defaultView || this.document[0].parentWindow);
-			}
-
-			this.options = $.widget.extend({}, this.options, this._getCreateOptions(), options);
-
-			this._create();
-
-			if (this.options.disabled) {
-				this._setOptionDisabled(this.options.disabled);
-			}
-
-			this._trigger("create", null, this._getCreateEventData());
-			this._init();
-		},
-
-		_getCreateOptions: function _getCreateOptions() {
-			return {};
-		},
-
-		_getCreateEventData: $.noop,
-
-		_create: $.noop,
-
-		_init: $.noop,
-
-		destroy: function destroy() {
-			var that = this;
-
-			this._destroy();
-			$.each(this.classesElementLookup, function (key, value) {
-				that._removeClass(value, key);
-			});
-
-			// We can probably remove the unbind calls in 2.0
-			// all event bindings should go through this._on()
-			this.element.off(this.eventNamespace).removeData(this.widgetFullName);
-			this.widget().off(this.eventNamespace).removeAttr("aria-disabled");
-
-			// Clean up events and states
-			this.bindings.off(this.eventNamespace);
-		},
-
-		_destroy: $.noop,
-
-		widget: function widget() {
-			return this.element;
-		},
-
-		option: function option(key, value) {
-			var options = key;
-			var parts;
-			var curOption;
-			var i;
-
-			if (arguments.length === 0) {
-
-				// Don't return a reference to the internal hash
-				return $.widget.extend({}, this.options);
-			}
-
-			if (typeof key === "string") {
-
-				// Handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
-				options = {};
-				parts = key.split(".");
-				key = parts.shift();
-				if (parts.length) {
-					curOption = options[key] = $.widget.extend({}, this.options[key]);
-					for (i = 0; i < parts.length - 1; i++) {
-						curOption[parts[i]] = curOption[parts[i]] || {};
-						curOption = curOption[parts[i]];
-					}
-					key = parts.pop();
-					if (arguments.length === 1) {
-						return curOption[key] === undefined ? null : curOption[key];
-					}
-					curOption[key] = value;
-				} else {
-					if (arguments.length === 1) {
-						return this.options[key] === undefined ? null : this.options[key];
-					}
-					options[key] = value;
-				}
-			}
-
-			this._setOptions(options);
-
-			return this;
-		},
-
-		_setOptions: function _setOptions(options) {
-			var key;
-
-			for (key in options) {
-				this._setOption(key, options[key]);
-			}
-
-			return this;
-		},
-
-		_setOption: function _setOption(key, value) {
-			if (key === "classes") {
-				this._setOptionClasses(value);
-			}
-
-			this.options[key] = value;
-
-			if (key === "disabled") {
-				this._setOptionDisabled(value);
-			}
-
-			return this;
-		},
-
-		_setOptionClasses: function _setOptionClasses(value) {
-			var classKey, elements, currentElements;
-
-			for (classKey in value) {
-				currentElements = this.classesElementLookup[classKey];
-				if (value[classKey] === this.options.classes[classKey] || !currentElements || !currentElements.length) {
-					continue;
-				}
-
-				// We are doing this to create a new jQuery object because the _removeClass() call
-				// on the next line is going to destroy the reference to the current elements being
-				// tracked. We need to save a copy of this collection so that we can add the new classes
-				// below.
-				elements = $(currentElements.get());
-				this._removeClass(currentElements, classKey);
-
-				// We don't use _addClass() here, because that uses this.options.classes
-				// for generating the string of classes. We want to use the value passed in from
-				// _setOption(), this is the new value of the classes option which was passed to
-				// _setOption(). We pass this value directly to _classes().
-				elements.addClass(this._classes({
-					element: elements,
-					keys: classKey,
-					classes: value,
-					add: true
-				}));
-			}
-		},
-
-		_setOptionDisabled: function _setOptionDisabled(value) {
-			this._toggleClass(this.widget(), this.widgetFullName + "-disabled", null, !!value);
-
-			// If the widget is becoming disabled, then nothing is interactive
-			if (value) {
-				this._removeClass(this.hoverable, null, "ui-state-hover");
-				this._removeClass(this.focusable, null, "ui-state-focus");
-			}
-		},
-
-		enable: function enable() {
-			return this._setOptions({ disabled: false });
-		},
-
-		disable: function disable() {
-			return this._setOptions({ disabled: true });
-		},
-
-		_classes: function _classes(options) {
-			var full = [];
-			var that = this;
-
-			options = $.extend({
-				element: this.element,
-				classes: this.options.classes || {}
-			}, options);
-
-			function processClassString(classes, checkOption) {
-				var current, i;
-				for (i = 0; i < classes.length; i++) {
-					current = that.classesElementLookup[classes[i]] || $();
-					if (options.add) {
-						current = $($.unique(current.get().concat(options.element.get())));
-					} else {
-						current = $(current.not(options.element).get());
-					}
-					that.classesElementLookup[classes[i]] = current;
-					full.push(classes[i]);
-					if (checkOption && options.classes[classes[i]]) {
-						full.push(options.classes[classes[i]]);
-					}
-				}
-			}
-
-			this._on(options.element, {
-				"remove": "_untrackClassesElement"
-			});
-
-			if (options.keys) {
-				processClassString(options.keys.match(/\S+/g) || [], true);
-			}
-			if (options.extra) {
-				processClassString(options.extra.match(/\S+/g) || []);
-			}
-
-			return full.join(" ");
-		},
-
-		_untrackClassesElement: function _untrackClassesElement(event) {
-			var that = this;
-			$.each(that.classesElementLookup, function (key, value) {
-				if ($.inArray(event.target, value) !== -1) {
-					that.classesElementLookup[key] = $(value.not(event.target).get());
-				}
-			});
-		},
-
-		_removeClass: function _removeClass(element, keys, extra) {
-			return this._toggleClass(element, keys, extra, false);
-		},
-
-		_addClass: function _addClass(element, keys, extra) {
-			return this._toggleClass(element, keys, extra, true);
-		},
-
-		_toggleClass: function _toggleClass(element, keys, extra, add) {
-			add = typeof add === "boolean" ? add : extra;
-			var shift = typeof element === "string" || element === null,
-			    options = {
-				extra: shift ? keys : extra,
-				keys: shift ? element : keys,
-				element: shift ? this.element : element,
-				add: add
-			};
-			options.element.toggleClass(this._classes(options), add);
-			return this;
-		},
-
-		_on: function _on(suppressDisabledCheck, element, handlers) {
-			var delegateElement;
-			var instance = this;
-
-			// No suppressDisabledCheck flag, shuffle arguments
-			if (typeof suppressDisabledCheck !== "boolean") {
-				handlers = element;
-				element = suppressDisabledCheck;
-				suppressDisabledCheck = false;
-			}
-
-			// No element argument, shuffle and use this.element
-			if (!handlers) {
-				handlers = element;
-				element = this.element;
-				delegateElement = this.widget();
-			} else {
-				element = delegateElement = $(element);
-				this.bindings = this.bindings.add(element);
-			}
-
-			$.each(handlers, function (event, handler) {
-				function handlerProxy() {
-
-					// Allow widgets to customize the disabled handling
-					// - disabled as an array instead of boolean
-					// - disabled class as method for disabling individual parts
-					if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
-						return;
-					}
-					return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);
-				}
-
-				// Copy the guid so direct unbinding works
-				if (typeof handler !== "string") {
-					handlerProxy.guid = handler.guid = handler.guid || handlerProxy.guid || $.guid++;
-				}
-
-				var match = event.match(/^([\w:-]*)\s*(.*)$/);
-				var eventName = match[1] + instance.eventNamespace;
-				var selector = match[2];
-
-				if (selector) {
-					delegateElement.on(eventName, selector, handlerProxy);
-				} else {
-					element.on(eventName, handlerProxy);
-				}
-			});
-		},
-
-		_off: function _off(element, eventName) {
-			eventName = (eventName || "").split(" ").join(this.eventNamespace + " ") + this.eventNamespace;
-			element.off(eventName).off(eventName);
-
-			// Clear the stack to avoid memory leaks (#10056)
-			this.bindings = $(this.bindings.not(element).get());
-			this.focusable = $(this.focusable.not(element).get());
-			this.hoverable = $(this.hoverable.not(element).get());
-		},
-
-		_delay: function _delay(handler, delay) {
-			function handlerProxy() {
-				return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);
-			}
-			var instance = this;
-			return setTimeout(handlerProxy, delay || 0);
-		},
-
-		_hoverable: function _hoverable(element) {
-			this.hoverable = this.hoverable.add(element);
-			this._on(element, {
-				mouseenter: function mouseenter(event) {
-					this._addClass($(event.currentTarget), null, "ui-state-hover");
-				},
-				mouseleave: function mouseleave(event) {
-					this._removeClass($(event.currentTarget), null, "ui-state-hover");
-				}
-			});
-		},
-
-		_focusable: function _focusable(element) {
-			this.focusable = this.focusable.add(element);
-			this._on(element, {
-				focusin: function focusin(event) {
-					this._addClass($(event.currentTarget), null, "ui-state-focus");
-				},
-				focusout: function focusout(event) {
-					this._removeClass($(event.currentTarget), null, "ui-state-focus");
-				}
-			});
-		},
-
-		_trigger: function _trigger(type, event, data) {
-			var prop, orig;
-			var callback = this.options[type];
-
-			data = data || {};
-			event = $.Event(event);
-			event.type = (type === this.widgetEventPrefix ? type : this.widgetEventPrefix + type).toLowerCase();
-
-			// The original event may come from any element
-			// so we need to reset the target on the new event
-			event.target = this.element[0];
-
-			// Copy original event properties over to the new event
-			orig = event.originalEvent;
-			if (orig) {
-				for (prop in orig) {
-					if (!(prop in event)) {
-						event[prop] = orig[prop];
-					}
-				}
-			}
-
-			this.element.trigger(event, data);
-			return !($.isFunction(callback) && callback.apply(this.element[0], [event].concat(data)) === false || event.isDefaultPrevented());
-		}
-	};
-
-	$.each({ show: "fadeIn", hide: "fadeOut" }, function (method, defaultEffect) {
-		$.Widget.prototype["_" + method] = function (element, options, callback) {
-			if (typeof options === "string") {
-				options = { effect: options };
-			}
-
-			var hasOptions;
-			var effectName = !options ? method : options === true || typeof options === "number" ? defaultEffect : options.effect || defaultEffect;
-
-			options = options || {};
-			if (typeof options === "number") {
-				options = { duration: options };
-			}
-
-			hasOptions = !$.isEmptyObject(options);
-			options.complete = callback;
-
-			if (options.delay) {
-				element.delay(options.delay);
-			}
-
-			if (hasOptions && $.effects && $.effects.effect[effectName]) {
-				element[method](options);
-			} else if (effectName !== method && element[effectName]) {
-				element[effectName](options.duration, options.easing, callback);
-			} else {
-				element.queue(function (next) {
-					$(this)[method]();
-					if (callback) {
-						callback.call(element[0]);
-					}
-					next();
-				});
-			}
-		};
-	});
-
-	return $.widget;
-});
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -15165,7 +14452,7 @@ exports.handleServerResponse = handleServerResponse;
 exports.handleServerError = handleServerError;
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15194,7 +14481,7 @@ exports.submissionStart = submissionStart;
 exports.submissionEnd = submissionEnd;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15224,7 +14511,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15239,9 +14526,9 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _serverresponse = __webpack_require__(5);
+var _serverresponse = __webpack_require__(4);
 
-var _userfeedback = __webpack_require__(6);
+var _userfeedback = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15325,6 +14612,237 @@ exports.initCSVButtonListener = initCSVButtonListener;
 exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
 exports.initSearchListener = initSearchListener;
 exports.initPopupXListener = initPopupXListener;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(129);
+
+__webpack_require__(131);
+
+__webpack_require__(132);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cal = function () {
+  function Cal(page, facing) {
+    _classCallCheck(this, Cal);
+
+    this.page = page;
+    this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+    this.setCalArgs();
+    this.initCalFor(facing);
+  }
+
+  _createClass(Cal, [{
+    key: 'initCalFor',
+    value: function initCalFor(facing) {
+      if (facing == 'public') {
+        this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+        this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+        this.initDraggable();
+        this.initPubResCal(this.page.getFacilityInfo('type'));
+      } else {}
+    }
+  }, {
+    key: 'eventFallsOnWeekend',
+    value: function eventFallsOnWeekend(e) {
+      var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+      var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+      //for now it ends at midnight of the following day
+      return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+    }
+  }, {
+    key: 'eventIsLongerThan',
+    value: function eventIsLongerThan(e, days) {
+      var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      return end.diff(start, 'days') > days;
+    }
+  }, {
+    key: 'convertBusinessHours',
+    value: function convertBusinessHours(jsonString) {
+      var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+      var converted = [];
+      var counter = 1;
+      for (var key in json) {
+        var day = _jquery2.default.extend({}, json[key]);
+        if (day.start != '') {
+          day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
+          day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
+          converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
+        } else {
+          converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
+        }
+        counter++;
+      }
+      return converted;
+    }
+  }, {
+    key: 'preventPastReservation',
+    value: function preventPastReservation(e) {
+
+      var targetTimeStart = null;
+
+      if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+
+      if (targetTimeStart.isBefore(moment())) {
+        alert('You cannot make reservations in the past.');
+        return false;
+      }
+      return true;
+    }
+  }, {
+    key: 'warnIfOutOfBounds',
+    value: function warnIfOutOfBounds(e) {
+      var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+
+      var thisStart = moment(thisDay.start, 'HH:mm');
+      var thisEnd = moment(thisDay.end, 'HH:mm');
+
+      var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
+      var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
+
+      if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
+        alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+      }
+    }
+  }, {
+    key: 'initDraggable',
+    value: function initDraggable() {
+
+      (0, _jquery2.default)('.iam-events .fc-event').each(function () {
+
+        // store data so the calendar knows to render an event upon drop
+        (0, _jquery2.default)(this).data('event', {
+          title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
+          editable: true,
+          eventDurationEditable: true,
+          color: '#4cad57',
+          className: 'iam-new-event'
+        });
+
+        // make the event draggable using jQuery UI
+        (0, _jquery2.default)(this).draggable({
+          zIndex: 999,
+          revert: true, // will cause the event to go back to its
+          revertDuration: 0 //  original position after the drag
+        });
+      });
+    }
+  }, {
+    key: 'initPubResCal',
+    value: function initPubResCal(facilitType) {
+      var facilityNeutralArgs = {
+        editable: false, //new events will be made editable else where
+        eventLimit: true, // allow "more" link when too many events
+        allDay: false,
+        height: 500,
+        forceEventDuration: true,
+        businessHours: this.businessHoursConverted,
+        droppable: true,
+        eventOverlap: false,
+        allDaySlot: false,
+        eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
+          color: '#f13d39' }]
+      };
+
+      var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
+
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
+    }
+  }, {
+    key: 'setCalArgs',
+    value: function setCalArgs() {
+
+      var that = this;
+      this.calArgs = {};
+
+      this.calArgs['appointment'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'agendaWeek,agendaDay'
+        },
+        defaultTimedEventDuration: '00:30:00',
+        weekends: true,
+        defaultView: 'agendaWeek',
+        eventReceive: function eventReceive(e, d, revert) {
+          if (!preventPastReservation(e)) {
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
+          warnIfOutOfBounds(e);
+        },
+        eventDrop: function eventDrop(e, d, revert) {
+          if (!preventPastReservation(e)) {
+            revert();
+            return;
+          }
+          warnIfOutOfBounds(e);
+        },
+        eventResize: function eventResize(e, d, revert) {
+          if (!preventPastReservation(e)) {
+            revert();
+            return;
+          }
+          warnIfOutOfBounds(e);
+        }
+      };
+
+      this.calArgs['appointment'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month'
+        },
+        weekends: false,
+        defaultView: 'month',
+        eventReceive: function eventReceive(e) {
+          if (eventFallsOnWeekend(e)) {
+            alert(that.ERinvalidTimePrompt);
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
+        },
+        eventDrop: function eventDrop(e, d, revert) {
+          if (eventFallsOnWeekend(e)) {
+            alert(that.ERinvalidTimePrompt);
+            revert();
+          }
+        },
+        eventResize: function eventResize(e, d, revert) {
+          if (eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
+            alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
+            revert();
+          }
+        },
+        defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
+      };
+    }
+  }]);
+
+  return Cal;
+}();
+
+exports.default = Cal;
 
 /***/ }),
 /* 9 */
@@ -26751,6 +26269,1702 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Widget 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Widget
+//>>group: Core
+//>>description: Provides a factory for creating stateful widgets with a common API.
+//>>docs: http://api.jqueryui.com/jQuery.widget/
+//>>demos: http://jqueryui.com/widget/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	var widgetUuid = 0;
+	var widgetSlice = Array.prototype.slice;
+
+	$.cleanData = function (orig) {
+		return function (elems) {
+			var events, elem, i;
+			for (i = 0; (elem = elems[i]) != null; i++) {
+				try {
+
+					// Only trigger remove when necessary to save time
+					events = $._data(elem, "events");
+					if (events && events.remove) {
+						$(elem).triggerHandler("remove");
+					}
+
+					// Http://bugs.jquery.com/ticket/8235
+				} catch (e) {}
+			}
+			orig(elems);
+		};
+	}($.cleanData);
+
+	$.widget = function (name, base, prototype) {
+		var existingConstructor, constructor, basePrototype;
+
+		// ProxiedPrototype allows the provided prototype to remain unmodified
+		// so that it can be used as a mixin for multiple widgets (#8876)
+		var proxiedPrototype = {};
+
+		var namespace = name.split(".")[0];
+		name = name.split(".")[1];
+		var fullName = namespace + "-" + name;
+
+		if (!prototype) {
+			prototype = base;
+			base = $.Widget;
+		}
+
+		if ($.isArray(prototype)) {
+			prototype = $.extend.apply(null, [{}].concat(prototype));
+		}
+
+		// Create selector for plugin
+		$.expr[":"][fullName.toLowerCase()] = function (elem) {
+			return !!$.data(elem, fullName);
+		};
+
+		$[namespace] = $[namespace] || {};
+		existingConstructor = $[namespace][name];
+		constructor = $[namespace][name] = function (options, element) {
+
+			// Allow instantiation without "new" keyword
+			if (!this._createWidget) {
+				return new constructor(options, element);
+			}
+
+			// Allow instantiation without initializing for simple inheritance
+			// must use "new" keyword (the code above always passes args)
+			if (arguments.length) {
+				this._createWidget(options, element);
+			}
+		};
+
+		// Extend with the existing constructor to carry over any static properties
+		$.extend(constructor, existingConstructor, {
+			version: prototype.version,
+
+			// Copy the object used to create the prototype in case we need to
+			// redefine the widget later
+			_proto: $.extend({}, prototype),
+
+			// Track widgets that inherit from this widget in case this widget is
+			// redefined after a widget inherits from it
+			_childConstructors: []
+		});
+
+		basePrototype = new base();
+
+		// We need to make the options hash a property directly on the new instance
+		// otherwise we'll modify the options hash on the prototype that we're
+		// inheriting from
+		basePrototype.options = $.widget.extend({}, basePrototype.options);
+		$.each(prototype, function (prop, value) {
+			if (!$.isFunction(value)) {
+				proxiedPrototype[prop] = value;
+				return;
+			}
+			proxiedPrototype[prop] = function () {
+				function _super() {
+					return base.prototype[prop].apply(this, arguments);
+				}
+
+				function _superApply(args) {
+					return base.prototype[prop].apply(this, args);
+				}
+
+				return function () {
+					var __super = this._super;
+					var __superApply = this._superApply;
+					var returnValue;
+
+					this._super = _super;
+					this._superApply = _superApply;
+
+					returnValue = value.apply(this, arguments);
+
+					this._super = __super;
+					this._superApply = __superApply;
+
+					return returnValue;
+				};
+			}();
+		});
+		constructor.prototype = $.widget.extend(basePrototype, {
+
+			// TODO: remove support for widgetEventPrefix
+			// always use the name + a colon as the prefix, e.g., draggable:start
+			// don't prefix for widgets that aren't DOM-based
+			widgetEventPrefix: existingConstructor ? basePrototype.widgetEventPrefix || name : name
+		}, proxiedPrototype, {
+			constructor: constructor,
+			namespace: namespace,
+			widgetName: name,
+			widgetFullName: fullName
+		});
+
+		// If this widget is being redefined then we need to find all widgets that
+		// are inheriting from it and redefine all of them so that they inherit from
+		// the new version of this widget. We're essentially trying to replace one
+		// level in the prototype chain.
+		if (existingConstructor) {
+			$.each(existingConstructor._childConstructors, function (i, child) {
+				var childPrototype = child.prototype;
+
+				// Redefine the child widget using the same prototype that was
+				// originally used, but inherit from the new version of the base
+				$.widget(childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto);
+			});
+
+			// Remove the list of existing child constructors from the old constructor
+			// so the old child constructors can be garbage collected
+			delete existingConstructor._childConstructors;
+		} else {
+			base._childConstructors.push(constructor);
+		}
+
+		$.widget.bridge(name, constructor);
+
+		return constructor;
+	};
+
+	$.widget.extend = function (target) {
+		var input = widgetSlice.call(arguments, 1);
+		var inputIndex = 0;
+		var inputLength = input.length;
+		var key;
+		var value;
+
+		for (; inputIndex < inputLength; inputIndex++) {
+			for (key in input[inputIndex]) {
+				value = input[inputIndex][key];
+				if (input[inputIndex].hasOwnProperty(key) && value !== undefined) {
+
+					// Clone objects
+					if ($.isPlainObject(value)) {
+						target[key] = $.isPlainObject(target[key]) ? $.widget.extend({}, target[key], value) :
+
+						// Don't extend strings, arrays, etc. with objects
+						$.widget.extend({}, value);
+
+						// Copy everything else by reference
+					} else {
+						target[key] = value;
+					}
+				}
+			}
+		}
+		return target;
+	};
+
+	$.widget.bridge = function (name, object) {
+		var fullName = object.prototype.widgetFullName || name;
+		$.fn[name] = function (options) {
+			var isMethodCall = typeof options === "string";
+			var args = widgetSlice.call(arguments, 1);
+			var returnValue = this;
+
+			if (isMethodCall) {
+
+				// If this is an empty collection, we need to have the instance method
+				// return undefined instead of the jQuery instance
+				if (!this.length && options === "instance") {
+					returnValue = undefined;
+				} else {
+					this.each(function () {
+						var methodValue;
+						var instance = $.data(this, fullName);
+
+						if (options === "instance") {
+							returnValue = instance;
+							return false;
+						}
+
+						if (!instance) {
+							return $.error("cannot call methods on " + name + " prior to initialization; " + "attempted to call method '" + options + "'");
+						}
+
+						if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
+							return $.error("no such method '" + options + "' for " + name + " widget instance");
+						}
+
+						methodValue = instance[options].apply(instance, args);
+
+						if (methodValue !== instance && methodValue !== undefined) {
+							returnValue = methodValue && methodValue.jquery ? returnValue.pushStack(methodValue.get()) : methodValue;
+							return false;
+						}
+					});
+				}
+			} else {
+
+				// Allow multiple hashes to be passed on init
+				if (args.length) {
+					options = $.widget.extend.apply(null, [options].concat(args));
+				}
+
+				this.each(function () {
+					var instance = $.data(this, fullName);
+					if (instance) {
+						instance.option(options || {});
+						if (instance._init) {
+							instance._init();
+						}
+					} else {
+						$.data(this, fullName, new object(options, this));
+					}
+				});
+			}
+
+			return returnValue;
+		};
+	};
+
+	$.Widget = function () /* options, element */{};
+	$.Widget._childConstructors = [];
+
+	$.Widget.prototype = {
+		widgetName: "widget",
+		widgetEventPrefix: "",
+		defaultElement: "<div>",
+
+		options: {
+			classes: {},
+			disabled: false,
+
+			// Callbacks
+			create: null
+		},
+
+		_createWidget: function _createWidget(options, element) {
+			element = $(element || this.defaultElement || this)[0];
+			this.element = $(element);
+			this.uuid = widgetUuid++;
+			this.eventNamespace = "." + this.widgetName + this.uuid;
+
+			this.bindings = $();
+			this.hoverable = $();
+			this.focusable = $();
+			this.classesElementLookup = {};
+
+			if (element !== this) {
+				$.data(element, this.widgetFullName, this);
+				this._on(true, this.element, {
+					remove: function remove(event) {
+						if (event.target === element) {
+							this.destroy();
+						}
+					}
+				});
+				this.document = $(element.style ?
+
+				// Element within the document
+				element.ownerDocument :
+
+				// Element is window or document
+				element.document || element);
+				this.window = $(this.document[0].defaultView || this.document[0].parentWindow);
+			}
+
+			this.options = $.widget.extend({}, this.options, this._getCreateOptions(), options);
+
+			this._create();
+
+			if (this.options.disabled) {
+				this._setOptionDisabled(this.options.disabled);
+			}
+
+			this._trigger("create", null, this._getCreateEventData());
+			this._init();
+		},
+
+		_getCreateOptions: function _getCreateOptions() {
+			return {};
+		},
+
+		_getCreateEventData: $.noop,
+
+		_create: $.noop,
+
+		_init: $.noop,
+
+		destroy: function destroy() {
+			var that = this;
+
+			this._destroy();
+			$.each(this.classesElementLookup, function (key, value) {
+				that._removeClass(value, key);
+			});
+
+			// We can probably remove the unbind calls in 2.0
+			// all event bindings should go through this._on()
+			this.element.off(this.eventNamespace).removeData(this.widgetFullName);
+			this.widget().off(this.eventNamespace).removeAttr("aria-disabled");
+
+			// Clean up events and states
+			this.bindings.off(this.eventNamespace);
+		},
+
+		_destroy: $.noop,
+
+		widget: function widget() {
+			return this.element;
+		},
+
+		option: function option(key, value) {
+			var options = key;
+			var parts;
+			var curOption;
+			var i;
+
+			if (arguments.length === 0) {
+
+				// Don't return a reference to the internal hash
+				return $.widget.extend({}, this.options);
+			}
+
+			if (typeof key === "string") {
+
+				// Handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+				options = {};
+				parts = key.split(".");
+				key = parts.shift();
+				if (parts.length) {
+					curOption = options[key] = $.widget.extend({}, this.options[key]);
+					for (i = 0; i < parts.length - 1; i++) {
+						curOption[parts[i]] = curOption[parts[i]] || {};
+						curOption = curOption[parts[i]];
+					}
+					key = parts.pop();
+					if (arguments.length === 1) {
+						return curOption[key] === undefined ? null : curOption[key];
+					}
+					curOption[key] = value;
+				} else {
+					if (arguments.length === 1) {
+						return this.options[key] === undefined ? null : this.options[key];
+					}
+					options[key] = value;
+				}
+			}
+
+			this._setOptions(options);
+
+			return this;
+		},
+
+		_setOptions: function _setOptions(options) {
+			var key;
+
+			for (key in options) {
+				this._setOption(key, options[key]);
+			}
+
+			return this;
+		},
+
+		_setOption: function _setOption(key, value) {
+			if (key === "classes") {
+				this._setOptionClasses(value);
+			}
+
+			this.options[key] = value;
+
+			if (key === "disabled") {
+				this._setOptionDisabled(value);
+			}
+
+			return this;
+		},
+
+		_setOptionClasses: function _setOptionClasses(value) {
+			var classKey, elements, currentElements;
+
+			for (classKey in value) {
+				currentElements = this.classesElementLookup[classKey];
+				if (value[classKey] === this.options.classes[classKey] || !currentElements || !currentElements.length) {
+					continue;
+				}
+
+				// We are doing this to create a new jQuery object because the _removeClass() call
+				// on the next line is going to destroy the reference to the current elements being
+				// tracked. We need to save a copy of this collection so that we can add the new classes
+				// below.
+				elements = $(currentElements.get());
+				this._removeClass(currentElements, classKey);
+
+				// We don't use _addClass() here, because that uses this.options.classes
+				// for generating the string of classes. We want to use the value passed in from
+				// _setOption(), this is the new value of the classes option which was passed to
+				// _setOption(). We pass this value directly to _classes().
+				elements.addClass(this._classes({
+					element: elements,
+					keys: classKey,
+					classes: value,
+					add: true
+				}));
+			}
+		},
+
+		_setOptionDisabled: function _setOptionDisabled(value) {
+			this._toggleClass(this.widget(), this.widgetFullName + "-disabled", null, !!value);
+
+			// If the widget is becoming disabled, then nothing is interactive
+			if (value) {
+				this._removeClass(this.hoverable, null, "ui-state-hover");
+				this._removeClass(this.focusable, null, "ui-state-focus");
+			}
+		},
+
+		enable: function enable() {
+			return this._setOptions({ disabled: false });
+		},
+
+		disable: function disable() {
+			return this._setOptions({ disabled: true });
+		},
+
+		_classes: function _classes(options) {
+			var full = [];
+			var that = this;
+
+			options = $.extend({
+				element: this.element,
+				classes: this.options.classes || {}
+			}, options);
+
+			function processClassString(classes, checkOption) {
+				var current, i;
+				for (i = 0; i < classes.length; i++) {
+					current = that.classesElementLookup[classes[i]] || $();
+					if (options.add) {
+						current = $($.unique(current.get().concat(options.element.get())));
+					} else {
+						current = $(current.not(options.element).get());
+					}
+					that.classesElementLookup[classes[i]] = current;
+					full.push(classes[i]);
+					if (checkOption && options.classes[classes[i]]) {
+						full.push(options.classes[classes[i]]);
+					}
+				}
+			}
+
+			this._on(options.element, {
+				"remove": "_untrackClassesElement"
+			});
+
+			if (options.keys) {
+				processClassString(options.keys.match(/\S+/g) || [], true);
+			}
+			if (options.extra) {
+				processClassString(options.extra.match(/\S+/g) || []);
+			}
+
+			return full.join(" ");
+		},
+
+		_untrackClassesElement: function _untrackClassesElement(event) {
+			var that = this;
+			$.each(that.classesElementLookup, function (key, value) {
+				if ($.inArray(event.target, value) !== -1) {
+					that.classesElementLookup[key] = $(value.not(event.target).get());
+				}
+			});
+		},
+
+		_removeClass: function _removeClass(element, keys, extra) {
+			return this._toggleClass(element, keys, extra, false);
+		},
+
+		_addClass: function _addClass(element, keys, extra) {
+			return this._toggleClass(element, keys, extra, true);
+		},
+
+		_toggleClass: function _toggleClass(element, keys, extra, add) {
+			add = typeof add === "boolean" ? add : extra;
+			var shift = typeof element === "string" || element === null,
+			    options = {
+				extra: shift ? keys : extra,
+				keys: shift ? element : keys,
+				element: shift ? this.element : element,
+				add: add
+			};
+			options.element.toggleClass(this._classes(options), add);
+			return this;
+		},
+
+		_on: function _on(suppressDisabledCheck, element, handlers) {
+			var delegateElement;
+			var instance = this;
+
+			// No suppressDisabledCheck flag, shuffle arguments
+			if (typeof suppressDisabledCheck !== "boolean") {
+				handlers = element;
+				element = suppressDisabledCheck;
+				suppressDisabledCheck = false;
+			}
+
+			// No element argument, shuffle and use this.element
+			if (!handlers) {
+				handlers = element;
+				element = this.element;
+				delegateElement = this.widget();
+			} else {
+				element = delegateElement = $(element);
+				this.bindings = this.bindings.add(element);
+			}
+
+			$.each(handlers, function (event, handler) {
+				function handlerProxy() {
+
+					// Allow widgets to customize the disabled handling
+					// - disabled as an array instead of boolean
+					// - disabled class as method for disabling individual parts
+					if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
+						return;
+					}
+					return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);
+				}
+
+				// Copy the guid so direct unbinding works
+				if (typeof handler !== "string") {
+					handlerProxy.guid = handler.guid = handler.guid || handlerProxy.guid || $.guid++;
+				}
+
+				var match = event.match(/^([\w:-]*)\s*(.*)$/);
+				var eventName = match[1] + instance.eventNamespace;
+				var selector = match[2];
+
+				if (selector) {
+					delegateElement.on(eventName, selector, handlerProxy);
+				} else {
+					element.on(eventName, handlerProxy);
+				}
+			});
+		},
+
+		_off: function _off(element, eventName) {
+			eventName = (eventName || "").split(" ").join(this.eventNamespace + " ") + this.eventNamespace;
+			element.off(eventName).off(eventName);
+
+			// Clear the stack to avoid memory leaks (#10056)
+			this.bindings = $(this.bindings.not(element).get());
+			this.focusable = $(this.focusable.not(element).get());
+			this.hoverable = $(this.hoverable.not(element).get());
+		},
+
+		_delay: function _delay(handler, delay) {
+			function handlerProxy() {
+				return (typeof handler === "string" ? instance[handler] : handler).apply(instance, arguments);
+			}
+			var instance = this;
+			return setTimeout(handlerProxy, delay || 0);
+		},
+
+		_hoverable: function _hoverable(element) {
+			this.hoverable = this.hoverable.add(element);
+			this._on(element, {
+				mouseenter: function mouseenter(event) {
+					this._addClass($(event.currentTarget), null, "ui-state-hover");
+				},
+				mouseleave: function mouseleave(event) {
+					this._removeClass($(event.currentTarget), null, "ui-state-hover");
+				}
+			});
+		},
+
+		_focusable: function _focusable(element) {
+			this.focusable = this.focusable.add(element);
+			this._on(element, {
+				focusin: function focusin(event) {
+					this._addClass($(event.currentTarget), null, "ui-state-focus");
+				},
+				focusout: function focusout(event) {
+					this._removeClass($(event.currentTarget), null, "ui-state-focus");
+				}
+			});
+		},
+
+		_trigger: function _trigger(type, event, data) {
+			var prop, orig;
+			var callback = this.options[type];
+
+			data = data || {};
+			event = $.Event(event);
+			event.type = (type === this.widgetEventPrefix ? type : this.widgetEventPrefix + type).toLowerCase();
+
+			// The original event may come from any element
+			// so we need to reset the target on the new event
+			event.target = this.element[0];
+
+			// Copy original event properties over to the new event
+			orig = event.originalEvent;
+			if (orig) {
+				for (prop in orig) {
+					if (!(prop in event)) {
+						event[prop] = orig[prop];
+					}
+				}
+			}
+
+			this.element.trigger(event, data);
+			return !($.isFunction(callback) && callback.apply(this.element[0], [event].concat(data)) === false || event.isDefaultPrevented());
+		}
+	};
+
+	$.each({ show: "fadeIn", hide: "fadeOut" }, function (method, defaultEffect) {
+		$.Widget.prototype["_" + method] = function (element, options, callback) {
+			if (typeof options === "string") {
+				options = { effect: options };
+			}
+
+			var hasOptions;
+			var effectName = !options ? method : options === true || typeof options === "number" ? defaultEffect : options.effect || defaultEffect;
+
+			options = options || {};
+			if (typeof options === "number") {
+				options = { duration: options };
+			}
+
+			hasOptions = !$.isEmptyObject(options);
+			options.complete = callback;
+
+			if (options.delay) {
+				element.delay(options.delay);
+			}
+
+			if (hasOptions && $.effects && $.effects.effect[effectName]) {
+				element[method](options);
+			} else if (effectName !== method && element[effectName]) {
+				element[effectName](options.duration, options.easing, callback);
+			} else {
+				element.queue(function (next) {
+					$(this)[method]();
+					if (callback) {
+						callback.call(element[0]);
+					}
+					next();
+				});
+			}
+		};
+	});
+
+	return $.widget;
+});
+
+/***/ }),
+/* 125 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(3);
+
+var _debug = __webpack_require__(126);
+
+var _uifunc = __webpack_require__(7);
+
+var _textfieldlisteners = __webpack_require__(127);
+
+var _cookie = __webpack_require__(128);
+
+var _serverresponse = __webpack_require__(4);
+
+var _cal = __webpack_require__(8);
+
+var _userfeedback = __webpack_require__(5);
+
+var _reservationpublic = __webpack_require__(140);
+
+var _reservationpublic2 = _interopRequireDefault(_reservationpublic);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(function ($) {
+
+	$(function () {
+		//constants
+		var IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
+		//global vars
+		var firstLoginAttempt = 1;
+
+		//misc functions
+
+		var loginLockout = function loginLockout() {
+			$('.login-form-container').empty();
+			$('.login-form-container').append('<h2 style="color:red;">Too many login attempts, you have been locked out.</h2><small>Please attempt to recover your password and try later.</small>');
+		};
+
+		var removeNav = function removeNav() {
+			$('.menu li').remove();
+			$('.site-navigation').height(53);
+			$('.entry-title').remove();
+		};
+
+		//reservation management
+
+		// checkout functions
+		var checkout_mats, selected_equip_schedule, selectedMat, checkoutRow, checkoutNid, checkoutTotal, balance, selected_equip_name, lastSource, currentCheckout, currentDiscount, currentAccountType, checkoutAmount, checkoutBusinessHours;
+		var comparingSchedules = false;
+
+		var initOldReservationsListener = function initOldReservationsListener() {
+			$('.iam-not-checked-out-container').toggleClass('iam-ninja');
+			$('.iam-old-reservations').click(function (event) {
+				$('.iam-not-checked-out-container').toggleClass('iam-ninja');
+				$('.iam-caret').toggleClass('fa-caret-right');
+				$('.iam-caret').toggleClass('fa-caret-down');
+			});
+		};
+
+		var canMakeReservation = function canMakeReservation(desired_appointment, dateOf) {
+			var equip_and_business_schedule = selected_equip_schedule.slice(0);
+
+			var dayOfWeek = moment(dateOf).format('ddd').toLowerCase();
+
+			for (var key in checkoutBusinessHours) {
+
+				var day = checkoutBusinessHours[key];
+
+				if (key == dayOfWeek) {
+					//add business hours event to event array
+					equip_and_business_schedule.push({
+						start: dateOf + ' 00:00:00',
+						end: dateOf + ' ' + moment(day.start, 'hh:mm:a').format('HH:mm:00'),
+						businessHours: true });
+					equip_and_business_schedule.push({
+						start: dateOf + ' ' + moment(day.end, 'hh:mm:a').format('HH:mm:00'),
+						end: dateOf + ' 24:00:00',
+						businessHours: true });
+				}
+			}
+
+			var warnOutsideOfHours = false;
+
+			for (var i = 0; i < equip_and_business_schedule.length; i++) {
+				var obj = equip_and_business_schedule[i];
+
+				//cache conditions
+				/*
+    >[desired]
+    		>[event]
+    	*/
+				var check1 = moment(desired_appointment.start).isBefore(obj.start);
+				/*
+    >[desired]
+    		[event]<
+    	*/
+				var check2 = moment(desired_appointment.start).isBefore(obj.end);
+				/*
+    [desired]<
+    		   >[event]
+    	*/
+				var check3 = moment(desired_appointment.end).isBefore(obj.start);
+				/*
+    [desired]<
+    		[event]<
+    	*/
+				var check4 = moment(desired_appointment.end).isBefore(obj.end);
+				//checking for event intersection, all must be the same value true or false
+				if (
+				/*
+    		  [desired]
+    	[event]
+    */
+				(moment(desired_appointment.start).isSame(obj.end) && check1 == check3 && check3 == check4) == false &&
+				/*
+    	[desired]
+    			[event]
+    */
+				(moment(desired_appointment.end).isSame(obj.start) && check1 == check2 && check2 == check4) == false && (check1 == check2 && check2 == check3 && check3 == check4) == false) {
+					if (obj.hasOwnProperty('businessHours') && !warnOutsideOfHours) {
+						warnOutsideOfHours = true;
+						alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+					} else {
+						alert('Your reservation interferes with another. Please double check the calendar for today and refresh the page if necessary.');
+						return false;
+					}
+				}
+			}
+			return true;
+		};
+
+		var reserveNewEquipmentAuthCallback = function reserveNewEquipmentAuthCallback(username) {
+			if ($('.iam-datepicker').val() == '' || $('.iam-from-timepicker').val() == '' || $('.iam-to-timepicker').val() == '') {
+				alert('Please select a value for date, start time, end time.');
+				return false;
+			}
+			if (comparingSchedules) {
+				alert('Please wait.');
+				return false;
+			}
+			var desired_appointment = { start: $('.iam-datepicker').val() + " " + $('.iam-from-timepicker').val() + ':00', end: $('.iam-datepicker').val() + " " + $('.iam-to-timepicker').val() + ':00', user: username };
+			comparingSchedules = true;
+			$('.iam-popup').remove();
+			$.ajax({
+				url: lastSource + '&get_irregular_hours=y',
+				type: 'GET',
+				success: function success(data) {
+					//handle as raw json since this is normally used for fullcal
+					selected_equip_schedule = JSON.parse(data);
+					if (canMakeReservation(desired_appointment, $('.iam-datepicker').val())) {
+						/*if (moment($('.iam-datepicker').val()).isBefore(moment())) {
+      	alert('The reservation cannot start in the past.');
+      	comparingSchedules = false;
+      	return;
+      }*/
+						$.ajax({
+							url: ajaxurl,
+							type: 'POST',
+							data: { action: 'submit_reservation', equipment: selected_equip_name, events: [desired_appointment], room: 0 },
+							success: function success(data) {
+								(0, _serverresponse.handleServerResponse)(data);
+								comparingSchedules = false;
+								$('.iam-cal').fullCalendar('removeEventSource', lastSource);
+								$('.iam-cal').fullCalendar('addEventSource', lastSource);
+								alert('success');
+							},
+							error: function error(data) {
+								(0, _serverresponse.handleServerError)(data, new Error());
+							}
+						});
+					}
+					comparingSchedules = false;
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		var lastActivity = Date.now();
+		var refreshPageAttempt = function refreshPageAttempt(argument) {
+			if (Date.now() - lastActivity > 120000 && $('.iam-popup').length < 1) {
+				window.location.reload();
+			}
+		};
+
+		var initCheckout = function initCheckout() {
+			var date_picker, from_picker, to_picker;
+			initCheckinListeners();
+			initCheckoutListeners();
+			setupEquipmentSchedule();
+
+			$('.iam-checkout-refresh').click(function (event) {
+				window.location.reload();
+			});
+
+			$('body *').click(function (event) {
+				lastActivity = Date.now();
+			});
+
+			setInterval(function () {
+				refreshPageAttempt();
+			}, 120000);
+
+			$('.logo').attr('href', '');
+			$('.entry-title').remove();
+			$('.menu').empty();
+			$('.menu').append('<li class="menu-item menu-item-type-post_type menu-item-object-page iam-checkout-area-tab"><a>Checkout</a></li><li class="menu-item menu-item-type-post_type menu-item-object-page iam-equipment-schedule-tab"><a>Equipment Schedule</a></li>');
+			$('.iam-equipment-schedule-tab').click(function (event) {
+				$('.iam-popup').remove();
+				$('.iam-equipment-schedule').removeClass('iam-ninja');
+				$('.iam-checkout-area').addClass('iam-ninja');
+				$('.iam-cal').fullCalendar('today');
+				$('.iam-reserve-new-equipment').off();
+				$('.iam-reserve-new-equipment').click(function (event) {
+					makeAuthPopup(reserveNewEquipmentAuthCallback);
+				});
+			});
+			$('.iam-checkout-area-tab').click(function (event) {
+				$('.iam-equipment-schedule').addClass('iam-ninja');
+				$('.iam-checkout-area').removeClass('iam-ninja');
+			});
+			initOldReservationsListener();
+		};
+
+		var updateForCheckoutDropDown = function updateForCheckoutDropDown() {
+			$('.iam-mats-row').each(function (index, el) {
+				selectedMat = $(this).find('.iam-checkout-possible-mats option:selected').val();
+				var un = $(this).children('span').children('.iam-checkout-unit-name');
+				var ppu = $(this).children('span').children('.iam-checkout-price-per-unit');
+				var d = $('.iam-checkout-discount');
+				var bp = $(this).children('label').children('.iam-checkout-base-price');
+
+				un.empty();
+				un.text(checkout_mats[selectedMat]['unit_name']);
+				ppu.empty();
+				ppu.text(checkout_mats[selectedMat]['price_per_unit']);
+				d.empty();
+				d.text(currentDiscount * 100 + '% ' + currentAccountType + ' discount');
+				bp.empty();
+				bp.text((checkout_mats[selectedMat]['base_price'] - checkout_mats[selectedMat]['base_price'] * currentDiscount).toFixed(2));
+			});
+		};
+		var initCheckoutDropDownListener = function initCheckoutDropDownListener() {
+			$('.iam-checkout-possible-mats').change(function (event) {
+				$('.iam-checkout-amount').keyup();
+				updateForCheckoutDropDown();
+			});
+		};
+
+		var initCheckoutTotalListener = function initCheckoutTotalListener() {
+			$('.iam-checkout-amount').off();
+			$('.iam-checkout-amount').keyup(function (event) {
+				if ($(this).val().length > 0 && !$.isNumeric($(this).val())) {
+					$(this).val($(this).val().substring(0, $(this).val().length - 2));
+					return;
+				}
+				checkoutAmount = $(this).val();
+				var thisMat = $(this).parent().find('.iam-checkout-possible-mats option:selected').val();
+				checkoutTotal = checkoutAmount * checkout_mats[thisMat]['price_per_unit'];
+				if (checkoutTotal < checkout_mats[thisMat]['base_price']) {
+					checkoutTotal = checkout_mats[thisMat]['base_price'];
+				}
+				checkoutTotal = checkoutTotal - checkoutTotal * currentDiscount;
+				$(this).next('span').children('.iam-checkout-total').text(checkoutTotal.toFixed(2));
+			});
+		};
+		var initCheckinListeners = function initCheckinListeners() {
+			$('.iam-check-in-button').off();
+			$('.iam-check-in-button').click(function (event) {
+				var that = this;
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'update_appointment', nid: $(that).data('nid'), status: 1 },
+					dataType: 'html',
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						$(that).addClass('iam-check-out-button');
+						$(that).removeClass('iam-check-in-button');
+						$('.iam-check-out-button').off();
+						initCheckoutListeners();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var addDeleteMatRowListeners = function addDeleteMatRowListeners() {
+			$('.iam-checkout-add-mat').click(function (event) {
+				if (cachedMatsRow == null) return;
+				$('.iam-mats-row').eq(-1).after(cachedMatsRow);
+				initCheckoutTotalListener();
+				initCheckoutDropDownListener();
+				updateForCheckoutDropDown();
+				(0, _textfieldlisteners.numbersOnlyListener)($('.iam-checkout-amount'));
+			});
+
+			$('.iam-checkout-del-mat').click(function (event) {
+				if ($('.iam-mats-row').length == 1) return;
+				$('.iam-mats-row').eq(-1).remove();
+			});
+		};
+
+		var cachedMatsRow = null;
+		var checkoutAuthenticateCallback = function checkoutAuthenticateCallback(username, data) {
+			var accountType = data;
+			currentAccountType = accountType.account_type;
+			currentDiscount = accountType.discount / 100;
+			$('.iam-popup').remove();
+			var thisnid = $(currentCheckout).data('nid');
+			var checkoutRow = $(currentCheckout).parent().parent();
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'get_checkout_popup', nid: thisnid },
+				success: function success(data) {
+					data = (0, _serverresponse.handleServerResponse)(data);
+					checkout_mats = JSON.parse(data['mats']);
+					$('body').append(data['html']);
+					if (cachedMatsRow == null) {
+						cachedMatsRow = $('<div>').append($('.iam-mats-row').clone()).html();
+					}
+					addDeleteMatRowListeners();
+					balance = $('.iam-checkout-bal').text();
+					checkoutNid = thisnid;
+					initClosePopupListener();
+					initCheckoutTotalListener();
+					initCheckoutDropDownListener();
+					initCheckoutSubmitListener();
+					updateForCheckoutDropDown();
+					(0, _textfieldlisteners.numbersOnlyListener)($('.iam-checkout-amount'));
+					$('.iam-checkout-discount');
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		var makeAuthPopup = function makeAuthPopup(callback, request, predefinedUser) {
+			var userfield = typeof predefinedUser === 'undefined' ? '<input type="text" placeholder="username" class="iam-username">' : '<input type="text" placeholder="username" class="iam-username" value="' + predefinedUser + '" disabled>';
+			request = typeof request === 'undefined' ? '' : request;
+			$('body').append('<div class="iam-popup" style="width:150px;left:30%;"><div class="iam-popup-header">Login<i style="float:right;" class="fa fa-close fa-3"></i></div><div class="iam-popup-body"><p class="iam-popup-message" style="color:red;"></p>' + userfield + '<br /><input type="password" class="iam-password" placeholder="password" style="margin-bottom:40px;"><input type="submit" class="iam-popup-submit iam-autheticate-submit"></div></div>');
+			initClosePopupListener();
+			initAuthenticationListeners(callback, request);
+			if (typeof predefinedUser === 'undefined') {
+				$('.iam-username').focus();
+			} else {
+				$('.iam-password').focus();
+			}
+		};
+
+		var initAuthenticationListeners = function initAuthenticationListeners(callback, req) {
+			$('.iam-autheticate-submit').off();
+			$('.iam-autheticate-submit').click(function (event) {
+				var user = $('.iam-username').val();
+				if ((0, _utils.isEmail)(user)) {
+					alert('Please enter your username, not email.');
+					return;
+				}
+				$.ajax({
+					url: ajaxurl,
+					type: 'GET',
+					data: { action: 'public_login', user: $('.iam-username').val(), password: $('.iam-password').val(), request: req },
+					success: function success(data) {
+						data = (0, _serverresponse.handleServerResponse)(data);
+						callback($('.iam-username').val(), data);
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+		var initCheckoutListeners = function initCheckoutListeners() {
+			$('.iam-check-out-button').off();
+			$('.iam-check-out-button').click(function (event) {
+				currentCheckout = this;
+				var currentCheckoutUser = $(this).parent().parent().children('.iam-checkout-username').text();
+				$('body').addClass('iam-no-select');
+				makeAuthPopup(checkoutAuthenticateCallback, 'account_type', currentCheckoutUser);
+			});
+		};
+		var initClosePopupListener = function initClosePopupListener() {
+			$('.fa-close').click(function (event) {
+				$('.iam-popup').remove();
+				if ($('.iam-checkout').length > 0) {
+					$('body').removeClass('iam-no-select');
+				}
+			});
+		};
+		var initCheckoutSubmitListener = function initCheckoutSubmitListener() {
+			$('.iam-checkout-submit').click(function (event) {
+				if ($('.iam-checkout-amount').val().length < 1) {
+					alert("Please enter an amount.");
+					return;
+				}
+				if (balance - parseFloat($('.iam-checkout-total').text()) < 0) {
+					alert("Insufficient account funds.");
+					return;
+				}
+				if (!confirm("Are you sure all the information is correct?")) return;
+				var checkoutSubmitAmount = 0;
+				var matToSend = {};
+				var multipleMats = false;
+				if ($('.iam-mats-row').length > 1) {
+					multipleMats = true;
+
+					$.each($('.iam-checkout-total'), function (index, val) {
+						checkoutSubmitAmount -= parseFloat($(this).text());
+					});
+
+					matToSend = [];
+					checkoutAmount = [];
+
+					$.each($('.iam-mats-row'), function (index, val) {
+
+						matToSend.push({ 'name': $(this).find('.iam-checkout-possible-mats option:selected').val(),
+							'unit_name': $(this).children('span').children('.iam-checkout-unit-name').eq(0).text(),
+							'price_per_unit': $(this).children('span').children('.iam-checkout-price-per-unit').text(),
+							'base_price': $(this).children('label').children('.iam-checkout-base-price').text() });
+						checkoutAmount.push($(this).find('.iam-checkout-amount').val());
+					});
+				} else {
+					checkoutSubmitAmount = -checkoutTotal;
+					matToSend = { 'name': selectedMat, 'unit_name': checkout_mats[selectedMat]['unit_name'], 'price_per_unit': checkout_mats[selectedMat]['price_per_unit'], 'base_price': checkout_mats[selectedMat]['base_price'] };
+				}
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { 'action': 'checkout_submit', 'nid': checkoutNid, 'total': checkoutSubmitAmount, 'mat': matToSend, 'amount': checkoutAmount, 'multiple_mats': multipleMats },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						$('body').removeClass('iam-no-select');
+						$('.iam-popup').remove();
+						$(checkoutRow).remove();
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+		var setupEquipmentSchedule = function setupEquipmentSchedule() {
+			//init calendar
+			selected_equip_name = $('.iam-equipment-schedule-list li').eq(0).text().replace(' ', '_');
+			$('.iam-equipment-schedule-list li').eq(0).addClass('currently-selected');
+			$('.iam-to-reserve').html($('.iam-equipment-schedule-list li').eq(0).text());
+			$('.iam-equipment-schedule-list li').click(function (event) {
+				$('.iam-equipment-schedule-list li').removeClass('currently-selected');
+				$(this).addClass('currently-selected');
+				selected_equip_name = $(this).text().replace(' ', '_');
+				$('.iam-to-reserve').html($(this).text());
+				var newSource = ajaxurl + "?action=get_equipment_calendar&name=" + selected_equip_name;
+				$('.iam-cal').fullCalendar('removeEventSource', lastSource);
+				$('.iam-cal').fullCalendar('addEventSource', newSource);
+				lastSource = newSource;
+			});
+			var wknd = false;
+			var d = moment().day();
+			if (d == 0 || d == 6) wknd = true;
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'get_business_hours', equip_name: selected_equip_name },
+				success: function success(data) {
+					data = (0, _serverresponse.handleServerResponse)(data);
+					checkoutBusinessHours = JSON.parse(data);
+					var businessHoursConverted = (0, _cal.convertBusinessHours)(data);
+					lastSource = ajaxurl + "?action=get_equipment_calendar&name=" + selected_equip_name;
+					$('.iam-cal').fullCalendar({
+						header: {
+							left: 'prev,next today',
+							right: 'title'
+						},
+						allDaySlot: false,
+						eventOverlap: false,
+						weekends: wknd,
+						eventTextColor: '#ffffff',
+						height: 500,
+						forceEventDuration: true,
+						defaultView: 'agendaDay',
+						editable: false, //new events will be made editable else where
+						businessHours: businessHoursConverted,
+						eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + selected_equip_name }, { url: ajaxurl + "?action=get_irregular_hours_calendar&equip_name=" + selected_equip_name,
+							color: '#f13d39' }]
+
+					});
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		//login functions
+
+		var initDiscoverAvailabilityListener = function initDiscoverAvailabilityListener() {
+			$('.iam-discover-availability-button').off();
+			$('.iam-discover-availability-button').click(function (event) {
+				//init popup
+
+				$('body').append(res_form);
+				(0, _uifunc.initPopupXListener)();
+				var equip_name = $('.iam-discover-data').data('name');
+				var original_name = equip_name;
+				$('.iam-res-popup-header').append(equip_name);
+				equip_name = equip_name.replace(/ /g, '_');
+				var event_data = [];
+
+				current_root_tag = $('.iam-discover-data').data('equiproot').replace(' ', '_').toLowerCase();
+				var wknd = false;
+				var d = moment().day();
+				if (d == 0 || d == 6) wknd = true;
+				if (facility_info[current_root_tag]['schedule_type'] == 'Rental') {
+					$('.iam-facility-info').html('<h1>' + $(this).data('equiproot') + ' Hours</h1><p>' + facility_info[current_root_tag]['rental_hours_description']) + '</p>';
+
+					$('.iam-res-cal').fullCalendar({
+						header: {
+							left: 'prev,next today',
+							center: 'title',
+							right: 'month'
+						},
+						droppable: true,
+						eventOverlap: false,
+						allDaySlot: true,
+						weekends: wknd,
+						height: 500,
+						forceEventDuration: true,
+						defaultView: 'month',
+						allDay: true,
+						defaultAllDayEventDuration: { days: facility_info[current_root_tag]['rental_period'] },
+						editable: false, //new events will be made editable else where
+						eventLimit: true, // allow "more" link when too many events
+						events: ajaxurl + "?action=get_equipment_calendar&name=" + equip_name
+					});
+				} else if (facility_info[current_root_tag]['schedule_type'] == 'Appointment') {
+
+					var businessHoursConverted = (0, _cal.convertBusinessHours)(facility_info[current_root_tag]['appointment_business_hours']);
+					$('.iam-res-cal').fullCalendar({
+						header: {
+							left: 'prev,next today',
+							center: 'title',
+							right: 'agendaWeek,agendaDay'
+						},
+						droppable: true,
+						allDaySlot: false,
+						eventOverlap: false,
+						businessHours: businessHoursConverted,
+						weekends: wknd,
+						height: 500,
+						forceEventDuration: true,
+						defaultView: 'agendaWeek',
+						editable: false, //new events will be made editable else where
+						eventLimit: true, // allow "more" link when too many events
+						eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + equip_name }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + current_root_tag,
+							color: '#f13d39' }]
+					});
+				} else if (facility_info[current_root_tag]['schedule_type'] == 'Approval') {
+					$.ajax({
+						url: ajaxurl,
+						type: 'GET',
+						data: { action: 'get_approval_hours', name: original_name },
+						success: function success(data) {
+							var businessHoursConverted = JSON.parse(data);
+							if (businessHoursConverted == null) {
+								businessHoursConverted = [];
+							}
+							$('.iam-res-cal').fullCalendar({
+								header: {
+									left: 'prev,next today',
+									center: 'title',
+									right: 'agendaWeek,agendaDay'
+								},
+								droppable: true,
+								allDaySlot: false,
+								eventOverlap: false,
+								businessHours: businessHoursConverted,
+								weekends: wknd,
+								height: 500,
+								forceEventDuration: true,
+								defaultView: 'agendaWeek',
+								editable: false, //new events will be made editable else where
+								eventLimit: true, // allow "more" link when too many events
+								eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + equip_name }, { url: ajaxurl + "?action=get_equipment_calendar&rstatus=0&name=" + equip_name,
+									color: '#a5a5a5' }]
+							});
+						},
+						error: function error(data) {
+							(0, _serverresponse.handleServerError)(data, new Error());
+						}
+					});
+				}
+				//listeners
+			});
+		};
+
+		var discoverEquipment = [];
+
+		var initDiscoverListListener = function initDiscoverListListener() {
+			$('.iam-discover-list li').click(function (event) {
+				$('.iam-discover-display').empty();
+				var equipment = discoverEquipment[$(this).data('equipment')];
+				if (equipment['Description'] == '') equipment['Description'] = 'N/A';
+				if (equipment['Pricing_Description'] == '') equipment['Pricing_Description'] = 'N/A';
+				if (equipment['Manufacturer_Info'] == '') equipment['Manufacturer_Info'] = 'N/A';
+				if (equipment['Manufacturer_Info'].indexOf('http') != -1) equipment['Manufacturer_Info'] = '<a href="' + equipment['Manufacturer_Info'] + '">' + equipment['Manufacturer_Info'] + '</a>';
+				$('.iam-discover-display').html('<input type="hidden" class="iam-discover-data" data-name="' + (0, _utils.escapeHtml)(equipment['Name']) + '" data-equiproot="' + (0, _utils.escapeHtml)(equipment['Root_Tag']) + '"><img style="height:120px;" src="' + equipment['Photo'] + '" alt="' + equipment['Name'] + '" /><p><div class="iam-secondary-button iam-discover-availability-button">View Availability</div><br/><br/><b>Item Name:</b> ' + equipment['Name'] + '</p><p><b>Description:</b> ' + equipment['Description'] + '</p><p><b>Pricing Description:</b> ' + equipment['Pricing_Description'] + '</p><p><b>Manufacturer Info:</b> ' + equipment['Manufacturer_Info'] + '</p>');
+				initDiscoverAvailabilityListener();
+			});
+		};
+
+		var cachedDiscoverData = {};
+
+		var buildDiscoverBlock = function buildDiscoverBlock(data) {
+			discoverEquipment = data;
+			var list = '<div class="iam-discover-list-container"><ul class="iam-discover-list">';
+			for (var i = 0; i < data.length; i++) {
+				if (data[i] == null) continue;
+				list += '<li data-equipment="' + i + '">' + data[i]['Name'] + '</li>';
+			}
+			list += '</ul></div><div class="iam-discover-display"></div>';
+			$('.iam-discover-block').empty();
+			$('.iam-discover-block').append(list);
+			initDiscoverListListener();
+			$('.iam-discover-list').children('li').eq(0).click();
+		};
+
+		var makeDiscoverBlock = function makeDiscoverBlock(tag) {
+			if (typeof cachedDiscoverData[tag] != 'undefined') {
+				buildDiscoverBlock(cachedDiscoverData[tag]);
+				return;
+			}
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'get_equipment_for_tag', 'tag': tag },
+				success: function success(data) {
+					data = JSON.parse((0, _serverresponse.handleServerResponse)(data));
+					cachedDiscoverData[tag] = data;
+					buildDiscoverBlock(data);
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		//perpage setup
+
+		//TODO: mixed up reservation with reference a while ago, change later
+		if ($('#iam-res').length > 0) {
+			//reservation page
+
+			var resPage = new _reservationpublic2.default();
+		} else if ($('#signupform').length > 0) {
+			removeNav();
+			(0, _textfieldlisteners.alphaOnlyListener)($('#first-name'));
+			(0, _textfieldlisteners.alphaOnlyListener)($('#last-name'));
+			(0, _textfieldlisteners.emailOnlyListener)($('#email'));
+			(0, _textfieldlisteners.emailOnlyListener)($('#email-confirm'));
+			(0, _textfieldlisteners.alphaNumericOnlyListener)($('#reg-key'));
+			$('#register-submit').click(function (event) {
+				if ($('#email').val() == '' || $('#first-name').val() == '' || $('#last-name').val() == '' || $('#password').val() == '') {
+					alert('Please fill out all fields');
+					return;
+				}
+				if ($('#account_type').val() == 'Select a Value' || $('#account_type').val() == null) {
+					alert('Please select an account type.');
+					return;
+				}
+				if (!$('#last-name').val().match(/^[a-zA-Z0-9.@]*$/) || !$('#first-name').val().match(/^[a-zA-Z0-9.@]*$/)) {
+					alert('Characters A-Z only for first and last names.');
+					return false;
+				}
+				if ($('#email').val() != $('#email-confirm').val()) {
+					alert('Emails do not match!');
+					return;
+				}
+				if ($('#password').val() != $('#password-confirm').val()) {
+					alert('Passwords do not match!');
+					return;
+				}
+				if (!(0, _utils.isEmail)($('#email').val())) {
+					alert('Please enter a valid email!');
+					return;
+				}
+				if ($('#password').val().length < 8 || !(/[0-9]/.test($('#password').val()) && /[a-z]/.test($('#password').val()) && /[A-Z]/.test($('#password').val()))) {
+					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
+					return;
+				}
+
+				var registerArgs = { action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'school-id': $('#school-id').val(), phonenum: (0, _utils.getPhoneNumberFromPage)(), 'password': $('#password').val(), 'key': $('#reg-key').val(), captcha: grecaptcha.getResponse() };
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: registerArgs,
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+						grecaptcha.reset();
+					}
+				});
+			});
+		} else if ($('.login-form-container').length > 0) {
+			removeNav();
+			var res_form, current_root_tag;
+			var facilities = $('.iam-cal-data').data('names').split(',');
+			var facility_info = {};
+			for (var i = 0; i < facilities.length; i++) {
+				facility_info[facilities[i]] = $('.iam-cal-data').data(facilities[i]);
+			}
+			$('.iam-cal-data').remove();
+			//init reservation popup
+			res_form = '<div class="iam-res-popup"><div class="iam-res-popup-header"><div class="iam-x fa fa-close fa-4"></div></div><div class="iam-res-popup-body"><div class="iam-res-cal" style="float: none; width:100%;"></div></div></div>';
+			$('.menu').append('<li class="menu-item menu-item-type-post_type menu-item-object-page iam-login-tab"><a>Discover</a></li>');
+			$('.iam-login-tab').click(function (event) {
+				$('.login-form-container').toggleClass('iam-ninja');
+				$('.iam-discover-container').toggleClass('iam-ninja');
+				if ($('.iam-discover-container').hasClass('iam-ninja')) {
+					$('.iam-login-tab a').text('Discover');
+					$('#main').removeClass('iam-no-pad-top');
+				} else {
+					$('.iam-login-tab a').text('< Back to Login');
+					$('#main').addClass('iam-no-pad-top');
+				}
+				if ($('.iam-discover-list').length < 1) {
+					makeDiscoverBlock('3D Printer');
+				}
+			});
+			$('.iam-discover-link').click(function (event) {
+				$('.iam-login-tab').click();
+			});
+			$('.iam-discover-button').click(function (event) {
+				makeDiscoverBlock($(this).text());
+			});
+			if ((0, _cookie.readCookie)('iamLoginCookie') != null) {
+				loginLockout();
+			}
+			$('.slick-prev').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
+			$('.slick-next').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
+			(0, _textfieldlisteners.alphaNumericOnlyListener)($('#user_login'));
+
+			$('#iam-slide-show').slick({
+				autoplay: true,
+				dots: true,
+				arrows: false
+			});
+			$('input[type=submit]').click(function (event) {
+				event.preventDefault();
+				if (!$('#user_login').val().match(/^[a-zA-Z0-9.]*$/)) {
+					alert('Characters A-Z 0-9 only please.');
+					return false;
+				}
+				if ($('#user_login').val().length < 1 || $('#user_password').val().length < 1) {
+					alert('Please fill out both email and password to login.');
+					return false;
+				}
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'iam_login', user: $('#user_login').val(), password: $('#user_password').val(), captcha: grecaptcha.getResponse(), first: firstLoginAttempt },
+					success: function success(data) {
+						firstLoginAttempt = 0;
+						(0, _serverresponse.handleServerResponse)(data);
+					},
+					error: function error(data) {
+						if (firstLoginAttempt) {
+							$('.iam-captcha-container').removeClass('iam-ninja');
+						}
+						if (data.status == 401) {
+
+							var lockTime = 60000; //1000*Math.pow(2,5+data.statusText);
+							(0, _cookie.createCookie)('iamLoginCookie', lockTime, lockTime, true);
+							loginLockout();
+							return;
+						}
+						firstLoginAttempt = 0;
+						(0, _serverresponse.handleServerError)(data, new Error());
+						grecaptcha.reset();
+					}
+				});
+			});
+		} else if ($('.iam-checkout').length > 0) {
+			var lastUpdateCookie = (0, _cookie.readCookie)(IPAD_LOCK_COOKIE);
+			(0, _textfieldlisteners.numbersOnlyListener)($('.iam-checkout-lock'));
+			removeNav();
+			if (lastUpdateCookie >= $('.iam-data').data('timestamp')) {
+				$.ajax({
+					url: ajaxurl,
+					type: 'GET',
+					data: { action: 'checkout_content' },
+					success: function success(data) {
+						data = (0, _serverresponse.handleServerResponse)(data);
+						$('.iam-checkout').empty();
+						$('.iam-checkout').append(data);
+						initCheckout();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			}
+			$('.iam-checkout-lock-submit').click(function (event) {
+				$.ajax({
+					url: ajaxurl,
+					type: 'GET',
+					data: { action: 'checkout_unlock', code: $('.iam-checkout-lock').val() },
+					success: function success(data) {
+						console.log('some thing');
+						data = (0, _serverresponse.handleServerResponse)(data);
+						(0, _cookie.createCookie)(IPAD_LOCK_COOKIE, $('.iam-data').data('timestamp'), 365);
+						$.ajax({
+							url: ajaxurl,
+							type: 'GET',
+							data: { action: 'checkout_content' },
+							success: function success(data) {
+								data = (0, _serverresponse.handleServerResponse)(data);
+								$('.iam-checkout').empty();
+								$('.iam-checkout').append(data);
+								initCheckout();
+							},
+							error: function error(data) {
+
+								(0, _serverresponse.handleServerError)(data, new Error());
+							}
+						});
+					},
+					error: function error(data) {
+						console.log('some thing else');
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		} else if ($('.iam-training-container').length > 0) {
+			$('input[type=submit]').click(function (event) {
+				var emailContent = $('.iam-training-comment').val();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'training_email', message: $('.iam-training-comment').val() },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						alert('Your message was sent!');
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		} else if ($('.login-action-lostpassword').length > 0) {
+			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
+			$('#lostpasswordform input[type=hidden]').val('/');
+			$('p#nav a').eq(0).attr('href', p + window.location.hostname);
+			$('p#nav a').eq(1).attr('href', p + window.location.hostname + '/register');
+		} else if ($('.login-action-register').length > 0) {
+			$('body').empty();
+			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
+			window.location.href = p + window.location.hostname;
+		} else if ($('.login-action-rp').length > 0) {
+			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
+			$('p#nav a').eq(0).attr('href', p + window.location.hostname);
+			$('p#nav a').eq(1).attr('href', p + window.location.hostname + '/register');
+			$('input[type=submit]').click(function (event) {
+				var pw = $('#pass1-text').val();
+
+				if (pw.length < 8 || !(/[0-9]/.test(pw) && /[a-z]/.test(pw) && /[A-Z]/.test(pw))) {
+					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
+					return false;
+				}
+			});
+		} else if ($('.login-action-resetpass').length > 0) {
+			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
+
+			$('a').attr('href', p + window.location.hostname);
+		} else if ($('.error404').length > 0) {
+			$('.entry-content').empty();
+			$('.entry-content').html('<p>There\'s nothing here.</p>');
+		} else if ($('#iam-user-account').length > 0) {
+			$('.iam-user-info-form .iam-submit').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'user_update_account_info',
+						link: $('.iam-user-info-form').data('link'),
+						first_name: $('#first-name').val(),
+						last_name: $('#last-name').val(),
+						email: $('#email').val(),
+						phonenum: (0, _utils.getPhoneNumberFromPage)(),
+						school_id: $('#school-id').val()
+					},
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						$('.iam-user-info-form .iam-submit').blur();
+						(0, _userfeedback.submissionEnd)();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		}
+		(0, _debug.debugWarn)();
+		(0, _debug.publicDebug)();
+	});
+})(jQuery);
+
+/***/ }),
+/* 126 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.debugWarn = exports.publicDebug = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function registerDebug() {
+  if ((0, _jquery2.default)('#signupform').length > 0) {
+    (0, _jquery2.default)('body').dblclick(function (event) {
+      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
+      (0, _jquery2.default)('#email').val(em);
+      (0, _jquery2.default)('#email-confirm').val(em);
+      (0, _jquery2.default)('#password').val('Asdfasdf1');
+      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
+      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
+      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
+      (0, _jquery2.default)('#phone-num-1').val('111');
+      (0, _jquery2.default)('#phone-num-2').val('222');
+      (0, _jquery2.default)('#phone-num-3').val('3333');
+      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
+    });
+  }
+}
+
+function inDebugMode() {
+  if (window.location.href.indexOf('imrcaccounts') != -1) return false;
+  return true;
+}
+
+function debugWarn() {
+  if (!inDebugMode()) return;
+  console.warn('debug mode active');
+}
+
+function publicDebug() {
+  if (!inDebugMode()) return;
+  registerDebug();
+}
+
+exports.publicDebug = publicDebug;
+exports.debugWarn = debugWarn;
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -26826,7 +28040,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 125 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26835,286 +28049,42 @@ exports.numbersOnlyListener = numbersOnlyListener;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(127);
-
-__webpack_require__(142);
-
-__webpack_require__(150);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Cal = function () {
-  function Cal(page, facing) {
-    _classCallCheck(this, Cal);
-
-    this.page = page;
-    this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
-    this.setCalArgs();
-    this.initCalFor(facing);
+var createCookie = function createCookie(name, value, days, readAsMS) {
+  var expires = "";
+  if (days) {
+    var date = new Date();
+    if (readAsMS == true) {
+      date.setTime(date.getTime() + days);
+    } else {
+      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    }
+    var _expires = "; expires=" + date.toGMTString();
   }
+  document.cookie = name + "=" + value + expires + "; path=/";
+};
 
-  _createClass(Cal, [{
-    key: 'initCalFor',
-    value: function initCalFor(facing) {
-      if (facing == 'public') {
-        this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
-        this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-        this.initDraggable();
-        this.initPubResCal(this.page.getFacilityInfo('type'));
-      } else {}
-    }
-  }, {
-    key: 'eventFallsOnWeekend',
-    value: function eventFallsOnWeekend(e) {
-      var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-      var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+var readCookie = function readCookie(name) {
+  var nameEQ = name + "=";
+  var ca = document.cookie.split(';');
+  for (var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1, c.length);
+    }if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+};
 
-      //for now it ends at midnight of the following day
-      return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-    }
-  }, {
-    key: 'eventIsLongerThan',
-    value: function eventIsLongerThan(e, days) {
-      var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-      var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-      return end.diff(start, 'days') > days;
-    }
-  }, {
-    key: 'convertBusinessHours',
-    value: function convertBusinessHours(jsonString) {
-      var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
-      var converted = [];
-      var counter = 1;
-      for (var key in json) {
-        var day = _jquery2.default.extend({}, json[key]);
-        if (day.start != '') {
-          day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
-          day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
-          converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
-        } else {
-          converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
-        }
-        counter++;
-      }
-      return converted;
-    }
-  }, {
-    key: 'preventPastReservation',
-    value: function preventPastReservation(e) {
+var eraseCookie = function eraseCookie(name) {
+  createCookie(name, "", -1);
+};
 
-      var targetTimeStart = null;
-
-      if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-
-      if (targetTimeStart.isBefore(moment())) {
-        alert('You cannot make reservations in the past.');
-        return false;
-      }
-      return true;
-    }
-  }, {
-    key: 'warnIfOutOfBounds',
-    value: function warnIfOutOfBounds(e) {
-      var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
-
-      var thisStart = moment(thisDay.start, 'HH:mm');
-      var thisEnd = moment(thisDay.end, 'HH:mm');
-
-      var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
-      var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
-
-      if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
-        alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
-      }
-    }
-  }, {
-    key: 'initDraggable',
-    value: function initDraggable() {
-
-      (0, _jquery2.default)('.iam-events .fc-event').each(function () {
-
-        // store data so the calendar knows to render an event upon drop
-        (0, _jquery2.default)(this).data('event', {
-          title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
-          editable: true,
-          eventDurationEditable: true,
-          color: '#4cad57',
-          className: 'iam-new-event'
-        });
-
-        // make the event draggable using jQuery UI
-        (0, _jquery2.default)(this).draggable({
-          zIndex: 999,
-          revert: true, // will cause the event to go back to its
-          revertDuration: 0 //  original position after the drag
-        });
-      });
-    }
-  }, {
-    key: 'initPubResCal',
-    value: function initPubResCal(facilitType) {
-      var facilityNeutralArgs = {
-        editable: false, //new events will be made editable else where
-        eventLimit: true, // allow "more" link when too many events
-        allDay: false,
-        height: 500,
-        forceEventDuration: true,
-        businessHours: this.businessHoursConverted,
-        droppable: true,
-        eventOverlap: false,
-        allDaySlot: false,
-        eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
-          color: '#f13d39' }]
-      };
-
-      var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
-
-      (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
-    }
-  }, {
-    key: 'setCalArgs',
-    value: function setCalArgs() {
-
-      var that = this;
-      this.calArgs = {};
-
-      this.calArgs['appointment'] = {
-        header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'agendaWeek,agendaDay'
-        },
-        defaultTimedEventDuration: '00:30:00',
-        weekends: true,
-        defaultView: 'agendaWeek',
-        eventReceive: function eventReceive(e, d, revert) {
-          if (!preventPastReservation(e)) {
-            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-            return false;
-          }
-          warnIfOutOfBounds(e);
-        },
-        eventDrop: function eventDrop(e, d, revert) {
-          if (!preventPastReservation(e)) {
-            revert();
-            return;
-          }
-          warnIfOutOfBounds(e);
-        },
-        eventResize: function eventResize(e, d, revert) {
-          if (!preventPastReservation(e)) {
-            revert();
-            return;
-          }
-          warnIfOutOfBounds(e);
-        }
-      };
-
-      this.calArgs['appointment'] = {
-        header: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'month'
-        },
-        weekends: false,
-        defaultView: 'month',
-        eventReceive: function eventReceive(e) {
-          if (eventFallsOnWeekend(e)) {
-            alert(that.ERinvalidTimePrompt);
-            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-            return false;
-          }
-        },
-        eventDrop: function eventDrop(e, d, revert) {
-          if (eventFallsOnWeekend(e)) {
-            alert(that.ERinvalidTimePrompt);
-            revert();
-          }
-        },
-        eventResize: function eventResize(e, d, revert) {
-          if (eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
-            alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
-            revert();
-          }
-        },
-        defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
-      };
-    }
-  }]);
-
-  return Cal;
-}();
-
-exports.default = Cal;
+exports.createCookie = createCookie;
+exports.readCookie = readCookie;
+exports.eraseCookie = eraseCookie;
 
 /***/ }),
-/* 126 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.debugWarn = exports.publicDebug = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function registerDebug() {
-  if ((0, _jquery2.default)('#signupform').length > 0) {
-    (0, _jquery2.default)('body').dblclick(function (event) {
-      var em = (0, _utils.rStr)(16) + '@' + (0, _utils.rStr)(16) + '.comdasdadsa';
-      (0, _jquery2.default)('#email').val(em);
-      (0, _jquery2.default)('#email-confirm').val(em);
-      (0, _jquery2.default)('#password').val('Asdfasdf1');
-      (0, _jquery2.default)('#password-confirm').val('Asdfasdf1');
-      (0, _jquery2.default)('#first-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#last-name').val((0, _utils.rStr)(12));
-      (0, _jquery2.default)('#school-id').val((0, _utils.rStr)(16));
-      (0, _jquery2.default)('#phone-num-1').val('111');
-      (0, _jquery2.default)('#phone-num-2').val('222');
-      (0, _jquery2.default)('#phone-num-3').val('3333');
-      (0, _jquery2.default)('#account_type option').eq(1).prop('selected', true);
-    });
-  }
-}
-
-function inDebugMode() {
-  if (window.location.href.indexOf('imrcaccounts') != -1) return false;
-  return true;
-}
-
-function debugWarn() {
-  if (!inDebugMode()) return;
-  console.warn('debug mode active');
-}
-
-function publicDebug() {
-  if (!inDebugMode()) return;
-  registerDebug();
-}
-
-exports.publicDebug = publicDebug;
-exports.debugWarn = debugWarn;
-
-/***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -40696,7 +41666,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -40945,1722 +41915,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 128;
+webpackContext.id = 130;
 
 /***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Mouse 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Mouse
-//>>group: Widgets
-//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
-//>>docs: http://api.jqueryui.com/mouse/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(151), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	var mouseHandled = false;
-	$(document).on("mouseup", function () {
-		mouseHandled = false;
-	});
-
-	return $.widget("ui.mouse", {
-		version: "1.12.1",
-		options: {
-			cancel: "input, textarea, button, select, option",
-			distance: 1,
-			delay: 0
-		},
-		_mouseInit: function _mouseInit() {
-			var that = this;
-
-			this.element.on("mousedown." + this.widgetName, function (event) {
-				return that._mouseDown(event);
-			}).on("click." + this.widgetName, function (event) {
-				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
-					$.removeData(event.target, that.widgetName + ".preventClickEvent");
-					event.stopImmediatePropagation();
-					return false;
-				}
-			});
-
-			this.started = false;
-		},
-
-		// TODO: make sure destroying one instance of mouse doesn't mess with
-		// other instances of mouse
-		_mouseDestroy: function _mouseDestroy() {
-			this.element.off("." + this.widgetName);
-			if (this._mouseMoveDelegate) {
-				this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
-			}
-		},
-
-		_mouseDown: function _mouseDown(event) {
-
-			// don't let more than one widget handle mouseStart
-			if (mouseHandled) {
-				return;
-			}
-
-			this._mouseMoved = false;
-
-			// We may have missed mouseup (out of window)
-			this._mouseStarted && this._mouseUp(event);
-
-			this._mouseDownEvent = event;
-
-			var that = this,
-			    btnIsLeft = event.which === 1,
-
-
-			// event.target.nodeName works around a bug in IE 8 with
-			// disabled inputs (#7620)
-			elIsCancel = typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false;
-			if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
-				return true;
-			}
-
-			this.mouseDelayMet = !this.options.delay;
-			if (!this.mouseDelayMet) {
-				this._mouseDelayTimer = setTimeout(function () {
-					that.mouseDelayMet = true;
-				}, this.options.delay);
-			}
-
-			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
-				this._mouseStarted = this._mouseStart(event) !== false;
-				if (!this._mouseStarted) {
-					event.preventDefault();
-					return true;
-				}
-			}
-
-			// Click event may never have fired (Gecko & Opera)
-			if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
-				$.removeData(event.target, this.widgetName + ".preventClickEvent");
-			}
-
-			// These delegates are required to keep context
-			this._mouseMoveDelegate = function (event) {
-				return that._mouseMove(event);
-			};
-			this._mouseUpDelegate = function (event) {
-				return that._mouseUp(event);
-			};
-
-			this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate);
-
-			event.preventDefault();
-
-			mouseHandled = true;
-			return true;
-		},
-
-		_mouseMove: function _mouseMove(event) {
-
-			// Only check for mouseups outside the document if you've moved inside the document
-			// at least once. This prevents the firing of mouseup in the case of IE<9, which will
-			// fire a mousemove event if content is placed under the cursor. See #7778
-			// Support: IE <9
-			if (this._mouseMoved) {
-
-				// IE mouseup check - mouseup happened when mouse was out of window
-				if ($.ui.ie && (!document.documentMode || document.documentMode < 9) && !event.button) {
-					return this._mouseUp(event);
-
-					// Iframe mouseup check - mouseup occurred in another document
-				} else if (!event.which) {
-
-					// Support: Safari <=8 - 9
-					// Safari sets which to 0 if you press any of the following keys
-					// during a drag (#14461)
-					if (event.originalEvent.altKey || event.originalEvent.ctrlKey || event.originalEvent.metaKey || event.originalEvent.shiftKey) {
-						this.ignoreMissingWhich = true;
-					} else if (!this.ignoreMissingWhich) {
-						return this._mouseUp(event);
-					}
-				}
-			}
-
-			if (event.which || event.button) {
-				this._mouseMoved = true;
-			}
-
-			if (this._mouseStarted) {
-				this._mouseDrag(event);
-				return event.preventDefault();
-			}
-
-			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
-				this._mouseStarted = this._mouseStart(this._mouseDownEvent, event) !== false;
-				this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event);
-			}
-
-			return !this._mouseStarted;
-		},
-
-		_mouseUp: function _mouseUp(event) {
-			this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
-
-			if (this._mouseStarted) {
-				this._mouseStarted = false;
-
-				if (event.target === this._mouseDownEvent.target) {
-					$.data(event.target, this.widgetName + ".preventClickEvent", true);
-				}
-
-				this._mouseStop(event);
-			}
-
-			if (this._mouseDelayTimer) {
-				clearTimeout(this._mouseDelayTimer);
-				delete this._mouseDelayTimer;
-			}
-
-			this.ignoreMissingWhich = false;
-			mouseHandled = false;
-			event.preventDefault();
-		},
-
-		_mouseDistanceMet: function _mouseDistanceMet(event) {
-			return Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance;
-		},
-
-		_mouseDelayMet: function _mouseDelayMet() /* event */{
-			return this.mouseDelayMet;
-		},
-
-		// These are placeholder methods, to be overriden by extending plugin
-		_mouseStart: function _mouseStart() /* event */{},
-		_mouseDrag: function _mouseDrag() /* event */{},
-		_mouseStop: function _mouseStop() /* event */{},
-		_mouseCapture: function _mouseCapture() /* event */{
-			return true;
-		}
-	});
-});
-
-/***/ }),
-/* 130 */,
-/* 131 */,
-/* 132 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	// $.ui.plugin is deprecated. Use $.widget() extensions instead.
-	return $.ui.plugin = {
-		add: function add(module, option, set) {
-			var i,
-			    proto = $.ui[module].prototype;
-			for (i in set) {
-				proto.plugins[i] = proto.plugins[i] || [];
-				proto.plugins[i].push([option, set[i]]);
-			}
-		},
-		call: function call(instance, name, args, allowDisconnected) {
-			var i,
-			    set = instance.plugins[name];
-
-			if (!set) {
-				return;
-			}
-
-			if (!allowDisconnected && (!instance.element[0].parentNode || instance.element[0].parentNode.nodeType === 11)) {
-				return;
-			}
-
-			for (i = 0; i < set.length; i++) {
-				if (instance.options[set[i][0]]) {
-					set[i][1].apply(instance.element, args);
-				}
-			}
-		}
-	};
-});
-
-/***/ }),
-/* 133 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.safeBlur = function (element) {
-
-		// Support: IE9 - 10 only
-		// If the <body> is blurred, IE will switch windows, see #9420
-		if (element && element.nodeName.toLowerCase() !== "body") {
-			$(element).trigger("blur");
-		}
-	};
-});
-
-/***/ }),
-/* 134 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.safeActiveElement = function (document) {
-		var activeElement;
-
-		// Support: IE 9 only
-		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
-		try {
-			activeElement = document.activeElement;
-		} catch (error) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 9 - 11 only
-		// IE may return null instead of an element
-		// Interestingly, this only seems to occur when NOT in an iframe
-		if (!activeElement) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 11 only
-		// IE11 returns a seemingly empty object in some cases when accessing
-		// document.activeElement from an <iframe>
-		if (!activeElement.nodeName) {
-			activeElement = document.body;
-		}
-
-		return activeElement;
-	};
-});
-
-/***/ }),
-/* 135 */,
-/* 136 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(3);
-
-var _debug = __webpack_require__(126);
-
-var _uifunc = __webpack_require__(8);
-
-var _textfieldlisteners = __webpack_require__(124);
-
-var _cookie = __webpack_require__(137);
-
-var _serverresponse = __webpack_require__(5);
-
-var _cal = __webpack_require__(125);
-
-var _userfeedback = __webpack_require__(6);
-
-var _reservationpublic = __webpack_require__(138);
-
-var _reservationpublic2 = _interopRequireDefault(_reservationpublic);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(function ($) {
-
-	$(function () {
-		//constants
-		var IPAD_LOCK_COOKIE = 'iam_ipad_code_last_updated';
-		//global vars
-		var firstLoginAttempt = 1;
-
-		//misc functions
-
-		var loginLockout = function loginLockout() {
-			$('.login-form-container').empty();
-			$('.login-form-container').append('<h2 style="color:red;">Too many login attempts, you have been locked out.</h2><small>Please attempt to recover your password and try later.</small>');
-		};
-
-		var removeNav = function removeNav() {
-			$('.menu li').remove();
-			$('.site-navigation').height(53);
-			$('.entry-title').remove();
-		};
-
-		//reservation management
-
-		// checkout functions
-		var checkout_mats, selected_equip_schedule, selectedMat, checkoutRow, checkoutNid, checkoutTotal, balance, selected_equip_name, lastSource, currentCheckout, currentDiscount, currentAccountType, checkoutAmount, checkoutBusinessHours;
-		var comparingSchedules = false;
-
-		var initOldReservationsListener = function initOldReservationsListener() {
-			$('.iam-not-checked-out-container').toggleClass('iam-ninja');
-			$('.iam-old-reservations').click(function (event) {
-				$('.iam-not-checked-out-container').toggleClass('iam-ninja');
-				$('.iam-caret').toggleClass('fa-caret-right');
-				$('.iam-caret').toggleClass('fa-caret-down');
-			});
-		};
-
-		var canMakeReservation = function canMakeReservation(desired_appointment, dateOf) {
-			var equip_and_business_schedule = selected_equip_schedule.slice(0);
-
-			var dayOfWeek = moment(dateOf).format('ddd').toLowerCase();
-
-			for (var key in checkoutBusinessHours) {
-
-				var day = checkoutBusinessHours[key];
-
-				if (key == dayOfWeek) {
-					//add business hours event to event array
-					equip_and_business_schedule.push({
-						start: dateOf + ' 00:00:00',
-						end: dateOf + ' ' + moment(day.start, 'hh:mm:a').format('HH:mm:00'),
-						businessHours: true });
-					equip_and_business_schedule.push({
-						start: dateOf + ' ' + moment(day.end, 'hh:mm:a').format('HH:mm:00'),
-						end: dateOf + ' 24:00:00',
-						businessHours: true });
-				}
-			}
-
-			var warnOutsideOfHours = false;
-
-			for (var i = 0; i < equip_and_business_schedule.length; i++) {
-				var obj = equip_and_business_schedule[i];
-
-				//cache conditions
-				/*
-    >[desired]
-    		>[event]
-    	*/
-				var check1 = moment(desired_appointment.start).isBefore(obj.start);
-				/*
-    >[desired]
-    		[event]<
-    	*/
-				var check2 = moment(desired_appointment.start).isBefore(obj.end);
-				/*
-    [desired]<
-    		   >[event]
-    	*/
-				var check3 = moment(desired_appointment.end).isBefore(obj.start);
-				/*
-    [desired]<
-    		[event]<
-    	*/
-				var check4 = moment(desired_appointment.end).isBefore(obj.end);
-				//checking for event intersection, all must be the same value true or false
-				if (
-				/*
-    		  [desired]
-    	[event]
-    */
-				(moment(desired_appointment.start).isSame(obj.end) && check1 == check3 && check3 == check4) == false &&
-				/*
-    	[desired]
-    			[event]
-    */
-				(moment(desired_appointment.end).isSame(obj.start) && check1 == check2 && check2 == check4) == false && (check1 == check2 && check2 == check3 && check3 == check4) == false) {
-					if (obj.hasOwnProperty('businessHours') && !warnOutsideOfHours) {
-						warnOutsideOfHours = true;
-						alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
-					} else {
-						alert('Your reservation interferes with another. Please double check the calendar for today and refresh the page if necessary.');
-						return false;
-					}
-				}
-			}
-			return true;
-		};
-
-		var reserveNewEquipmentAuthCallback = function reserveNewEquipmentAuthCallback(username) {
-			if ($('.iam-datepicker').val() == '' || $('.iam-from-timepicker').val() == '' || $('.iam-to-timepicker').val() == '') {
-				alert('Please select a value for date, start time, end time.');
-				return false;
-			}
-			if (comparingSchedules) {
-				alert('Please wait.');
-				return false;
-			}
-			var desired_appointment = { start: $('.iam-datepicker').val() + " " + $('.iam-from-timepicker').val() + ':00', end: $('.iam-datepicker').val() + " " + $('.iam-to-timepicker').val() + ':00', user: username };
-			comparingSchedules = true;
-			$('.iam-popup').remove();
-			$.ajax({
-				url: lastSource + '&get_irregular_hours=y',
-				type: 'GET',
-				success: function success(data) {
-					//handle as raw json since this is normally used for fullcal
-					selected_equip_schedule = JSON.parse(data);
-					if (canMakeReservation(desired_appointment, $('.iam-datepicker').val())) {
-						/*if (moment($('.iam-datepicker').val()).isBefore(moment())) {
-      	alert('The reservation cannot start in the past.');
-      	comparingSchedules = false;
-      	return;
-      }*/
-						$.ajax({
-							url: ajaxurl,
-							type: 'POST',
-							data: { action: 'submit_reservation', equipment: selected_equip_name, events: [desired_appointment], room: 0 },
-							success: function success(data) {
-								(0, _serverresponse.handleServerResponse)(data);
-								comparingSchedules = false;
-								$('.iam-cal').fullCalendar('removeEventSource', lastSource);
-								$('.iam-cal').fullCalendar('addEventSource', lastSource);
-								alert('success');
-							},
-							error: function error(data) {
-								(0, _serverresponse.handleServerError)(data, new Error());
-							}
-						});
-					}
-					comparingSchedules = false;
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		var lastActivity = Date.now();
-		var refreshPageAttempt = function refreshPageAttempt(argument) {
-			if (Date.now() - lastActivity > 120000 && $('.iam-popup').length < 1) {
-				window.location.reload();
-			}
-		};
-
-		var initCheckout = function initCheckout() {
-			var date_picker, from_picker, to_picker;
-			initCheckinListeners();
-			initCheckoutListeners();
-			setupEquipmentSchedule();
-
-			$('.iam-checkout-refresh').click(function (event) {
-				window.location.reload();
-			});
-
-			$('body *').click(function (event) {
-				lastActivity = Date.now();
-			});
-
-			setInterval(function () {
-				refreshPageAttempt();
-			}, 120000);
-
-			$('.logo').attr('href', '');
-			$('.entry-title').remove();
-			$('.menu').empty();
-			$('.menu').append('<li class="menu-item menu-item-type-post_type menu-item-object-page iam-checkout-area-tab"><a>Checkout</a></li><li class="menu-item menu-item-type-post_type menu-item-object-page iam-equipment-schedule-tab"><a>Equipment Schedule</a></li>');
-			$('.iam-equipment-schedule-tab').click(function (event) {
-				$('.iam-popup').remove();
-				$('.iam-equipment-schedule').removeClass('iam-ninja');
-				$('.iam-checkout-area').addClass('iam-ninja');
-				$('.iam-cal').fullCalendar('today');
-				$('.iam-reserve-new-equipment').off();
-				$('.iam-reserve-new-equipment').click(function (event) {
-					makeAuthPopup(reserveNewEquipmentAuthCallback);
-				});
-			});
-			$('.iam-checkout-area-tab').click(function (event) {
-				$('.iam-equipment-schedule').addClass('iam-ninja');
-				$('.iam-checkout-area').removeClass('iam-ninja');
-			});
-			initOldReservationsListener();
-		};
-
-		var updateForCheckoutDropDown = function updateForCheckoutDropDown() {
-			$('.iam-mats-row').each(function (index, el) {
-				selectedMat = $(this).find('.iam-checkout-possible-mats option:selected').val();
-				var un = $(this).children('span').children('.iam-checkout-unit-name');
-				var ppu = $(this).children('span').children('.iam-checkout-price-per-unit');
-				var d = $('.iam-checkout-discount');
-				var bp = $(this).children('label').children('.iam-checkout-base-price');
-
-				un.empty();
-				un.text(checkout_mats[selectedMat]['unit_name']);
-				ppu.empty();
-				ppu.text(checkout_mats[selectedMat]['price_per_unit']);
-				d.empty();
-				d.text(currentDiscount * 100 + '% ' + currentAccountType + ' discount');
-				bp.empty();
-				bp.text((checkout_mats[selectedMat]['base_price'] - checkout_mats[selectedMat]['base_price'] * currentDiscount).toFixed(2));
-			});
-		};
-		var initCheckoutDropDownListener = function initCheckoutDropDownListener() {
-			$('.iam-checkout-possible-mats').change(function (event) {
-				$('.iam-checkout-amount').keyup();
-				updateForCheckoutDropDown();
-			});
-		};
-
-		var initCheckoutTotalListener = function initCheckoutTotalListener() {
-			$('.iam-checkout-amount').off();
-			$('.iam-checkout-amount').keyup(function (event) {
-				if ($(this).val().length > 0 && !$.isNumeric($(this).val())) {
-					$(this).val($(this).val().substring(0, $(this).val().length - 2));
-					return;
-				}
-				checkoutAmount = $(this).val();
-				var thisMat = $(this).parent().find('.iam-checkout-possible-mats option:selected').val();
-				checkoutTotal = checkoutAmount * checkout_mats[thisMat]['price_per_unit'];
-				if (checkoutTotal < checkout_mats[thisMat]['base_price']) {
-					checkoutTotal = checkout_mats[thisMat]['base_price'];
-				}
-				checkoutTotal = checkoutTotal - checkoutTotal * currentDiscount;
-				$(this).next('span').children('.iam-checkout-total').text(checkoutTotal.toFixed(2));
-			});
-		};
-		var initCheckinListeners = function initCheckinListeners() {
-			$('.iam-check-in-button').off();
-			$('.iam-check-in-button').click(function (event) {
-				var that = this;
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'update_appointment', nid: $(that).data('nid'), status: 1 },
-					dataType: 'html',
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						$(that).addClass('iam-check-out-button');
-						$(that).removeClass('iam-check-in-button');
-						$('.iam-check-out-button').off();
-						initCheckoutListeners();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var addDeleteMatRowListeners = function addDeleteMatRowListeners() {
-			$('.iam-checkout-add-mat').click(function (event) {
-				if (cachedMatsRow == null) return;
-				$('.iam-mats-row').eq(-1).after(cachedMatsRow);
-				initCheckoutTotalListener();
-				initCheckoutDropDownListener();
-				updateForCheckoutDropDown();
-				(0, _textfieldlisteners.numbersOnlyListener)($('.iam-checkout-amount'));
-			});
-
-			$('.iam-checkout-del-mat').click(function (event) {
-				if ($('.iam-mats-row').length == 1) return;
-				$('.iam-mats-row').eq(-1).remove();
-			});
-		};
-
-		var cachedMatsRow = null;
-		var checkoutAuthenticateCallback = function checkoutAuthenticateCallback(username, data) {
-			var accountType = data;
-			currentAccountType = accountType.account_type;
-			currentDiscount = accountType.discount / 100;
-			$('.iam-popup').remove();
-			var thisnid = $(currentCheckout).data('nid');
-			var checkoutRow = $(currentCheckout).parent().parent();
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'get_checkout_popup', nid: thisnid },
-				success: function success(data) {
-					data = (0, _serverresponse.handleServerResponse)(data);
-					checkout_mats = JSON.parse(data['mats']);
-					$('body').append(data['html']);
-					if (cachedMatsRow == null) {
-						cachedMatsRow = $('<div>').append($('.iam-mats-row').clone()).html();
-					}
-					addDeleteMatRowListeners();
-					balance = $('.iam-checkout-bal').text();
-					checkoutNid = thisnid;
-					initClosePopupListener();
-					initCheckoutTotalListener();
-					initCheckoutDropDownListener();
-					initCheckoutSubmitListener();
-					updateForCheckoutDropDown();
-					(0, _textfieldlisteners.numbersOnlyListener)($('.iam-checkout-amount'));
-					$('.iam-checkout-discount');
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		var makeAuthPopup = function makeAuthPopup(callback, request, predefinedUser) {
-			var userfield = typeof predefinedUser === 'undefined' ? '<input type="text" placeholder="username" class="iam-username">' : '<input type="text" placeholder="username" class="iam-username" value="' + predefinedUser + '" disabled>';
-			request = typeof request === 'undefined' ? '' : request;
-			$('body').append('<div class="iam-popup" style="width:150px;left:30%;"><div class="iam-popup-header">Login<i style="float:right;" class="fa fa-close fa-3"></i></div><div class="iam-popup-body"><p class="iam-popup-message" style="color:red;"></p>' + userfield + '<br /><input type="password" class="iam-password" placeholder="password" style="margin-bottom:40px;"><input type="submit" class="iam-popup-submit iam-autheticate-submit"></div></div>');
-			initClosePopupListener();
-			initAuthenticationListeners(callback, request);
-			if (typeof predefinedUser === 'undefined') {
-				$('.iam-username').focus();
-			} else {
-				$('.iam-password').focus();
-			}
-		};
-
-		var initAuthenticationListeners = function initAuthenticationListeners(callback, req) {
-			$('.iam-autheticate-submit').off();
-			$('.iam-autheticate-submit').click(function (event) {
-				var user = $('.iam-username').val();
-				if ((0, _utils.isEmail)(user)) {
-					alert('Please enter your username, not email.');
-					return;
-				}
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'public_login', user: $('.iam-username').val(), password: $('.iam-password').val(), request: req },
-					success: function success(data) {
-						data = (0, _serverresponse.handleServerResponse)(data);
-						callback($('.iam-username').val(), data);
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-		var initCheckoutListeners = function initCheckoutListeners() {
-			$('.iam-check-out-button').off();
-			$('.iam-check-out-button').click(function (event) {
-				currentCheckout = this;
-				var currentCheckoutUser = $(this).parent().parent().children('.iam-checkout-username').text();
-				$('body').addClass('iam-no-select');
-				makeAuthPopup(checkoutAuthenticateCallback, 'account_type', currentCheckoutUser);
-			});
-		};
-		var initClosePopupListener = function initClosePopupListener() {
-			$('.fa-close').click(function (event) {
-				$('.iam-popup').remove();
-				if ($('.iam-checkout').length > 0) {
-					$('body').removeClass('iam-no-select');
-				}
-			});
-		};
-		var initCheckoutSubmitListener = function initCheckoutSubmitListener() {
-			$('.iam-checkout-submit').click(function (event) {
-				if ($('.iam-checkout-amount').val().length < 1) {
-					alert("Please enter an amount.");
-					return;
-				}
-				if (balance - parseFloat($('.iam-checkout-total').text()) < 0) {
-					alert("Insufficient account funds.");
-					return;
-				}
-				if (!confirm("Are you sure all the information is correct?")) return;
-				var checkoutSubmitAmount = 0;
-				var matToSend = {};
-				var multipleMats = false;
-				if ($('.iam-mats-row').length > 1) {
-					multipleMats = true;
-
-					$.each($('.iam-checkout-total'), function (index, val) {
-						checkoutSubmitAmount -= parseFloat($(this).text());
-					});
-
-					matToSend = [];
-					checkoutAmount = [];
-
-					$.each($('.iam-mats-row'), function (index, val) {
-
-						matToSend.push({ 'name': $(this).find('.iam-checkout-possible-mats option:selected').val(),
-							'unit_name': $(this).children('span').children('.iam-checkout-unit-name').eq(0).text(),
-							'price_per_unit': $(this).children('span').children('.iam-checkout-price-per-unit').text(),
-							'base_price': $(this).children('label').children('.iam-checkout-base-price').text() });
-						checkoutAmount.push($(this).find('.iam-checkout-amount').val());
-					});
-				} else {
-					checkoutSubmitAmount = -checkoutTotal;
-					matToSend = { 'name': selectedMat, 'unit_name': checkout_mats[selectedMat]['unit_name'], 'price_per_unit': checkout_mats[selectedMat]['price_per_unit'], 'base_price': checkout_mats[selectedMat]['base_price'] };
-				}
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { 'action': 'checkout_submit', 'nid': checkoutNid, 'total': checkoutSubmitAmount, 'mat': matToSend, 'amount': checkoutAmount, 'multiple_mats': multipleMats },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						$('body').removeClass('iam-no-select');
-						$('.iam-popup').remove();
-						$(checkoutRow).remove();
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-		var setupEquipmentSchedule = function setupEquipmentSchedule() {
-			//init calendar
-			selected_equip_name = $('.iam-equipment-schedule-list li').eq(0).text().replace(' ', '_');
-			$('.iam-equipment-schedule-list li').eq(0).addClass('currently-selected');
-			$('.iam-to-reserve').html($('.iam-equipment-schedule-list li').eq(0).text());
-			$('.iam-equipment-schedule-list li').click(function (event) {
-				$('.iam-equipment-schedule-list li').removeClass('currently-selected');
-				$(this).addClass('currently-selected');
-				selected_equip_name = $(this).text().replace(' ', '_');
-				$('.iam-to-reserve').html($(this).text());
-				var newSource = ajaxurl + "?action=get_equipment_calendar&name=" + selected_equip_name;
-				$('.iam-cal').fullCalendar('removeEventSource', lastSource);
-				$('.iam-cal').fullCalendar('addEventSource', newSource);
-				lastSource = newSource;
-			});
-			var wknd = false;
-			var d = moment().day();
-			if (d == 0 || d == 6) wknd = true;
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'get_business_hours', equip_name: selected_equip_name },
-				success: function success(data) {
-					data = (0, _serverresponse.handleServerResponse)(data);
-					checkoutBusinessHours = JSON.parse(data);
-					var businessHoursConverted = (0, _cal.convertBusinessHours)(data);
-					lastSource = ajaxurl + "?action=get_equipment_calendar&name=" + selected_equip_name;
-					$('.iam-cal').fullCalendar({
-						header: {
-							left: 'prev,next today',
-							right: 'title'
-						},
-						allDaySlot: false,
-						eventOverlap: false,
-						weekends: wknd,
-						eventTextColor: '#ffffff',
-						height: 500,
-						forceEventDuration: true,
-						defaultView: 'agendaDay',
-						editable: false, //new events will be made editable else where
-						businessHours: businessHoursConverted,
-						eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + selected_equip_name }, { url: ajaxurl + "?action=get_irregular_hours_calendar&equip_name=" + selected_equip_name,
-							color: '#f13d39' }]
-
-					});
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		//login functions
-
-		var initDiscoverAvailabilityListener = function initDiscoverAvailabilityListener() {
-			$('.iam-discover-availability-button').off();
-			$('.iam-discover-availability-button').click(function (event) {
-				//init popup
-
-				$('body').append(res_form);
-				(0, _uifunc.initPopupXListener)();
-				var equip_name = $('.iam-discover-data').data('name');
-				var original_name = equip_name;
-				$('.iam-res-popup-header').append(equip_name);
-				equip_name = equip_name.replace(/ /g, '_');
-				var event_data = [];
-
-				current_root_tag = $('.iam-discover-data').data('equiproot').replace(' ', '_').toLowerCase();
-				var wknd = false;
-				var d = moment().day();
-				if (d == 0 || d == 6) wknd = true;
-				if (facility_info[current_root_tag]['schedule_type'] == 'Rental') {
-					$('.iam-facility-info').html('<h1>' + $(this).data('equiproot') + ' Hours</h1><p>' + facility_info[current_root_tag]['rental_hours_description']) + '</p>';
-
-					$('.iam-res-cal').fullCalendar({
-						header: {
-							left: 'prev,next today',
-							center: 'title',
-							right: 'month'
-						},
-						droppable: true,
-						eventOverlap: false,
-						allDaySlot: true,
-						weekends: wknd,
-						height: 500,
-						forceEventDuration: true,
-						defaultView: 'month',
-						allDay: true,
-						defaultAllDayEventDuration: { days: facility_info[current_root_tag]['rental_period'] },
-						editable: false, //new events will be made editable else where
-						eventLimit: true, // allow "more" link when too many events
-						events: ajaxurl + "?action=get_equipment_calendar&name=" + equip_name
-					});
-				} else if (facility_info[current_root_tag]['schedule_type'] == 'Appointment') {
-
-					var businessHoursConverted = (0, _cal.convertBusinessHours)(facility_info[current_root_tag]['appointment_business_hours']);
-					$('.iam-res-cal').fullCalendar({
-						header: {
-							left: 'prev,next today',
-							center: 'title',
-							right: 'agendaWeek,agendaDay'
-						},
-						droppable: true,
-						allDaySlot: false,
-						eventOverlap: false,
-						businessHours: businessHoursConverted,
-						weekends: wknd,
-						height: 500,
-						forceEventDuration: true,
-						defaultView: 'agendaWeek',
-						editable: false, //new events will be made editable else where
-						eventLimit: true, // allow "more" link when too many events
-						eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + equip_name }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + current_root_tag,
-							color: '#f13d39' }]
-					});
-				} else if (facility_info[current_root_tag]['schedule_type'] == 'Approval') {
-					$.ajax({
-						url: ajaxurl,
-						type: 'GET',
-						data: { action: 'get_approval_hours', name: original_name },
-						success: function success(data) {
-							var businessHoursConverted = JSON.parse(data);
-							if (businessHoursConverted == null) {
-								businessHoursConverted = [];
-							}
-							$('.iam-res-cal').fullCalendar({
-								header: {
-									left: 'prev,next today',
-									center: 'title',
-									right: 'agendaWeek,agendaDay'
-								},
-								droppable: true,
-								allDaySlot: false,
-								eventOverlap: false,
-								businessHours: businessHoursConverted,
-								weekends: wknd,
-								height: 500,
-								forceEventDuration: true,
-								defaultView: 'agendaWeek',
-								editable: false, //new events will be made editable else where
-								eventLimit: true, // allow "more" link when too many events
-								eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + equip_name }, { url: ajaxurl + "?action=get_equipment_calendar&rstatus=0&name=" + equip_name,
-									color: '#a5a5a5' }]
-							});
-						},
-						error: function error(data) {
-							(0, _serverresponse.handleServerError)(data, new Error());
-						}
-					});
-				}
-				//listeners
-			});
-		};
-
-		var discoverEquipment = [];
-
-		var initDiscoverListListener = function initDiscoverListListener() {
-			$('.iam-discover-list li').click(function (event) {
-				$('.iam-discover-display').empty();
-				var equipment = discoverEquipment[$(this).data('equipment')];
-				if (equipment['Description'] == '') equipment['Description'] = 'N/A';
-				if (equipment['Pricing_Description'] == '') equipment['Pricing_Description'] = 'N/A';
-				if (equipment['Manufacturer_Info'] == '') equipment['Manufacturer_Info'] = 'N/A';
-				if (equipment['Manufacturer_Info'].indexOf('http') != -1) equipment['Manufacturer_Info'] = '<a href="' + equipment['Manufacturer_Info'] + '">' + equipment['Manufacturer_Info'] + '</a>';
-				$('.iam-discover-display').html('<input type="hidden" class="iam-discover-data" data-name="' + (0, _utils.escapeHtml)(equipment['Name']) + '" data-equiproot="' + (0, _utils.escapeHtml)(equipment['Root_Tag']) + '"><img style="height:120px;" src="' + equipment['Photo'] + '" alt="' + equipment['Name'] + '" /><p><div class="iam-secondary-button iam-discover-availability-button">View Availability</div><br/><br/><b>Item Name:</b> ' + equipment['Name'] + '</p><p><b>Description:</b> ' + equipment['Description'] + '</p><p><b>Pricing Description:</b> ' + equipment['Pricing_Description'] + '</p><p><b>Manufacturer Info:</b> ' + equipment['Manufacturer_Info'] + '</p>');
-				initDiscoverAvailabilityListener();
-			});
-		};
-
-		var cachedDiscoverData = {};
-
-		var buildDiscoverBlock = function buildDiscoverBlock(data) {
-			discoverEquipment = data;
-			var list = '<div class="iam-discover-list-container"><ul class="iam-discover-list">';
-			for (var i = 0; i < data.length; i++) {
-				if (data[i] == null) continue;
-				list += '<li data-equipment="' + i + '">' + data[i]['Name'] + '</li>';
-			}
-			list += '</ul></div><div class="iam-discover-display"></div>';
-			$('.iam-discover-block').empty();
-			$('.iam-discover-block').append(list);
-			initDiscoverListListener();
-			$('.iam-discover-list').children('li').eq(0).click();
-		};
-
-		var makeDiscoverBlock = function makeDiscoverBlock(tag) {
-			if (typeof cachedDiscoverData[tag] != 'undefined') {
-				buildDiscoverBlock(cachedDiscoverData[tag]);
-				return;
-			}
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'get_equipment_for_tag', 'tag': tag },
-				success: function success(data) {
-					data = JSON.parse((0, _serverresponse.handleServerResponse)(data));
-					cachedDiscoverData[tag] = data;
-					buildDiscoverBlock(data);
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		//perpage setup
-
-		//TODO: mixed up reservation with reference a while ago, change later
-		if ($('#iam-res').length > 0) {
-			//reservation page
-
-			var resPage = new _reservationpublic2.default();
-		} else if ($('#signupform').length > 0) {
-			removeNav();
-			(0, _textfieldlisteners.alphaOnlyListener)($('#first-name'));
-			(0, _textfieldlisteners.alphaOnlyListener)($('#last-name'));
-			(0, _textfieldlisteners.emailOnlyListener)($('#email'));
-			(0, _textfieldlisteners.emailOnlyListener)($('#email-confirm'));
-			(0, _textfieldlisteners.alphaNumericOnlyListener)($('#reg-key'));
-			$('#register-submit').click(function (event) {
-				if ($('#email').val() == '' || $('#first-name').val() == '' || $('#last-name').val() == '' || $('#password').val() == '') {
-					alert('Please fill out all fields');
-					return;
-				}
-				if ($('#account_type').val() == 'Select a Value' || $('#account_type').val() == null) {
-					alert('Please select an account type.');
-					return;
-				}
-				if (!$('#last-name').val().match(/^[a-zA-Z0-9.@]*$/) || !$('#first-name').val().match(/^[a-zA-Z0-9.@]*$/)) {
-					alert('Characters A-Z only for first and last names.');
-					return false;
-				}
-				if ($('#email').val() != $('#email-confirm').val()) {
-					alert('Emails do not match!');
-					return;
-				}
-				if ($('#password').val() != $('#password-confirm').val()) {
-					alert('Passwords do not match!');
-					return;
-				}
-				if (!(0, _utils.isEmail)($('#email').val())) {
-					alert('Please enter a valid email!');
-					return;
-				}
-				if ($('#password').val().length < 8 || !(/[0-9]/.test($('#password').val()) && /[a-z]/.test($('#password').val()) && /[A-Z]/.test($('#password').val()))) {
-					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
-					return;
-				}
-
-				var registerArgs = { action: 'iam_register_user', 'email': $('#email').val(), 'first-name': $('#first-name').val(), 'last-name': $('#last-name').val(), 'account_type': $('#account_type').val(), 'school-id': $('#school-id').val(), phonenum: (0, _utils.getPhoneNumberFromPage)(), 'password': $('#password').val(), 'key': $('#reg-key').val(), captcha: grecaptcha.getResponse() };
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: registerArgs,
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-						grecaptcha.reset();
-					}
-				});
-			});
-		} else if ($('.login-form-container').length > 0) {
-			removeNav();
-			var res_form, current_root_tag;
-			var facilities = $('.iam-cal-data').data('names').split(',');
-			var facility_info = {};
-			for (var i = 0; i < facilities.length; i++) {
-				facility_info[facilities[i]] = $('.iam-cal-data').data(facilities[i]);
-			}
-			$('.iam-cal-data').remove();
-			//init reservation popup
-			res_form = '<div class="iam-res-popup"><div class="iam-res-popup-header"><div class="iam-x fa fa-close fa-4"></div></div><div class="iam-res-popup-body"><div class="iam-res-cal" style="float: none; width:100%;"></div></div></div>';
-			$('.menu').append('<li class="menu-item menu-item-type-post_type menu-item-object-page iam-login-tab"><a>Discover</a></li>');
-			$('.iam-login-tab').click(function (event) {
-				$('.login-form-container').toggleClass('iam-ninja');
-				$('.iam-discover-container').toggleClass('iam-ninja');
-				if ($('.iam-discover-container').hasClass('iam-ninja')) {
-					$('.iam-login-tab a').text('Discover');
-					$('#main').removeClass('iam-no-pad-top');
-				} else {
-					$('.iam-login-tab a').text('< Back to Login');
-					$('#main').addClass('iam-no-pad-top');
-				}
-				if ($('.iam-discover-list').length < 1) {
-					makeDiscoverBlock('3D Printer');
-				}
-			});
-			$('.iam-discover-link').click(function (event) {
-				$('.iam-login-tab').click();
-			});
-			$('.iam-discover-button').click(function (event) {
-				makeDiscoverBlock($(this).text());
-			});
-			if ((0, _cookie.readCookie)('iamLoginCookie') != null) {
-				loginLockout();
-			}
-			$('.slick-prev').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
-			$('.slick-next').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
-			(0, _textfieldlisteners.alphaNumericOnlyListener)($('#user_login'));
-
-			$('#iam-slide-show').slick({
-				autoplay: true,
-				dots: true,
-				arrows: false
-			});
-			$('input[type=submit]').click(function (event) {
-				event.preventDefault();
-				if (!$('#user_login').val().match(/^[a-zA-Z0-9.]*$/)) {
-					alert('Characters A-Z 0-9 only please.');
-					return false;
-				}
-				if ($('#user_login').val().length < 1 || $('#user_password').val().length < 1) {
-					alert('Please fill out both email and password to login.');
-					return false;
-				}
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'iam_login', user: $('#user_login').val(), password: $('#user_password').val(), captcha: grecaptcha.getResponse(), first: firstLoginAttempt },
-					success: function success(data) {
-						firstLoginAttempt = 0;
-						(0, _serverresponse.handleServerResponse)(data);
-					},
-					error: function error(data) {
-						if (firstLoginAttempt) {
-							$('.iam-captcha-container').removeClass('iam-ninja');
-						}
-						if (data.status == 401) {
-
-							var lockTime = 60000; //1000*Math.pow(2,5+data.statusText);
-							(0, _cookie.createCookie)('iamLoginCookie', lockTime, lockTime, true);
-							loginLockout();
-							return;
-						}
-						firstLoginAttempt = 0;
-						(0, _serverresponse.handleServerError)(data, new Error());
-						grecaptcha.reset();
-					}
-				});
-			});
-		} else if ($('.iam-checkout').length > 0) {
-			var lastUpdateCookie = (0, _cookie.readCookie)(IPAD_LOCK_COOKIE);
-			(0, _textfieldlisteners.numbersOnlyListener)($('.iam-checkout-lock'));
-			removeNav();
-			if (lastUpdateCookie >= $('.iam-data').data('timestamp')) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'checkout_content' },
-					success: function success(data) {
-						data = (0, _serverresponse.handleServerResponse)(data);
-						$('.iam-checkout').empty();
-						$('.iam-checkout').append(data);
-						initCheckout();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			}
-			$('.iam-checkout-lock-submit').click(function (event) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'checkout_unlock', code: $('.iam-checkout-lock').val() },
-					success: function success(data) {
-						console.log('some thing');
-						data = (0, _serverresponse.handleServerResponse)(data);
-						(0, _cookie.createCookie)(IPAD_LOCK_COOKIE, $('.iam-data').data('timestamp'), 365);
-						$.ajax({
-							url: ajaxurl,
-							type: 'GET',
-							data: { action: 'checkout_content' },
-							success: function success(data) {
-								data = (0, _serverresponse.handleServerResponse)(data);
-								$('.iam-checkout').empty();
-								$('.iam-checkout').append(data);
-								initCheckout();
-							},
-							error: function error(data) {
-
-								(0, _serverresponse.handleServerError)(data, new Error());
-							}
-						});
-					},
-					error: function error(data) {
-						console.log('some thing else');
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		} else if ($('.iam-training-container').length > 0) {
-			$('input[type=submit]').click(function (event) {
-				var emailContent = $('.iam-training-comment').val();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'training_email', message: $('.iam-training-comment').val() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						alert('Your message was sent!');
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		} else if ($('.login-action-lostpassword').length > 0) {
-			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
-			$('#lostpasswordform input[type=hidden]').val('/');
-			$('p#nav a').eq(0).attr('href', p + window.location.hostname);
-			$('p#nav a').eq(1).attr('href', p + window.location.hostname + '/register');
-		} else if ($('.login-action-register').length > 0) {
-			$('body').empty();
-			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
-			window.location.href = p + window.location.hostname;
-		} else if ($('.login-action-rp').length > 0) {
-			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
-			$('p#nav a').eq(0).attr('href', p + window.location.hostname);
-			$('p#nav a').eq(1).attr('href', p + window.location.hostname + '/register');
-			$('input[type=submit]').click(function (event) {
-				var pw = $('#pass1-text').val();
-
-				if (pw.length < 8 || !(/[0-9]/.test(pw) && /[a-z]/.test(pw) && /[A-Z]/.test(pw))) {
-					alert('Your password must be at least 8 characters, contain an uppercase letter, a lowercase letter and a number');
-					return false;
-				}
-			});
-		} else if ($('.login-action-resetpass').length > 0) {
-			var p = window.location.protocol == 'http:' ? 'http://' : 'https://';
-
-			$('a').attr('href', p + window.location.hostname);
-		} else if ($('.error404').length > 0) {
-			$('.entry-content').empty();
-			$('.entry-content').html('<p>There\'s nothing here.</p>');
-		} else if ($('#iam-user-account').length > 0) {
-			$('.iam-user-info-form .iam-submit').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'user_update_account_info',
-						link: $('.iam-user-info-form').data('link'),
-						first_name: $('#first-name').val(),
-						last_name: $('#last-name').val(),
-						email: $('#email').val(),
-						phonenum: (0, _utils.getPhoneNumberFromPage)(),
-						school_id: $('#school-id').val()
-					},
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						$('.iam-user-info-form .iam-submit').blur();
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		}
-		(0, _debug.debugWarn)();
-		(0, _debug.publicDebug)();
-	});
-})(jQuery);
-
-/***/ }),
-/* 137 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var createCookie = function createCookie(name, value, days, readAsMS) {
-  var expires = "";
-  if (days) {
-    var date = new Date();
-    if (readAsMS == true) {
-      date.setTime(date.getTime() + days);
-    } else {
-      date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    }
-    var _expires = "; expires=" + date.toGMTString();
-  }
-  document.cookie = name + "=" + value + expires + "; path=/";
-};
-
-var readCookie = function readCookie(name) {
-  var nameEQ = name + "=";
-  var ca = document.cookie.split(';');
-  for (var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1, c.length);
-    }if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
-  }
-  return null;
-};
-
-var eraseCookie = function eraseCookie(name) {
-  createCookie(name, "", -1);
-};
-
-exports.createCookie = createCookie;
-exports.readCookie = readCookie;
-exports.eraseCookie = eraseCookie;
-
-/***/ }),
-/* 138 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(3);
-
-var _uifunc = __webpack_require__(8);
-
-var _serverresponse = __webpack_require__(5);
-
-var _userfeedback = __webpack_require__(6);
-
-var _cal = __webpack_require__(125);
-
-var _cal2 = _interopRequireDefault(_cal);
-
-var _breadcrumb = __webpack_require__(139);
-
-var _breadcrumb2 = _interopRequireDefault(_breadcrumb);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ReservationPublic = function () {
-  function ReservationPublic() {
-    _classCallCheck(this, ReservationPublic);
-
-    this.currentRootTag = null;
-    this.pastEvent = null;
-    this.oldScrollPos = null;
-
-    this.grabResPopup();
-    this.grabCalData();
-    this.breadCrumb = new _breadcrumb2.default(this);
-
-    //listeners
-    this.initEquipmentButtonListener();
-    this.initResDelete();
-    (0, _uifunc.initSearchListener)('.iam-reservations-search', '.iam-equipment-title', 2);
-  }
-
-  _createClass(ReservationPublic, [{
-    key: 'grabResPopup',
-    value: function grabResPopup() {
-      this.resPopup = (0, _jquery2.default)('.iam-res-popup').prop('outerHTML');
-      (0, _jquery2.default)('.iam-res-popup').remove();
-    }
-  }, {
-    key: 'grabCalData',
-    value: function grabCalData() {
-      this.facilities = (0, _jquery2.default)('.iam-cal-data').data('names').split(',');
-      this.rootTags = (0, _jquery2.default)('.iam-cal-data').data('root-tags').split(',');
-      this.canReserveER = (0, _jquery2.default)('.iam-cal-data').data('can-res-er');
-      this.erLateFee = (0, _jquery2.default)('.iam-cal-data').data('late-fee');
-      this.facilityInfo = {};
-
-      for (var i = 0; i < this.facilities.length; i++) {
-        this.facilityInfo[this.facilities[i]] = (0, _jquery2.default)('.iam-cal-data').data(this.facilities[i]);
-      }
-
-      (0, _jquery2.default)('.iam-cal-data').remove();
-    }
-  }, {
-    key: 'initResDelete',
-    value: function initResDelete() {
-      var that = this;
-
-      (0, _jquery2.default)('.iam-existing-res-del-button').click(function (event) {
-        var value = (0, _jquery2.default)(this).parent().children('input').val();
-        _jquery2.default.ajax({
-          url: ajaxurl,
-          type: 'POST',
-          data: { action: 'delete_user_reservation', val: value },
-          success: function success(data) {
-            (0, _serverresponse.handleServerResponse)(data);
-            that.reloadExistingRes();
-          },
-          error: function error(data) {
-            (0, _serverresponse.handleServerError)(data, new Error());
-          }
-        });
-      });
-    }
-  }, {
-    key: 'reloadExistingRes',
-    value: function reloadExistingRes() {
-      var that = this;
-      (0, _jquery2.default)('#iam-existing-res-container').empty();
-      _jquery2.default.ajax({
-        url: ajaxurl,
-        type: 'GET',
-        data: { action: 'get_user_reservations' },
-        success: function success(data) {
-          (0, _jquery2.default)('#iam-existing-res-container').append((0, _serverresponse.handleServerResponse)(data));
-          that.initResDelete();
-        },
-        error: function error(data) {
-          (0, _serverresponse.handleServerError)(data, new Error());
-        }
-      });
-    }
-  }, {
-    key: 'spawnResPopup',
-    value: function spawnResPopup(facilityName, description) {
-      (0, _jquery2.default)('body').append(this.resPopup);
-      (0, _jquery2.default)('.iam-res-popup').removeClass('iam-ninja');
-      (0, _jquery2.default)('.iam-res-popup-header').append(this.activeEquipName);
-      (0, _jquery2.default)('.iam-facility-info').html('<h1>' + facilityName + ' Hours</h1><p>' + description + '</p>');
-    }
-  }, {
-    key: 'getFacilityInfo',
-    value: function getFacilityInfo(key) {
-      if (key == '' || typeof key == 'undefined' || typeof this.facilityInfo[this.currentRootTag] == 'undefined') {
-        return (0, _utils.doError)('An error occurred when trying to use this equipment! :(');
-      }
-      return this.facilityInfo[this.currentRootTag][key];
-    }
-  }, {
-    key: 'initEquipmentButtonListener',
-    value: function initEquipmentButtonListener() {
-      var that = this;
-
-      (0, _jquery2.default)('.iam-equipment-button').click(function (event) {
-
-        that.currentRootTag = (0, _jquery2.default)(this).data('equiproot').split(' ').join('_').toLowerCase();
-        that.activeEquipName = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text().split(' ').join('_');
-
-        if (that.canReserveER == 0 && that.currentRootTag == 'equipment_room') {
-          alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $' + erLateFee + '.');
-          return;
-        }
-
-        if (that.getFacilityInfo('type') == 'rental') that.rentalPeriod = (0, _jquery2.default)(this).data('rental-period');
-
-        that.spawnResPopup((0, _jquery2.default)(this).data('equiproot'), that.getFacilityInfo('description'));
-
-        that.cal = new _cal2.default(that, 'public');
-
-        that.popupSubmitListener();
-
-        that.hideEquipmentBlocks();
-        (0, _uifunc.initPopupXListener)(that.revealEquipmentBlocks);
-
-        this.oldScrollPos = (0, _jquery2.default)(window).scrollTop();
-      });
-    }
-  }, {
-    key: 'hideEquipmentBlocks',
-    value: function hideEquipmentBlocks() {
-      (0, _jquery2.default)('.iam-res-left').addClass('iam-ninja');
-    }
-  }, {
-    key: 'revealEquipmentBlocks',
-    value: function revealEquipmentBlocks() {
-      (0, _jquery2.default)('.iam-res-left').removeClass('iam-ninja');
-    }
-  }, {
-    key: 'popupSubmitListener',
-    value: function popupSubmitListener() {
-      var that = this;
-      (0, _jquery2.default)('.iam-popup-submit button').click(function (event) {
-        var newEvents = [];
-        var events = (0, _jquery2.default)('.iam-res-cal').fullCalendar('clientEvents');
-        var warning = false;
-        var comment = (0, _jquery2.default)('.iam-res-comment').val();
-        for (var i = 0; i < events.length; i++) {
-          var starttime = void 0,
-              endtime = void 0;
-          if (events[i].className.length > 0) {
-            newEvents.push({
-              user: events[i].title,
-              start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
-              end: events[i].end.format('YYYY-MM-DD HH:mm:ss'),
-              comment: comment
-            });
-          }
-        }
-
-        _jquery2.default.ajax({
-          url: ajaxurl,
-          type: 'POST',
-          async: false,
-          data: { action: 'submit_reservation', equipment: that.activeEquipName, events: newEvents },
-          success: function success(data) {
-            (0, _serverresponse.handleServerResponse)(data);
-            (0, _jquery2.default)('.iam-res-popup').remove();
-            that.reloadExistingRes();
-            that.revealEquipmentBlocks();
-          },
-          error: function error(data) {
-            (0, _serverresponse.handleServerError)(data, new Error());
-          }
-        });
-      });
-    }
-  }]);
-
-  return ReservationPublic;
-}();
-
-exports.default = ReservationPublic;
-
-/***/ }),
-/* 139 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _serverresponse = __webpack_require__(5);
-
-var _userfeedback = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var BreadCrumb = function () {
-  function BreadCrumb(resPage) {
-    _classCallCheck(this, BreadCrumb);
-
-    this.resPage = resPage;
-    this.breadcrumbTrail = [];
-    this.initCrumbListener();
-    this.initCrumbButtonListener();
-    this.initRootCrumbListener();
-  }
-
-  _createClass(BreadCrumb, [{
-    key: 'initRootCrumbListener',
-    value: function initRootCrumbListener() {
-      var that = this;
-      (0, _jquery2.default)('#iam-crumb-root').click(function (event) {
-        that.popToCrumbRoot();
-      });
-    }
-  }, {
-    key: 'updateTrail',
-    value: function updateTrail() {
-      (0, _jquery2.default)('#iam-res-crumb').empty();
-      for (var i = 0; i < this.breadcrumbTrail.length; i++) {
-        (0, _jquery2.default)('#iam-res-crumb').append('<div class="iam-crumb">' + this.breadcrumbTrail[i] + '</div>');
-      }
-    }
-  }, {
-    key: 'initCrumbListener',
-    value: function initCrumbListener() {
-      var that = this;
-
-      (0, _jquery2.default)('.iam-crumb').click(function (event) {
-        var crumbIndex = that.breadcrumbTrail.indexOf((0, _jquery2.default)(this).text());
-        if (crumbIndex == -1 || crumbIndex == that.breadcrumbTrail.length - 1) return;
-        var rem = that.breadcrumbTrail.length - 1 - crumbIndex;
-        for (var i = 0; i < rem; i++) {
-          that.breadcrumbTrail.pop();
-        }
-        that.updateTrail();
-        that.updatePageForCrumb();
-        that.updateCrumbButtons();
-        that.initCrumbListener();
-        that.initCrumbButtonListener();
-      });
-    }
-  }, {
-    key: 'initCrumbButtonListener',
-    value: function initCrumbButtonListener() {
-      var that = this;
-      (0, _jquery2.default)('.iam-crumb-button').click(function (event) {
-        that.breadcrumbTrail.push((0, _jquery2.default)(this).text());
-        that.updateTrail();
-        that.updatePageForCrumb();
-        that.updateCrumbButtons();
-        that.initCrumbListener();
-        that.initCrumbButtonListener();
-      });
-    }
-  }, {
-    key: 'updateCrumbButtons',
-    value: function updateCrumbButtons() {
-      _jquery2.default.ajax({
-        url: ajaxurl,
-        type: 'GET',
-        async: false,
-        data: { action: 'get_child_tags', parent_tag: this.breadcrumbTrail[this.breadcrumbTrail.length - 1] },
-        success: function success(data) {
-          data = (0, _serverresponse.handleServerResponse)(data);
-          (0, _jquery2.default)('#iam-res-crumb-buttons').empty();
-          if (!Array.isArray(data)) data = [data];
-          for (var crumbButton in data) {
-            (0, _jquery2.default)('#iam-res-crumb-buttons').append('<button class="iam-crumb-button">' + data[crumbButton] + '</button>');
-          }
-        },
-        error: function error(data) {
-          (0, _serverresponse.handleServerError)(data, new Error());
-        }
-      });
-    }
-  }, {
-    key: 'newDataToResLeft',
-    value: function newDataToResLeft(data, empty) {
-      if (empty === true) (0, _jquery2.default)('.iam-res-left').empty();
-      (0, _jquery2.default)('.iam-res-left').append(data);
-      this.resPage.initEquipmentButtonListener();
-    }
-  }, {
-    key: 'updatePageForCrumb',
-    value: function updatePageForCrumb() {
-      var that = this;
-      if (this.breadcrumbTrail.length < 1) return;
-      (0, _jquery2.default)('.iam-res-left').empty();
-      _jquery2.default.ajax({
-        url: ajaxurl,
-        type: 'GET',
-        async: false,
-        data: { action: 'get_equipment_for_tags', tags: this.breadcrumbTrail[this.breadcrumbTrail.length - 1] },
-        success: function success(data) {
-          data = (0, _serverresponse.handleServerResponse)(data);
-          that.newDataToResLeft(data);
-        },
-        error: function error(data) {
-          (0, _serverresponse.handleServerError)(data, new Error());
-        }
-      });
-    }
-  }, {
-    key: 'popToCrumbRoot',
-    value: function popToCrumbRoot() {
-      var that = this;
-      //clear crumbs
-      this.breadcrumbTrail = [];
-      (0, _jquery2.default)('#iam-res-crumb').empty();
-      //new stuff
-      _jquery2.default.ajax({
-        url: ajaxurl,
-        type: 'GET',
-        async: false,
-        data: { action: 'get_equipment_for_tags', tags: that.resPage.rootTags },
-        success: function success(data) {
-          that.newDataToResLeft((0, _serverresponse.handleServerResponse)(data, true), true);
-        },
-        error: function error(data) {
-          (0, _serverresponse.handleServerError)(data, new Error());
-        }
-      });
-      //empty buttons
-      (0, _jquery2.default)('#iam-res-crumb-buttons').empty();
-
-      for (var i = 0; i < that.resPage.rootTags.length; i++) {
-        (0, _jquery2.default)('#iam-res-crumb-buttons').append('<button class="iam-crumb-button">' + that.resPage.rootTags[i] + '</button>');
-      }
-
-      this.initCrumbListener();
-      this.initCrumbButtonListener();
-    }
-  }]);
-
-  return BreadCrumb;
-}();
-
-exports.default = BreadCrumb;
-
-/***/ }),
-/* 140 */,
-/* 141 */,
-/* 142 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42676,14 +41934,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 })();
 
 /***/ }),
-/* 143 */,
-/* 144 */,
-/* 145 */,
-/* 146 */,
-/* 147 */,
-/* 148 */,
-/* 149 */,
-/* 150 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -42709,7 +41960,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(129), __webpack_require__(152), __webpack_require__(132), __webpack_require__(134), __webpack_require__(133), __webpack_require__(153), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(133), __webpack_require__(135), __webpack_require__(136), __webpack_require__(139), __webpack_require__(137), __webpack_require__(138), __webpack_require__(2), __webpack_require__(124)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -43821,7 +43072,225 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 151 */
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Mouse 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Mouse
+//>>group: Widgets
+//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
+//>>docs: http://api.jqueryui.com/mouse/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(134), __webpack_require__(2), __webpack_require__(124)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	var mouseHandled = false;
+	$(document).on("mouseup", function () {
+		mouseHandled = false;
+	});
+
+	return $.widget("ui.mouse", {
+		version: "1.12.1",
+		options: {
+			cancel: "input, textarea, button, select, option",
+			distance: 1,
+			delay: 0
+		},
+		_mouseInit: function _mouseInit() {
+			var that = this;
+
+			this.element.on("mousedown." + this.widgetName, function (event) {
+				return that._mouseDown(event);
+			}).on("click." + this.widgetName, function (event) {
+				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
+					$.removeData(event.target, that.widgetName + ".preventClickEvent");
+					event.stopImmediatePropagation();
+					return false;
+				}
+			});
+
+			this.started = false;
+		},
+
+		// TODO: make sure destroying one instance of mouse doesn't mess with
+		// other instances of mouse
+		_mouseDestroy: function _mouseDestroy() {
+			this.element.off("." + this.widgetName);
+			if (this._mouseMoveDelegate) {
+				this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
+			}
+		},
+
+		_mouseDown: function _mouseDown(event) {
+
+			// don't let more than one widget handle mouseStart
+			if (mouseHandled) {
+				return;
+			}
+
+			this._mouseMoved = false;
+
+			// We may have missed mouseup (out of window)
+			this._mouseStarted && this._mouseUp(event);
+
+			this._mouseDownEvent = event;
+
+			var that = this,
+			    btnIsLeft = event.which === 1,
+
+
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false;
+			if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
+				return true;
+			}
+
+			this.mouseDelayMet = !this.options.delay;
+			if (!this.mouseDelayMet) {
+				this._mouseDelayTimer = setTimeout(function () {
+					that.mouseDelayMet = true;
+				}, this.options.delay);
+			}
+
+			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+				this._mouseStarted = this._mouseStart(event) !== false;
+				if (!this._mouseStarted) {
+					event.preventDefault();
+					return true;
+				}
+			}
+
+			// Click event may never have fired (Gecko & Opera)
+			if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
+				$.removeData(event.target, this.widgetName + ".preventClickEvent");
+			}
+
+			// These delegates are required to keep context
+			this._mouseMoveDelegate = function (event) {
+				return that._mouseMove(event);
+			};
+			this._mouseUpDelegate = function (event) {
+				return that._mouseUp(event);
+			};
+
+			this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate);
+
+			event.preventDefault();
+
+			mouseHandled = true;
+			return true;
+		},
+
+		_mouseMove: function _mouseMove(event) {
+
+			// Only check for mouseups outside the document if you've moved inside the document
+			// at least once. This prevents the firing of mouseup in the case of IE<9, which will
+			// fire a mousemove event if content is placed under the cursor. See #7778
+			// Support: IE <9
+			if (this._mouseMoved) {
+
+				// IE mouseup check - mouseup happened when mouse was out of window
+				if ($.ui.ie && (!document.documentMode || document.documentMode < 9) && !event.button) {
+					return this._mouseUp(event);
+
+					// Iframe mouseup check - mouseup occurred in another document
+				} else if (!event.which) {
+
+					// Support: Safari <=8 - 9
+					// Safari sets which to 0 if you press any of the following keys
+					// during a drag (#14461)
+					if (event.originalEvent.altKey || event.originalEvent.ctrlKey || event.originalEvent.metaKey || event.originalEvent.shiftKey) {
+						this.ignoreMissingWhich = true;
+					} else if (!this.ignoreMissingWhich) {
+						return this._mouseUp(event);
+					}
+				}
+			}
+
+			if (event.which || event.button) {
+				this._mouseMoved = true;
+			}
+
+			if (this._mouseStarted) {
+				this._mouseDrag(event);
+				return event.preventDefault();
+			}
+
+			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+				this._mouseStarted = this._mouseStart(this._mouseDownEvent, event) !== false;
+				this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event);
+			}
+
+			return !this._mouseStarted;
+		},
+
+		_mouseUp: function _mouseUp(event) {
+			this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
+
+			if (this._mouseStarted) {
+				this._mouseStarted = false;
+
+				if (event.target === this._mouseDownEvent.target) {
+					$.data(event.target, this.widgetName + ".preventClickEvent", true);
+				}
+
+				this._mouseStop(event);
+			}
+
+			if (this._mouseDelayTimer) {
+				clearTimeout(this._mouseDelayTimer);
+				delete this._mouseDelayTimer;
+			}
+
+			this.ignoreMissingWhich = false;
+			mouseHandled = false;
+			event.preventDefault();
+		},
+
+		_mouseDistanceMet: function _mouseDistanceMet(event) {
+			return Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance;
+		},
+
+		_mouseDelayMet: function _mouseDelayMet() /* event */{
+			return this.mouseDelayMet;
+		},
+
+		// These are placeholder methods, to be overriden by extending plugin
+		_mouseStart: function _mouseStart() /* event */{},
+		_mouseDrag: function _mouseDrag() /* event */{},
+		_mouseStop: function _mouseStop() /* event */{},
+		_mouseCapture: function _mouseCapture() /* event */{
+			return true;
+		}
+	});
+});
+
+/***/ }),
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43847,7 +43316,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 152 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43896,7 +43365,91 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 153 */
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	// $.ui.plugin is deprecated. Use $.widget() extensions instead.
+	return $.ui.plugin = {
+		add: function add(module, option, set) {
+			var i,
+			    proto = $.ui[module].prototype;
+			for (i in set) {
+				proto.plugins[i] = proto.plugins[i] || [];
+				proto.plugins[i].push([option, set[i]]);
+			}
+		},
+		call: function call(instance, name, args, allowDisconnected) {
+			var i,
+			    set = instance.plugins[name];
+
+			if (!set) {
+				return;
+			}
+
+			if (!allowDisconnected && (!instance.element[0].parentNode || instance.element[0].parentNode.nodeType === 11)) {
+				return;
+			}
+
+			for (i = 0; i < set.length; i++) {
+				if (instance.options[set[i][0]]) {
+					set[i][1].apply(instance.element, args);
+				}
+			}
+		}
+	};
+});
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.safeBlur = function (element) {
+
+		// Support: IE9 - 10 only
+		// If the <body> is blurred, IE will switch windows, see #9420
+		if (element && element.nodeName.toLowerCase() !== "body") {
+			$(element).trigger("blur");
+		}
+	};
+});
+
+/***/ }),
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43946,6 +43499,441 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		return position === "fixed" || !scrollParent.length ? $(this[0].ownerDocument || document) : scrollParent;
 	};
 });
+
+/***/ }),
+/* 139 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.safeActiveElement = function (document) {
+		var activeElement;
+
+		// Support: IE 9 only
+		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+		try {
+			activeElement = document.activeElement;
+		} catch (error) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 9 - 11 only
+		// IE may return null instead of an element
+		// Interestingly, this only seems to occur when NOT in an iframe
+		if (!activeElement) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 11 only
+		// IE11 returns a seemingly empty object in some cases when accessing
+		// document.activeElement from an <iframe>
+		if (!activeElement.nodeName) {
+			activeElement = document.body;
+		}
+
+		return activeElement;
+	};
+});
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(3);
+
+var _uifunc = __webpack_require__(7);
+
+var _serverresponse = __webpack_require__(4);
+
+var _userfeedback = __webpack_require__(5);
+
+var _cal = __webpack_require__(8);
+
+var _cal2 = _interopRequireDefault(_cal);
+
+var _breadcrumb = __webpack_require__(141);
+
+var _breadcrumb2 = _interopRequireDefault(_breadcrumb);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ReservationPublic = function () {
+  function ReservationPublic() {
+    _classCallCheck(this, ReservationPublic);
+
+    this.currentRootTag = null;
+    this.pastEvent = null;
+    this.oldScrollPos = null;
+
+    this.grabResPopup();
+    this.grabCalData();
+    this.breadCrumb = new _breadcrumb2.default(this);
+
+    //listeners
+    this.initEquipmentButtonListener();
+    this.initResDelete();
+    (0, _uifunc.initSearchListener)('.iam-reservations-search', '.iam-equipment-title', 2);
+  }
+
+  _createClass(ReservationPublic, [{
+    key: 'grabResPopup',
+    value: function grabResPopup() {
+      this.resPopup = (0, _jquery2.default)('.iam-res-popup').prop('outerHTML');
+      (0, _jquery2.default)('.iam-res-popup').remove();
+    }
+  }, {
+    key: 'grabCalData',
+    value: function grabCalData() {
+      this.facilities = (0, _jquery2.default)('.iam-cal-data').data('names').split(',');
+      this.rootTags = (0, _jquery2.default)('.iam-cal-data').data('root-tags').split(',');
+      this.canReserveER = (0, _jquery2.default)('.iam-cal-data').data('can-res-er');
+      this.erLateFee = (0, _jquery2.default)('.iam-cal-data').data('late-fee');
+      this.facilityInfo = {};
+
+      for (var i = 0; i < this.facilities.length; i++) {
+        this.facilityInfo[this.facilities[i]] = (0, _jquery2.default)('.iam-cal-data').data(this.facilities[i]);
+      }
+
+      (0, _jquery2.default)('.iam-cal-data').remove();
+    }
+  }, {
+    key: 'initResDelete',
+    value: function initResDelete() {
+      var that = this;
+
+      (0, _jquery2.default)('.iam-existing-res-del-button').click(function (event) {
+        var value = (0, _jquery2.default)(this).parent().children('input').val();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { action: 'delete_user_reservation', val: value },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            that.reloadExistingRes();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'reloadExistingRes',
+    value: function reloadExistingRes() {
+      var that = this;
+      (0, _jquery2.default)('#iam-existing-res-container').empty();
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'GET',
+        data: { action: 'get_user_reservations' },
+        success: function success(data) {
+          (0, _jquery2.default)('#iam-existing-res-container').append((0, _serverresponse.handleServerResponse)(data));
+          that.initResDelete();
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+    }
+  }, {
+    key: 'spawnResPopup',
+    value: function spawnResPopup(facilityName, description) {
+      (0, _jquery2.default)('body').append(this.resPopup);
+      (0, _jquery2.default)('.iam-res-popup').removeClass('iam-ninja');
+      (0, _jquery2.default)('.iam-res-popup-header').append(this.activeEquipName);
+      (0, _jquery2.default)('.iam-facility-info').html('<h1>' + facilityName + ' Hours</h1><p>' + description + '</p>');
+    }
+  }, {
+    key: 'getFacilityInfo',
+    value: function getFacilityInfo(key) {
+      if (key == '' || typeof key == 'undefined' || typeof this.facilityInfo[this.currentRootTag] == 'undefined') {
+        return (0, _utils.doError)('An error occurred when trying to use this equipment! :(');
+      }
+      return this.facilityInfo[this.currentRootTag][key];
+    }
+  }, {
+    key: 'initEquipmentButtonListener',
+    value: function initEquipmentButtonListener() {
+      var that = this;
+
+      (0, _jquery2.default)('.iam-equipment-button').click(function (event) {
+
+        that.currentRootTag = (0, _jquery2.default)(this).data('equiproot').split(' ').join('_').toLowerCase();
+        that.activeEquipName = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text().split(' ').join('_');
+
+        if (that.canReserveER == 0 && that.currentRootTag == 'equipment_room') {
+          alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $' + erLateFee + '.');
+          return;
+        }
+
+        if (that.getFacilityInfo('type') == 'rental') that.rentalPeriod = (0, _jquery2.default)(this).data('rental-period');
+
+        that.spawnResPopup((0, _jquery2.default)(this).data('equiproot'), that.getFacilityInfo('description'));
+
+        that.cal = new _cal2.default(that, 'public');
+
+        that.popupSubmitListener();
+
+        that.hideEquipmentBlocks();
+        (0, _uifunc.initPopupXListener)(that.revealEquipmentBlocks);
+
+        this.oldScrollPos = (0, _jquery2.default)(window).scrollTop();
+      });
+    }
+  }, {
+    key: 'hideEquipmentBlocks',
+    value: function hideEquipmentBlocks() {
+      (0, _jquery2.default)('.iam-res-left').addClass('iam-ninja');
+    }
+  }, {
+    key: 'revealEquipmentBlocks',
+    value: function revealEquipmentBlocks() {
+      (0, _jquery2.default)('.iam-res-left').removeClass('iam-ninja');
+    }
+  }, {
+    key: 'popupSubmitListener',
+    value: function popupSubmitListener() {
+      var that = this;
+      (0, _jquery2.default)('.iam-popup-submit button').click(function (event) {
+        var newEvents = [];
+        var events = (0, _jquery2.default)('.iam-res-cal').fullCalendar('clientEvents');
+        var warning = false;
+        var comment = (0, _jquery2.default)('.iam-res-comment').val();
+        for (var i = 0; i < events.length; i++) {
+          var starttime = void 0,
+              endtime = void 0;
+          if (events[i].className.length > 0) {
+            newEvents.push({
+              user: events[i].title,
+              start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
+              end: events[i].end.format('YYYY-MM-DD HH:mm:ss'),
+              comment: comment
+            });
+          }
+        }
+
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          async: false,
+          data: { action: 'submit_reservation', equipment: that.activeEquipName, events: newEvents },
+          success: function success(data) {
+            (0, _serverresponse.handleServerResponse)(data);
+            (0, _jquery2.default)('.iam-res-popup').remove();
+            that.reloadExistingRes();
+            that.revealEquipmentBlocks();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }]);
+
+  return ReservationPublic;
+}();
+
+exports.default = ReservationPublic;
+
+/***/ }),
+/* 141 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _serverresponse = __webpack_require__(4);
+
+var _userfeedback = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BreadCrumb = function () {
+  function BreadCrumb(resPage) {
+    _classCallCheck(this, BreadCrumb);
+
+    this.resPage = resPage;
+    this.breadcrumbTrail = [];
+    this.initCrumbListener();
+    this.initCrumbButtonListener();
+    this.initRootCrumbListener();
+  }
+
+  _createClass(BreadCrumb, [{
+    key: 'initRootCrumbListener',
+    value: function initRootCrumbListener() {
+      var that = this;
+      (0, _jquery2.default)('#iam-crumb-root').click(function (event) {
+        that.popToCrumbRoot();
+      });
+    }
+  }, {
+    key: 'updateTrail',
+    value: function updateTrail() {
+      (0, _jquery2.default)('#iam-res-crumb').empty();
+      for (var i = 0; i < this.breadcrumbTrail.length; i++) {
+        (0, _jquery2.default)('#iam-res-crumb').append('<div class="iam-crumb">' + this.breadcrumbTrail[i] + '</div>');
+      }
+    }
+  }, {
+    key: 'initCrumbListener',
+    value: function initCrumbListener() {
+      var that = this;
+
+      (0, _jquery2.default)('.iam-crumb').click(function (event) {
+        var crumbIndex = that.breadcrumbTrail.indexOf((0, _jquery2.default)(this).text());
+        if (crumbIndex == -1 || crumbIndex == that.breadcrumbTrail.length - 1) return;
+        var rem = that.breadcrumbTrail.length - 1 - crumbIndex;
+        for (var i = 0; i < rem; i++) {
+          that.breadcrumbTrail.pop();
+        }
+        that.updateTrail();
+        that.updatePageForCrumb();
+        that.updateCrumbButtons();
+        that.initCrumbListener();
+        that.initCrumbButtonListener();
+      });
+    }
+  }, {
+    key: 'initCrumbButtonListener',
+    value: function initCrumbButtonListener() {
+      var that = this;
+      (0, _jquery2.default)('.iam-crumb-button').click(function (event) {
+        that.breadcrumbTrail.push((0, _jquery2.default)(this).text());
+        that.updateTrail();
+        that.updatePageForCrumb();
+        that.updateCrumbButtons();
+        that.initCrumbListener();
+        that.initCrumbButtonListener();
+      });
+    }
+  }, {
+    key: 'updateCrumbButtons',
+    value: function updateCrumbButtons() {
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'GET',
+        async: false,
+        data: { action: 'get_child_tags', parent_tag: this.breadcrumbTrail[this.breadcrumbTrail.length - 1] },
+        success: function success(data) {
+          data = (0, _serverresponse.handleServerResponse)(data);
+          (0, _jquery2.default)('#iam-res-crumb-buttons').empty();
+          if (!Array.isArray(data)) data = [data];
+          for (var crumbButton in data) {
+            (0, _jquery2.default)('#iam-res-crumb-buttons').append('<button class="iam-crumb-button">' + data[crumbButton] + '</button>');
+          }
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+    }
+  }, {
+    key: 'newDataToResLeft',
+    value: function newDataToResLeft(data, empty) {
+      if (empty === true) (0, _jquery2.default)('.iam-res-left').empty();
+      (0, _jquery2.default)('.iam-res-left').append(data);
+      this.resPage.initEquipmentButtonListener();
+    }
+  }, {
+    key: 'updatePageForCrumb',
+    value: function updatePageForCrumb() {
+      var that = this;
+      if (this.breadcrumbTrail.length < 1) return;
+      (0, _jquery2.default)('.iam-res-left').empty();
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'GET',
+        async: false,
+        data: { action: 'get_equipment_for_tags', tags: this.breadcrumbTrail[this.breadcrumbTrail.length - 1] },
+        success: function success(data) {
+          data = (0, _serverresponse.handleServerResponse)(data);
+          that.newDataToResLeft(data);
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+    }
+  }, {
+    key: 'popToCrumbRoot',
+    value: function popToCrumbRoot() {
+      var that = this;
+      //clear crumbs
+      this.breadcrumbTrail = [];
+      (0, _jquery2.default)('#iam-res-crumb').empty();
+      //new stuff
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'GET',
+        async: false,
+        data: { action: 'get_equipment_for_tags', tags: that.resPage.rootTags },
+        success: function success(data) {
+          that.newDataToResLeft((0, _serverresponse.handleServerResponse)(data, true), true);
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+      //empty buttons
+      (0, _jquery2.default)('#iam-res-crumb-buttons').empty();
+
+      for (var i = 0; i < that.resPage.rootTags.length; i++) {
+        (0, _jquery2.default)('#iam-res-crumb-buttons').append('<button class="iam-crumb-button">' + that.resPage.rootTags[i] + '</button>');
+      }
+
+      this.initCrumbListener();
+      this.initCrumbButtonListener();
+    }
+  }]);
+
+  return BreadCrumb;
+}();
+
+exports.default = BreadCrumb;
 
 /***/ })
 /******/ ]);

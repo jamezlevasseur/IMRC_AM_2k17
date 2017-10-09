@@ -29,7 +29,8 @@ function get_rental_period($id)
 	global $wpdb;
 	$json = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$id));
 	if (count($json)==0) {
-		return 0;
+		$default = ezget("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s", DEFAULT_RENTAL_TYPE_KEY)[0]->Meta_Value;
+		return json_decode($default)->duration;
 	}
 	return json_decode($json[0]->Meta_Value)->duration;
 }

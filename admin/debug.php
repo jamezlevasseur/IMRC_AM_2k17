@@ -8,8 +8,6 @@ class Debug_Page
 
     public static function debug_content()
     {
-      Facility::create(['name'=>'Fab Lab','type'=>'a']);
-      Facility::create(['name'=>'Equipment Room','type'=>'r']);
         ?>
         <div class="debug-wrap">
           <h3>Make Dummy Reservations</h3>
@@ -21,7 +19,7 @@ class Debug_Page
         </div>
         <?php
         /** de bugs go here **/
-
+        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=0");
 
     }
 

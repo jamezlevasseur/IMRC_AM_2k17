@@ -126,7 +126,6 @@ class IAM_Admin {
 		wp_enqueue_script($this->plugin_name.'-jquery-ui', iam_url().'static/'. 'js/jquery-ui.min.js', array('jquery'),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'-moment', iam_url().'static/'. 'js/moment.min.js', array(),$this->version, false);
 		wp_enqueue_script($this->plugin_name.'pagination-js', iam_url().'static/' . 'js/pagination.min.js',array('jquery'), $this->version, false);
-		wp_enqueue_script($this->plugin_name.'timepicker-js', iam_url().'static/' . 'js/jquery.timepicker.min.js',array('jquery'), $this->version, false);
 		wp_enqueue_script($this->plugin_name.'fullcalendar-js', iam_url().'static/' . 'js/fullcalendar.min.js',array('jquery'), $this->version, false);
 
 		wp_enqueue_script( $this->plugin_name, iam_url() . 'build/js/admin.js', array( 'jquery' ), $this->version, false );

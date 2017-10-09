@@ -539,36 +539,51 @@ import SettingsAdmin from '../page/settingsadmin';
 				var initRentalTypeRowListener = function () {
 		  		$('.rental-duration').off();
 		  		numbersOnlyListener($('.rental-duration'));
-				//detects changes in account and type
-				$('.rental-duration').change(function(event) {
-					var n = $(this).closest('tr').data('id');
-					if (n=='') {
-						return;
-					}
-					updatedRentalTypes[$(this).closest('tr').data('id')] = {
-						'label':$(this).closest('tr').find('.rental-label').val(),
-						'duration':$(this).val()
-										};
-				});
-				$('.rental-label').change(function(event) {
-					var n = $(this).closest('tr').data('id');
-					if (typeof n=='undefined' || n=='') {
-						return;
-					}
-					updatedRentalTypes[$(this).closest('tr').data('id')] = {
-						'duration':$(this).closest('tr').find('.rental-duration').val(),
-						'label':$(this).val()
-										};
-				});
-				initDeleteRentalTypeButtonListener();
+					$('.rental-duration').change(function(event) {
+						var n = $(this).closest('.rental-period-container').data('id');
+						if (n=='') {
+							return;
+						}
+						updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
+							'label':$(this).closest('.rental-period-container').find('.rental-label').val(),
+							'duration':$(this).val()
+							};
+					});
+					$('.rental-label').change(function(event) {
+						var n = $(this).closest('.rental-period-container').data('id');
+						if (typeof n=='undefined' || n=='') {
+							return;
+						}
+						updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
+							'duration':$(this).closest('.rental-period-container').find('.rental-duration').val(),
+							'label':$(this).val()
+							};
+					});
+					$('.default-rental-type').click(function(event) {
+						var n = $(this).closest('.rental-period-container').data('id');
+						if (typeof n=='undefined' || n=='') {
+							return;
+						}
+						updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
+							'duration':$(this).closest('.rental-period-container').find('.rental-duration').val(),
+							'label':$(this).closest('.rental-period-container').find('.rental-label').val()
+
+								};
+					});
+					initDeleteRentalTypeButtonListener();
 		  	}
 
 				var initAddRentalTypeButtonListener = function () {
+					$('.template-rental-seg').removeClass('iam-ninja');
+					var templateRentalSeg = $('.template-rental-seg').prop('outerHTML');
+					$('.template-rental-seg').remove();
+
+
 					$('.iam-add-rental-type').click(function(event) {
-						if ($('.iam-rental-type-form .iam-no-data-row').length>0) {
-							$('.iam-rental-type-form .iam-no-data-row').remove();
+						if ($('.no-data-found').length>0) {
+							$('.no-data-found').remove();
 						}
-						$('.iam-rental-type-form table tbody').append('<tr data-id=""><td><label>Label: <input type="text" class="rental-label"></label></td><td><label>Duration (in days): <input type="number" class="rental-duration"></label></td><td><i class="iam-delete-rental-type fa fa-close fa-3"></i></td></tr>');
+						$('.rental-type-master-container').append(templateRentalSeg);
 						initRentalTypeRowListener();
 					});
 				}
@@ -576,6 +591,30 @@ import SettingsAdmin from '../page/settingsadmin';
 				var initDeleteRentalTypeButtonListener = function () {
 					$('.iam-delete-rental-type').off();
 					$('.iam-delete-rental-type').click(function(event) {
+						let that = this;
+						if ($(this).closest('.rental-period-container').find('.default-rental-type').is(':checked')) {
+								alert('Cannot delete the default rental type. Please assign another to default then delete this one.');
+								return;
+						}
+						if ($('.rental-label').length<2) {
+							alert('Cannot delete the last rental type.');
+							return;
+						}
+						submissionStart();
+						$.ajax({
+							url: ajaxurl,
+							type: 'POST',
+							data: {action: 'admin_delete_rental_type', toDelete: $(this).closest('.rental-period-container').data('id')},
+							success: function (data) {
+								submissionEnd();
+								handleServerResponse(data);
+								$(that).closest('.rental-period-container').remove();
+							},
+							error: function (data) {
+								handleServerError(data, new Error());
+							}
+						});
+						/*
 						var toDelete = $(this).parent().parent().find('.rental-label').val();
 						var list = '<select class="iam-select iam-delete-rental-type-select">';
 		  			$('.rental-label').each(function(index, el) {
@@ -589,47 +628,53 @@ import SettingsAdmin from '../page/settingsadmin';
 		  				$(this).parent().parent().remove();
 		  				return;
 		  			}
-		  			makeSubmitPopup('Delete Rental Type','<p style="color:red;">Deleting: '+toDelete+'</p><p>Select a replacement rental type for equipment that currently have '+toDelete+'.</p>'+list,deleteRentalTypeListener,[$(this).closest('tr')]);
+		  			makeSubmitPopup('Delete Rental Type','<p style="color:red;">Deleting: '+toDelete+'</p><p>Select a replacement rental type for equipment that currently have '+toDelete+'.</p>'+list,deleteRentalTypeListener,[$(this).closest('tr')]);*/
 					});
 				}
 
-				var deleteRentalTypeListener = function (a) {
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'admin_delete_rental_type', replacement: $('.iam-delete-rental-type-select').val(), toDelete: a[0].data('id')},
-						success: function (data) {
-							handleServerResponse(data);
-							a[0].remove();
-						},
-					error: function (data) {
-						handleServerError(data, new Error());
+				let resetDefault = function () {
+					for (let item in updatedRentalTypes) {
+						updatedRentalTypes[item]['default'] = 0;
 					}
-					});
 				}
 
 				var initSubmitRentalTypeListener = function () {
 					$('.iam-rental-types-submit').click(function(event) {
 						submissionStart();
 						var newTypes = [];
-						$('.iam-rental-type-form table tbody tr').each(function(index, el) {
+
+						$('.rental-period-container').each(function(index, el) {
 							if ($(this).data('id')=='' &&
 								$(this).find('.rental-label').val().length>0 &&
 								$(this).find('.rental-duration').val().length>0) {
-								var duration = $(this).find('.rental-duration').val();
+								let duration = $(this).find('.rental-duration').val();
+								let isDefault =  $(this).find('.default-rental-type').is(':checked') ? 1 : 0;
+								if (isDefault)
+									resetDefault();
 								newTypes.push({
 											'label':$(this).find('.rental-label').val(),
-											'duration': duration
+											'duration': duration,
+											'default': isDefault
 										});
 							}
 						});
+
+						let checked = $('.default-rental-type:checked').closest('.rental-period-container').data('id');
+						if (checked in updatedRentalTypes) {
+							resetDefault();
+							updatedRentalTypes[checked]['default'] = 1;
+						}
+
 						$.ajax({
 							url: ajaxurl,
 							type: 'POST',
-							data: {action: 'admin_update_rental_type', updated_rental_types: updatedRentalTypes, new_rental_types: newTypes},
+							data: {	'action': 'admin_update_rental_type',
+											'updated_rental_types': updatedRentalTypes,
+											'new_rental_types': newTypes},
 							success: function (data) {
 								handleServerResponse(data);
 								submissionEnd();
+								window.location.reload();
 							},
 						error: function (data) {
 							handleServerError(data, new Error());

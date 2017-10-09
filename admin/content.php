@@ -775,27 +775,26 @@ class Admin_Content
 				<section>
 					<h1>Rental Types</h1>
 					<form accept-charset="utf-8" class="iam-rental-type-form">
-						<table>
-							<tbody>
-									<?php
-										$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
-										if (count($rental_types)==0) {
-											echo '<tr class="iam-no-data-row"><td>No data found!</td></tr>';
-										}
-										foreach ($rental_types as $row) {
-											$r = json_decode($row->Meta_Value);
-											echo '<tr data-id="'.$r->id.'"><td><label>Label: <input type="text" class="rental-label" value="'.$r->label.'"></label></td><td><label>Duration (in days): <input type="number" class="rental-duration" value="'.$r->duration.'"></label></td><td><i class="iam-delete-rental-type fa fa-close fa-3"></i></td></tr>';
-										}
-										?>
-							</tbody>
-						</table>
+						<div class="rental-type-master-container">
+							<?php
+								$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
+								if (count($rental_types)==0) {
+									echo '<div class="no-data-found">No data found!</div>';
+								}
+								foreach ($rental_types as $row) {
+									$r = json_decode($row->Meta_Value);
+									$checked = $r->default==1 ? 'checked' : '';
+									echo Settings_Page::make_rental_seg(['id'=>$r->id,'label'=>$r->label,'duration'=>$r->duration,'default'=>$checked]);
+								}
+								?>
+						</div>
 						<div class="iam-secondary-button iam-add-rental-type">add new</div>
 						<div class="iam-rental-types-submit iam-save iam-button"></div>
 					</form>
 				</section>
 			<?php }//if rental ?>
 			</section>
-			<hr>
+			<?php echo Settings_Page::make_rental_seg(['class'=>'iam-ninja template-rental-seg']); ?>
 			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
 		</div>
 		<?php
