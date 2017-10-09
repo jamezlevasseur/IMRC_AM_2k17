@@ -193,7 +193,7 @@
 }
 
 .iam-ninja {
-	display: none;
+	display: none!important;
 }
 .menu-item a:active {
 	color:white;
@@ -331,20 +331,20 @@
 	padding-top: 125px;
 }
 
-.iam-ref-left {
+.iam-res-left {
 	display: inline-block;
 	max-width: 75%;
 	float: left;
 }
 
-.iam-ref-left-top {
+.iam-res-left-top {
 	display: inline-block;
 	width: 65.5%;
 	min-width: 850px;
 	float: left;
 }
 
-#iam-ref-right {
+#iam-res-right {
 	display: inline-block;
 	min-width: 100px;
 	max-width: 15%;
@@ -374,7 +374,7 @@
 	margin-top: 10px;
 }
 
-#iam-ref-right-title {
+#iam-res-right-title {
 	font-size: 20px;
 	line-height: 1.1em;
 	margin-bottom: 20px;
@@ -386,7 +386,7 @@
 }
 /*********************** SMALL SCREEN ***********************/
 @media screen and (max-width: 1090px) {
-    #iam-ref-right {
+    #iam-res-right {
     	clear:both;
     	float:left;
     }
@@ -401,7 +401,7 @@
     	width: 125%;
     	min-height: 300px;
     }
-    .iam-ref-left-top {
+    .iam-res-left-top {
     	min-width:210px;
     	width:100%;
     }
@@ -469,11 +469,11 @@
 	float: right;
 	clear: right;
 }
-#iam-ref-crumb {
+#iam-res-crumb {
 	display: inline-block;
 }
 
-#iam-ref-crumb-buttons {
+#iam-res-crumb-buttons {
 	float: right;
 	display: inline-block;
 	max-width: 680px;
@@ -506,10 +506,10 @@
 }
 
 @media screen and (max-width: 700px) {
-	.iam-ref-left-top {
+	.iam-res-left-top {
 		margin-left: 0px;
 	}
-	#iam-ref-crumb-buttons {
+	#iam-res-crumb-buttons {
 		float: none !important;
 		clear: both !important;
 		margin-left: -10px;

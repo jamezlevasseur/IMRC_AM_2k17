@@ -32,13 +32,6 @@ class Reservation_Public
         exit;
     }
 
-    public static function reservation_popup_callback()
-    {
-        echo IAM_Reservation_Popup::get();
-        exit;
-    }
-
-
     public static function get_child_tags_callback()
     {
         IAM_Reservation_Page::get_child_tags();

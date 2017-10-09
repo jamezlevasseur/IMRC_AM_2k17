@@ -44,7 +44,7 @@ class IAM_Reservation_Page
 		return $key.$val;
 	}
 
-	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag='Fab Lab')
+	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag)
 	{
 		global $wpdb;
 
@@ -77,7 +77,7 @@ class IAM_Reservation_Page
 								<div class="iam-equipment-certifications iam-equipment-sub-block">'.IAM_Reservation_Page::orNoInfo('Certifications : ',iam_output($cert_name)).'</div>
 								'.$certified_html.'
 							</div>
-							<div class="iam-equipment-block-button"><button class="iam-equipment-button" data-equiproot="'.iam_output($equip_root_tag).'" data-rental-period="'.$rental_period.'" '.$button_disabled.'>Select</button></div>
+							<div class="iam-equipment-block-button"><button class="iam-equipment-button" data-equiproot="'.iam_output($equip_root_tag).'" data-equip data-rental-period="'.$rental_period.'" '.$button_disabled.'>Select</button></div>
 						</div>';
 	}
 
@@ -108,9 +108,15 @@ class IAM_Reservation_Page
 					if (!in_array($equip_id, $added_equip_ids)) {
 						$added_equip_ids[] = $equip_id;
 						$equip_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id));
+						if (empty($equip_results))
+							continue;
 						$equip_row = $equip_results[0];
 						$cert_id = $equip_row->Certification_ID;
-						$cert_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID=%d ",$cert_id))[0]->Name;
+						$cert_name = ezget("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID=%d ",$cert_id);
+						if (!empty($cert_name))
+							$cert_name = $cert_name[0]->Name;
+						else
+							$cert_name = '';
 						$rental_type = get_rental_period($equip_row->Rental_Type);
 						$photo_url = $equip_row->Photo==null ? IAM_DEFAULT_LARGE_PICTURE : $equip_row->Photo;
 						$equipment_blocks[$equip_row->Name] = IAM_Reservation_Page::make_equipment_block(
@@ -150,8 +156,10 @@ class IAM_Reservation_Page
 		$html = "";
 		foreach ($results as $row) {
 			$cert_id = $row->Certification_ID;
-			$cert = $wpdb->prepare("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID=%d ", $cert_id);
-			$cert_name = $wpdb->get_results($cert)[0]->Name;
+			$cert = ezget("SELECT Name FROM ".IAM_CERTIFICATION_TABLE." WHERE Certification_ID=%d ", $cert_id);
+			$cert_name = '';
+			if (!empty($cert))
+				$cert_name = $cert[0]->Name;
 			$photo_url = $row->Photo==null ? IAM_DEFAULT_LARGE_PICTURE : $row->Photo;
 			$html .= IAM_Reservation_Page::make_equipment_block(
 				$row->Out_Of_Order,
@@ -251,32 +259,48 @@ class IAM_Reservation_Page
 		$facility_crumb_buttons = '';
 		$facility_html = '';
 		$facility_names = '';
+		$root_tags = [];
 		foreach ($facility_results as $row) {
 			$tag_id = $row->Tag_ID;
 			$tag = $wpdb->get_results("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID='$tag_id'")[0]->Tag;
-
-			//make readable by javascript
+			$row_scheduling = json_decode($row->Schedule);
+			$root_tags[] = $tag;
 			$tag = strtolower(str_replace(' ', '_', $tag));
 			$facility_names.=$tag.',';
-			$facility_html.='data-'.$tag.'="'.iam_output(json_encode(['schedule_type'=>$row->Schedule_Type,'rental_period'=>$row->Rental_Days,'rental_hours_description'=>$row->Rental_Hours_Description,'appointment_business_hours'=>$row->Appointment_Business_Hours])).'" ';
-
+			$facility_html.='data-'.$tag.'="'.iam_output($row->Schedule).'" ';
 			$facility_crumb_buttons .= '<button class="iam-crumb-button">'.$row->Name.'</button>';
 		}
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
-		$html = '<div id="iam-ref">'.IAM_Reservation_Page::res_banner().'
+		$html = '<div id="iam-res">'.IAM_Reservation_Page::res_banner().'
 		<p class="iam-page-header">Available Equiment</p>
-		<div class="iam-ninja iam-cal-data" data-late-fee="'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.'></div>
-		<div class="iam-ref-left-top">
+		<div class="iam-ninja iam-cal-data" data-late-fee="'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.' data-root-tags="'.iam_output(implode(',',$root_tags)).'"></div>
+		<div class="iam-res-left-top">
 			<div class="iam-search-container">
 				<input type="search" placeholder="search..." class="iam-search iam-reservations-search">
 			</div>
-			<div id="iam-ref-crumb-buttons">'.$facility_crumb_buttons.'</div><br>
-			<div class="iam-crumb-container"><div id="iam-crumb-root"></div><div id="iam-ref-crumb"></div></div>
+			<div id="iam-res-crumb-buttons">'.$facility_crumb_buttons.'</div><br>
+			<div class="iam-crumb-container"><div id="iam-crumb-root"></div><div id="iam-res-crumb"></div></div>
 		</div>
-		<div class="iam-ref-left">'.IAM_Reservation_Page::get_equipment().'
+		<div class="iam-res-left">'.IAM_Reservation_Page::get_equipment().'
 		</div>
-		<div id="iam-ref-right"><div id="iam-ref-right-title">Existing Reservations</div><div id="iam-existing-res-container">'.IAM_Reservation_Page::get_user_reservations().'</div></div>
+		<div id="iam-res-right"><div id="iam-res-right-title">Existing Reservations</div><div id="iam-existing-res-container">'.IAM_Reservation_Page::get_user_reservations().'</div></div>
 		</div>';
+
+		$current_user = wp_get_current_user();
+		$html.= '<div class="iam-res-popup iam-ninja">
+			<div class="iam-res-popup-header"><div class="iam-x fa fa-close fa-4"></div></div>
+			<div class="iam-res-popup-body">
+				<div class="iam-events">
+					<h4 style="font-weight:bold;color:#248cc8;text-align:center;">DRAG ME OVER --></h4>
+					<div class="fc-event">'.$current_user->user_login.'</div>
+					<div class="iam-facility-info"></div>
+					<div class="iam-popup-submit"><button type="button">Submit</button></div>
+				</div>
+				<div class="iam-res-cal"></div>
+			</div>
+			<textarea class="iam-textarea iam-res-comment" placeholder="Additional details go here." rows="4"></textarea>
+		</div>';
+
 		Utils_Public::render_page_for_login_status($html);
 	}
 

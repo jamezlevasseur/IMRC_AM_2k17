@@ -68,8 +68,6 @@ class IAM_Public {
 
 		require_once iam_dir() . 'templates/reservation_page.php';
 
-		require_once iam_dir() . 'templates/reservation_popup.php';
-
 		require_once iam_dir() . 'templates/certification_page.php';
 
 		require_once iam_dir() . 'templates/training_page.php';

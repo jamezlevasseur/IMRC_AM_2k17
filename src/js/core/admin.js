@@ -8,7 +8,7 @@ import { handleServerResponse, handleServerError } from '../module/serverrespons
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../module/cal';
 import { overridePrompt } from '../module/override';
-import { initCSVButtonListener, initCSVAJAXButtonListener } from '../module/uifunc';
+import { initCSVButtonListener, initCSVAJAXButtonListener, initSearchListener } from '../module/uifunc';
 
 import UserAdmin from '../page/useradmin';
 import SettingsAdmin from '../page/settingsadmin';
@@ -490,33 +490,6 @@ import SettingsAdmin from '../page/settingsadmin';
 						return true;
 				}
 				return add;
-			}
-
-			var initSearchListener = function (searchElement,elementWithText,parents) {
-				$(searchElement).keyup(function(event) {
-					$(elementWithText).each(function(index, el) {
-						if ($(this).text().toLowerCase().indexOf($(searchElement).val().toLowerCase())==-1) {
-							var hideable = $(this);
-							for (var i = 0; i < parents; i++) {
-								hideable = hideable.parent();
-							}
-							hideable.addClass('iam-ninja');
-						} else {
-							var hideable = $(this);
-							for (var i = 0; i < parents; i++) {
-								hideable = hideable.parent();
-							}
-							hideable.removeClass('iam-ninja');
-						}
-						if ($(searchElement).val().length==0) {
-							var hideable = $(this);
-							for (var i = 0; i < parents; i++) {
-								hideable = hideable.parent();
-							}
-							hideable.removeClass('iam-ninja');
-						}
-					});
-				});
 			}
 
 			var initDeleteFormListener = function (formtype) {

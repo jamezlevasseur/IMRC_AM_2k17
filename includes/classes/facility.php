@@ -97,7 +97,7 @@ class Facility
               $email_template,
               'Failed to send notification.' );
 
-    send_to_debug_file( get_email($user->IAM_ID) );
+    send_to_debug_file( $email_info->Email );
     send_to_debug_file( $email_template );
   }
 
@@ -115,7 +115,7 @@ class Facility
               $email_template,
               'Failed to send notification.' );
 
-    send_to_debug_file( get_email($user->IAM_ID) );
+    send_to_debug_file( $email_args['user_email'] );
     send_to_debug_file( $email_template );
   }
 
@@ -133,7 +133,7 @@ class Facility
               $email_template,
               'Failed to send notification.' );
 
-    send_to_debug_file( get_email($user->IAM_ID) );
+    send_to_debug_file( $email_info->Email );
     send_to_debug_file( $email_template );
   }
 

@@ -642,7 +642,7 @@ class Admin_Content
 			<section class="iam-settings-container">
 				<section>
 					<div class="iam-form iam-form-left">
-						<label>Facility Name: <input type="text" class="facility-name" value="<?php echo $this->facility->Name; ?>"></label>
+						<label>Facility Name: <input disabled type="text" class="facility-name" value="<?php echo $this->facility->Name; ?>"></label>
 					</div>
 				</section>
 				<section>

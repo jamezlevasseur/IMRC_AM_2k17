@@ -30,6 +30,11 @@ function detectIE() {
     return false;
 }
 
+let doError = function (msg) {
+  alert(msg);
+  throw msg;
+}
+
 let isEmail = function (email) {
   let atpos = email.indexOf("@");
   let dotpos = email.lastIndexOf(".");
@@ -85,4 +90,4 @@ let rStr = function (length) {
   return str;
 }
 
-export {rStr, isEmail, getSize, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn, detectIE};
+export {rStr, isEmail, getSize, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn, detectIE, doError};
