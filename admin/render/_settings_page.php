@@ -101,7 +101,7 @@ class Settings_Page
           iam_throw_error("Cannot delete the default rental type.");
 
         ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Rental_Type=0 WHERE Rental_Type=%s",$to_delete);
-        
+
         $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",RENTAL_PREFIX.$to_delete));
         iam_respond(SUCCESS);
     }
@@ -245,10 +245,32 @@ class Settings_Page
               </select>
           </div><br />
           <div class="late-check-time">Late check time: '.self::make_timepicker($scheduling->late_check_time).' </div><br />
-          <div><button type="button" class="btn btn-primary">Irregular Hours</button></div><br />
+          <div><button type="button" class="btn btn-primary iam-irregular-hours-button" data-toggle="modal" data-target="#irregular-hours-modal">Irregular Hours</button></div><br />
           '.$hours_ui.'<br />
           <div><textarea class="scheduling-description" cols="80" rows="5" placeholder="Scheduling description and additional information go here. Example: We\'re open 10-4 weekdays, please bring a deposit to rent your equipment.">'.$scheduling->description.'</textarea></div><br />
           <button type="button" class="btn btn-success">Save</button>
+      </div>
+      <div id="irregular-hours-modal" class="modal" role="dialog">
+        <div class="modal-dialog modal-lg">
+
+          <!-- Modal content-->
+          <div class="modal-content">
+            <div class="modal-header iam-events">
+              <div class="fc-event" style="text-align:center; max-width:120px;">  drag me </div>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+
+        </div>
       </div>';
     }
 

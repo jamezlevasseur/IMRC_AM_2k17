@@ -19,8 +19,9 @@ export default class Cal {
       this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
       this.initDraggable();
       this.initPubResCal(this.page.getFacilityInfo('type'));
-    } else {
-
+    } else if (facing=='admin') {
+      this.initDraggable();
+      this.initAdminCal(this.page.cal);
     }
   }
 
@@ -111,6 +112,23 @@ export default class Cal {
 
   }
 
+  initAdminCal (cal) {
+    let neutralArgs = {
+      editable: false, //new events will be made editable else where
+      eventLimit: true, // allow "more" link when too many events
+      allDay: false,
+      height: 500,
+      forceEventDuration: true,
+      droppable: true,
+      eventOverlap: false,
+      allDaySlot: false
+    };
+
+    let finalArgs = $.extend(neutralArgs, this.calArgs[cal]);
+
+    $('.iam-cal').fullCalendar(finalArgs);
+  }
+
   initPubResCal (facilitType) {
     let facilityNeutralArgs = {
       editable: false, //new events will be made editable else where
@@ -139,6 +157,20 @@ export default class Cal {
     let that = this;
     this.calArgs = {};
 
+    this.calArgs['irregular'] = {
+      header: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'month,agendaWeek,agendaDay'
+      },
+      defaultView: 'agendaWeek',
+      title: 'closed',
+      eventReceive: function (e, d, revert) {
+        e.title = 'closed';
+      },
+      events: ajaxurl+"?action=admin_get_irregular_hours&facility="+this.page.facilityName
+    };
+
     this.calArgs['appointment'] = {
       header: {
         left: 'prev,next today',
@@ -149,51 +181,52 @@ export default class Cal {
       weekends:true,
       defaultView: 'agendaWeek',
       eventReceive: function (e, d, revert) {
-        if (!preventPastReservation(e)) {
+        if (!that.preventPastReservation(e)) {
           $('.iam-res-cal').fullCalendar('removeEvents',e._id);
           return false;
         }
-        warnIfOutOfBounds(e);
+        that.warnIfOutOfBounds(e);
       },
       eventDrop: function (e, d, revert) {
-        if (!preventPastReservation(e)) {
+        if (!that.preventPastReservation(e)) {
           revert();
           return;
         }
-        warnIfOutOfBounds(e);
+        that.warnIfOutOfBounds(e);
       },
       eventResize: function (e, d, revert) {
-        if (!preventPastReservation(e)) {
+        if (!that.preventPastReservation(e)) {
           revert();
           return;
         }
-        warnIfOutOfBounds(e);
+        that.warnIfOutOfBounds(e);
       }
     }
 
-    this.calArgs['appointment'] = {
+    this.calArgs['rental'] = {
       header: {
         left: 'prev,next today',
         center: 'title',
         right: 'month'
       },
       weekends: false,
+      defaultTimedEventDuration: (that.page.rentalPeriod*24)+':00:00',
       defaultView: 'month',
       eventReceive: function (e) {
-        if (eventFallsOnWeekend(e)) {
+        if (that.eventFallsOnWeekend(e)) {
           alert(that.ERinvalidTimePrompt);
           $('.iam-res-cal').fullCalendar('removeEvents',e._id);
           return false;
         }
       },
       eventDrop: function (e, d, revert) {
-        if (eventFallsOnWeekend(e)) {
+        if (that.eventFallsOnWeekend(e)) {
           alert(that.ERinvalidTimePrompt);
           revert();
         }
       },
       eventResize: function (e, d, revert) {
-        if (eventIsLongerThan(e, (parseInt(that.page.rentalPeriod) + 1))) {
+        if (that.eventIsLongerThan(e, (parseInt(that.page.rentalPeriod) + 1))) {
           alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.')
           revert();
         }

@@ -6,6 +6,8 @@ import { numbersOnlyListener } from '../module/textfieldlisteners';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 
+import Cal from '../module/cal';
+
 export default class SettingsAdmin {
 
   constructor () {
@@ -20,7 +22,9 @@ export default class SettingsAdmin {
     this.facilityEmailListener();
     this.notificationEmailListeners();
     this.initScheduleSubmitListeners();
+    this.initIrregularHoursButtonListener();
 
+    this.facilityName = $('.facility-name').val();
   }
 
   getTimePickerVal ($container) {
@@ -147,7 +151,6 @@ export default class SettingsAdmin {
   }
 
   updateNotificationEmail (action, $panelBody) {
-    console.log($panelBody);
     let that = this;
     submissionStart();
     $.ajax({
@@ -192,5 +195,54 @@ export default class SettingsAdmin {
 			});
 		});
 	}
+
+  initUpdateIrregularHoursButtonListener () {
+    let that = this;
+    $('#irregular-hours-modal .btn-success').off();
+    $('#irregular-hours-modal .btn-success').click(function(event) {
+
+      submissionStart();
+      let newEvents = [];
+      let events = $('.iam-cal').fullCalendar('clientEvents');
+      for (let i = 0; i < events.length; i++) {
+        let starttime, endtime;
+        if (events[i].className.length>0) {
+          newEvents.push( {
+            title: 'closed',
+            start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
+            end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
+          });
+        }
+      }
+
+      $.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: {action: 'admin_update_irregular_hours', facility:that.facilityName, events: newEvents},
+        success: function (data) {
+          handleServerResponse(data);
+          submissionEnd();
+        },
+        error: function (data) {
+          handleServerError(data, new Error());
+        }
+      });
+    });
+  }
+
+  initIrregularHoursButtonListener () {
+    let that = this;
+    this.cal = 'irregular';
+
+    $('.iam-irregular-hours-button').off();
+    $('.iam-irregular-hours-button').click(function(event) {
+      $('#irregular-hours-modal .modal-body').empty();
+      $('#irregular-hours-modal .modal-body').append('<div class="iam-cal"></div>');
+
+      setTimeout( () => { that.irregularCal = new Cal(that, 'admin'); }, 200);
+
+      that.initUpdateIrregularHoursButtonListener();
+    });
+  }
 
 }
