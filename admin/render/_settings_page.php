@@ -156,18 +156,52 @@ class Settings_Page
       iam_respond(SUCCESS);
     }
 
-    public static function test_email()
+    public static function new_res_email_test ()
     {
-      /*
-      $facility = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
-      $facility_name = $facility->Name;
-      $schedule = $
-      Facility::send_admin_late_res_email( $facility_name,
+      $components = ezget("SELECT ".IAM_FACILITY_TABLE." Name,Email,Schedule WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+
+      $now = new DateTime();
+
+      Facility::send_facility_new_res_email($components->Name,
+																						[ 'equipment'=>'Test Equipment',
+																							'username'=>'some.user',
+																							'start'=>$now->format('M d, Y \a\t g:i a'),
+																							'end'=>$now->format('M d, Y \a\t g:i a')
+																						]);
+
+      iam_respond(SUCCESS);
+    }
+
+    public static function late_res_admin_email_test ()
+    {
+      $components = ezget("SELECT ".IAM_FACILITY_TABLE." Name,Email,Schedule WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+
+      $description = json_decode($components->Schedule)->description;
+
+      Facility::send_admin_late_res_email( $components->Name,
                                           [ 'equipment'=>'Test Equipment',
-                                            'fee'=>cash_format($fee),
-                                            'username'=>$user->WP_Username,
-                                            'notification_num'=>ordinal_format($notifcation_num)
-                                          ]);*/
+                                            'fee'=>'9.99',
+                                            'username'=>'some.username',
+                                            'notification_num'=>ordinal_format(3)
+                                          ]);
+
+      iam_respond(SUCCESS);
+    }
+
+    public static function late_res_user_email_test ()
+    {
+      $components = ezget("SELECT ".IAM_FACILITY_TABLE." Name,Email,Schedule WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+
+      $description = json_decode($components->Schedule)->description;
+
+      Facility::send_user_late_res_email( $components->Name,
+                                          [ 'user_email'=>$components->Email,
+                                            'equipment'=>'Test Equipment',
+                                            'fee'=>'9.99',
+                                            'schedule_description'=>$description
+                                          ]);
+
+      iam_respond(SUCCESS);
     }
 
     public static function new_res_email_change ()

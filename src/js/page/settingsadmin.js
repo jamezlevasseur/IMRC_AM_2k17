@@ -21,6 +21,7 @@ export default class SettingsAdmin {
     this.facilityNameListener();
     this.facilityEmailListener();
     this.notificationEmailListeners();
+    this.testEmailListeners();
     this.initScheduleSubmitListeners();
     this.initIrregularHoursButtonListener();
 
@@ -147,6 +148,41 @@ export default class SettingsAdmin {
     });
     $('.late-res-user-email .btn-success').click(function(event) {
       that.updateNotificationEmail('late_res_user_email_change', $(this).parent());
+    });
+  }
+
+  testEmailListeners () {
+    let that = this;
+
+    $('.new-res-email .btn-warning').click(function(event) {
+      that.testNotificationEmail('new_res_email_test', $(this).parent());
+    });
+    $('.late-res-admin-email .btn-warning').click(function(event) {
+      that.testNotificationEmail('late_res_admin_email_test', $(this).parent());
+    });
+    $('.late-res-user-email .btn-warning').click(function(event) {
+      that.testNotificationEmail('late_res_user_email_test', $(this).parent());
+    });
+  }
+
+  testNotificationEmail (action, $panelBody) {
+    let that = this;
+    submissionStart();
+    $.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: { 'action': action,
+              'subject': $panelBody.find('.email-subject').val(),
+              'body': $panelBody.find('.email-body').val(),
+              'link': that.link
+            },
+      success: function (data) {
+        handleServerResponse(data);
+        submissionEnd();
+      },
+      error: function (data) {
+        handleServerError(data, new Error());
+      }
     });
   }
 

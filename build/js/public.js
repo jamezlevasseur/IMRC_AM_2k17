@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 141);
+/******/ 	return __webpack_require__(__webpack_require__.s = 143);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1893,7 +1893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (!locales[name] && typeof module !== 'undefined' && module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
-                __webpack_require__(134)("./" + name);
+                __webpack_require__(135)("./" + name);
                 // because defineLocale currently also sets the global locale, we
                 // want to undo that for lazy loaded locales
                 getSetGlobalLocale(oldLocale);
@@ -4425,7 +4425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     return hooks;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
 
 /***/ }),
 /* 1 */
@@ -14261,7 +14261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
 
 /***/ }),
 /* 2 */
@@ -14292,154 +14292,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.submissionEnd = exports.submissionStart = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var submissionStart = function submissionStart() {
-  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
-};
-
-var submissionEnd = function submissionEnd() {
-  (0, _jquery2.default)('.iam-loading-anim').remove();
-};
-
-exports.submissionStart = submissionStart;
-exports.submissionEnd = submissionEnd;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * detect IE
- * returns version of IE or false, if browser is not Internet Explorer
- */
-function detectIE() {
-  var ua = window.navigator.userAgent;
-
-  var msie = ua.indexOf('MSIE ');
-  if (msie > 0) {
-    // IE 10 or older => return version number
-    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-  }
-
-  var trident = ua.indexOf('Trident/');
-  if (trident > 0) {
-    // IE 11 => return version number
-    var rv = ua.indexOf('rv:');
-    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-  }
-
-  var edge = ua.indexOf('Edge/');
-  if (edge > 0) {
-    // Edge (IE 12+) => return version number
-    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-  }
-
-  // other browser
-  return false;
-}
-
-var doError = function doError(msg) {
-  alert(msg);
-  throw msg;
-};
-
-var isEmail = function isEmail(email) {
-  var atpos = email.indexOf("@");
-  var dotpos = email.lastIndexOf(".");
-  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
-    return false;
-  }
-  return true;
-};
-
-var getSize = function getSize(obj) {
-  var size = 0,
-      key = void 0;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
-};
-
-function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-
-  return text.replace(/[&<>"']/g, function (m) {
-    return map[m];
-  });
-}
-
-var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
-
-function getPhoneNumberFromPage() {
-  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-  if (!phoneNumberIsFilledIn()) {
-    if (!required) return '';
-    alert(plsFillInPhoneNum);
-    throw plsFillInPhoneNum;
-  }
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
-}
-
-function phoneNumberIsFilledIn() {
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
-}
-
-var rStr = function rStr(length) {
-  var str = '';
-  for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
-  }
-  return str;
-};
-
-exports.rStr = rStr;
-exports.isEmail = isEmail;
-exports.getSize = getSize;
-exports.escapeHtml = escapeHtml;
-exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
-exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
-exports.detectIE = detectIE;
-exports.doError = doError;
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15152,6 +15004,154 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.submissionEnd = exports.submissionStart = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var submissionStart = function submissionStart() {
+  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
+};
+
+var submissionEnd = function submissionEnd() {
+  (0, _jquery2.default)('.iam-loading-anim').remove();
+};
+
+exports.submissionStart = submissionStart;
+exports.submissionEnd = submissionEnd;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ */
+function detectIE() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+  }
+
+  // other browser
+  return false;
+}
+
+var doError = function doError(msg) {
+  alert(msg);
+  throw msg;
+};
+
+var isEmail = function isEmail(email) {
+  var atpos = email.indexOf("@");
+  var dotpos = email.lastIndexOf(".");
+  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+    return false;
+  }
+  return true;
+};
+
+var getSize = function getSize(obj) {
+  var size = 0,
+      key = void 0;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
+function escapeHtml(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function (m) {
+    return map[m];
+  });
+}
+
+var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
+
+function getPhoneNumberFromPage() {
+  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (!phoneNumberIsFilledIn()) {
+    if (!required) return '';
+    alert(plsFillInPhoneNum);
+    throw plsFillInPhoneNum;
+  }
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
+}
+
+function phoneNumberIsFilledIn() {
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
+}
+
+var rStr = function rStr(length) {
+  var str = '';
+  for (var i = 0; i < length; i++) {
+    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+  }
+  return str;
+};
+
+exports.rStr = rStr;
+exports.isEmail = isEmail;
+exports.getSize = getSize;
+exports.escapeHtml = escapeHtml;
+exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
+exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
+exports.detectIE = detectIE;
+exports.doError = doError;
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15198,6 +15198,56 @@ exports.handleServerError = handleServerError;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.safeActiveElement = function (document) {
+		var activeElement;
+
+		// Support: IE 9 only
+		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+		try {
+			activeElement = document.activeElement;
+		} catch (error) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 9 - 11 only
+		// IE may return null instead of an element
+		// Interestingly, this only seems to occur when NOT in an iframe
+		if (!activeElement) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 11 only
+		// IE11 returns a seemingly empty object in some cases when accessing
+		// document.activeElement from an <iframe>
+		if (!activeElement.nodeName) {
+			activeElement = document.body;
+		}
+
+		return activeElement;
+	};
+});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 module.exports = function (module) {
@@ -15224,7 +15274,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15241,7 +15291,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15325,1141 +15375,6 @@ exports.initCSVButtonListener = initCSVButtonListener;
 exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
 exports.initSearchListener = initSearchListener;
 exports.initPopupXListener = initPopupXListener;
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(133);
-
-__webpack_require__(127);
-
-__webpack_require__(128);
-
-var _userfeedback = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Cal = function () {
-    function Cal(page, facing) {
-        _classCallCheck(this, Cal);
-
-        this.page = page;
-        this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
-        this.setCalArgs();
-        this.initCalFor(facing);
-    }
-
-    _createClass(Cal, [{
-        key: 'initCalFor',
-        value: function initCalFor(facing) {
-            if (facing == 'public') {
-                this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
-                this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-                this.initDraggable();
-                this.initPubResCal(this.page.getFacilityInfo('type'));
-            } else if (facing == 'admin') {
-                this.initDraggable();
-                this.initAdminCal(this.page.cal);
-            }
-        }
-    }, {
-        key: 'eventFallsOnWeekend',
-        value: function eventFallsOnWeekend(e) {
-            var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-            var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-            //for now it ends at midnight of the following day
-            return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-        }
-    }, {
-        key: 'eventIsLongerThan',
-        value: function eventIsLongerThan(e, days) {
-            var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            return end.diff(start, 'days') > days;
-        }
-    }, {
-        key: 'convertBusinessHours',
-        value: function convertBusinessHours(jsonString) {
-            var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
-            var converted = [];
-            var counter = 1;
-            for (var key in json) {
-                var day = _jquery2.default.extend({}, json[key]);
-                if (day.start != '') {
-                    day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
-                    day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
-                    converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
-                } else {
-                    converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
-                }
-                counter++;
-            }
-            return converted;
-        }
-    }, {
-        key: 'preventPastReservation',
-        value: function preventPastReservation(e) {
-
-            var targetTimeStart = null;
-
-            if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-
-            if (targetTimeStart.isBefore(moment())) {
-                alert('You cannot make reservations in the past.');
-                return false;
-            }
-            return true;
-        }
-    }, {
-        key: 'warnIfOutOfBounds',
-        value: function warnIfOutOfBounds(e) {
-            var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
-
-            var thisStart = moment(thisDay.start, 'HH:mm');
-            var thisEnd = moment(thisDay.end, 'HH:mm');
-
-            var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
-            var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
-
-            if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
-                alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
-            }
-        }
-    }, {
-        key: 'initDraggable',
-        value: function initDraggable() {
-
-            (0, _jquery2.default)('.iam-events .fc-event').each(function () {
-
-                // store data so the calendar knows to render an event upon drop
-                (0, _jquery2.default)(this).data('event', {
-                    title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
-                    editable: true,
-                    eventDurationEditable: true,
-                    color: '#4cad57',
-                    className: 'iam-new-event'
-                });
-
-                // make the event draggable using jQuery UI
-                (0, _jquery2.default)(this).draggable({
-                    zIndex: 999,
-                    revert: true, // will cause the event to go back to its
-                    revertDuration: 0 //  original position after the drag
-                });
-            });
-        }
-    }, {
-        key: 'initAdminCal',
-        value: function initAdminCal(cal) {
-            var _this = this;
-
-            this.eventsToDelete = [];
-
-            var neutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false
-            };
-
-            var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
-            this.calID = '.iam-cal';
-            (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
-            (0, _userfeedback.submissionStart)();
-            setTimeout(function () {
-                _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
-            }, 1000);
-        }
-    }, {
-        key: 'initPubResCal',
-        value: function initPubResCal(facilitType) {
-            var facilityNeutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                businessHours: this.businessHoursConverted,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false,
-                eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
-                    color: '#f13d39' }]
-            };
-
-            var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
-
-            (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
-        }
-    }, {
-        key: 'handleEventToDelete',
-        value: function handleEventToDelete(event, j) {
-
-            if (j.hasClass('event-not-editable')) return;
-            if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
-
-            var index = this.eventsToDelete.indexOf(event.nid);
-            if (index != -1) {
-                this.eventsToDelete.splice(index, 1);
-            } else {
-                this.eventsToDelete.push(event.nid);
-            }
-            (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
-        }
-    }, {
-        key: 'initContextMenu',
-        value: function initContextMenu(menuToUse) {
-            var that = this;
-            this.cmlib();
-            menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
-
-            var menu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }, {
-                name: 'copy email',
-                title: 'copy button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { email: t.data('email') };
-                    that.handleEventCopyEmail(event);
-                }
-            }];
-
-            var rentalMenu = [{
-                name: 'use this reservation',
-                title: 'select reservation button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    makeRelevantReservation(t.data('fcSeg').event);
-                }
-            }, {
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }];
-
-            var irregularMenu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(t.data('fcSeg').event, t);
-                    (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
-                }
-            }];
-
-            var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
-            var menuOfChoice = menuDict[menuToUse];
-
-            (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
-        }
-    }, {
-        key: 'setCalArgs',
-        value: function setCalArgs() {
-
-            var that = this;
-            this.calArgs = {};
-
-            this.calArgs['irregular'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                defaultView: 'agendaWeek',
-                title: 'closed',
-                eventReceive: function eventReceive(e, d, revert) {
-                    e.title = 'closed';
-                },
-                eventRender: function eventRender(event, element) {
-                    if (that.eventsToDelete.indexOf(event.nid) != -1) {
-                        (0, _jquery2.default)(element).addClass('marked-for-delete');
-                    }
-                },
-                eventAfterAllRender: function eventAfterAllRender() {
-                    that.initContextMenu(that.page.cal);
-                },
-                events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
-            };
-
-            this.calArgs['appointment'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'agendaWeek,agendaDay'
-                },
-                defaultTimedEventDuration: '00:30:00',
-                weekends: true,
-                defaultView: 'agendaWeek',
-                eventReceive: function eventReceive(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                }
-            };
-
-            this.calArgs['rental'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month'
-                },
-                weekends: false,
-                defaultTimedEventDuration: that.page.rentalPeriod * 24 + ':00:00',
-                defaultView: 'month',
-                eventReceive: function eventReceive(e) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        revert();
-                    }
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
-                        alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
-                        revert();
-                    }
-                },
-                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
-            };
-        }
-    }, {
-        key: 'cmlib',
-        value: function cmlib() {
-            /*
-             *contextMenu.js v 1.4.1
-             *Author: Sudhanshu Yadav
-             *s-yadav.github.com
-             *Copyright (c) 2013-2015 Sudhanshu Yadav.
-             *Dual licensed under the MIT and GPL licenses
-             */
-
-            "use strict";
-            //jQuery, window, document
-
-            _jquery2.default.single = function () {
-                var single = (0, _jquery2.default)({});
-                return function (elm) {
-                    single[0] = elm;
-                    return single;
-                };
-            }();
-
-            _jquery2.default.fn.contextMenu = function (method, selector, option) {
-
-                //parameter fix
-                if (!methods[method]) {
-                    option = selector;
-                    selector = method;
-                    method = 'popup';
-                }
-                //need to check for array object
-                else if (selector) {
-                        if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
-                            option = selector;
-                            selector = null;
-                        }
-                    }
-
-                if (selector instanceof Array && method != 'update') {
-                    method = 'menu';
-                }
-
-                var myoptions = option;
-                if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
-                    option = iMethods.optionOtimizer(method, option);
-                    this.each(function () {
-                        var $this = (0, _jquery2.default)(this);
-                        myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
-                        if (!myoptions.baseTrigger) {
-                            myoptions.baseTrigger = $this;
-                        }
-                        methods[method].call($this, selector, myoptions);
-                    });
-                } else {
-                    methods[method].call(this, selector, myoptions);
-                }
-                return this;
-            };
-            _jquery2.default.fn.contextMenu.defaults = {
-                triggerOn: 'click', //avaliable options are all event related mouse plus enter option
-                subMenuTriggerOn: 'hover click',
-                displayAround: 'cursor', // cursor or trigger
-                mouseClick: 'left',
-                verAdjust: 0,
-                horAdjust: 0,
-                top: 'auto',
-                left: 'auto',
-                closeOther: true, //to close other already opened context menu
-                containment: window,
-                winEventClose: true,
-                position: 'auto', //allowed values are top, left, bottom and right
-                closeOnClick: true, //close context menu on click/ trigger of any item in menu
-
-                //callback
-                onOpen: function onOpen(data, event) {},
-                afterOpen: function afterOpen(data, event) {},
-                onClose: function onClose(data, event) {}
-            };
-
-            var methods = {
-                menu: function menu(selector, option) {
-                    selector = iMethods.createMenuList(this, selector, option);
-                    iMethods.contextMenuBind.call(this, selector, option, 'menu');
-                },
-                popup: function popup(selector, option) {
-                    (0, _jquery2.default)(selector).addClass('iw-contextMenu');
-                    iMethods.contextMenuBind.call(this, selector, option, 'popup');
-                },
-                update: function update(selector, option) {
-                    var self = this;
-                    option = option || {};
-
-                    this.each(function () {
-                        var trgr = (0, _jquery2.default)(this),
-                            menuData = trgr.data('iw-menuData');
-                        //refresh if any new element is added
-                        if (!menuData) {
-                            self.contextMenu('refresh');
-                            menuData = trgr.data('iw-menuData');
-                        }
-
-                        var menu = menuData.menu;
-                        if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
-
-                            for (var i = 0; i < selector.length; i++) {
-                                var name = selector[i].name,
-                                    disable = selector[i].disable,
-                                    fun = selector[i].fun,
-                                    icon = selector[i].icon,
-                                    img = selector[i].img,
-                                    title = selector[i].title,
-                                    className = selector[i].className,
-                                    elm = menu.children('li').filter(function () {
-                                    return (0, _jquery2.default)(this).contents().filter(function () {
-                                        return this.nodeType == 3;
-                                    }).text() == name;
-                                }),
-                                    subMenu = selector[i].subMenu;
-
-                                //toggle disable if provided on update method
-                                disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
-
-                                //bind new function if provided
-                                fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
-
-                                //update title
-                                title != undefined && elm.attr('title', title);
-
-                                //update class name
-                                className != undefined && elm.attr('class', className);
-
-                                var imgIcon = elm.find('.iw-mIcon');
-                                if (imgIcon.length) imgIcon.remove();
-
-                                //update image or icon
-                                if (img) {
-                                    elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                                } else if (icon) {
-                                    elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
-                                }
-
-                                //to change submenus
-                                if (subMenu) {
-                                    elm.contextMenu('update', subMenu);
-                                }
-                            }
-                        }
-
-                        iMethods.onOff(menu);
-
-                        //bind event again if trigger option has changed.
-                        var triggerOn = option.triggerOn;
-                        if (triggerOn) {
-                            trgr.unbind('.contextMenu');
-
-                            //add contextMenu identifier on all events
-                            triggerOn = triggerOn.split(" ");
-                            var events = [];
-                            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                                events.push(triggerOn[i] + '.contextMenu');
-                            }
-
-                            //to bind event
-                            trgr.bind(events.join(' '), iMethods.eventHandler);
-                        }
-
-                        //set menu data back to trigger element
-                        menuData.option = _jquery2.default.extend({}, menuData.option, option);
-                        trgr.data('iw-menuData', menuData);
-                    });
-                },
-                refresh: function refresh() {
-                    var menuData = this.filter(function () {
-                        return !!(0, _jquery2.default)(this).data('iw-menuData');
-                    }).data('iw-menuData'),
-                        newElm = this.filter(function () {
-                        return !(0, _jquery2.default)(this).data('iw-menuData');
-                    });
-                    //to change basetrigger on refresh
-                    menuData.option.baseTrigger = this;
-                    iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
-                },
-                open: function open(sel, data) {
-                    data = data || {};
-                    var e = data.event || _jquery2.default.Event('click');
-                    if (data.top) e.clientY = data.top;
-                    if (data.left) e.clientX = data.left;
-                    this.each(function () {
-                        iMethods.eventHandler.call(this, e);
-                    });
-                },
-                //to force context menu to close
-                close: function close() {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData) {
-                        iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
-                    }
-                },
-                //to get value of a key
-                value: function value(key) {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData[key]) {
-                        return menuData[key];
-                    } else if (menuData.option) {
-                        return menuData.option[key];
-                    }
-                    return null;
-                },
-                destroy: function destroy() {
-                    var trgr = this,
-                        menuId = trgr.data('iw-menuData').menuId,
-                        menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
-                        menuData = menu.data('iw-menuData');
-
-                    //Handle the situation of dynamically added element.
-                    if (!menuData) return;
-
-                    if (menuData.noTrigger == 1) {
-                        if (menu.hasClass('iw-created')) {
-                            menu.remove();
-                        } else {
-                            menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
-                            //to destroy submenus
-                            menu.find('li.iw-mTrigger').contextMenu('destroy');
-                        }
-                    } else {
-                        menuData.noTrigger--;
-                        menu.data('iw-menuData', menuData);
-                    }
-                    trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
-                }
-            };
-            var iMethods = {
-                contextMenuBind: function contextMenuBind(selector, option, method) {
-                    var trigger = this,
-                        menu = (0, _jquery2.default)(selector),
-                        menuData = menu.data('iw-menuData');
-
-                    //fallback
-                    if (menu.length == 0) {
-                        menu = trigger.find(selector);
-                        if (menu.length == 0) {
-                            return;
-                        }
-                    }
-
-                    if (method == 'menu') {
-                        iMethods.menuHover(menu);
-                    }
-                    //get base trigger
-                    var baseTrigger = option.baseTrigger;
-
-                    if (!menuData) {
-                        var menuId;
-                        if (!baseTrigger.data('iw-menuData')) {
-                            menuId = Math.ceil(Math.random() * 100000);
-                            baseTrigger.data('iw-menuData', {
-                                'menuId': menuId
-                            });
-                        } else {
-                            menuId = baseTrigger.data('iw-menuData').menuId;
-                        }
-                        //create clone menu to calculate exact height and width.
-                        var cloneMenu = menu.clone();
-                        cloneMenu.appendTo('body');
-
-                        menuData = {
-                            'menuId': menuId,
-                            'menuWidth': cloneMenu.outerWidth(true),
-                            'menuHeight': cloneMenu.outerHeight(true),
-                            'noTrigger': 1,
-                            'trigger': trigger
-                        };
-
-                        //to set data on selector
-                        menu.data('iw-menuData', menuData).attr('menuId', menuId);
-                        //remove clone menu
-                        cloneMenu.remove();
-                    } else {
-                        menuData.noTrigger++;
-                        menu.data('iw-menuData', menuData);
-                    }
-
-                    //to set data on trigger
-                    trigger.addClass('iw-mTrigger').data('iw-menuData', {
-                        'menuId': menuData.menuId,
-                        'option': option,
-                        'menu': menu,
-                        'menuSelector': selector,
-                        'method': method
-                    });
-
-                    //hover fix
-                    var triggerOn = option.triggerOn;
-                    if (triggerOn.indexOf('hover') != -1) {
-                        triggerOn = triggerOn.replace('hover', 'mouseenter');
-                        //hover out if display is of context menu is on hover
-                        if (baseTrigger.index(trigger) != -1) {
-                            baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
-                                if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
-                                    (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
-                                }
-                            });
-                        }
-                    }
-
-                    trigger.delegate('input,a,.needs-click', 'click', function (e) {
-                        e.stopImmediatePropagation();
-                    });
-
-                    //add contextMenu identifier on all events
-                    triggerOn = triggerOn.split(' ');
-                    var events = [];
-                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                        events.push(triggerOn[i] + '.contextMenu');
-                    }
-
-                    //to bind event
-                    trigger.bind(events.join(' '), iMethods.eventHandler);
-
-                    //to stop bubbling in menu
-                    menu.bind('click mouseenter', function (e) {
-                        e.stopPropagation();
-                    });
-
-                    menu.delegate('li', 'click', function (e) {
-                        if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
-                    });
-                },
-                eventHandler: function eventHandler(e) {
-                    e.preventDefault();
-                    var trigger = (0, _jquery2.default)(this),
-                        trgrData = trigger.data('iw-menuData'),
-                        menu = trgrData.menu,
-                        menuData = menu.data('iw-menuData'),
-                        option = trgrData.option,
-                        cntnmnt = option.containment,
-                        clbckData = {
-                        trigger: trigger,
-                        menu: menu
-                    },
-
-                    //check conditions
-                    cntWin = cntnmnt == window,
-                        btChck = option.baseTrigger.index(trigger) == -1;
-
-                    //to close previous open menu.
-                    if (!btChck && option.closeOther) {
-                        (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    }
-
-                    //to reset already selected menu item
-                    menu.find('.iw-mSelected').removeClass('iw-mSelected');
-
-                    //call open callback
-                    option.onOpen.call(this, clbckData, e);
-
-                    var cObj = (0, _jquery2.default)(cntnmnt),
-                        cHeight = cObj.innerHeight(),
-                        cWidth = cObj.innerWidth(),
-                        cTop = 0,
-                        cLeft = 0,
-                        menuHeight = menuData.menuHeight,
-                        menuWidth = menuData.menuWidth,
-                        va,
-                        ha,
-                        left = 0,
-                        top = 0,
-                        bottomMenu,
-                        rightMenu,
-                        verAdjust = va = parseInt(option.verAdjust),
-                        horAdjust = ha = parseInt(option.horAdjust);
-
-                    if (!cntWin) {
-                        cTop = cObj.offset().top;
-                        cLeft = cObj.offset().left;
-
-                        //to add relative position if no position is defined on containment
-                        if (cObj.css('position') == 'static') {
-                            cObj.css('position', 'relative');
-                        }
-                    }
-
-                    if (option.displayAround == 'cursor') {
-                        left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
-                        top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                }
-                            } else {
-                                left = left - menuWidth;
-                                ha = -1 * ha;
-                            }
-                        }
-                    } else if (option.displayAround == 'trigger') {
-                        var triggerHeight = trigger.outerHeight(true),
-                            triggerWidth = trigger.outerWidth(true),
-                            triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
-                            triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
-                            leftShift = triggerWidth;
-
-                        left = triggerLeft + triggerWidth;
-                        top = triggerTop;
-
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight + triggerHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                    leftShift = -triggerWidth;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                    leftShift = 0;
-                                }
-                            } else {
-                                left = left - menuWidth - triggerWidth;
-                                ha = -1 * ha;
-                                leftShift = -triggerWidth;
-                            }
-                        }
-                        //test end
-                        if (option.position == 'top') {
-                            top = triggerTop - menuHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'left') {
-                            left = triggerLeft - menuWidth;
-                            ha = horAdjust;
-                        } else if (option.position == 'bottom') {
-                            top = triggerTop + triggerHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'right') {
-                            left = triggerLeft + triggerWidth;
-                            ha = horAdjust;
-                        }
-                    }
-
-                    //applying css property
-                    var cssObj = {
-                        'position': cntWin || btChck ? 'fixed' : 'absolute',
-                        'display': 'inline-block',
-                        'height': '',
-                        'width': ''
-                    };
-
-                    //to get position from offset parent
-                    if (option.left != 'auto') {
-                        left = iMethods.getPxSize(option.left, cWidth);
-                    }
-                    if (option.top != 'auto') {
-                        top = iMethods.getPxSize(option.top, cHeight);
-                    }
-                    if (!cntWin) {
-                        var oParPos = trigger.offsetParent().offset();
-                        if (btChck) {
-                            left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
-                            top = top + cTop - (0, _jquery2.default)(window).scrollTop();
-                        } else {
-                            left = left - (cLeft - oParPos.left);
-                            top = top - (cTop - oParPos.top);
-                        }
-                    }
-                    cssObj.left = left + ha + 'px';
-                    cssObj.top = top + va + 'px';
-
-                    menu.css(cssObj);
-
-                    //to call after open call back
-                    option.afterOpen.call(this, clbckData, e);
-
-                    //to add current menu class
-                    if (trigger.closest('.iw-contextMenu').length == 0) {
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                    }
-
-                    var dataParm = {
-                        trigger: trigger,
-                        menu: menu,
-                        option: option,
-                        method: trgrData.method
-                    };
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
-                    if (option.winEventClose) {
-                        (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
-                    }
-                },
-
-                scrollEvent: function scrollEvent(e) {
-                    iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                },
-
-                clickEvent: function clickEvent(e) {
-                    var button = e.data.trigger.get(0);
-
-                    if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
-                        iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                    }
-                },
-                keyEvent: function keyEvent(e) {
-                    e.preventDefault();
-                    var menu = e.data.menu,
-                        option = e.data.option,
-                        keyCode = e.keyCode;
-                    // handle cursor keys
-                    if (keyCode == 27) {
-                        iMethods.closeContextMenu(option, e.data.trigger, menu, e);
-                    }
-                    if (e.data.method == 'menu') {
-                        var curMenu = (0, _jquery2.default)('.iw-curMenu'),
-                            optList = curMenu.children('li:not(.iw-mDisable)'),
-                            selected = optList.filter('.iw-mSelected'),
-                            index = optList.index(selected),
-                            focusOn = function focusOn(elm) {
-                            iMethods.selectMenu(curMenu, elm);
-                            var menuData = elm.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(elm[0], e);
-                            }
-                        },
-                            first = function first() {
-                            focusOn(optList.filter(':first'));
-                        },
-                            last = function last() {
-                            focusOn(optList.filter(':last'));
-                        },
-                            next = function next() {
-                            focusOn(optList.filter(':eq(' + (index + 1) + ')'));
-                        },
-                            prev = function prev() {
-                            focusOn(optList.filter(':eq(' + (index - 1) + ')'));
-                        },
-                            subMenu = function subMenu() {
-                            var menuData = selected.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(selected[0], e);
-                                var selector = menuData.menu;
-                                selector.addClass('iw-curMenu');
-                                curMenu.removeClass('iw-curMenu');
-                                curMenu = selector;
-                                optList = curMenu.children('li:not(.iw-mDisable)');
-                                selected = optList.filter('.iw-mSelected');
-                                first();
-                            }
-                        },
-                            parMenu = function parMenu() {
-                            var selector = curMenu.data('iw-menuData').trigger;
-                            var parMenu = selector.closest('.iw-contextMenu');
-                            if (parMenu.length != 0) {
-                                curMenu.removeClass('iw-curMenu').css('display', 'none');
-                                parMenu.addClass('iw-curMenu');
-                            }
-                        };
-                        switch (keyCode) {
-                            case 13:
-                                selected.click();
-                                break;
-                            case 40:
-                                index == optList.length - 1 || selected.length == 0 ? first() : next();
-                                break;
-                            case 38:
-                                index == 0 || selected.length == 0 ? last() : prev();
-                                break;
-                            case 33:
-                                first();
-                                break;
-                            case 34:
-                                last();
-                                break;
-                            case 37:
-                                parMenu();
-                                break;
-                            case 39:
-                                subMenu();
-                                break;
-                        }
-                    }
-                },
-                closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
-
-                    //unbind all events from top DOM
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
-                    (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
-                    (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    (0, _jquery2.default)(document).focus();
-
-                    //call close function
-                    option.onClose.call(this, {
-                        trigger: trigger,
-                        menu: menu
-                    }, e);
-                },
-                getPxSize: function getPxSize(size, of) {
-                    if (!isNaN(size)) {
-                        return size;
-                    }
-                    if (size.indexOf('%') != -1) {
-                        return parseInt(size) * of / 100;
-                    } else {
-                        return parseInt(size);
-                    }
-                },
-                selectMenu: function selectMenu(menu, elm) {
-                    //to select the list
-                    var selected = menu.find('li.iw-mSelected'),
-                        submenu = selected.find('.iw-contextMenu');
-                    if (submenu.length != 0 && selected[0] != elm[0]) {
-                        submenu.fadeOut(100);
-                    }
-                    selected.removeClass('iw-mSelected');
-                    elm.addClass('iw-mSelected');
-                },
-                menuHover: function menuHover(menu) {
-                    var lastEventTime = Date.now();
-                    menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
-                        //to make curmenu
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                        iMethods.selectMenu(menu, (0, _jquery2.default)(this));
-                    });
-                },
-                createMenuList: function createMenuList(trgr, selector, option) {
-                    var baseTrigger = option.baseTrigger,
-                        randomNum = Math.floor(Math.random() * 10000);
-                    if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
-                        var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
-                        _jquery2.default.each(selector, function (index, selObj) {
-                            var name = selObj.name,
-                                fun = selObj.fun || function () {},
-                                subMenu = selObj.subMenu,
-                                img = selObj.img || '',
-                                icon = selObj.icon || '',
-                                title = selObj.title || "",
-                                className = selObj.className || "",
-                                disable = selObj.disable,
-                                list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
-
-                            if (img) {
-                                list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                            } else if (icon) {
-                                list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
-                            }
-                            //to add disable
-                            if (disable) {
-                                list.addClass('iw-mDisable');
-                            }
-
-                            if (!subMenu) {
-                                list.bind('click.contextMenu', function (e) {
-                                    fun.call(this, {
-                                        trigger: baseTrigger,
-                                        menu: menuList
-                                    }, e);
-                                });
-                            }
-
-                            //to create sub menu
-                            menuList.append(list);
-                            if (subMenu) {
-                                list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
-                                iMethods.subMenu(list, subMenu, baseTrigger, option);
-                            }
-                        });
-
-                        if (baseTrigger.index(trgr[0]) == -1) {
-                            trgr.append(menuList);
-                        } else {
-                            var par = option.containment == window ? 'body' : option.containment;
-                            (0, _jquery2.default)(par).append(menuList);
-                        }
-
-                        iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
-                        return '#iw-contextMenu' + randomNum;
-                    } else if ((0, _jquery2.default)(selector).length != 0) {
-                        var element = (0, _jquery2.default)(selector);
-                        element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
-
-                        //to create subMenu
-                        element.find('ul').each(function (index, element) {
-                            var subMenu = (0, _jquery2.default)(this),
-                                parent = subMenu.parent('li');
-                            parent.append('<div class="iw-cm-arrow-right" />');
-                            subMenu.addClass('iw-contextMenuCurrent');
-                            iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
-                        });
-                        iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
-                        return '.iw-contextMenu' + randomNum;
-                    }
-                },
-                subMenu: function subMenu(trigger, selector, baseTrigger, option) {
-                    trigger.contextMenu('menu', selector, {
-                        triggerOn: option.subMenuTriggerOn,
-                        displayAround: 'trigger',
-                        position: 'auto',
-                        mouseClick: 'left',
-                        baseTrigger: baseTrigger,
-                        containment: option.containment
-                    });
-                },
-                onOff: function onOff(menu) {
-
-                    menu.find('.iw-mOverlay').remove();
-                    menu.find('.iw-mDisable').each(function () {
-                        var list = (0, _jquery2.default)(this);
-                        list.append('<div class="iw-mOverlay"/>');
-                        list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
-                            event.stopPropagation();
-                        });
-                    });
-                },
-                optionOtimizer: function optionOtimizer(method, option) {
-                    if (!option) {
-                        return;
-                    }
-                    if (method == 'menu') {
-                        if (!option.mouseClick) {
-                            option.mouseClick = 'right';
-                        }
-                    }
-                    if (option.mouseClick == 'right' && option.triggerOn == 'click') {
-                        option.triggerOn = 'contextmenu';
-                    }
-
-                    if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
-                        option.displayAround = 'trigger';
-                    }
-                    return option;
-                }
-            };
-        }
-    }]);
-
-    return Cal;
-}();
-
-exports.default = Cal;
 
 /***/ }),
 /* 10 */
@@ -27906,7 +26821,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(136), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -28115,7 +27030,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28183,6 +27098,1141 @@ exports.numbersOnlyListener = numbersOnlyListener;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(134);
+
+__webpack_require__(128);
+
+__webpack_require__(129);
+
+var _userfeedback = __webpack_require__(4);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cal = function () {
+    function Cal(page, facing) {
+        _classCallCheck(this, Cal);
+
+        this.page = page;
+        this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+        this.setCalArgs();
+        this.initCalFor(facing);
+    }
+
+    _createClass(Cal, [{
+        key: 'initCalFor',
+        value: function initCalFor(facing) {
+            if (facing == 'public') {
+                this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+                this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+                this.initDraggable();
+                this.initPubResCal(this.page.getFacilityInfo('type'));
+            } else if (facing == 'admin') {
+                this.initDraggable();
+                this.initAdminCal(this.page.cal);
+            }
+        }
+    }, {
+        key: 'eventFallsOnWeekend',
+        value: function eventFallsOnWeekend(e) {
+            var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+            var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+            //for now it ends at midnight of the following day
+            return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+        }
+    }, {
+        key: 'eventIsLongerThan',
+        value: function eventIsLongerThan(e, days) {
+            var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+            var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+            return end.diff(start, 'days') > days;
+        }
+    }, {
+        key: 'convertBusinessHours',
+        value: function convertBusinessHours(jsonString) {
+            var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+            var converted = [];
+            var counter = 1;
+            for (var key in json) {
+                var day = _jquery2.default.extend({}, json[key]);
+                if (day.start != '') {
+                    day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
+                    day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
+                    converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
+                } else {
+                    converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
+                }
+                counter++;
+            }
+            return converted;
+        }
+    }, {
+        key: 'preventPastReservation',
+        value: function preventPastReservation(e) {
+
+            var targetTimeStart = null;
+
+            if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+
+            if (targetTimeStart.isBefore(moment())) {
+                alert('You cannot make reservations in the past.');
+                return false;
+            }
+            return true;
+        }
+    }, {
+        key: 'warnIfOutOfBounds',
+        value: function warnIfOutOfBounds(e) {
+            var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+
+            var thisStart = moment(thisDay.start, 'HH:mm');
+            var thisEnd = moment(thisDay.end, 'HH:mm');
+
+            var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
+            var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
+
+            if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
+                alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+            }
+        }
+    }, {
+        key: 'initDraggable',
+        value: function initDraggable() {
+
+            (0, _jquery2.default)('.iam-events .fc-event').each(function () {
+
+                // store data so the calendar knows to render an event upon drop
+                (0, _jquery2.default)(this).data('event', {
+                    title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
+                    editable: true,
+                    eventDurationEditable: true,
+                    color: '#4cad57',
+                    className: 'iam-new-event'
+                });
+
+                // make the event draggable using jQuery UI
+                (0, _jquery2.default)(this).draggable({
+                    zIndex: 999,
+                    revert: true, // will cause the event to go back to its
+                    revertDuration: 0 //  original position after the drag
+                });
+            });
+        }
+    }, {
+        key: 'initAdminCal',
+        value: function initAdminCal(cal) {
+            var _this = this;
+
+            this.eventsToDelete = [];
+
+            var neutralArgs = {
+                editable: false, //new events will be made editable else where
+                eventLimit: true, // allow "more" link when too many events
+                allDay: false,
+                height: 500,
+                forceEventDuration: true,
+                droppable: true,
+                eventOverlap: false,
+                allDaySlot: false
+            };
+
+            var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
+            this.calID = '.iam-cal';
+            (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
+            (0, _userfeedback.submissionStart)();
+            setTimeout(function () {
+                _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
+            }, 1000);
+        }
+    }, {
+        key: 'initPubResCal',
+        value: function initPubResCal(facilitType) {
+            var facilityNeutralArgs = {
+                editable: false, //new events will be made editable else where
+                eventLimit: true, // allow "more" link when too many events
+                allDay: false,
+                height: 500,
+                forceEventDuration: true,
+                businessHours: this.businessHoursConverted,
+                droppable: true,
+                eventOverlap: false,
+                allDaySlot: false,
+                eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
+                    color: '#f13d39' }]
+            };
+
+            var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
+
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
+        }
+    }, {
+        key: 'handleEventToDelete',
+        value: function handleEventToDelete(event, j) {
+
+            if (j.hasClass('event-not-editable')) return;
+            if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
+
+            var index = this.eventsToDelete.indexOf(event.nid);
+            if (index != -1) {
+                this.eventsToDelete.splice(index, 1);
+            } else {
+                this.eventsToDelete.push(event.nid);
+            }
+            (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
+        }
+    }, {
+        key: 'initContextMenu',
+        value: function initContextMenu(menuToUse) {
+            var that = this;
+            this.cmlib();
+            menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
+
+            var menu = [{
+                name: 'mark for deletion',
+                title: 'delete button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    that.handleEventToDelete(event, t);
+                }
+            }, {
+                name: 'copy email',
+                title: 'copy button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { email: t.data('email') };
+                    that.handleEventCopyEmail(event);
+                }
+            }];
+
+            var rentalMenu = [{
+                name: 'use this reservation',
+                title: 'select reservation button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    makeRelevantReservation(t.data('fcSeg').event);
+                }
+            }, {
+                name: 'mark for deletion',
+                title: 'delete button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    that.handleEventToDelete(event, t);
+                }
+            }];
+
+            var irregularMenu = [{
+                name: 'mark for deletion',
+                title: 'delete button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    that.handleEventToDelete(t.data('fcSeg').event, t);
+                    (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
+                }
+            }];
+
+            var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
+            var menuOfChoice = menuDict[menuToUse];
+
+            (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
+        }
+    }, {
+        key: 'setCalArgs',
+        value: function setCalArgs() {
+
+            var that = this;
+            this.calArgs = {};
+
+            this.calArgs['irregular'] = {
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultView: 'agendaWeek',
+                title: 'closed',
+                eventReceive: function eventReceive(e, d, revert) {
+                    e.title = 'closed';
+                },
+                eventRender: function eventRender(event, element) {
+                    if (that.eventsToDelete.indexOf(event.nid) != -1) {
+                        (0, _jquery2.default)(element).addClass('marked-for-delete');
+                    }
+                },
+                eventAfterAllRender: function eventAfterAllRender() {
+                    that.initContextMenu(that.page.cal);
+                },
+                events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
+            };
+
+            this.calArgs['appointment'] = {
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek,agendaDay'
+                },
+                defaultTimedEventDuration: '00:30:00',
+                weekends: true,
+                defaultView: 'agendaWeek',
+                eventReceive: function eventReceive(e, d, revert) {
+                    if (!that.preventPastReservation(e)) {
+                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+                        return false;
+                    }
+                    that.warnIfOutOfBounds(e);
+                },
+                eventDrop: function eventDrop(e, d, revert) {
+                    if (!that.preventPastReservation(e)) {
+                        revert();
+                        return;
+                    }
+                    that.warnIfOutOfBounds(e);
+                },
+                eventResize: function eventResize(e, d, revert) {
+                    if (!that.preventPastReservation(e)) {
+                        revert();
+                        return;
+                    }
+                    that.warnIfOutOfBounds(e);
+                }
+            };
+
+            this.calArgs['rental'] = {
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month'
+                },
+                weekends: false,
+                defaultTimedEventDuration: that.page.rentalPeriod * 24 + ':00:00',
+                defaultView: 'month',
+                eventReceive: function eventReceive(e) {
+                    if (that.eventFallsOnWeekend(e)) {
+                        alert(that.ERinvalidTimePrompt);
+                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+                        return false;
+                    }
+                },
+                eventDrop: function eventDrop(e, d, revert) {
+                    if (that.eventFallsOnWeekend(e)) {
+                        alert(that.ERinvalidTimePrompt);
+                        revert();
+                    }
+                },
+                eventResize: function eventResize(e, d, revert) {
+                    if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
+                        alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
+                        revert();
+                    }
+                },
+                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
+            };
+        }
+    }, {
+        key: 'cmlib',
+        value: function cmlib() {
+            /*
+             *contextMenu.js v 1.4.1
+             *Author: Sudhanshu Yadav
+             *s-yadav.github.com
+             *Copyright (c) 2013-2015 Sudhanshu Yadav.
+             *Dual licensed under the MIT and GPL licenses
+             */
+
+            "use strict";
+            //jQuery, window, document
+
+            _jquery2.default.single = function () {
+                var single = (0, _jquery2.default)({});
+                return function (elm) {
+                    single[0] = elm;
+                    return single;
+                };
+            }();
+
+            _jquery2.default.fn.contextMenu = function (method, selector, option) {
+
+                //parameter fix
+                if (!methods[method]) {
+                    option = selector;
+                    selector = method;
+                    method = 'popup';
+                }
+                //need to check for array object
+                else if (selector) {
+                        if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
+                            option = selector;
+                            selector = null;
+                        }
+                    }
+
+                if (selector instanceof Array && method != 'update') {
+                    method = 'menu';
+                }
+
+                var myoptions = option;
+                if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
+                    option = iMethods.optionOtimizer(method, option);
+                    this.each(function () {
+                        var $this = (0, _jquery2.default)(this);
+                        myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
+                        if (!myoptions.baseTrigger) {
+                            myoptions.baseTrigger = $this;
+                        }
+                        methods[method].call($this, selector, myoptions);
+                    });
+                } else {
+                    methods[method].call(this, selector, myoptions);
+                }
+                return this;
+            };
+            _jquery2.default.fn.contextMenu.defaults = {
+                triggerOn: 'click', //avaliable options are all event related mouse plus enter option
+                subMenuTriggerOn: 'hover click',
+                displayAround: 'cursor', // cursor or trigger
+                mouseClick: 'left',
+                verAdjust: 0,
+                horAdjust: 0,
+                top: 'auto',
+                left: 'auto',
+                closeOther: true, //to close other already opened context menu
+                containment: window,
+                winEventClose: true,
+                position: 'auto', //allowed values are top, left, bottom and right
+                closeOnClick: true, //close context menu on click/ trigger of any item in menu
+
+                //callback
+                onOpen: function onOpen(data, event) {},
+                afterOpen: function afterOpen(data, event) {},
+                onClose: function onClose(data, event) {}
+            };
+
+            var methods = {
+                menu: function menu(selector, option) {
+                    selector = iMethods.createMenuList(this, selector, option);
+                    iMethods.contextMenuBind.call(this, selector, option, 'menu');
+                },
+                popup: function popup(selector, option) {
+                    (0, _jquery2.default)(selector).addClass('iw-contextMenu');
+                    iMethods.contextMenuBind.call(this, selector, option, 'popup');
+                },
+                update: function update(selector, option) {
+                    var self = this;
+                    option = option || {};
+
+                    this.each(function () {
+                        var trgr = (0, _jquery2.default)(this),
+                            menuData = trgr.data('iw-menuData');
+                        //refresh if any new element is added
+                        if (!menuData) {
+                            self.contextMenu('refresh');
+                            menuData = trgr.data('iw-menuData');
+                        }
+
+                        var menu = menuData.menu;
+                        if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
+
+                            for (var i = 0; i < selector.length; i++) {
+                                var name = selector[i].name,
+                                    disable = selector[i].disable,
+                                    fun = selector[i].fun,
+                                    icon = selector[i].icon,
+                                    img = selector[i].img,
+                                    title = selector[i].title,
+                                    className = selector[i].className,
+                                    elm = menu.children('li').filter(function () {
+                                    return (0, _jquery2.default)(this).contents().filter(function () {
+                                        return this.nodeType == 3;
+                                    }).text() == name;
+                                }),
+                                    subMenu = selector[i].subMenu;
+
+                                //toggle disable if provided on update method
+                                disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
+
+                                //bind new function if provided
+                                fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
+
+                                //update title
+                                title != undefined && elm.attr('title', title);
+
+                                //update class name
+                                className != undefined && elm.attr('class', className);
+
+                                var imgIcon = elm.find('.iw-mIcon');
+                                if (imgIcon.length) imgIcon.remove();
+
+                                //update image or icon
+                                if (img) {
+                                    elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                                } else if (icon) {
+                                    elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
+                                }
+
+                                //to change submenus
+                                if (subMenu) {
+                                    elm.contextMenu('update', subMenu);
+                                }
+                            }
+                        }
+
+                        iMethods.onOff(menu);
+
+                        //bind event again if trigger option has changed.
+                        var triggerOn = option.triggerOn;
+                        if (triggerOn) {
+                            trgr.unbind('.contextMenu');
+
+                            //add contextMenu identifier on all events
+                            triggerOn = triggerOn.split(" ");
+                            var events = [];
+                            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                                events.push(triggerOn[i] + '.contextMenu');
+                            }
+
+                            //to bind event
+                            trgr.bind(events.join(' '), iMethods.eventHandler);
+                        }
+
+                        //set menu data back to trigger element
+                        menuData.option = _jquery2.default.extend({}, menuData.option, option);
+                        trgr.data('iw-menuData', menuData);
+                    });
+                },
+                refresh: function refresh() {
+                    var menuData = this.filter(function () {
+                        return !!(0, _jquery2.default)(this).data('iw-menuData');
+                    }).data('iw-menuData'),
+                        newElm = this.filter(function () {
+                        return !(0, _jquery2.default)(this).data('iw-menuData');
+                    });
+                    //to change basetrigger on refresh
+                    menuData.option.baseTrigger = this;
+                    iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
+                },
+                open: function open(sel, data) {
+                    data = data || {};
+                    var e = data.event || _jquery2.default.Event('click');
+                    if (data.top) e.clientY = data.top;
+                    if (data.left) e.clientX = data.left;
+                    this.each(function () {
+                        iMethods.eventHandler.call(this, e);
+                    });
+                },
+                //to force context menu to close
+                close: function close() {
+                    var menuData = this.data('iw-menuData');
+                    if (menuData) {
+                        iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
+                    }
+                },
+                //to get value of a key
+                value: function value(key) {
+                    var menuData = this.data('iw-menuData');
+                    if (menuData[key]) {
+                        return menuData[key];
+                    } else if (menuData.option) {
+                        return menuData.option[key];
+                    }
+                    return null;
+                },
+                destroy: function destroy() {
+                    var trgr = this,
+                        menuId = trgr.data('iw-menuData').menuId,
+                        menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
+                        menuData = menu.data('iw-menuData');
+
+                    //Handle the situation of dynamically added element.
+                    if (!menuData) return;
+
+                    if (menuData.noTrigger == 1) {
+                        if (menu.hasClass('iw-created')) {
+                            menu.remove();
+                        } else {
+                            menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
+                            //to destroy submenus
+                            menu.find('li.iw-mTrigger').contextMenu('destroy');
+                        }
+                    } else {
+                        menuData.noTrigger--;
+                        menu.data('iw-menuData', menuData);
+                    }
+                    trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
+                }
+            };
+            var iMethods = {
+                contextMenuBind: function contextMenuBind(selector, option, method) {
+                    var trigger = this,
+                        menu = (0, _jquery2.default)(selector),
+                        menuData = menu.data('iw-menuData');
+
+                    //fallback
+                    if (menu.length == 0) {
+                        menu = trigger.find(selector);
+                        if (menu.length == 0) {
+                            return;
+                        }
+                    }
+
+                    if (method == 'menu') {
+                        iMethods.menuHover(menu);
+                    }
+                    //get base trigger
+                    var baseTrigger = option.baseTrigger;
+
+                    if (!menuData) {
+                        var menuId;
+                        if (!baseTrigger.data('iw-menuData')) {
+                            menuId = Math.ceil(Math.random() * 100000);
+                            baseTrigger.data('iw-menuData', {
+                                'menuId': menuId
+                            });
+                        } else {
+                            menuId = baseTrigger.data('iw-menuData').menuId;
+                        }
+                        //create clone menu to calculate exact height and width.
+                        var cloneMenu = menu.clone();
+                        cloneMenu.appendTo('body');
+
+                        menuData = {
+                            'menuId': menuId,
+                            'menuWidth': cloneMenu.outerWidth(true),
+                            'menuHeight': cloneMenu.outerHeight(true),
+                            'noTrigger': 1,
+                            'trigger': trigger
+                        };
+
+                        //to set data on selector
+                        menu.data('iw-menuData', menuData).attr('menuId', menuId);
+                        //remove clone menu
+                        cloneMenu.remove();
+                    } else {
+                        menuData.noTrigger++;
+                        menu.data('iw-menuData', menuData);
+                    }
+
+                    //to set data on trigger
+                    trigger.addClass('iw-mTrigger').data('iw-menuData', {
+                        'menuId': menuData.menuId,
+                        'option': option,
+                        'menu': menu,
+                        'menuSelector': selector,
+                        'method': method
+                    });
+
+                    //hover fix
+                    var triggerOn = option.triggerOn;
+                    if (triggerOn.indexOf('hover') != -1) {
+                        triggerOn = triggerOn.replace('hover', 'mouseenter');
+                        //hover out if display is of context menu is on hover
+                        if (baseTrigger.index(trigger) != -1) {
+                            baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
+                                if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
+                                    (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
+                                }
+                            });
+                        }
+                    }
+
+                    trigger.delegate('input,a,.needs-click', 'click', function (e) {
+                        e.stopImmediatePropagation();
+                    });
+
+                    //add contextMenu identifier on all events
+                    triggerOn = triggerOn.split(' ');
+                    var events = [];
+                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                        events.push(triggerOn[i] + '.contextMenu');
+                    }
+
+                    //to bind event
+                    trigger.bind(events.join(' '), iMethods.eventHandler);
+
+                    //to stop bubbling in menu
+                    menu.bind('click mouseenter', function (e) {
+                        e.stopPropagation();
+                    });
+
+                    menu.delegate('li', 'click', function (e) {
+                        if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
+                    });
+                },
+                eventHandler: function eventHandler(e) {
+                    e.preventDefault();
+                    var trigger = (0, _jquery2.default)(this),
+                        trgrData = trigger.data('iw-menuData'),
+                        menu = trgrData.menu,
+                        menuData = menu.data('iw-menuData'),
+                        option = trgrData.option,
+                        cntnmnt = option.containment,
+                        clbckData = {
+                        trigger: trigger,
+                        menu: menu
+                    },
+
+                    //check conditions
+                    cntWin = cntnmnt == window,
+                        btChck = option.baseTrigger.index(trigger) == -1;
+
+                    //to close previous open menu.
+                    if (!btChck && option.closeOther) {
+                        (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+                    }
+
+                    //to reset already selected menu item
+                    menu.find('.iw-mSelected').removeClass('iw-mSelected');
+
+                    //call open callback
+                    option.onOpen.call(this, clbckData, e);
+
+                    var cObj = (0, _jquery2.default)(cntnmnt),
+                        cHeight = cObj.innerHeight(),
+                        cWidth = cObj.innerWidth(),
+                        cTop = 0,
+                        cLeft = 0,
+                        menuHeight = menuData.menuHeight,
+                        menuWidth = menuData.menuWidth,
+                        va,
+                        ha,
+                        left = 0,
+                        top = 0,
+                        bottomMenu,
+                        rightMenu,
+                        verAdjust = va = parseInt(option.verAdjust),
+                        horAdjust = ha = parseInt(option.horAdjust);
+
+                    if (!cntWin) {
+                        cTop = cObj.offset().top;
+                        cLeft = cObj.offset().left;
+
+                        //to add relative position if no position is defined on containment
+                        if (cObj.css('position') == 'static') {
+                            cObj.css('position', 'relative');
+                        }
+                    }
+
+                    if (option.displayAround == 'cursor') {
+                        left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
+                        top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
+                        bottomMenu = top + menuHeight;
+                        rightMenu = left + menuWidth;
+                        //max height and width of context menu
+                        if (bottomMenu > cHeight) {
+                            if (top - menuHeight < 0) {
+                                if (bottomMenu - cHeight < menuHeight - top) {
+                                    top = cHeight - menuHeight;
+                                    va = -1 * va;
+                                } else {
+                                    top = 0;
+                                    va = 0;
+                                }
+                            } else {
+                                top = top - menuHeight;
+                                va = -1 * va;
+                            }
+                        }
+                        if (rightMenu > cWidth) {
+                            if (left - menuWidth < 0) {
+                                if (rightMenu - cWidth < menuWidth - left) {
+                                    left = cWidth - menuWidth;
+                                    ha = -1 * ha;
+                                } else {
+                                    left = 0;
+                                    ha = 0;
+                                }
+                            } else {
+                                left = left - menuWidth;
+                                ha = -1 * ha;
+                            }
+                        }
+                    } else if (option.displayAround == 'trigger') {
+                        var triggerHeight = trigger.outerHeight(true),
+                            triggerWidth = trigger.outerWidth(true),
+                            triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
+                            triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
+                            leftShift = triggerWidth;
+
+                        left = triggerLeft + triggerWidth;
+                        top = triggerTop;
+
+                        bottomMenu = top + menuHeight;
+                        rightMenu = left + menuWidth;
+                        //max height and width of context menu
+                        if (bottomMenu > cHeight) {
+                            if (top - menuHeight < 0) {
+                                if (bottomMenu - cHeight < menuHeight - top) {
+                                    top = cHeight - menuHeight;
+                                    va = -1 * va;
+                                } else {
+                                    top = 0;
+                                    va = 0;
+                                }
+                            } else {
+                                top = top - menuHeight + triggerHeight;
+                                va = -1 * va;
+                            }
+                        }
+                        if (rightMenu > cWidth) {
+                            if (left - menuWidth < 0) {
+                                if (rightMenu - cWidth < menuWidth - left) {
+                                    left = cWidth - menuWidth;
+                                    ha = -1 * ha;
+                                    leftShift = -triggerWidth;
+                                } else {
+                                    left = 0;
+                                    ha = 0;
+                                    leftShift = 0;
+                                }
+                            } else {
+                                left = left - menuWidth - triggerWidth;
+                                ha = -1 * ha;
+                                leftShift = -triggerWidth;
+                            }
+                        }
+                        //test end
+                        if (option.position == 'top') {
+                            top = triggerTop - menuHeight;
+                            va = verAdjust;
+                            left = left - leftShift;
+                        } else if (option.position == 'left') {
+                            left = triggerLeft - menuWidth;
+                            ha = horAdjust;
+                        } else if (option.position == 'bottom') {
+                            top = triggerTop + triggerHeight;
+                            va = verAdjust;
+                            left = left - leftShift;
+                        } else if (option.position == 'right') {
+                            left = triggerLeft + triggerWidth;
+                            ha = horAdjust;
+                        }
+                    }
+
+                    //applying css property
+                    var cssObj = {
+                        'position': cntWin || btChck ? 'fixed' : 'absolute',
+                        'display': 'inline-block',
+                        'height': '',
+                        'width': ''
+                    };
+
+                    //to get position from offset parent
+                    if (option.left != 'auto') {
+                        left = iMethods.getPxSize(option.left, cWidth);
+                    }
+                    if (option.top != 'auto') {
+                        top = iMethods.getPxSize(option.top, cHeight);
+                    }
+                    if (!cntWin) {
+                        var oParPos = trigger.offsetParent().offset();
+                        if (btChck) {
+                            left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
+                            top = top + cTop - (0, _jquery2.default)(window).scrollTop();
+                        } else {
+                            left = left - (cLeft - oParPos.left);
+                            top = top - (cTop - oParPos.top);
+                        }
+                    }
+                    cssObj.left = left + ha + 'px';
+                    cssObj.top = top + va + 'px';
+
+                    menu.css(cssObj);
+
+                    //to call after open call back
+                    option.afterOpen.call(this, clbckData, e);
+
+                    //to add current menu class
+                    if (trigger.closest('.iw-contextMenu').length == 0) {
+                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                        menu.addClass('iw-curMenu');
+                    }
+
+                    var dataParm = {
+                        trigger: trigger,
+                        menu: menu,
+                        option: option,
+                        method: trgrData.method
+                    };
+                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
+                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
+                    if (option.winEventClose) {
+                        (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
+                    }
+                },
+
+                scrollEvent: function scrollEvent(e) {
+                    iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+                },
+
+                clickEvent: function clickEvent(e) {
+                    var button = e.data.trigger.get(0);
+
+                    if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
+                        iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+                    }
+                },
+                keyEvent: function keyEvent(e) {
+                    e.preventDefault();
+                    var menu = e.data.menu,
+                        option = e.data.option,
+                        keyCode = e.keyCode;
+                    // handle cursor keys
+                    if (keyCode == 27) {
+                        iMethods.closeContextMenu(option, e.data.trigger, menu, e);
+                    }
+                    if (e.data.method == 'menu') {
+                        var curMenu = (0, _jquery2.default)('.iw-curMenu'),
+                            optList = curMenu.children('li:not(.iw-mDisable)'),
+                            selected = optList.filter('.iw-mSelected'),
+                            index = optList.index(selected),
+                            focusOn = function focusOn(elm) {
+                            iMethods.selectMenu(curMenu, elm);
+                            var menuData = elm.data('iw-menuData');
+                            if (menuData) {
+                                iMethods.eventHandler.call(elm[0], e);
+                            }
+                        },
+                            first = function first() {
+                            focusOn(optList.filter(':first'));
+                        },
+                            last = function last() {
+                            focusOn(optList.filter(':last'));
+                        },
+                            next = function next() {
+                            focusOn(optList.filter(':eq(' + (index + 1) + ')'));
+                        },
+                            prev = function prev() {
+                            focusOn(optList.filter(':eq(' + (index - 1) + ')'));
+                        },
+                            subMenu = function subMenu() {
+                            var menuData = selected.data('iw-menuData');
+                            if (menuData) {
+                                iMethods.eventHandler.call(selected[0], e);
+                                var selector = menuData.menu;
+                                selector.addClass('iw-curMenu');
+                                curMenu.removeClass('iw-curMenu');
+                                curMenu = selector;
+                                optList = curMenu.children('li:not(.iw-mDisable)');
+                                selected = optList.filter('.iw-mSelected');
+                                first();
+                            }
+                        },
+                            parMenu = function parMenu() {
+                            var selector = curMenu.data('iw-menuData').trigger;
+                            var parMenu = selector.closest('.iw-contextMenu');
+                            if (parMenu.length != 0) {
+                                curMenu.removeClass('iw-curMenu').css('display', 'none');
+                                parMenu.addClass('iw-curMenu');
+                            }
+                        };
+                        switch (keyCode) {
+                            case 13:
+                                selected.click();
+                                break;
+                            case 40:
+                                index == optList.length - 1 || selected.length == 0 ? first() : next();
+                                break;
+                            case 38:
+                                index == 0 || selected.length == 0 ? last() : prev();
+                                break;
+                            case 33:
+                                first();
+                                break;
+                            case 34:
+                                last();
+                                break;
+                            case 37:
+                                parMenu();
+                                break;
+                            case 39:
+                                subMenu();
+                                break;
+                        }
+                    }
+                },
+                closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
+
+                    //unbind all events from top DOM
+                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
+                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
+                    (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
+                    (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+                    (0, _jquery2.default)(document).focus();
+
+                    //call close function
+                    option.onClose.call(this, {
+                        trigger: trigger,
+                        menu: menu
+                    }, e);
+                },
+                getPxSize: function getPxSize(size, of) {
+                    if (!isNaN(size)) {
+                        return size;
+                    }
+                    if (size.indexOf('%') != -1) {
+                        return parseInt(size) * of / 100;
+                    } else {
+                        return parseInt(size);
+                    }
+                },
+                selectMenu: function selectMenu(menu, elm) {
+                    //to select the list
+                    var selected = menu.find('li.iw-mSelected'),
+                        submenu = selected.find('.iw-contextMenu');
+                    if (submenu.length != 0 && selected[0] != elm[0]) {
+                        submenu.fadeOut(100);
+                    }
+                    selected.removeClass('iw-mSelected');
+                    elm.addClass('iw-mSelected');
+                },
+                menuHover: function menuHover(menu) {
+                    var lastEventTime = Date.now();
+                    menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
+                        //to make curmenu
+                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                        menu.addClass('iw-curMenu');
+                        iMethods.selectMenu(menu, (0, _jquery2.default)(this));
+                    });
+                },
+                createMenuList: function createMenuList(trgr, selector, option) {
+                    var baseTrigger = option.baseTrigger,
+                        randomNum = Math.floor(Math.random() * 10000);
+                    if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
+                        var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
+                        _jquery2.default.each(selector, function (index, selObj) {
+                            var name = selObj.name,
+                                fun = selObj.fun || function () {},
+                                subMenu = selObj.subMenu,
+                                img = selObj.img || '',
+                                icon = selObj.icon || '',
+                                title = selObj.title || "",
+                                className = selObj.className || "",
+                                disable = selObj.disable,
+                                list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
+
+                            if (img) {
+                                list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                            } else if (icon) {
+                                list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
+                            }
+                            //to add disable
+                            if (disable) {
+                                list.addClass('iw-mDisable');
+                            }
+
+                            if (!subMenu) {
+                                list.bind('click.contextMenu', function (e) {
+                                    fun.call(this, {
+                                        trigger: baseTrigger,
+                                        menu: menuList
+                                    }, e);
+                                });
+                            }
+
+                            //to create sub menu
+                            menuList.append(list);
+                            if (subMenu) {
+                                list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
+                                iMethods.subMenu(list, subMenu, baseTrigger, option);
+                            }
+                        });
+
+                        if (baseTrigger.index(trgr[0]) == -1) {
+                            trgr.append(menuList);
+                        } else {
+                            var par = option.containment == window ? 'body' : option.containment;
+                            (0, _jquery2.default)(par).append(menuList);
+                        }
+
+                        iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
+                        return '#iw-contextMenu' + randomNum;
+                    } else if ((0, _jquery2.default)(selector).length != 0) {
+                        var element = (0, _jquery2.default)(selector);
+                        element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
+
+                        //to create subMenu
+                        element.find('ul').each(function (index, element) {
+                            var subMenu = (0, _jquery2.default)(this),
+                                parent = subMenu.parent('li');
+                            parent.append('<div class="iw-cm-arrow-right" />');
+                            subMenu.addClass('iw-contextMenuCurrent');
+                            iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
+                        });
+                        iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
+                        return '.iw-contextMenu' + randomNum;
+                    }
+                },
+                subMenu: function subMenu(trigger, selector, baseTrigger, option) {
+                    trigger.contextMenu('menu', selector, {
+                        triggerOn: option.subMenuTriggerOn,
+                        displayAround: 'trigger',
+                        position: 'auto',
+                        mouseClick: 'left',
+                        baseTrigger: baseTrigger,
+                        containment: option.containment
+                    });
+                },
+                onOff: function onOff(menu) {
+
+                    menu.find('.iw-mOverlay').remove();
+                    menu.find('.iw-mDisable').each(function () {
+                        var list = (0, _jquery2.default)(this);
+                        list.append('<div class="iw-mOverlay"/>');
+                        list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
+                            event.stopPropagation();
+                        });
+                    });
+                },
+                optionOtimizer: function optionOtimizer(method, option) {
+                    if (!option) {
+                        return;
+                    }
+                    if (method == 'menu') {
+                        if (!option.mouseClick) {
+                            option.mouseClick = 'right';
+                        }
+                    }
+                    if (option.mouseClick == 'right' && option.triggerOn == 'click') {
+                        option.triggerOn = 'contextmenu';
+                    }
+
+                    if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
+                        option.displayAround = 'trigger';
+                    }
+                    return option;
+                }
+            };
+        }
+    }]);
+
+    return Cal;
+}();
+
+exports.default = Cal;
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 // This file is deprecated in 1.12.0 to be removed in 1.13
@@ -28195,7 +28245,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 })();
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28221,7 +28271,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(136), __webpack_require__(129), __webpack_require__(131), __webpack_require__(130), __webpack_require__(137), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(137), __webpack_require__(130), __webpack_require__(7), __webpack_require__(131), __webpack_require__(138), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -29333,7 +29383,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29386,7 +29436,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29417,57 +29467,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 131 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.safeActiveElement = function (document) {
-		var activeElement;
-
-		// Support: IE 9 only
-		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
-		try {
-			activeElement = document.activeElement;
-		} catch (error) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 9 - 11 only
-		// IE may return null instead of an element
-		// Interestingly, this only seems to occur when NOT in an iframe
-		if (!activeElement) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 11 only
-		// IE11 returns a seemingly empty object in some cases when accessing
-		// document.activeElement from an <iframe>
-		if (!activeElement.nodeName) {
-			activeElement = document.body;
-		}
-
-		return activeElement;
-	};
-});
-
-/***/ }),
-/* 132 */
+/* 132 */,
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29482,7 +29483,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29524,7 +29525,7 @@ exports.publicDebug = publicDebug;
 exports.debugWarn = debugWarn;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43106,7 +43107,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -43355,10 +43356,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 134;
+webpackContext.id = 135;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43384,7 +43385,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43433,7 +43434,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43485,10 +43486,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 138 */,
 /* 139 */,
 /* 140 */,
-/* 141 */
+/* 141 */,
+/* 142 */,
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43498,23 +43500,23 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
-var _debug = __webpack_require__(132);
+var _debug = __webpack_require__(133);
 
-var _uifunc = __webpack_require__(8);
+var _uifunc = __webpack_require__(9);
 
 var _textfieldlisteners = __webpack_require__(126);
 
-var _cookie = __webpack_require__(142);
+var _cookie = __webpack_require__(144);
 
 var _serverresponse = __webpack_require__(6);
 
-var _cal = __webpack_require__(9);
+var _cal = __webpack_require__(127);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
-var _reservationpublic = __webpack_require__(143);
+var _reservationpublic = __webpack_require__(145);
 
 var _reservationpublic2 = _interopRequireDefault(_reservationpublic);
 
@@ -44414,7 +44416,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44458,7 +44460,7 @@ exports.readCookie = readCookie;
 exports.eraseCookie = eraseCookie;
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44474,19 +44476,19 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
-var _uifunc = __webpack_require__(8);
+var _uifunc = __webpack_require__(9);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
-var _cal = __webpack_require__(9);
+var _cal = __webpack_require__(127);
 
 var _cal2 = _interopRequireDefault(_cal);
 
-var _breadcrumb = __webpack_require__(144);
+var _breadcrumb = __webpack_require__(146);
 
 var _breadcrumb2 = _interopRequireDefault(_breadcrumb);
 
@@ -44675,7 +44677,7 @@ var ReservationPublic = function () {
 exports.default = ReservationPublic;
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44693,7 +44695,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

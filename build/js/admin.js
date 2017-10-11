@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 145);
+/******/ 	return __webpack_require__(__webpack_require__.s = 147);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1893,7 +1893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (!locales[name] && typeof module !== 'undefined' && module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
-                __webpack_require__(134)("./" + name);
+                __webpack_require__(135)("./" + name);
                 // because defineLocale currently also sets the global locale, we
                 // want to undo that for lazy loaded locales
                 getSetGlobalLocale(oldLocale);
@@ -4425,7 +4425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     return hooks;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
 
 /***/ }),
 /* 1 */
@@ -14261,7 +14261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)(module)))
 
 /***/ }),
 /* 2 */
@@ -14292,154 +14292,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.submissionEnd = exports.submissionStart = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var submissionStart = function submissionStart() {
-  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
-};
-
-var submissionEnd = function submissionEnd() {
-  (0, _jquery2.default)('.iam-loading-anim').remove();
-};
-
-exports.submissionStart = submissionStart;
-exports.submissionEnd = submissionEnd;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * detect IE
- * returns version of IE or false, if browser is not Internet Explorer
- */
-function detectIE() {
-  var ua = window.navigator.userAgent;
-
-  var msie = ua.indexOf('MSIE ');
-  if (msie > 0) {
-    // IE 10 or older => return version number
-    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
-  }
-
-  var trident = ua.indexOf('Trident/');
-  if (trident > 0) {
-    // IE 11 => return version number
-    var rv = ua.indexOf('rv:');
-    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
-  }
-
-  var edge = ua.indexOf('Edge/');
-  if (edge > 0) {
-    // Edge (IE 12+) => return version number
-    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
-  }
-
-  // other browser
-  return false;
-}
-
-var doError = function doError(msg) {
-  alert(msg);
-  throw msg;
-};
-
-var isEmail = function isEmail(email) {
-  var atpos = email.indexOf("@");
-  var dotpos = email.lastIndexOf(".");
-  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
-    return false;
-  }
-  return true;
-};
-
-var getSize = function getSize(obj) {
-  var size = 0,
-      key = void 0;
-  for (key in obj) {
-    if (obj.hasOwnProperty(key)) size++;
-  }
-  return size;
-};
-
-function escapeHtml(text) {
-  var map = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#039;'
-  };
-
-  return text.replace(/[&<>"']/g, function (m) {
-    return map[m];
-  });
-}
-
-var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
-
-function getPhoneNumberFromPage() {
-  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-  if (!phoneNumberIsFilledIn()) {
-    if (!required) return '';
-    alert(plsFillInPhoneNum);
-    throw plsFillInPhoneNum;
-  }
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
-}
-
-function phoneNumberIsFilledIn() {
-  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
-}
-
-var rStr = function rStr(length) {
-  var str = '';
-  for (var i = 0; i < length; i++) {
-    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
-  }
-  return str;
-};
-
-exports.rStr = rStr;
-exports.isEmail = isEmail;
-exports.getSize = getSize;
-exports.escapeHtml = escapeHtml;
-exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
-exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
-exports.detectIE = detectIE;
-exports.doError = doError;
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15152,6 +15004,154 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.submissionEnd = exports.submissionStart = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var submissionStart = function submissionStart() {
+  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
+};
+
+var submissionEnd = function submissionEnd() {
+  (0, _jquery2.default)('.iam-loading-anim').remove();
+};
+
+exports.submissionStart = submissionStart;
+exports.submissionEnd = submissionEnd;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * detect IE
+ * returns version of IE or false, if browser is not Internet Explorer
+ */
+function detectIE() {
+  var ua = window.navigator.userAgent;
+
+  var msie = ua.indexOf('MSIE ');
+  if (msie > 0) {
+    // IE 10 or older => return version number
+    return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+  }
+
+  var trident = ua.indexOf('Trident/');
+  if (trident > 0) {
+    // IE 11 => return version number
+    var rv = ua.indexOf('rv:');
+    return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+  }
+
+  var edge = ua.indexOf('Edge/');
+  if (edge > 0) {
+    // Edge (IE 12+) => return version number
+    return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+  }
+
+  // other browser
+  return false;
+}
+
+var doError = function doError(msg) {
+  alert(msg);
+  throw msg;
+};
+
+var isEmail = function isEmail(email) {
+  var atpos = email.indexOf("@");
+  var dotpos = email.lastIndexOf(".");
+  if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= email.length) {
+    return false;
+  }
+  return true;
+};
+
+var getSize = function getSize(obj) {
+  var size = 0,
+      key = void 0;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
+function escapeHtml(text) {
+  var map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return text.replace(/[&<>"']/g, function (m) {
+    return map[m];
+  });
+}
+
+var plsFillInPhoneNum = 'Please fill in all fields of the phone number.';
+
+function getPhoneNumberFromPage() {
+  var required = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+  if (!phoneNumberIsFilledIn()) {
+    if (!required) return '';
+    alert(plsFillInPhoneNum);
+    throw plsFillInPhoneNum;
+  }
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val() + '-' + (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val();
+}
+
+function phoneNumberIsFilledIn() {
+  return (0, _jquery2.default)('.iam-phone-num-grp #phone-num-1').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-2').val().length == 3 && (0, _jquery2.default)('.iam-phone-num-grp #phone-num-3').val().length == 4;
+}
+
+var rStr = function rStr(length) {
+  var str = '';
+  for (var i = 0; i < length; i++) {
+    str += String.fromCharCode(97 + Math.floor(Math.random() * 25));
+  }
+  return str;
+};
+
+exports.rStr = rStr;
+exports.isEmail = isEmail;
+exports.getSize = getSize;
+exports.escapeHtml = escapeHtml;
+exports.getPhoneNumberFromPage = getPhoneNumberFromPage;
+exports.phoneNumberIsFilledIn = phoneNumberIsFilledIn;
+exports.detectIE = detectIE;
+exports.doError = doError;
+
+/***/ }),
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -15198,6 +15198,56 @@ exports.handleServerError = handleServerError;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.safeActiveElement = function (document) {
+		var activeElement;
+
+		// Support: IE 9 only
+		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
+		try {
+			activeElement = document.activeElement;
+		} catch (error) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 9 - 11 only
+		// IE may return null instead of an element
+		// Interestingly, this only seems to occur when NOT in an iframe
+		if (!activeElement) {
+			activeElement = document.body;
+		}
+
+		// Support: IE 11 only
+		// IE11 returns a seemingly empty object in some cases when accessing
+		// document.activeElement from an <iframe>
+		if (!activeElement.nodeName) {
+			activeElement = document.body;
+		}
+
+		return activeElement;
+	};
+});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 module.exports = function (module) {
@@ -15224,7 +15274,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15241,7 +15291,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15325,1141 +15375,6 @@ exports.initCSVButtonListener = initCSVButtonListener;
 exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
 exports.initSearchListener = initSearchListener;
 exports.initPopupXListener = initPopupXListener;
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(133);
-
-__webpack_require__(127);
-
-__webpack_require__(128);
-
-var _userfeedback = __webpack_require__(3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Cal = function () {
-    function Cal(page, facing) {
-        _classCallCheck(this, Cal);
-
-        this.page = page;
-        this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
-        this.setCalArgs();
-        this.initCalFor(facing);
-    }
-
-    _createClass(Cal, [{
-        key: 'initCalFor',
-        value: function initCalFor(facing) {
-            if (facing == 'public') {
-                this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
-                this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-                this.initDraggable();
-                this.initPubResCal(this.page.getFacilityInfo('type'));
-            } else if (facing == 'admin') {
-                this.initDraggable();
-                this.initAdminCal(this.page.cal);
-            }
-        }
-    }, {
-        key: 'eventFallsOnWeekend',
-        value: function eventFallsOnWeekend(e) {
-            var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-            var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-            //for now it ends at midnight of the following day
-            return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-        }
-    }, {
-        key: 'eventIsLongerThan',
-        value: function eventIsLongerThan(e, days) {
-            var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            return end.diff(start, 'days') > days;
-        }
-    }, {
-        key: 'convertBusinessHours',
-        value: function convertBusinessHours(jsonString) {
-            var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
-            var converted = [];
-            var counter = 1;
-            for (var key in json) {
-                var day = _jquery2.default.extend({}, json[key]);
-                if (day.start != '') {
-                    day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
-                    day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
-                    converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
-                } else {
-                    converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
-                }
-                counter++;
-            }
-            return converted;
-        }
-    }, {
-        key: 'preventPastReservation',
-        value: function preventPastReservation(e) {
-
-            var targetTimeStart = null;
-
-            if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-
-            if (targetTimeStart.isBefore(moment())) {
-                alert('You cannot make reservations in the past.');
-                return false;
-            }
-            return true;
-        }
-    }, {
-        key: 'warnIfOutOfBounds',
-        value: function warnIfOutOfBounds(e) {
-            var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
-
-            var thisStart = moment(thisDay.start, 'HH:mm');
-            var thisEnd = moment(thisDay.end, 'HH:mm');
-
-            var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
-            var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
-
-            if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
-                alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
-            }
-        }
-    }, {
-        key: 'initDraggable',
-        value: function initDraggable() {
-
-            (0, _jquery2.default)('.iam-events .fc-event').each(function () {
-
-                // store data so the calendar knows to render an event upon drop
-                (0, _jquery2.default)(this).data('event', {
-                    title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
-                    editable: true,
-                    eventDurationEditable: true,
-                    color: '#4cad57',
-                    className: 'iam-new-event'
-                });
-
-                // make the event draggable using jQuery UI
-                (0, _jquery2.default)(this).draggable({
-                    zIndex: 999,
-                    revert: true, // will cause the event to go back to its
-                    revertDuration: 0 //  original position after the drag
-                });
-            });
-        }
-    }, {
-        key: 'initAdminCal',
-        value: function initAdminCal(cal) {
-            var _this = this;
-
-            this.eventsToDelete = [];
-
-            var neutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false
-            };
-
-            var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
-            this.calID = '.iam-cal';
-            (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
-            (0, _userfeedback.submissionStart)();
-            setTimeout(function () {
-                _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
-            }, 1000);
-        }
-    }, {
-        key: 'initPubResCal',
-        value: function initPubResCal(facilitType) {
-            var facilityNeutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                businessHours: this.businessHoursConverted,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false,
-                eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
-                    color: '#f13d39' }]
-            };
-
-            var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
-
-            (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
-        }
-    }, {
-        key: 'handleEventToDelete',
-        value: function handleEventToDelete(event, j) {
-
-            if (j.hasClass('event-not-editable')) return;
-            if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
-
-            var index = this.eventsToDelete.indexOf(event.nid);
-            if (index != -1) {
-                this.eventsToDelete.splice(index, 1);
-            } else {
-                this.eventsToDelete.push(event.nid);
-            }
-            (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
-        }
-    }, {
-        key: 'initContextMenu',
-        value: function initContextMenu(menuToUse) {
-            var that = this;
-            this.cmlib();
-            menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
-
-            var menu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }, {
-                name: 'copy email',
-                title: 'copy button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { email: t.data('email') };
-                    that.handleEventCopyEmail(event);
-                }
-            }];
-
-            var rentalMenu = [{
-                name: 'use this reservation',
-                title: 'select reservation button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    makeRelevantReservation(t.data('fcSeg').event);
-                }
-            }, {
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }];
-
-            var irregularMenu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(t.data('fcSeg').event, t);
-                    (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
-                }
-            }];
-
-            var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
-            var menuOfChoice = menuDict[menuToUse];
-
-            (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
-        }
-    }, {
-        key: 'setCalArgs',
-        value: function setCalArgs() {
-
-            var that = this;
-            this.calArgs = {};
-
-            this.calArgs['irregular'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                defaultView: 'agendaWeek',
-                title: 'closed',
-                eventReceive: function eventReceive(e, d, revert) {
-                    e.title = 'closed';
-                },
-                eventRender: function eventRender(event, element) {
-                    if (that.eventsToDelete.indexOf(event.nid) != -1) {
-                        (0, _jquery2.default)(element).addClass('marked-for-delete');
-                    }
-                },
-                eventAfterAllRender: function eventAfterAllRender() {
-                    that.initContextMenu(that.page.cal);
-                },
-                events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
-            };
-
-            this.calArgs['appointment'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'agendaWeek,agendaDay'
-                },
-                defaultTimedEventDuration: '00:30:00',
-                weekends: true,
-                defaultView: 'agendaWeek',
-                eventReceive: function eventReceive(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                }
-            };
-
-            this.calArgs['rental'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month'
-                },
-                weekends: false,
-                defaultTimedEventDuration: that.page.rentalPeriod * 24 + ':00:00',
-                defaultView: 'month',
-                eventReceive: function eventReceive(e) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        revert();
-                    }
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
-                        alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
-                        revert();
-                    }
-                },
-                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
-            };
-        }
-    }, {
-        key: 'cmlib',
-        value: function cmlib() {
-            /*
-             *contextMenu.js v 1.4.1
-             *Author: Sudhanshu Yadav
-             *s-yadav.github.com
-             *Copyright (c) 2013-2015 Sudhanshu Yadav.
-             *Dual licensed under the MIT and GPL licenses
-             */
-
-            "use strict";
-            //jQuery, window, document
-
-            _jquery2.default.single = function () {
-                var single = (0, _jquery2.default)({});
-                return function (elm) {
-                    single[0] = elm;
-                    return single;
-                };
-            }();
-
-            _jquery2.default.fn.contextMenu = function (method, selector, option) {
-
-                //parameter fix
-                if (!methods[method]) {
-                    option = selector;
-                    selector = method;
-                    method = 'popup';
-                }
-                //need to check for array object
-                else if (selector) {
-                        if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
-                            option = selector;
-                            selector = null;
-                        }
-                    }
-
-                if (selector instanceof Array && method != 'update') {
-                    method = 'menu';
-                }
-
-                var myoptions = option;
-                if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
-                    option = iMethods.optionOtimizer(method, option);
-                    this.each(function () {
-                        var $this = (0, _jquery2.default)(this);
-                        myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
-                        if (!myoptions.baseTrigger) {
-                            myoptions.baseTrigger = $this;
-                        }
-                        methods[method].call($this, selector, myoptions);
-                    });
-                } else {
-                    methods[method].call(this, selector, myoptions);
-                }
-                return this;
-            };
-            _jquery2.default.fn.contextMenu.defaults = {
-                triggerOn: 'click', //avaliable options are all event related mouse plus enter option
-                subMenuTriggerOn: 'hover click',
-                displayAround: 'cursor', // cursor or trigger
-                mouseClick: 'left',
-                verAdjust: 0,
-                horAdjust: 0,
-                top: 'auto',
-                left: 'auto',
-                closeOther: true, //to close other already opened context menu
-                containment: window,
-                winEventClose: true,
-                position: 'auto', //allowed values are top, left, bottom and right
-                closeOnClick: true, //close context menu on click/ trigger of any item in menu
-
-                //callback
-                onOpen: function onOpen(data, event) {},
-                afterOpen: function afterOpen(data, event) {},
-                onClose: function onClose(data, event) {}
-            };
-
-            var methods = {
-                menu: function menu(selector, option) {
-                    selector = iMethods.createMenuList(this, selector, option);
-                    iMethods.contextMenuBind.call(this, selector, option, 'menu');
-                },
-                popup: function popup(selector, option) {
-                    (0, _jquery2.default)(selector).addClass('iw-contextMenu');
-                    iMethods.contextMenuBind.call(this, selector, option, 'popup');
-                },
-                update: function update(selector, option) {
-                    var self = this;
-                    option = option || {};
-
-                    this.each(function () {
-                        var trgr = (0, _jquery2.default)(this),
-                            menuData = trgr.data('iw-menuData');
-                        //refresh if any new element is added
-                        if (!menuData) {
-                            self.contextMenu('refresh');
-                            menuData = trgr.data('iw-menuData');
-                        }
-
-                        var menu = menuData.menu;
-                        if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
-
-                            for (var i = 0; i < selector.length; i++) {
-                                var name = selector[i].name,
-                                    disable = selector[i].disable,
-                                    fun = selector[i].fun,
-                                    icon = selector[i].icon,
-                                    img = selector[i].img,
-                                    title = selector[i].title,
-                                    className = selector[i].className,
-                                    elm = menu.children('li').filter(function () {
-                                    return (0, _jquery2.default)(this).contents().filter(function () {
-                                        return this.nodeType == 3;
-                                    }).text() == name;
-                                }),
-                                    subMenu = selector[i].subMenu;
-
-                                //toggle disable if provided on update method
-                                disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
-
-                                //bind new function if provided
-                                fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
-
-                                //update title
-                                title != undefined && elm.attr('title', title);
-
-                                //update class name
-                                className != undefined && elm.attr('class', className);
-
-                                var imgIcon = elm.find('.iw-mIcon');
-                                if (imgIcon.length) imgIcon.remove();
-
-                                //update image or icon
-                                if (img) {
-                                    elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                                } else if (icon) {
-                                    elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
-                                }
-
-                                //to change submenus
-                                if (subMenu) {
-                                    elm.contextMenu('update', subMenu);
-                                }
-                            }
-                        }
-
-                        iMethods.onOff(menu);
-
-                        //bind event again if trigger option has changed.
-                        var triggerOn = option.triggerOn;
-                        if (triggerOn) {
-                            trgr.unbind('.contextMenu');
-
-                            //add contextMenu identifier on all events
-                            triggerOn = triggerOn.split(" ");
-                            var events = [];
-                            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                                events.push(triggerOn[i] + '.contextMenu');
-                            }
-
-                            //to bind event
-                            trgr.bind(events.join(' '), iMethods.eventHandler);
-                        }
-
-                        //set menu data back to trigger element
-                        menuData.option = _jquery2.default.extend({}, menuData.option, option);
-                        trgr.data('iw-menuData', menuData);
-                    });
-                },
-                refresh: function refresh() {
-                    var menuData = this.filter(function () {
-                        return !!(0, _jquery2.default)(this).data('iw-menuData');
-                    }).data('iw-menuData'),
-                        newElm = this.filter(function () {
-                        return !(0, _jquery2.default)(this).data('iw-menuData');
-                    });
-                    //to change basetrigger on refresh
-                    menuData.option.baseTrigger = this;
-                    iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
-                },
-                open: function open(sel, data) {
-                    data = data || {};
-                    var e = data.event || _jquery2.default.Event('click');
-                    if (data.top) e.clientY = data.top;
-                    if (data.left) e.clientX = data.left;
-                    this.each(function () {
-                        iMethods.eventHandler.call(this, e);
-                    });
-                },
-                //to force context menu to close
-                close: function close() {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData) {
-                        iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
-                    }
-                },
-                //to get value of a key
-                value: function value(key) {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData[key]) {
-                        return menuData[key];
-                    } else if (menuData.option) {
-                        return menuData.option[key];
-                    }
-                    return null;
-                },
-                destroy: function destroy() {
-                    var trgr = this,
-                        menuId = trgr.data('iw-menuData').menuId,
-                        menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
-                        menuData = menu.data('iw-menuData');
-
-                    //Handle the situation of dynamically added element.
-                    if (!menuData) return;
-
-                    if (menuData.noTrigger == 1) {
-                        if (menu.hasClass('iw-created')) {
-                            menu.remove();
-                        } else {
-                            menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
-                            //to destroy submenus
-                            menu.find('li.iw-mTrigger').contextMenu('destroy');
-                        }
-                    } else {
-                        menuData.noTrigger--;
-                        menu.data('iw-menuData', menuData);
-                    }
-                    trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
-                }
-            };
-            var iMethods = {
-                contextMenuBind: function contextMenuBind(selector, option, method) {
-                    var trigger = this,
-                        menu = (0, _jquery2.default)(selector),
-                        menuData = menu.data('iw-menuData');
-
-                    //fallback
-                    if (menu.length == 0) {
-                        menu = trigger.find(selector);
-                        if (menu.length == 0) {
-                            return;
-                        }
-                    }
-
-                    if (method == 'menu') {
-                        iMethods.menuHover(menu);
-                    }
-                    //get base trigger
-                    var baseTrigger = option.baseTrigger;
-
-                    if (!menuData) {
-                        var menuId;
-                        if (!baseTrigger.data('iw-menuData')) {
-                            menuId = Math.ceil(Math.random() * 100000);
-                            baseTrigger.data('iw-menuData', {
-                                'menuId': menuId
-                            });
-                        } else {
-                            menuId = baseTrigger.data('iw-menuData').menuId;
-                        }
-                        //create clone menu to calculate exact height and width.
-                        var cloneMenu = menu.clone();
-                        cloneMenu.appendTo('body');
-
-                        menuData = {
-                            'menuId': menuId,
-                            'menuWidth': cloneMenu.outerWidth(true),
-                            'menuHeight': cloneMenu.outerHeight(true),
-                            'noTrigger': 1,
-                            'trigger': trigger
-                        };
-
-                        //to set data on selector
-                        menu.data('iw-menuData', menuData).attr('menuId', menuId);
-                        //remove clone menu
-                        cloneMenu.remove();
-                    } else {
-                        menuData.noTrigger++;
-                        menu.data('iw-menuData', menuData);
-                    }
-
-                    //to set data on trigger
-                    trigger.addClass('iw-mTrigger').data('iw-menuData', {
-                        'menuId': menuData.menuId,
-                        'option': option,
-                        'menu': menu,
-                        'menuSelector': selector,
-                        'method': method
-                    });
-
-                    //hover fix
-                    var triggerOn = option.triggerOn;
-                    if (triggerOn.indexOf('hover') != -1) {
-                        triggerOn = triggerOn.replace('hover', 'mouseenter');
-                        //hover out if display is of context menu is on hover
-                        if (baseTrigger.index(trigger) != -1) {
-                            baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
-                                if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
-                                    (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
-                                }
-                            });
-                        }
-                    }
-
-                    trigger.delegate('input,a,.needs-click', 'click', function (e) {
-                        e.stopImmediatePropagation();
-                    });
-
-                    //add contextMenu identifier on all events
-                    triggerOn = triggerOn.split(' ');
-                    var events = [];
-                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                        events.push(triggerOn[i] + '.contextMenu');
-                    }
-
-                    //to bind event
-                    trigger.bind(events.join(' '), iMethods.eventHandler);
-
-                    //to stop bubbling in menu
-                    menu.bind('click mouseenter', function (e) {
-                        e.stopPropagation();
-                    });
-
-                    menu.delegate('li', 'click', function (e) {
-                        if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
-                    });
-                },
-                eventHandler: function eventHandler(e) {
-                    e.preventDefault();
-                    var trigger = (0, _jquery2.default)(this),
-                        trgrData = trigger.data('iw-menuData'),
-                        menu = trgrData.menu,
-                        menuData = menu.data('iw-menuData'),
-                        option = trgrData.option,
-                        cntnmnt = option.containment,
-                        clbckData = {
-                        trigger: trigger,
-                        menu: menu
-                    },
-
-                    //check conditions
-                    cntWin = cntnmnt == window,
-                        btChck = option.baseTrigger.index(trigger) == -1;
-
-                    //to close previous open menu.
-                    if (!btChck && option.closeOther) {
-                        (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    }
-
-                    //to reset already selected menu item
-                    menu.find('.iw-mSelected').removeClass('iw-mSelected');
-
-                    //call open callback
-                    option.onOpen.call(this, clbckData, e);
-
-                    var cObj = (0, _jquery2.default)(cntnmnt),
-                        cHeight = cObj.innerHeight(),
-                        cWidth = cObj.innerWidth(),
-                        cTop = 0,
-                        cLeft = 0,
-                        menuHeight = menuData.menuHeight,
-                        menuWidth = menuData.menuWidth,
-                        va,
-                        ha,
-                        left = 0,
-                        top = 0,
-                        bottomMenu,
-                        rightMenu,
-                        verAdjust = va = parseInt(option.verAdjust),
-                        horAdjust = ha = parseInt(option.horAdjust);
-
-                    if (!cntWin) {
-                        cTop = cObj.offset().top;
-                        cLeft = cObj.offset().left;
-
-                        //to add relative position if no position is defined on containment
-                        if (cObj.css('position') == 'static') {
-                            cObj.css('position', 'relative');
-                        }
-                    }
-
-                    if (option.displayAround == 'cursor') {
-                        left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
-                        top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                }
-                            } else {
-                                left = left - menuWidth;
-                                ha = -1 * ha;
-                            }
-                        }
-                    } else if (option.displayAround == 'trigger') {
-                        var triggerHeight = trigger.outerHeight(true),
-                            triggerWidth = trigger.outerWidth(true),
-                            triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
-                            triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
-                            leftShift = triggerWidth;
-
-                        left = triggerLeft + triggerWidth;
-                        top = triggerTop;
-
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight + triggerHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                    leftShift = -triggerWidth;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                    leftShift = 0;
-                                }
-                            } else {
-                                left = left - menuWidth - triggerWidth;
-                                ha = -1 * ha;
-                                leftShift = -triggerWidth;
-                            }
-                        }
-                        //test end
-                        if (option.position == 'top') {
-                            top = triggerTop - menuHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'left') {
-                            left = triggerLeft - menuWidth;
-                            ha = horAdjust;
-                        } else if (option.position == 'bottom') {
-                            top = triggerTop + triggerHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'right') {
-                            left = triggerLeft + triggerWidth;
-                            ha = horAdjust;
-                        }
-                    }
-
-                    //applying css property
-                    var cssObj = {
-                        'position': cntWin || btChck ? 'fixed' : 'absolute',
-                        'display': 'inline-block',
-                        'height': '',
-                        'width': ''
-                    };
-
-                    //to get position from offset parent
-                    if (option.left != 'auto') {
-                        left = iMethods.getPxSize(option.left, cWidth);
-                    }
-                    if (option.top != 'auto') {
-                        top = iMethods.getPxSize(option.top, cHeight);
-                    }
-                    if (!cntWin) {
-                        var oParPos = trigger.offsetParent().offset();
-                        if (btChck) {
-                            left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
-                            top = top + cTop - (0, _jquery2.default)(window).scrollTop();
-                        } else {
-                            left = left - (cLeft - oParPos.left);
-                            top = top - (cTop - oParPos.top);
-                        }
-                    }
-                    cssObj.left = left + ha + 'px';
-                    cssObj.top = top + va + 'px';
-
-                    menu.css(cssObj);
-
-                    //to call after open call back
-                    option.afterOpen.call(this, clbckData, e);
-
-                    //to add current menu class
-                    if (trigger.closest('.iw-contextMenu').length == 0) {
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                    }
-
-                    var dataParm = {
-                        trigger: trigger,
-                        menu: menu,
-                        option: option,
-                        method: trgrData.method
-                    };
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
-                    if (option.winEventClose) {
-                        (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
-                    }
-                },
-
-                scrollEvent: function scrollEvent(e) {
-                    iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                },
-
-                clickEvent: function clickEvent(e) {
-                    var button = e.data.trigger.get(0);
-
-                    if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
-                        iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                    }
-                },
-                keyEvent: function keyEvent(e) {
-                    e.preventDefault();
-                    var menu = e.data.menu,
-                        option = e.data.option,
-                        keyCode = e.keyCode;
-                    // handle cursor keys
-                    if (keyCode == 27) {
-                        iMethods.closeContextMenu(option, e.data.trigger, menu, e);
-                    }
-                    if (e.data.method == 'menu') {
-                        var curMenu = (0, _jquery2.default)('.iw-curMenu'),
-                            optList = curMenu.children('li:not(.iw-mDisable)'),
-                            selected = optList.filter('.iw-mSelected'),
-                            index = optList.index(selected),
-                            focusOn = function focusOn(elm) {
-                            iMethods.selectMenu(curMenu, elm);
-                            var menuData = elm.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(elm[0], e);
-                            }
-                        },
-                            first = function first() {
-                            focusOn(optList.filter(':first'));
-                        },
-                            last = function last() {
-                            focusOn(optList.filter(':last'));
-                        },
-                            next = function next() {
-                            focusOn(optList.filter(':eq(' + (index + 1) + ')'));
-                        },
-                            prev = function prev() {
-                            focusOn(optList.filter(':eq(' + (index - 1) + ')'));
-                        },
-                            subMenu = function subMenu() {
-                            var menuData = selected.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(selected[0], e);
-                                var selector = menuData.menu;
-                                selector.addClass('iw-curMenu');
-                                curMenu.removeClass('iw-curMenu');
-                                curMenu = selector;
-                                optList = curMenu.children('li:not(.iw-mDisable)');
-                                selected = optList.filter('.iw-mSelected');
-                                first();
-                            }
-                        },
-                            parMenu = function parMenu() {
-                            var selector = curMenu.data('iw-menuData').trigger;
-                            var parMenu = selector.closest('.iw-contextMenu');
-                            if (parMenu.length != 0) {
-                                curMenu.removeClass('iw-curMenu').css('display', 'none');
-                                parMenu.addClass('iw-curMenu');
-                            }
-                        };
-                        switch (keyCode) {
-                            case 13:
-                                selected.click();
-                                break;
-                            case 40:
-                                index == optList.length - 1 || selected.length == 0 ? first() : next();
-                                break;
-                            case 38:
-                                index == 0 || selected.length == 0 ? last() : prev();
-                                break;
-                            case 33:
-                                first();
-                                break;
-                            case 34:
-                                last();
-                                break;
-                            case 37:
-                                parMenu();
-                                break;
-                            case 39:
-                                subMenu();
-                                break;
-                        }
-                    }
-                },
-                closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
-
-                    //unbind all events from top DOM
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
-                    (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
-                    (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    (0, _jquery2.default)(document).focus();
-
-                    //call close function
-                    option.onClose.call(this, {
-                        trigger: trigger,
-                        menu: menu
-                    }, e);
-                },
-                getPxSize: function getPxSize(size, of) {
-                    if (!isNaN(size)) {
-                        return size;
-                    }
-                    if (size.indexOf('%') != -1) {
-                        return parseInt(size) * of / 100;
-                    } else {
-                        return parseInt(size);
-                    }
-                },
-                selectMenu: function selectMenu(menu, elm) {
-                    //to select the list
-                    var selected = menu.find('li.iw-mSelected'),
-                        submenu = selected.find('.iw-contextMenu');
-                    if (submenu.length != 0 && selected[0] != elm[0]) {
-                        submenu.fadeOut(100);
-                    }
-                    selected.removeClass('iw-mSelected');
-                    elm.addClass('iw-mSelected');
-                },
-                menuHover: function menuHover(menu) {
-                    var lastEventTime = Date.now();
-                    menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
-                        //to make curmenu
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                        iMethods.selectMenu(menu, (0, _jquery2.default)(this));
-                    });
-                },
-                createMenuList: function createMenuList(trgr, selector, option) {
-                    var baseTrigger = option.baseTrigger,
-                        randomNum = Math.floor(Math.random() * 10000);
-                    if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
-                        var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
-                        _jquery2.default.each(selector, function (index, selObj) {
-                            var name = selObj.name,
-                                fun = selObj.fun || function () {},
-                                subMenu = selObj.subMenu,
-                                img = selObj.img || '',
-                                icon = selObj.icon || '',
-                                title = selObj.title || "",
-                                className = selObj.className || "",
-                                disable = selObj.disable,
-                                list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
-
-                            if (img) {
-                                list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                            } else if (icon) {
-                                list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
-                            }
-                            //to add disable
-                            if (disable) {
-                                list.addClass('iw-mDisable');
-                            }
-
-                            if (!subMenu) {
-                                list.bind('click.contextMenu', function (e) {
-                                    fun.call(this, {
-                                        trigger: baseTrigger,
-                                        menu: menuList
-                                    }, e);
-                                });
-                            }
-
-                            //to create sub menu
-                            menuList.append(list);
-                            if (subMenu) {
-                                list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
-                                iMethods.subMenu(list, subMenu, baseTrigger, option);
-                            }
-                        });
-
-                        if (baseTrigger.index(trgr[0]) == -1) {
-                            trgr.append(menuList);
-                        } else {
-                            var par = option.containment == window ? 'body' : option.containment;
-                            (0, _jquery2.default)(par).append(menuList);
-                        }
-
-                        iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
-                        return '#iw-contextMenu' + randomNum;
-                    } else if ((0, _jquery2.default)(selector).length != 0) {
-                        var element = (0, _jquery2.default)(selector);
-                        element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
-
-                        //to create subMenu
-                        element.find('ul').each(function (index, element) {
-                            var subMenu = (0, _jquery2.default)(this),
-                                parent = subMenu.parent('li');
-                            parent.append('<div class="iw-cm-arrow-right" />');
-                            subMenu.addClass('iw-contextMenuCurrent');
-                            iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
-                        });
-                        iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
-                        return '.iw-contextMenu' + randomNum;
-                    }
-                },
-                subMenu: function subMenu(trigger, selector, baseTrigger, option) {
-                    trigger.contextMenu('menu', selector, {
-                        triggerOn: option.subMenuTriggerOn,
-                        displayAround: 'trigger',
-                        position: 'auto',
-                        mouseClick: 'left',
-                        baseTrigger: baseTrigger,
-                        containment: option.containment
-                    });
-                },
-                onOff: function onOff(menu) {
-
-                    menu.find('.iw-mOverlay').remove();
-                    menu.find('.iw-mDisable').each(function () {
-                        var list = (0, _jquery2.default)(this);
-                        list.append('<div class="iw-mOverlay"/>');
-                        list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
-                            event.stopPropagation();
-                        });
-                    });
-                },
-                optionOtimizer: function optionOtimizer(method, option) {
-                    if (!option) {
-                        return;
-                    }
-                    if (method == 'menu') {
-                        if (!option.mouseClick) {
-                            option.mouseClick = 'right';
-                        }
-                    }
-                    if (option.mouseClick == 'right' && option.triggerOn == 'click') {
-                        option.triggerOn = 'contextmenu';
-                    }
-
-                    if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
-                        option.displayAround = 'trigger';
-                    }
-                    return option;
-                }
-            };
-        }
-    }]);
-
-    return Cal;
-}();
-
-exports.default = Cal;
 
 /***/ }),
 /* 10 */
@@ -27906,7 +26821,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(136), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -28115,7 +27030,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28183,6 +27098,1141 @@ exports.numbersOnlyListener = numbersOnlyListener;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(134);
+
+__webpack_require__(128);
+
+__webpack_require__(129);
+
+var _userfeedback = __webpack_require__(4);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cal = function () {
+    function Cal(page, facing) {
+        _classCallCheck(this, Cal);
+
+        this.page = page;
+        this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+        this.setCalArgs();
+        this.initCalFor(facing);
+    }
+
+    _createClass(Cal, [{
+        key: 'initCalFor',
+        value: function initCalFor(facing) {
+            if (facing == 'public') {
+                this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+                this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+                this.initDraggable();
+                this.initPubResCal(this.page.getFacilityInfo('type'));
+            } else if (facing == 'admin') {
+                this.initDraggable();
+                this.initAdminCal(this.page.cal);
+            }
+        }
+    }, {
+        key: 'eventFallsOnWeekend',
+        value: function eventFallsOnWeekend(e) {
+            var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+            var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+            //for now it ends at midnight of the following day
+            return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+        }
+    }, {
+        key: 'eventIsLongerThan',
+        value: function eventIsLongerThan(e, days) {
+            var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+            var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+            return end.diff(start, 'days') > days;
+        }
+    }, {
+        key: 'convertBusinessHours',
+        value: function convertBusinessHours(jsonString) {
+            var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+            var converted = [];
+            var counter = 1;
+            for (var key in json) {
+                var day = _jquery2.default.extend({}, json[key]);
+                if (day.start != '') {
+                    day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
+                    day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
+                    converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
+                } else {
+                    converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
+                }
+                counter++;
+            }
+            return converted;
+        }
+    }, {
+        key: 'preventPastReservation',
+        value: function preventPastReservation(e) {
+
+            var targetTimeStart = null;
+
+            if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+
+            if (targetTimeStart.isBefore(moment())) {
+                alert('You cannot make reservations in the past.');
+                return false;
+            }
+            return true;
+        }
+    }, {
+        key: 'warnIfOutOfBounds',
+        value: function warnIfOutOfBounds(e) {
+            var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+
+            var thisStart = moment(thisDay.start, 'HH:mm');
+            var thisEnd = moment(thisDay.end, 'HH:mm');
+
+            var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
+            var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
+
+            if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
+                alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+            }
+        }
+    }, {
+        key: 'initDraggable',
+        value: function initDraggable() {
+
+            (0, _jquery2.default)('.iam-events .fc-event').each(function () {
+
+                // store data so the calendar knows to render an event upon drop
+                (0, _jquery2.default)(this).data('event', {
+                    title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
+                    editable: true,
+                    eventDurationEditable: true,
+                    color: '#4cad57',
+                    className: 'iam-new-event'
+                });
+
+                // make the event draggable using jQuery UI
+                (0, _jquery2.default)(this).draggable({
+                    zIndex: 999,
+                    revert: true, // will cause the event to go back to its
+                    revertDuration: 0 //  original position after the drag
+                });
+            });
+        }
+    }, {
+        key: 'initAdminCal',
+        value: function initAdminCal(cal) {
+            var _this = this;
+
+            this.eventsToDelete = [];
+
+            var neutralArgs = {
+                editable: false, //new events will be made editable else where
+                eventLimit: true, // allow "more" link when too many events
+                allDay: false,
+                height: 500,
+                forceEventDuration: true,
+                droppable: true,
+                eventOverlap: false,
+                allDaySlot: false
+            };
+
+            var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
+            this.calID = '.iam-cal';
+            (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
+            (0, _userfeedback.submissionStart)();
+            setTimeout(function () {
+                _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
+            }, 1000);
+        }
+    }, {
+        key: 'initPubResCal',
+        value: function initPubResCal(facilitType) {
+            var facilityNeutralArgs = {
+                editable: false, //new events will be made editable else where
+                eventLimit: true, // allow "more" link when too many events
+                allDay: false,
+                height: 500,
+                forceEventDuration: true,
+                businessHours: this.businessHoursConverted,
+                droppable: true,
+                eventOverlap: false,
+                allDaySlot: false,
+                eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
+                    color: '#f13d39' }]
+            };
+
+            var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
+
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
+        }
+    }, {
+        key: 'handleEventToDelete',
+        value: function handleEventToDelete(event, j) {
+
+            if (j.hasClass('event-not-editable')) return;
+            if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
+
+            var index = this.eventsToDelete.indexOf(event.nid);
+            if (index != -1) {
+                this.eventsToDelete.splice(index, 1);
+            } else {
+                this.eventsToDelete.push(event.nid);
+            }
+            (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
+        }
+    }, {
+        key: 'initContextMenu',
+        value: function initContextMenu(menuToUse) {
+            var that = this;
+            this.cmlib();
+            menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
+
+            var menu = [{
+                name: 'mark for deletion',
+                title: 'delete button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    that.handleEventToDelete(event, t);
+                }
+            }, {
+                name: 'copy email',
+                title: 'copy button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { email: t.data('email') };
+                    that.handleEventCopyEmail(event);
+                }
+            }];
+
+            var rentalMenu = [{
+                name: 'use this reservation',
+                title: 'select reservation button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    makeRelevantReservation(t.data('fcSeg').event);
+                }
+            }, {
+                name: 'mark for deletion',
+                title: 'delete button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    that.handleEventToDelete(event, t);
+                }
+            }];
+
+            var irregularMenu = [{
+                name: 'mark for deletion',
+                title: 'delete button',
+                fun: function fun(e) {
+                    var t = (0, _jquery2.default)(e.trigger);
+                    var event = { nid: t.data('nid') };
+                    that.handleEventToDelete(t.data('fcSeg').event, t);
+                    (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
+                }
+            }];
+
+            var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
+            var menuOfChoice = menuDict[menuToUse];
+
+            (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
+        }
+    }, {
+        key: 'setCalArgs',
+        value: function setCalArgs() {
+
+            var that = this;
+            this.calArgs = {};
+
+            this.calArgs['irregular'] = {
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultView: 'agendaWeek',
+                title: 'closed',
+                eventReceive: function eventReceive(e, d, revert) {
+                    e.title = 'closed';
+                },
+                eventRender: function eventRender(event, element) {
+                    if (that.eventsToDelete.indexOf(event.nid) != -1) {
+                        (0, _jquery2.default)(element).addClass('marked-for-delete');
+                    }
+                },
+                eventAfterAllRender: function eventAfterAllRender() {
+                    that.initContextMenu(that.page.cal);
+                },
+                events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
+            };
+
+            this.calArgs['appointment'] = {
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'agendaWeek,agendaDay'
+                },
+                defaultTimedEventDuration: '00:30:00',
+                weekends: true,
+                defaultView: 'agendaWeek',
+                eventReceive: function eventReceive(e, d, revert) {
+                    if (!that.preventPastReservation(e)) {
+                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+                        return false;
+                    }
+                    that.warnIfOutOfBounds(e);
+                },
+                eventDrop: function eventDrop(e, d, revert) {
+                    if (!that.preventPastReservation(e)) {
+                        revert();
+                        return;
+                    }
+                    that.warnIfOutOfBounds(e);
+                },
+                eventResize: function eventResize(e, d, revert) {
+                    if (!that.preventPastReservation(e)) {
+                        revert();
+                        return;
+                    }
+                    that.warnIfOutOfBounds(e);
+                }
+            };
+
+            this.calArgs['rental'] = {
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month'
+                },
+                weekends: false,
+                defaultTimedEventDuration: that.page.rentalPeriod * 24 + ':00:00',
+                defaultView: 'month',
+                eventReceive: function eventReceive(e) {
+                    if (that.eventFallsOnWeekend(e)) {
+                        alert(that.ERinvalidTimePrompt);
+                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+                        return false;
+                    }
+                },
+                eventDrop: function eventDrop(e, d, revert) {
+                    if (that.eventFallsOnWeekend(e)) {
+                        alert(that.ERinvalidTimePrompt);
+                        revert();
+                    }
+                },
+                eventResize: function eventResize(e, d, revert) {
+                    if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
+                        alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
+                        revert();
+                    }
+                },
+                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
+            };
+        }
+    }, {
+        key: 'cmlib',
+        value: function cmlib() {
+            /*
+             *contextMenu.js v 1.4.1
+             *Author: Sudhanshu Yadav
+             *s-yadav.github.com
+             *Copyright (c) 2013-2015 Sudhanshu Yadav.
+             *Dual licensed under the MIT and GPL licenses
+             */
+
+            "use strict";
+            //jQuery, window, document
+
+            _jquery2.default.single = function () {
+                var single = (0, _jquery2.default)({});
+                return function (elm) {
+                    single[0] = elm;
+                    return single;
+                };
+            }();
+
+            _jquery2.default.fn.contextMenu = function (method, selector, option) {
+
+                //parameter fix
+                if (!methods[method]) {
+                    option = selector;
+                    selector = method;
+                    method = 'popup';
+                }
+                //need to check for array object
+                else if (selector) {
+                        if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
+                            option = selector;
+                            selector = null;
+                        }
+                    }
+
+                if (selector instanceof Array && method != 'update') {
+                    method = 'menu';
+                }
+
+                var myoptions = option;
+                if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
+                    option = iMethods.optionOtimizer(method, option);
+                    this.each(function () {
+                        var $this = (0, _jquery2.default)(this);
+                        myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
+                        if (!myoptions.baseTrigger) {
+                            myoptions.baseTrigger = $this;
+                        }
+                        methods[method].call($this, selector, myoptions);
+                    });
+                } else {
+                    methods[method].call(this, selector, myoptions);
+                }
+                return this;
+            };
+            _jquery2.default.fn.contextMenu.defaults = {
+                triggerOn: 'click', //avaliable options are all event related mouse plus enter option
+                subMenuTriggerOn: 'hover click',
+                displayAround: 'cursor', // cursor or trigger
+                mouseClick: 'left',
+                verAdjust: 0,
+                horAdjust: 0,
+                top: 'auto',
+                left: 'auto',
+                closeOther: true, //to close other already opened context menu
+                containment: window,
+                winEventClose: true,
+                position: 'auto', //allowed values are top, left, bottom and right
+                closeOnClick: true, //close context menu on click/ trigger of any item in menu
+
+                //callback
+                onOpen: function onOpen(data, event) {},
+                afterOpen: function afterOpen(data, event) {},
+                onClose: function onClose(data, event) {}
+            };
+
+            var methods = {
+                menu: function menu(selector, option) {
+                    selector = iMethods.createMenuList(this, selector, option);
+                    iMethods.contextMenuBind.call(this, selector, option, 'menu');
+                },
+                popup: function popup(selector, option) {
+                    (0, _jquery2.default)(selector).addClass('iw-contextMenu');
+                    iMethods.contextMenuBind.call(this, selector, option, 'popup');
+                },
+                update: function update(selector, option) {
+                    var self = this;
+                    option = option || {};
+
+                    this.each(function () {
+                        var trgr = (0, _jquery2.default)(this),
+                            menuData = trgr.data('iw-menuData');
+                        //refresh if any new element is added
+                        if (!menuData) {
+                            self.contextMenu('refresh');
+                            menuData = trgr.data('iw-menuData');
+                        }
+
+                        var menu = menuData.menu;
+                        if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
+
+                            for (var i = 0; i < selector.length; i++) {
+                                var name = selector[i].name,
+                                    disable = selector[i].disable,
+                                    fun = selector[i].fun,
+                                    icon = selector[i].icon,
+                                    img = selector[i].img,
+                                    title = selector[i].title,
+                                    className = selector[i].className,
+                                    elm = menu.children('li').filter(function () {
+                                    return (0, _jquery2.default)(this).contents().filter(function () {
+                                        return this.nodeType == 3;
+                                    }).text() == name;
+                                }),
+                                    subMenu = selector[i].subMenu;
+
+                                //toggle disable if provided on update method
+                                disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
+
+                                //bind new function if provided
+                                fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
+
+                                //update title
+                                title != undefined && elm.attr('title', title);
+
+                                //update class name
+                                className != undefined && elm.attr('class', className);
+
+                                var imgIcon = elm.find('.iw-mIcon');
+                                if (imgIcon.length) imgIcon.remove();
+
+                                //update image or icon
+                                if (img) {
+                                    elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                                } else if (icon) {
+                                    elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
+                                }
+
+                                //to change submenus
+                                if (subMenu) {
+                                    elm.contextMenu('update', subMenu);
+                                }
+                            }
+                        }
+
+                        iMethods.onOff(menu);
+
+                        //bind event again if trigger option has changed.
+                        var triggerOn = option.triggerOn;
+                        if (triggerOn) {
+                            trgr.unbind('.contextMenu');
+
+                            //add contextMenu identifier on all events
+                            triggerOn = triggerOn.split(" ");
+                            var events = [];
+                            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                                events.push(triggerOn[i] + '.contextMenu');
+                            }
+
+                            //to bind event
+                            trgr.bind(events.join(' '), iMethods.eventHandler);
+                        }
+
+                        //set menu data back to trigger element
+                        menuData.option = _jquery2.default.extend({}, menuData.option, option);
+                        trgr.data('iw-menuData', menuData);
+                    });
+                },
+                refresh: function refresh() {
+                    var menuData = this.filter(function () {
+                        return !!(0, _jquery2.default)(this).data('iw-menuData');
+                    }).data('iw-menuData'),
+                        newElm = this.filter(function () {
+                        return !(0, _jquery2.default)(this).data('iw-menuData');
+                    });
+                    //to change basetrigger on refresh
+                    menuData.option.baseTrigger = this;
+                    iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
+                },
+                open: function open(sel, data) {
+                    data = data || {};
+                    var e = data.event || _jquery2.default.Event('click');
+                    if (data.top) e.clientY = data.top;
+                    if (data.left) e.clientX = data.left;
+                    this.each(function () {
+                        iMethods.eventHandler.call(this, e);
+                    });
+                },
+                //to force context menu to close
+                close: function close() {
+                    var menuData = this.data('iw-menuData');
+                    if (menuData) {
+                        iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
+                    }
+                },
+                //to get value of a key
+                value: function value(key) {
+                    var menuData = this.data('iw-menuData');
+                    if (menuData[key]) {
+                        return menuData[key];
+                    } else if (menuData.option) {
+                        return menuData.option[key];
+                    }
+                    return null;
+                },
+                destroy: function destroy() {
+                    var trgr = this,
+                        menuId = trgr.data('iw-menuData').menuId,
+                        menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
+                        menuData = menu.data('iw-menuData');
+
+                    //Handle the situation of dynamically added element.
+                    if (!menuData) return;
+
+                    if (menuData.noTrigger == 1) {
+                        if (menu.hasClass('iw-created')) {
+                            menu.remove();
+                        } else {
+                            menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
+                            //to destroy submenus
+                            menu.find('li.iw-mTrigger').contextMenu('destroy');
+                        }
+                    } else {
+                        menuData.noTrigger--;
+                        menu.data('iw-menuData', menuData);
+                    }
+                    trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
+                }
+            };
+            var iMethods = {
+                contextMenuBind: function contextMenuBind(selector, option, method) {
+                    var trigger = this,
+                        menu = (0, _jquery2.default)(selector),
+                        menuData = menu.data('iw-menuData');
+
+                    //fallback
+                    if (menu.length == 0) {
+                        menu = trigger.find(selector);
+                        if (menu.length == 0) {
+                            return;
+                        }
+                    }
+
+                    if (method == 'menu') {
+                        iMethods.menuHover(menu);
+                    }
+                    //get base trigger
+                    var baseTrigger = option.baseTrigger;
+
+                    if (!menuData) {
+                        var menuId;
+                        if (!baseTrigger.data('iw-menuData')) {
+                            menuId = Math.ceil(Math.random() * 100000);
+                            baseTrigger.data('iw-menuData', {
+                                'menuId': menuId
+                            });
+                        } else {
+                            menuId = baseTrigger.data('iw-menuData').menuId;
+                        }
+                        //create clone menu to calculate exact height and width.
+                        var cloneMenu = menu.clone();
+                        cloneMenu.appendTo('body');
+
+                        menuData = {
+                            'menuId': menuId,
+                            'menuWidth': cloneMenu.outerWidth(true),
+                            'menuHeight': cloneMenu.outerHeight(true),
+                            'noTrigger': 1,
+                            'trigger': trigger
+                        };
+
+                        //to set data on selector
+                        menu.data('iw-menuData', menuData).attr('menuId', menuId);
+                        //remove clone menu
+                        cloneMenu.remove();
+                    } else {
+                        menuData.noTrigger++;
+                        menu.data('iw-menuData', menuData);
+                    }
+
+                    //to set data on trigger
+                    trigger.addClass('iw-mTrigger').data('iw-menuData', {
+                        'menuId': menuData.menuId,
+                        'option': option,
+                        'menu': menu,
+                        'menuSelector': selector,
+                        'method': method
+                    });
+
+                    //hover fix
+                    var triggerOn = option.triggerOn;
+                    if (triggerOn.indexOf('hover') != -1) {
+                        triggerOn = triggerOn.replace('hover', 'mouseenter');
+                        //hover out if display is of context menu is on hover
+                        if (baseTrigger.index(trigger) != -1) {
+                            baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
+                                if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
+                                    (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
+                                }
+                            });
+                        }
+                    }
+
+                    trigger.delegate('input,a,.needs-click', 'click', function (e) {
+                        e.stopImmediatePropagation();
+                    });
+
+                    //add contextMenu identifier on all events
+                    triggerOn = triggerOn.split(' ');
+                    var events = [];
+                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                        events.push(triggerOn[i] + '.contextMenu');
+                    }
+
+                    //to bind event
+                    trigger.bind(events.join(' '), iMethods.eventHandler);
+
+                    //to stop bubbling in menu
+                    menu.bind('click mouseenter', function (e) {
+                        e.stopPropagation();
+                    });
+
+                    menu.delegate('li', 'click', function (e) {
+                        if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
+                    });
+                },
+                eventHandler: function eventHandler(e) {
+                    e.preventDefault();
+                    var trigger = (0, _jquery2.default)(this),
+                        trgrData = trigger.data('iw-menuData'),
+                        menu = trgrData.menu,
+                        menuData = menu.data('iw-menuData'),
+                        option = trgrData.option,
+                        cntnmnt = option.containment,
+                        clbckData = {
+                        trigger: trigger,
+                        menu: menu
+                    },
+
+                    //check conditions
+                    cntWin = cntnmnt == window,
+                        btChck = option.baseTrigger.index(trigger) == -1;
+
+                    //to close previous open menu.
+                    if (!btChck && option.closeOther) {
+                        (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+                    }
+
+                    //to reset already selected menu item
+                    menu.find('.iw-mSelected').removeClass('iw-mSelected');
+
+                    //call open callback
+                    option.onOpen.call(this, clbckData, e);
+
+                    var cObj = (0, _jquery2.default)(cntnmnt),
+                        cHeight = cObj.innerHeight(),
+                        cWidth = cObj.innerWidth(),
+                        cTop = 0,
+                        cLeft = 0,
+                        menuHeight = menuData.menuHeight,
+                        menuWidth = menuData.menuWidth,
+                        va,
+                        ha,
+                        left = 0,
+                        top = 0,
+                        bottomMenu,
+                        rightMenu,
+                        verAdjust = va = parseInt(option.verAdjust),
+                        horAdjust = ha = parseInt(option.horAdjust);
+
+                    if (!cntWin) {
+                        cTop = cObj.offset().top;
+                        cLeft = cObj.offset().left;
+
+                        //to add relative position if no position is defined on containment
+                        if (cObj.css('position') == 'static') {
+                            cObj.css('position', 'relative');
+                        }
+                    }
+
+                    if (option.displayAround == 'cursor') {
+                        left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
+                        top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
+                        bottomMenu = top + menuHeight;
+                        rightMenu = left + menuWidth;
+                        //max height and width of context menu
+                        if (bottomMenu > cHeight) {
+                            if (top - menuHeight < 0) {
+                                if (bottomMenu - cHeight < menuHeight - top) {
+                                    top = cHeight - menuHeight;
+                                    va = -1 * va;
+                                } else {
+                                    top = 0;
+                                    va = 0;
+                                }
+                            } else {
+                                top = top - menuHeight;
+                                va = -1 * va;
+                            }
+                        }
+                        if (rightMenu > cWidth) {
+                            if (left - menuWidth < 0) {
+                                if (rightMenu - cWidth < menuWidth - left) {
+                                    left = cWidth - menuWidth;
+                                    ha = -1 * ha;
+                                } else {
+                                    left = 0;
+                                    ha = 0;
+                                }
+                            } else {
+                                left = left - menuWidth;
+                                ha = -1 * ha;
+                            }
+                        }
+                    } else if (option.displayAround == 'trigger') {
+                        var triggerHeight = trigger.outerHeight(true),
+                            triggerWidth = trigger.outerWidth(true),
+                            triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
+                            triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
+                            leftShift = triggerWidth;
+
+                        left = triggerLeft + triggerWidth;
+                        top = triggerTop;
+
+                        bottomMenu = top + menuHeight;
+                        rightMenu = left + menuWidth;
+                        //max height and width of context menu
+                        if (bottomMenu > cHeight) {
+                            if (top - menuHeight < 0) {
+                                if (bottomMenu - cHeight < menuHeight - top) {
+                                    top = cHeight - menuHeight;
+                                    va = -1 * va;
+                                } else {
+                                    top = 0;
+                                    va = 0;
+                                }
+                            } else {
+                                top = top - menuHeight + triggerHeight;
+                                va = -1 * va;
+                            }
+                        }
+                        if (rightMenu > cWidth) {
+                            if (left - menuWidth < 0) {
+                                if (rightMenu - cWidth < menuWidth - left) {
+                                    left = cWidth - menuWidth;
+                                    ha = -1 * ha;
+                                    leftShift = -triggerWidth;
+                                } else {
+                                    left = 0;
+                                    ha = 0;
+                                    leftShift = 0;
+                                }
+                            } else {
+                                left = left - menuWidth - triggerWidth;
+                                ha = -1 * ha;
+                                leftShift = -triggerWidth;
+                            }
+                        }
+                        //test end
+                        if (option.position == 'top') {
+                            top = triggerTop - menuHeight;
+                            va = verAdjust;
+                            left = left - leftShift;
+                        } else if (option.position == 'left') {
+                            left = triggerLeft - menuWidth;
+                            ha = horAdjust;
+                        } else if (option.position == 'bottom') {
+                            top = triggerTop + triggerHeight;
+                            va = verAdjust;
+                            left = left - leftShift;
+                        } else if (option.position == 'right') {
+                            left = triggerLeft + triggerWidth;
+                            ha = horAdjust;
+                        }
+                    }
+
+                    //applying css property
+                    var cssObj = {
+                        'position': cntWin || btChck ? 'fixed' : 'absolute',
+                        'display': 'inline-block',
+                        'height': '',
+                        'width': ''
+                    };
+
+                    //to get position from offset parent
+                    if (option.left != 'auto') {
+                        left = iMethods.getPxSize(option.left, cWidth);
+                    }
+                    if (option.top != 'auto') {
+                        top = iMethods.getPxSize(option.top, cHeight);
+                    }
+                    if (!cntWin) {
+                        var oParPos = trigger.offsetParent().offset();
+                        if (btChck) {
+                            left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
+                            top = top + cTop - (0, _jquery2.default)(window).scrollTop();
+                        } else {
+                            left = left - (cLeft - oParPos.left);
+                            top = top - (cTop - oParPos.top);
+                        }
+                    }
+                    cssObj.left = left + ha + 'px';
+                    cssObj.top = top + va + 'px';
+
+                    menu.css(cssObj);
+
+                    //to call after open call back
+                    option.afterOpen.call(this, clbckData, e);
+
+                    //to add current menu class
+                    if (trigger.closest('.iw-contextMenu').length == 0) {
+                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                        menu.addClass('iw-curMenu');
+                    }
+
+                    var dataParm = {
+                        trigger: trigger,
+                        menu: menu,
+                        option: option,
+                        method: trgrData.method
+                    };
+                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
+                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
+                    if (option.winEventClose) {
+                        (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
+                    }
+                },
+
+                scrollEvent: function scrollEvent(e) {
+                    iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+                },
+
+                clickEvent: function clickEvent(e) {
+                    var button = e.data.trigger.get(0);
+
+                    if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
+                        iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+                    }
+                },
+                keyEvent: function keyEvent(e) {
+                    e.preventDefault();
+                    var menu = e.data.menu,
+                        option = e.data.option,
+                        keyCode = e.keyCode;
+                    // handle cursor keys
+                    if (keyCode == 27) {
+                        iMethods.closeContextMenu(option, e.data.trigger, menu, e);
+                    }
+                    if (e.data.method == 'menu') {
+                        var curMenu = (0, _jquery2.default)('.iw-curMenu'),
+                            optList = curMenu.children('li:not(.iw-mDisable)'),
+                            selected = optList.filter('.iw-mSelected'),
+                            index = optList.index(selected),
+                            focusOn = function focusOn(elm) {
+                            iMethods.selectMenu(curMenu, elm);
+                            var menuData = elm.data('iw-menuData');
+                            if (menuData) {
+                                iMethods.eventHandler.call(elm[0], e);
+                            }
+                        },
+                            first = function first() {
+                            focusOn(optList.filter(':first'));
+                        },
+                            last = function last() {
+                            focusOn(optList.filter(':last'));
+                        },
+                            next = function next() {
+                            focusOn(optList.filter(':eq(' + (index + 1) + ')'));
+                        },
+                            prev = function prev() {
+                            focusOn(optList.filter(':eq(' + (index - 1) + ')'));
+                        },
+                            subMenu = function subMenu() {
+                            var menuData = selected.data('iw-menuData');
+                            if (menuData) {
+                                iMethods.eventHandler.call(selected[0], e);
+                                var selector = menuData.menu;
+                                selector.addClass('iw-curMenu');
+                                curMenu.removeClass('iw-curMenu');
+                                curMenu = selector;
+                                optList = curMenu.children('li:not(.iw-mDisable)');
+                                selected = optList.filter('.iw-mSelected');
+                                first();
+                            }
+                        },
+                            parMenu = function parMenu() {
+                            var selector = curMenu.data('iw-menuData').trigger;
+                            var parMenu = selector.closest('.iw-contextMenu');
+                            if (parMenu.length != 0) {
+                                curMenu.removeClass('iw-curMenu').css('display', 'none');
+                                parMenu.addClass('iw-curMenu');
+                            }
+                        };
+                        switch (keyCode) {
+                            case 13:
+                                selected.click();
+                                break;
+                            case 40:
+                                index == optList.length - 1 || selected.length == 0 ? first() : next();
+                                break;
+                            case 38:
+                                index == 0 || selected.length == 0 ? last() : prev();
+                                break;
+                            case 33:
+                                first();
+                                break;
+                            case 34:
+                                last();
+                                break;
+                            case 37:
+                                parMenu();
+                                break;
+                            case 39:
+                                subMenu();
+                                break;
+                        }
+                    }
+                },
+                closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
+
+                    //unbind all events from top DOM
+                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
+                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
+                    (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
+                    (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+                    (0, _jquery2.default)(document).focus();
+
+                    //call close function
+                    option.onClose.call(this, {
+                        trigger: trigger,
+                        menu: menu
+                    }, e);
+                },
+                getPxSize: function getPxSize(size, of) {
+                    if (!isNaN(size)) {
+                        return size;
+                    }
+                    if (size.indexOf('%') != -1) {
+                        return parseInt(size) * of / 100;
+                    } else {
+                        return parseInt(size);
+                    }
+                },
+                selectMenu: function selectMenu(menu, elm) {
+                    //to select the list
+                    var selected = menu.find('li.iw-mSelected'),
+                        submenu = selected.find('.iw-contextMenu');
+                    if (submenu.length != 0 && selected[0] != elm[0]) {
+                        submenu.fadeOut(100);
+                    }
+                    selected.removeClass('iw-mSelected');
+                    elm.addClass('iw-mSelected');
+                },
+                menuHover: function menuHover(menu) {
+                    var lastEventTime = Date.now();
+                    menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
+                        //to make curmenu
+                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                        menu.addClass('iw-curMenu');
+                        iMethods.selectMenu(menu, (0, _jquery2.default)(this));
+                    });
+                },
+                createMenuList: function createMenuList(trgr, selector, option) {
+                    var baseTrigger = option.baseTrigger,
+                        randomNum = Math.floor(Math.random() * 10000);
+                    if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
+                        var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
+                        _jquery2.default.each(selector, function (index, selObj) {
+                            var name = selObj.name,
+                                fun = selObj.fun || function () {},
+                                subMenu = selObj.subMenu,
+                                img = selObj.img || '',
+                                icon = selObj.icon || '',
+                                title = selObj.title || "",
+                                className = selObj.className || "",
+                                disable = selObj.disable,
+                                list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
+
+                            if (img) {
+                                list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                            } else if (icon) {
+                                list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
+                            }
+                            //to add disable
+                            if (disable) {
+                                list.addClass('iw-mDisable');
+                            }
+
+                            if (!subMenu) {
+                                list.bind('click.contextMenu', function (e) {
+                                    fun.call(this, {
+                                        trigger: baseTrigger,
+                                        menu: menuList
+                                    }, e);
+                                });
+                            }
+
+                            //to create sub menu
+                            menuList.append(list);
+                            if (subMenu) {
+                                list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
+                                iMethods.subMenu(list, subMenu, baseTrigger, option);
+                            }
+                        });
+
+                        if (baseTrigger.index(trgr[0]) == -1) {
+                            trgr.append(menuList);
+                        } else {
+                            var par = option.containment == window ? 'body' : option.containment;
+                            (0, _jquery2.default)(par).append(menuList);
+                        }
+
+                        iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
+                        return '#iw-contextMenu' + randomNum;
+                    } else if ((0, _jquery2.default)(selector).length != 0) {
+                        var element = (0, _jquery2.default)(selector);
+                        element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
+
+                        //to create subMenu
+                        element.find('ul').each(function (index, element) {
+                            var subMenu = (0, _jquery2.default)(this),
+                                parent = subMenu.parent('li');
+                            parent.append('<div class="iw-cm-arrow-right" />');
+                            subMenu.addClass('iw-contextMenuCurrent');
+                            iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
+                        });
+                        iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
+                        return '.iw-contextMenu' + randomNum;
+                    }
+                },
+                subMenu: function subMenu(trigger, selector, baseTrigger, option) {
+                    trigger.contextMenu('menu', selector, {
+                        triggerOn: option.subMenuTriggerOn,
+                        displayAround: 'trigger',
+                        position: 'auto',
+                        mouseClick: 'left',
+                        baseTrigger: baseTrigger,
+                        containment: option.containment
+                    });
+                },
+                onOff: function onOff(menu) {
+
+                    menu.find('.iw-mOverlay').remove();
+                    menu.find('.iw-mDisable').each(function () {
+                        var list = (0, _jquery2.default)(this);
+                        list.append('<div class="iw-mOverlay"/>');
+                        list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
+                            event.stopPropagation();
+                        });
+                    });
+                },
+                optionOtimizer: function optionOtimizer(method, option) {
+                    if (!option) {
+                        return;
+                    }
+                    if (method == 'menu') {
+                        if (!option.mouseClick) {
+                            option.mouseClick = 'right';
+                        }
+                    }
+                    if (option.mouseClick == 'right' && option.triggerOn == 'click') {
+                        option.triggerOn = 'contextmenu';
+                    }
+
+                    if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
+                        option.displayAround = 'trigger';
+                    }
+                    return option;
+                }
+            };
+        }
+    }]);
+
+    return Cal;
+}();
+
+exports.default = Cal;
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 // This file is deprecated in 1.12.0 to be removed in 1.13
@@ -28195,7 +28245,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 })();
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28221,7 +28271,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(136), __webpack_require__(129), __webpack_require__(131), __webpack_require__(130), __webpack_require__(137), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(137), __webpack_require__(130), __webpack_require__(7), __webpack_require__(131), __webpack_require__(138), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -29333,7 +29383,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29386,7 +29436,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29417,11 +29467,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Keycode 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Keycode
+//>>group: Core
+//>>description: Provide keycodes as keynames
+//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
 
 (function (factory) {
 	if (true) {
@@ -29437,37 +29501,28 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		factory(jQuery);
 	}
 })(function ($) {
-	return $.ui.safeActiveElement = function (document) {
-		var activeElement;
-
-		// Support: IE 9 only
-		// IE9 throws an "Unspecified error" accessing document.activeElement from an <iframe>
-		try {
-			activeElement = document.activeElement;
-		} catch (error) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 9 - 11 only
-		// IE may return null instead of an element
-		// Interestingly, this only seems to occur when NOT in an iframe
-		if (!activeElement) {
-			activeElement = document.body;
-		}
-
-		// Support: IE 11 only
-		// IE11 returns a seemingly empty object in some cases when accessing
-		// document.activeElement from an <iframe>
-		if (!activeElement.nodeName) {
-			activeElement = document.body;
-		}
-
-		return activeElement;
+	return $.ui.keyCode = {
+		BACKSPACE: 8,
+		COMMA: 188,
+		DELETE: 46,
+		DOWN: 40,
+		END: 35,
+		ENTER: 13,
+		ESCAPE: 27,
+		HOME: 36,
+		LEFT: 37,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PERIOD: 190,
+		RIGHT: 39,
+		SPACE: 32,
+		TAB: 9,
+		UP: 38
 	};
 });
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29482,7 +29537,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29524,7 +29579,7 @@ exports.publicDebug = publicDebug;
 exports.debugWarn = debugWarn;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43106,7 +43161,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
@@ -43355,10 +43410,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 134;
+webpackContext.id = 135;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43384,7 +43439,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43433,7 +43488,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43485,7 +43540,537 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 138 */
+/* 139 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Position 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/position/
+ */
+
+//>>label: Position
+//>>group: Core
+//>>description: Positions elements relative to other elements.
+//>>docs: http://api.jqueryui.com/position/
+//>>demos: http://jqueryui.com/position/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	(function () {
+		var cachedScrollbarWidth,
+		    max = Math.max,
+		    abs = Math.abs,
+		    rhorizontal = /left|center|right/,
+		    rvertical = /top|center|bottom/,
+		    roffset = /[\+\-]\d+(\.[\d]+)?%?/,
+		    rposition = /^\w+/,
+		    rpercent = /%$/,
+		    _position = $.fn.position;
+
+		function getOffsets(offsets, width, height) {
+			return [parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1), parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)];
+		}
+
+		function parseCss(element, property) {
+			return parseInt($.css(element, property), 10) || 0;
+		}
+
+		function getDimensions(elem) {
+			var raw = elem[0];
+			if (raw.nodeType === 9) {
+				return {
+					width: elem.width(),
+					height: elem.height(),
+					offset: { top: 0, left: 0 }
+				};
+			}
+			if ($.isWindow(raw)) {
+				return {
+					width: elem.width(),
+					height: elem.height(),
+					offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+				};
+			}
+			if (raw.preventDefault) {
+				return {
+					width: 0,
+					height: 0,
+					offset: { top: raw.pageY, left: raw.pageX }
+				};
+			}
+			return {
+				width: elem.outerWidth(),
+				height: elem.outerHeight(),
+				offset: elem.offset()
+			};
+		}
+
+		$.position = {
+			scrollbarWidth: function scrollbarWidth() {
+				if (cachedScrollbarWidth !== undefined) {
+					return cachedScrollbarWidth;
+				}
+				var w1,
+				    w2,
+				    div = $("<div " + "style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" + "<div style='height:100px;width:auto;'></div></div>"),
+				    innerDiv = div.children()[0];
+
+				$("body").append(div);
+				w1 = innerDiv.offsetWidth;
+				div.css("overflow", "scroll");
+
+				w2 = innerDiv.offsetWidth;
+
+				if (w1 === w2) {
+					w2 = div[0].clientWidth;
+				}
+
+				div.remove();
+
+				return cachedScrollbarWidth = w1 - w2;
+			},
+			getScrollInfo: function getScrollInfo(within) {
+				var overflowX = within.isWindow || within.isDocument ? "" : within.element.css("overflow-x"),
+				    overflowY = within.isWindow || within.isDocument ? "" : within.element.css("overflow-y"),
+				    hasOverflowX = overflowX === "scroll" || overflowX === "auto" && within.width < within.element[0].scrollWidth,
+				    hasOverflowY = overflowY === "scroll" || overflowY === "auto" && within.height < within.element[0].scrollHeight;
+				return {
+					width: hasOverflowY ? $.position.scrollbarWidth() : 0,
+					height: hasOverflowX ? $.position.scrollbarWidth() : 0
+				};
+			},
+			getWithinInfo: function getWithinInfo(element) {
+				var withinElement = $(element || window),
+				    isWindow = $.isWindow(withinElement[0]),
+				    isDocument = !!withinElement[0] && withinElement[0].nodeType === 9,
+				    hasOffset = !isWindow && !isDocument;
+				return {
+					element: withinElement,
+					isWindow: isWindow,
+					isDocument: isDocument,
+					offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
+					scrollLeft: withinElement.scrollLeft(),
+					scrollTop: withinElement.scrollTop(),
+					width: withinElement.outerWidth(),
+					height: withinElement.outerHeight()
+				};
+			}
+		};
+
+		$.fn.position = function (options) {
+			if (!options || !options.of) {
+				return _position.apply(this, arguments);
+			}
+
+			// Make a copy, we don't want to modify arguments
+			options = $.extend({}, options);
+
+			var atOffset,
+			    targetWidth,
+			    targetHeight,
+			    targetOffset,
+			    basePosition,
+			    dimensions,
+			    target = $(options.of),
+			    within = $.position.getWithinInfo(options.within),
+			    scrollInfo = $.position.getScrollInfo(within),
+			    collision = (options.collision || "flip").split(" "),
+			    offsets = {};
+
+			dimensions = getDimensions(target);
+			if (target[0].preventDefault) {
+
+				// Force left top to allow flipping
+				options.at = "left top";
+			}
+			targetWidth = dimensions.width;
+			targetHeight = dimensions.height;
+			targetOffset = dimensions.offset;
+
+			// Clone to reuse original targetOffset later
+			basePosition = $.extend({}, targetOffset);
+
+			// Force my and at to have valid horizontal and vertical positions
+			// if a value is missing or invalid, it will be converted to center
+			$.each(["my", "at"], function () {
+				var pos = (options[this] || "").split(" "),
+				    horizontalOffset,
+				    verticalOffset;
+
+				if (pos.length === 1) {
+					pos = rhorizontal.test(pos[0]) ? pos.concat(["center"]) : rvertical.test(pos[0]) ? ["center"].concat(pos) : ["center", "center"];
+				}
+				pos[0] = rhorizontal.test(pos[0]) ? pos[0] : "center";
+				pos[1] = rvertical.test(pos[1]) ? pos[1] : "center";
+
+				// Calculate offsets
+				horizontalOffset = roffset.exec(pos[0]);
+				verticalOffset = roffset.exec(pos[1]);
+				offsets[this] = [horizontalOffset ? horizontalOffset[0] : 0, verticalOffset ? verticalOffset[0] : 0];
+
+				// Reduce to just the positions without the offsets
+				options[this] = [rposition.exec(pos[0])[0], rposition.exec(pos[1])[0]];
+			});
+
+			// Normalize collision option
+			if (collision.length === 1) {
+				collision[1] = collision[0];
+			}
+
+			if (options.at[0] === "right") {
+				basePosition.left += targetWidth;
+			} else if (options.at[0] === "center") {
+				basePosition.left += targetWidth / 2;
+			}
+
+			if (options.at[1] === "bottom") {
+				basePosition.top += targetHeight;
+			} else if (options.at[1] === "center") {
+				basePosition.top += targetHeight / 2;
+			}
+
+			atOffset = getOffsets(offsets.at, targetWidth, targetHeight);
+			basePosition.left += atOffset[0];
+			basePosition.top += atOffset[1];
+
+			return this.each(function () {
+				var collisionPosition,
+				    using,
+				    elem = $(this),
+				    elemWidth = elem.outerWidth(),
+				    elemHeight = elem.outerHeight(),
+				    marginLeft = parseCss(this, "marginLeft"),
+				    marginTop = parseCss(this, "marginTop"),
+				    collisionWidth = elemWidth + marginLeft + parseCss(this, "marginRight") + scrollInfo.width,
+				    collisionHeight = elemHeight + marginTop + parseCss(this, "marginBottom") + scrollInfo.height,
+				    position = $.extend({}, basePosition),
+				    myOffset = getOffsets(offsets.my, elem.outerWidth(), elem.outerHeight());
+
+				if (options.my[0] === "right") {
+					position.left -= elemWidth;
+				} else if (options.my[0] === "center") {
+					position.left -= elemWidth / 2;
+				}
+
+				if (options.my[1] === "bottom") {
+					position.top -= elemHeight;
+				} else if (options.my[1] === "center") {
+					position.top -= elemHeight / 2;
+				}
+
+				position.left += myOffset[0];
+				position.top += myOffset[1];
+
+				collisionPosition = {
+					marginLeft: marginLeft,
+					marginTop: marginTop
+				};
+
+				$.each(["left", "top"], function (i, dir) {
+					if ($.ui.position[collision[i]]) {
+						$.ui.position[collision[i]][dir](position, {
+							targetWidth: targetWidth,
+							targetHeight: targetHeight,
+							elemWidth: elemWidth,
+							elemHeight: elemHeight,
+							collisionPosition: collisionPosition,
+							collisionWidth: collisionWidth,
+							collisionHeight: collisionHeight,
+							offset: [atOffset[0] + myOffset[0], atOffset[1] + myOffset[1]],
+							my: options.my,
+							at: options.at,
+							within: within,
+							elem: elem
+						});
+					}
+				});
+
+				if (options.using) {
+
+					// Adds feedback as second argument to using callback, if present
+					using = function using(props) {
+						var left = targetOffset.left - position.left,
+						    right = left + targetWidth - elemWidth,
+						    top = targetOffset.top - position.top,
+						    bottom = top + targetHeight - elemHeight,
+						    feedback = {
+							target: {
+								element: target,
+								left: targetOffset.left,
+								top: targetOffset.top,
+								width: targetWidth,
+								height: targetHeight
+							},
+							element: {
+								element: elem,
+								left: position.left,
+								top: position.top,
+								width: elemWidth,
+								height: elemHeight
+							},
+							horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
+							vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
+						};
+						if (targetWidth < elemWidth && abs(left + right) < targetWidth) {
+							feedback.horizontal = "center";
+						}
+						if (targetHeight < elemHeight && abs(top + bottom) < targetHeight) {
+							feedback.vertical = "middle";
+						}
+						if (max(abs(left), abs(right)) > max(abs(top), abs(bottom))) {
+							feedback.important = "horizontal";
+						} else {
+							feedback.important = "vertical";
+						}
+						options.using.call(this, props, feedback);
+					};
+				}
+
+				elem.offset($.extend(position, { using: using }));
+			});
+		};
+
+		$.ui.position = {
+			fit: {
+				left: function left(position, data) {
+					var within = data.within,
+					    withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
+					    outerWidth = within.width,
+					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+					    overLeft = withinOffset - collisionPosLeft,
+					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
+					    newOverRight;
+
+					// Element is wider than within
+					if (data.collisionWidth > outerWidth) {
+
+						// Element is initially over the left side of within
+						if (overLeft > 0 && overRight <= 0) {
+							newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
+							position.left += overLeft - newOverRight;
+
+							// Element is initially over right side of within
+						} else if (overRight > 0 && overLeft <= 0) {
+							position.left = withinOffset;
+
+							// Element is initially over both left and right sides of within
+						} else {
+							if (overLeft > overRight) {
+								position.left = withinOffset + outerWidth - data.collisionWidth;
+							} else {
+								position.left = withinOffset;
+							}
+						}
+
+						// Too far left -> align with left edge
+					} else if (overLeft > 0) {
+						position.left += overLeft;
+
+						// Too far right -> align with right edge
+					} else if (overRight > 0) {
+						position.left -= overRight;
+
+						// Adjust based on position and margin
+					} else {
+						position.left = max(position.left - collisionPosLeft, position.left);
+					}
+				},
+				top: function top(position, data) {
+					var within = data.within,
+					    withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
+					    outerHeight = data.within.height,
+					    collisionPosTop = position.top - data.collisionPosition.marginTop,
+					    overTop = withinOffset - collisionPosTop,
+					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
+					    newOverBottom;
+
+					// Element is taller than within
+					if (data.collisionHeight > outerHeight) {
+
+						// Element is initially over the top of within
+						if (overTop > 0 && overBottom <= 0) {
+							newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
+							position.top += overTop - newOverBottom;
+
+							// Element is initially over bottom of within
+						} else if (overBottom > 0 && overTop <= 0) {
+							position.top = withinOffset;
+
+							// Element is initially over both top and bottom of within
+						} else {
+							if (overTop > overBottom) {
+								position.top = withinOffset + outerHeight - data.collisionHeight;
+							} else {
+								position.top = withinOffset;
+							}
+						}
+
+						// Too far up -> align with top
+					} else if (overTop > 0) {
+						position.top += overTop;
+
+						// Too far down -> align with bottom edge
+					} else if (overBottom > 0) {
+						position.top -= overBottom;
+
+						// Adjust based on position and margin
+					} else {
+						position.top = max(position.top - collisionPosTop, position.top);
+					}
+				}
+			},
+			flip: {
+				left: function left(position, data) {
+					var within = data.within,
+					    withinOffset = within.offset.left + within.scrollLeft,
+					    outerWidth = within.width,
+					    offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
+					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+					    overLeft = collisionPosLeft - offsetLeft,
+					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
+					    myOffset = data.my[0] === "left" ? -data.elemWidth : data.my[0] === "right" ? data.elemWidth : 0,
+					    atOffset = data.at[0] === "left" ? data.targetWidth : data.at[0] === "right" ? -data.targetWidth : 0,
+					    offset = -2 * data.offset[0],
+					    newOverRight,
+					    newOverLeft;
+
+					if (overLeft < 0) {
+						newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
+						if (newOverRight < 0 || newOverRight < abs(overLeft)) {
+							position.left += myOffset + atOffset + offset;
+						}
+					} else if (overRight > 0) {
+						newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
+						if (newOverLeft > 0 || abs(newOverLeft) < overRight) {
+							position.left += myOffset + atOffset + offset;
+						}
+					}
+				},
+				top: function top(position, data) {
+					var within = data.within,
+					    withinOffset = within.offset.top + within.scrollTop,
+					    outerHeight = within.height,
+					    offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
+					    collisionPosTop = position.top - data.collisionPosition.marginTop,
+					    overTop = collisionPosTop - offsetTop,
+					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
+					    top = data.my[1] === "top",
+					    myOffset = top ? -data.elemHeight : data.my[1] === "bottom" ? data.elemHeight : 0,
+					    atOffset = data.at[1] === "top" ? data.targetHeight : data.at[1] === "bottom" ? -data.targetHeight : 0,
+					    offset = -2 * data.offset[1],
+					    newOverTop,
+					    newOverBottom;
+					if (overTop < 0) {
+						newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
+						if (newOverBottom < 0 || newOverBottom < abs(overTop)) {
+							position.top += myOffset + atOffset + offset;
+						}
+					} else if (overBottom > 0) {
+						newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+						if (newOverTop > 0 || abs(newOverTop) < overBottom) {
+							position.top += myOffset + atOffset + offset;
+						}
+					}
+				}
+			},
+			flipfit: {
+				left: function left() {
+					$.ui.position.flip.left.apply(this, arguments);
+					$.ui.position.fit.left.apply(this, arguments);
+				},
+				top: function top() {
+					$.ui.position.flip.top.apply(this, arguments);
+					$.ui.position.fit.top.apply(this, arguments);
+				}
+			}
+		};
+	})();
+
+	return $.ui.position;
+});
+
+/***/ }),
+/* 140 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Unique ID 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: uniqueId
+//>>group: Core
+//>>description: Functions to generate and remove uniqueId's
+//>>docs: http://api.jqueryui.com/uniqueId/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.extend({
+		uniqueId: function () {
+			var uuid = 0;
+
+			return function () {
+				return this.each(function () {
+					if (!this.id) {
+						this.id = "ui-id-" + ++uuid;
+					}
+				});
+			};
+		}(),
+
+		removeUniqueId: function removeUniqueId() {
+			return this.each(function () {
+				if (/^ui-id-\d+$/.test(this.id)) {
+					$(this).removeAttr("id");
+				}
+			});
+		}
+	});
+});
+
+/***/ }),
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43516,62 +44101,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 139 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Keycode 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Keycode
-//>>group: Core
-//>>description: Provide keycodes as keynames
-//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.keyCode = {
-		BACKSPACE: 8,
-		COMMA: 188,
-		DELETE: 46,
-		DOWN: 40,
-		END: 35,
-		ENTER: 13,
-		ESCAPE: 27,
-		HOME: 36,
-		LEFT: 37,
-		PAGE_DOWN: 34,
-		PAGE_UP: 33,
-		PERIOD: 190,
-		RIGHT: 39,
-		SPACE: 32,
-		TAB: 9,
-		UP: 38
-	};
-});
-
-/***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43669,11 +44199,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 141 */,
-/* 142 */,
 /* 143 */,
 /* 144 */,
-/* 145 */
+/* 145 */,
+/* 146 */,
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43685,27 +44215,27 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(161);
+__webpack_require__(148);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
-var _debug = __webpack_require__(132);
+var _debug = __webpack_require__(133);
 
 var _textfieldlisteners = __webpack_require__(126);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
-var _override = __webpack_require__(146);
+var _override = __webpack_require__(150);
 
-var _uifunc = __webpack_require__(8);
+var _uifunc = __webpack_require__(9);
 
-var _useradmin = __webpack_require__(159);
+var _useradmin = __webpack_require__(161);
 
 var _useradmin2 = _interopRequireDefault(_useradmin);
 
-var _settingsadmin = __webpack_require__(160);
+var _settingsadmin = __webpack_require__(162);
 
 var _settingsadmin2 = _interopRequireDefault(_settingsadmin);
 
@@ -45885,7 +46415,1305 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 146 */
+/* 148 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Autocomplete 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Autocomplete
+//>>group: Widgets
+//>>description: Lists suggested words as the user is typing.
+//>>docs: http://api.jqueryui.com/autocomplete/
+//>>demos: http://jqueryui.com/autocomplete/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/autocomplete.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(149), __webpack_require__(132), __webpack_require__(139), __webpack_require__(7), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	$.widget("ui.autocomplete", {
+		version: "1.12.1",
+		defaultElement: "<input>",
+		options: {
+			appendTo: null,
+			autoFocus: false,
+			delay: 300,
+			minLength: 1,
+			position: {
+				my: "left top",
+				at: "left bottom",
+				collision: "none"
+			},
+			source: null,
+
+			// Callbacks
+			change: null,
+			close: null,
+			focus: null,
+			open: null,
+			response: null,
+			search: null,
+			select: null
+		},
+
+		requestIndex: 0,
+		pending: 0,
+
+		_create: function _create() {
+
+			// Some browsers only repeat keydown events, not keypress events,
+			// so we use the suppressKeyPress flag to determine if we've already
+			// handled the keydown event. #7269
+			// Unfortunately the code for & in keypress is the same as the up arrow,
+			// so we use the suppressKeyPressRepeat flag to avoid handling keypress
+			// events when we know the keydown event was used to modify the
+			// search term. #7799
+			var suppressKeyPress,
+			    suppressKeyPressRepeat,
+			    suppressInput,
+			    nodeName = this.element[0].nodeName.toLowerCase(),
+			    isTextarea = nodeName === "textarea",
+			    isInput = nodeName === "input";
+
+			// Textareas are always multi-line
+			// Inputs are always single-line, even if inside a contentEditable element
+			// IE also treats inputs as contentEditable
+			// All other element types are determined by whether or not they're contentEditable
+			this.isMultiLine = isTextarea || !isInput && this._isContentEditable(this.element);
+
+			this.valueMethod = this.element[isTextarea || isInput ? "val" : "text"];
+			this.isNewMenu = true;
+
+			this._addClass("ui-autocomplete-input");
+			this.element.attr("autocomplete", "off");
+
+			this._on(this.element, {
+				keydown: function keydown(event) {
+					if (this.element.prop("readOnly")) {
+						suppressKeyPress = true;
+						suppressInput = true;
+						suppressKeyPressRepeat = true;
+						return;
+					}
+
+					suppressKeyPress = false;
+					suppressInput = false;
+					suppressKeyPressRepeat = false;
+					var keyCode = $.ui.keyCode;
+					switch (event.keyCode) {
+						case keyCode.PAGE_UP:
+							suppressKeyPress = true;
+							this._move("previousPage", event);
+							break;
+						case keyCode.PAGE_DOWN:
+							suppressKeyPress = true;
+							this._move("nextPage", event);
+							break;
+						case keyCode.UP:
+							suppressKeyPress = true;
+							this._keyEvent("previous", event);
+							break;
+						case keyCode.DOWN:
+							suppressKeyPress = true;
+							this._keyEvent("next", event);
+							break;
+						case keyCode.ENTER:
+
+							// when menu is open and has focus
+							if (this.menu.active) {
+
+								// #6055 - Opera still allows the keypress to occur
+								// which causes forms to submit
+								suppressKeyPress = true;
+								event.preventDefault();
+								this.menu.select(event);
+							}
+							break;
+						case keyCode.TAB:
+							if (this.menu.active) {
+								this.menu.select(event);
+							}
+							break;
+						case keyCode.ESCAPE:
+							if (this.menu.element.is(":visible")) {
+								if (!this.isMultiLine) {
+									this._value(this.term);
+								}
+								this.close(event);
+
+								// Different browsers have different default behavior for escape
+								// Single press can mean undo or clear
+								// Double press in IE means clear the whole form
+								event.preventDefault();
+							}
+							break;
+						default:
+							suppressKeyPressRepeat = true;
+
+							// search timeout should be triggered before the input value is changed
+							this._searchTimeout(event);
+							break;
+					}
+				},
+				keypress: function keypress(event) {
+					if (suppressKeyPress) {
+						suppressKeyPress = false;
+						if (!this.isMultiLine || this.menu.element.is(":visible")) {
+							event.preventDefault();
+						}
+						return;
+					}
+					if (suppressKeyPressRepeat) {
+						return;
+					}
+
+					// Replicate some key handlers to allow them to repeat in Firefox and Opera
+					var keyCode = $.ui.keyCode;
+					switch (event.keyCode) {
+						case keyCode.PAGE_UP:
+							this._move("previousPage", event);
+							break;
+						case keyCode.PAGE_DOWN:
+							this._move("nextPage", event);
+							break;
+						case keyCode.UP:
+							this._keyEvent("previous", event);
+							break;
+						case keyCode.DOWN:
+							this._keyEvent("next", event);
+							break;
+					}
+				},
+				input: function input(event) {
+					if (suppressInput) {
+						suppressInput = false;
+						event.preventDefault();
+						return;
+					}
+					this._searchTimeout(event);
+				},
+				focus: function focus() {
+					this.selectedItem = null;
+					this.previous = this._value();
+				},
+				blur: function blur(event) {
+					if (this.cancelBlur) {
+						delete this.cancelBlur;
+						return;
+					}
+
+					clearTimeout(this.searching);
+					this.close(event);
+					this._change(event);
+				}
+			});
+
+			this._initSource();
+			this.menu = $("<ul>").appendTo(this._appendTo()).menu({
+
+				// disable ARIA support, the live region takes care of that
+				role: null
+			}).hide().menu("instance");
+
+			this._addClass(this.menu.element, "ui-autocomplete", "ui-front");
+			this._on(this.menu.element, {
+				mousedown: function mousedown(event) {
+
+					// prevent moving focus out of the text field
+					event.preventDefault();
+
+					// IE doesn't prevent moving focus even with event.preventDefault()
+					// so we set a flag to know when we should ignore the blur event
+					this.cancelBlur = true;
+					this._delay(function () {
+						delete this.cancelBlur;
+
+						// Support: IE 8 only
+						// Right clicking a menu item or selecting text from the menu items will
+						// result in focus moving out of the input. However, we've already received
+						// and ignored the blur event because of the cancelBlur flag set above. So
+						// we restore focus to ensure that the menu closes properly based on the user's
+						// next actions.
+						if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
+							this.element.trigger("focus");
+						}
+					});
+				},
+				menufocus: function menufocus(event, ui) {
+					var label, item;
+
+					// support: Firefox
+					// Prevent accidental activation of menu items in Firefox (#7024 #9118)
+					if (this.isNewMenu) {
+						this.isNewMenu = false;
+						if (event.originalEvent && /^mouse/.test(event.originalEvent.type)) {
+							this.menu.blur();
+
+							this.document.one("mousemove", function () {
+								$(event.target).trigger(event.originalEvent);
+							});
+
+							return;
+						}
+					}
+
+					item = ui.item.data("ui-autocomplete-item");
+					if (false !== this._trigger("focus", event, { item: item })) {
+
+						// use value to match what will end up in the input, if it was a key event
+						if (event.originalEvent && /^key/.test(event.originalEvent.type)) {
+							this._value(item.value);
+						}
+					}
+
+					// Announce the value in the liveRegion
+					label = ui.item.attr("aria-label") || item.value;
+					if (label && $.trim(label).length) {
+						this.liveRegion.children().hide();
+						$("<div>").text(label).appendTo(this.liveRegion);
+					}
+				},
+				menuselect: function menuselect(event, ui) {
+					var item = ui.item.data("ui-autocomplete-item"),
+					    previous = this.previous;
+
+					// Only trigger when focus was lost (click on menu)
+					if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
+						this.element.trigger("focus");
+						this.previous = previous;
+
+						// #6109 - IE triggers two focus events and the second
+						// is asynchronous, so we need to reset the previous
+						// term synchronously and asynchronously :-(
+						this._delay(function () {
+							this.previous = previous;
+							this.selectedItem = item;
+						});
+					}
+
+					if (false !== this._trigger("select", event, { item: item })) {
+						this._value(item.value);
+					}
+
+					// reset the term after the select event
+					// this allows custom select handling to work properly
+					this.term = this._value();
+
+					this.close(event);
+					this.selectedItem = item;
+				}
+			});
+
+			this.liveRegion = $("<div>", {
+				role: "status",
+				"aria-live": "assertive",
+				"aria-relevant": "additions"
+			}).appendTo(this.document[0].body);
+
+			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
+
+			// Turning off autocomplete prevents the browser from remembering the
+			// value when navigating through history, so we re-enable autocomplete
+			// if the page is unloaded before the widget is destroyed. #7790
+			this._on(this.window, {
+				beforeunload: function beforeunload() {
+					this.element.removeAttr("autocomplete");
+				}
+			});
+		},
+
+		_destroy: function _destroy() {
+			clearTimeout(this.searching);
+			this.element.removeAttr("autocomplete");
+			this.menu.element.remove();
+			this.liveRegion.remove();
+		},
+
+		_setOption: function _setOption(key, value) {
+			this._super(key, value);
+			if (key === "source") {
+				this._initSource();
+			}
+			if (key === "appendTo") {
+				this.menu.element.appendTo(this._appendTo());
+			}
+			if (key === "disabled" && value && this.xhr) {
+				this.xhr.abort();
+			}
+		},
+
+		_isEventTargetInWidget: function _isEventTargetInWidget(event) {
+			var menuElement = this.menu.element[0];
+
+			return event.target === this.element[0] || event.target === menuElement || $.contains(menuElement, event.target);
+		},
+
+		_closeOnClickOutside: function _closeOnClickOutside(event) {
+			if (!this._isEventTargetInWidget(event)) {
+				this.close();
+			}
+		},
+
+		_appendTo: function _appendTo() {
+			var element = this.options.appendTo;
+
+			if (element) {
+				element = element.jquery || element.nodeType ? $(element) : this.document.find(element).eq(0);
+			}
+
+			if (!element || !element[0]) {
+				element = this.element.closest(".ui-front, dialog");
+			}
+
+			if (!element.length) {
+				element = this.document[0].body;
+			}
+
+			return element;
+		},
+
+		_initSource: function _initSource() {
+			var array,
+			    url,
+			    that = this;
+			if ($.isArray(this.options.source)) {
+				array = this.options.source;
+				this.source = function (request, response) {
+					response($.ui.autocomplete.filter(array, request.term));
+				};
+			} else if (typeof this.options.source === "string") {
+				url = this.options.source;
+				this.source = function (request, response) {
+					if (that.xhr) {
+						that.xhr.abort();
+					}
+					that.xhr = $.ajax({
+						url: url,
+						data: request,
+						dataType: "json",
+						success: function success(data) {
+							response(data);
+						},
+						error: function error() {
+							response([]);
+						}
+					});
+				};
+			} else {
+				this.source = this.options.source;
+			}
+		},
+
+		_searchTimeout: function _searchTimeout(event) {
+			clearTimeout(this.searching);
+			this.searching = this._delay(function () {
+
+				// Search if the value has changed, or if the user retypes the same value (see #7434)
+				var equalValues = this.term === this._value(),
+				    menuVisible = this.menu.element.is(":visible"),
+				    modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+
+				if (!equalValues || equalValues && !menuVisible && !modifierKey) {
+					this.selectedItem = null;
+					this.search(null, event);
+				}
+			}, this.options.delay);
+		},
+
+		search: function search(value, event) {
+			value = value != null ? value : this._value();
+
+			// Always save the actual value, not the one passed as an argument
+			this.term = this._value();
+
+			if (value.length < this.options.minLength) {
+				return this.close(event);
+			}
+
+			if (this._trigger("search", event) === false) {
+				return;
+			}
+
+			return this._search(value);
+		},
+
+		_search: function _search(value) {
+			this.pending++;
+			this._addClass("ui-autocomplete-loading");
+			this.cancelSearch = false;
+
+			this.source({ term: value }, this._response());
+		},
+
+		_response: function _response() {
+			var index = ++this.requestIndex;
+
+			return $.proxy(function (content) {
+				if (index === this.requestIndex) {
+					this.__response(content);
+				}
+
+				this.pending--;
+				if (!this.pending) {
+					this._removeClass("ui-autocomplete-loading");
+				}
+			}, this);
+		},
+
+		__response: function __response(content) {
+			if (content) {
+				content = this._normalize(content);
+			}
+			this._trigger("response", null, { content: content });
+			if (!this.options.disabled && content && content.length && !this.cancelSearch) {
+				this._suggest(content);
+				this._trigger("open");
+			} else {
+
+				// use ._close() instead of .close() so we don't cancel future searches
+				this._close();
+			}
+		},
+
+		close: function close(event) {
+			this.cancelSearch = true;
+			this._close(event);
+		},
+
+		_close: function _close(event) {
+
+			// Remove the handler that closes the menu on outside clicks
+			this._off(this.document, "mousedown");
+
+			if (this.menu.element.is(":visible")) {
+				this.menu.element.hide();
+				this.menu.blur();
+				this.isNewMenu = true;
+				this._trigger("close", event);
+			}
+		},
+
+		_change: function _change(event) {
+			if (this.previous !== this._value()) {
+				this._trigger("change", event, { item: this.selectedItem });
+			}
+		},
+
+		_normalize: function _normalize(items) {
+
+			// assume all items have the right format when the first item is complete
+			if (items.length && items[0].label && items[0].value) {
+				return items;
+			}
+			return $.map(items, function (item) {
+				if (typeof item === "string") {
+					return {
+						label: item,
+						value: item
+					};
+				}
+				return $.extend({}, item, {
+					label: item.label || item.value,
+					value: item.value || item.label
+				});
+			});
+		},
+
+		_suggest: function _suggest(items) {
+			var ul = this.menu.element.empty();
+			this._renderMenu(ul, items);
+			this.isNewMenu = true;
+			this.menu.refresh();
+
+			// Size and position menu
+			ul.show();
+			this._resizeMenu();
+			ul.position($.extend({
+				of: this.element
+			}, this.options.position));
+
+			if (this.options.autoFocus) {
+				this.menu.next();
+			}
+
+			// Listen for interactions outside of the widget (#6642)
+			this._on(this.document, {
+				mousedown: "_closeOnClickOutside"
+			});
+		},
+
+		_resizeMenu: function _resizeMenu() {
+			var ul = this.menu.element;
+			ul.outerWidth(Math.max(
+
+			// Firefox wraps long text (possibly a rounding bug)
+			// so we add 1px to avoid the wrapping (#7513)
+			ul.width("").outerWidth() + 1, this.element.outerWidth()));
+		},
+
+		_renderMenu: function _renderMenu(ul, items) {
+			var that = this;
+			$.each(items, function (index, item) {
+				that._renderItemData(ul, item);
+			});
+		},
+
+		_renderItemData: function _renderItemData(ul, item) {
+			return this._renderItem(ul, item).data("ui-autocomplete-item", item);
+		},
+
+		_renderItem: function _renderItem(ul, item) {
+			return $("<li>").append($("<div>").text(item.label)).appendTo(ul);
+		},
+
+		_move: function _move(direction, event) {
+			if (!this.menu.element.is(":visible")) {
+				this.search(null, event);
+				return;
+			}
+			if (this.menu.isFirstItem() && /^previous/.test(direction) || this.menu.isLastItem() && /^next/.test(direction)) {
+
+				if (!this.isMultiLine) {
+					this._value(this.term);
+				}
+
+				this.menu.blur();
+				return;
+			}
+			this.menu[direction](event);
+		},
+
+		widget: function widget() {
+			return this.menu.element;
+		},
+
+		_value: function _value() {
+			return this.valueMethod.apply(this.element, arguments);
+		},
+
+		_keyEvent: function _keyEvent(keyEvent, event) {
+			if (!this.isMultiLine || this.menu.element.is(":visible")) {
+				this._move(keyEvent, event);
+
+				// Prevents moving cursor to beginning/end of the text field in some browsers
+				event.preventDefault();
+			}
+		},
+
+		// Support: Chrome <=50
+		// We should be able to just use this.element.prop( "isContentEditable" )
+		// but hidden elements always report false in Chrome.
+		// https://code.google.com/p/chromium/issues/detail?id=313082
+		_isContentEditable: function _isContentEditable(element) {
+			if (!element.length) {
+				return false;
+			}
+
+			var editable = element.prop("contentEditable");
+
+			if (editable === "inherit") {
+				return this._isContentEditable(element.parent());
+			}
+
+			return editable === "true";
+		}
+	});
+
+	$.extend($.ui.autocomplete, {
+		escapeRegex: function escapeRegex(value) {
+			return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+		},
+		filter: function filter(array, term) {
+			var matcher = new RegExp($.ui.autocomplete.escapeRegex(term), "i");
+			return $.grep(array, function (value) {
+				return matcher.test(value.label || value.value || value);
+			});
+		}
+	});
+
+	// Live region extension, adding a `messages` option
+	// NOTE: This is an experimental API. We are still investigating
+	// a full solution for string manipulation and internationalization.
+	$.widget("ui.autocomplete", $.ui.autocomplete, {
+		options: {
+			messages: {
+				noResults: "No search results.",
+				results: function results(amount) {
+					return amount + (amount > 1 ? " results are" : " result is") + " available, use up and down arrow keys to navigate.";
+				}
+			}
+		},
+
+		__response: function __response(content) {
+			var message;
+			this._superApply(arguments);
+			if (this.options.disabled || this.cancelSearch) {
+				return;
+			}
+			if (content && content.length) {
+				message = this.options.messages.results(content.length);
+			} else {
+				message = this.options.messages.noResults;
+			}
+			this.liveRegion.children().hide();
+			$("<div>").text(message).appendTo(this.liveRegion);
+		}
+	});
+
+	return $.ui.autocomplete;
+});
+
+/***/ }),
+/* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Menu 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Menu
+//>>group: Widgets
+//>>description: Creates nestable menus.
+//>>docs: http://api.jqueryui.com/menu/
+//>>demos: http://jqueryui.com/menu/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/menu.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(132), __webpack_require__(139), __webpack_require__(7), __webpack_require__(140), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.widget("ui.menu", {
+		version: "1.12.1",
+		defaultElement: "<ul>",
+		delay: 300,
+		options: {
+			icons: {
+				submenu: "ui-icon-caret-1-e"
+			},
+			items: "> *",
+			menus: "ul",
+			position: {
+				my: "left top",
+				at: "right top"
+			},
+			role: "menu",
+
+			// Callbacks
+			blur: null,
+			focus: null,
+			select: null
+		},
+
+		_create: function _create() {
+			this.activeMenu = this.element;
+
+			// Flag used to prevent firing of the click handler
+			// as the event bubbles up through nested menus
+			this.mouseHandled = false;
+			this.element.uniqueId().attr({
+				role: this.options.role,
+				tabIndex: 0
+			});
+
+			this._addClass("ui-menu", "ui-widget ui-widget-content");
+			this._on({
+
+				// Prevent focus from sticking to links inside menu after clicking
+				// them (focus should always stay on UL during navigation).
+				"mousedown .ui-menu-item": function mousedownUiMenuItem(event) {
+					event.preventDefault();
+				},
+				"click .ui-menu-item": function clickUiMenuItem(event) {
+					var target = $(event.target);
+					var active = $($.ui.safeActiveElement(this.document[0]));
+					if (!this.mouseHandled && target.not(".ui-state-disabled").length) {
+						this.select(event);
+
+						// Only set the mouseHandled flag if the event will bubble, see #9469.
+						if (!event.isPropagationStopped()) {
+							this.mouseHandled = true;
+						}
+
+						// Open submenu on click
+						if (target.has(".ui-menu").length) {
+							this.expand(event);
+						} else if (!this.element.is(":focus") && active.closest(".ui-menu").length) {
+
+							// Redirect focus to the menu
+							this.element.trigger("focus", [true]);
+
+							// If the active item is on the top level, let it stay active.
+							// Otherwise, blur the active item since it is no longer visible.
+							if (this.active && this.active.parents(".ui-menu").length === 1) {
+								clearTimeout(this.timer);
+							}
+						}
+					}
+				},
+				"mouseenter .ui-menu-item": function mouseenterUiMenuItem(event) {
+
+					// Ignore mouse events while typeahead is active, see #10458.
+					// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
+					// is over an item in the menu
+					if (this.previousFilter) {
+						return;
+					}
+
+					var actualTarget = $(event.target).closest(".ui-menu-item"),
+					    target = $(event.currentTarget);
+
+					// Ignore bubbled events on parent items, see #11641
+					if (actualTarget[0] !== target[0]) {
+						return;
+					}
+
+					// Remove ui-state-active class from siblings of the newly focused menu item
+					// to avoid a jump caused by adjacent elements both having a class with a border
+					this._removeClass(target.siblings().children(".ui-state-active"), null, "ui-state-active");
+					this.focus(event, target);
+				},
+				mouseleave: "collapseAll",
+				"mouseleave .ui-menu": "collapseAll",
+				focus: function focus(event, keepActiveItem) {
+
+					// If there's already an active item, keep it active
+					// If not, activate the first item
+					var item = this.active || this.element.find(this.options.items).eq(0);
+
+					if (!keepActiveItem) {
+						this.focus(event, item);
+					}
+				},
+				blur: function blur(event) {
+					this._delay(function () {
+						var notContained = !$.contains(this.element[0], $.ui.safeActiveElement(this.document[0]));
+						if (notContained) {
+							this.collapseAll(event);
+						}
+					});
+				},
+				keydown: "_keydown"
+			});
+
+			this.refresh();
+
+			// Clicks outside of a menu collapse any open menus
+			this._on(this.document, {
+				click: function click(event) {
+					if (this._closeOnDocumentClick(event)) {
+						this.collapseAll(event);
+					}
+
+					// Reset the mouseHandled flag
+					this.mouseHandled = false;
+				}
+			});
+		},
+
+		_destroy: function _destroy() {
+			var items = this.element.find(".ui-menu-item").removeAttr("role aria-disabled"),
+			    submenus = items.children(".ui-menu-item-wrapper").removeUniqueId().removeAttr("tabIndex role aria-haspopup");
+
+			// Destroy (sub)menus
+			this.element.removeAttr("aria-activedescendant").find(".ui-menu").addBack().removeAttr("role aria-labelledby aria-expanded aria-hidden aria-disabled " + "tabIndex").removeUniqueId().show();
+
+			submenus.children().each(function () {
+				var elem = $(this);
+				if (elem.data("ui-menu-submenu-caret")) {
+					elem.remove();
+				}
+			});
+		},
+
+		_keydown: function _keydown(event) {
+			var match,
+			    prev,
+			    character,
+			    skip,
+			    preventDefault = true;
+
+			switch (event.keyCode) {
+				case $.ui.keyCode.PAGE_UP:
+					this.previousPage(event);
+					break;
+				case $.ui.keyCode.PAGE_DOWN:
+					this.nextPage(event);
+					break;
+				case $.ui.keyCode.HOME:
+					this._move("first", "first", event);
+					break;
+				case $.ui.keyCode.END:
+					this._move("last", "last", event);
+					break;
+				case $.ui.keyCode.UP:
+					this.previous(event);
+					break;
+				case $.ui.keyCode.DOWN:
+					this.next(event);
+					break;
+				case $.ui.keyCode.LEFT:
+					this.collapse(event);
+					break;
+				case $.ui.keyCode.RIGHT:
+					if (this.active && !this.active.is(".ui-state-disabled")) {
+						this.expand(event);
+					}
+					break;
+				case $.ui.keyCode.ENTER:
+				case $.ui.keyCode.SPACE:
+					this._activate(event);
+					break;
+				case $.ui.keyCode.ESCAPE:
+					this.collapse(event);
+					break;
+				default:
+					preventDefault = false;
+					prev = this.previousFilter || "";
+					skip = false;
+
+					// Support number pad values
+					character = event.keyCode >= 96 && event.keyCode <= 105 ? (event.keyCode - 96).toString() : String.fromCharCode(event.keyCode);
+
+					clearTimeout(this.filterTimer);
+
+					if (character === prev) {
+						skip = true;
+					} else {
+						character = prev + character;
+					}
+
+					match = this._filterMenuItems(character);
+					match = skip && match.index(this.active.next()) !== -1 ? this.active.nextAll(".ui-menu-item") : match;
+
+					// If no matches on the current filter, reset to the last character pressed
+					// to move down the menu to the first item that starts with that character
+					if (!match.length) {
+						character = String.fromCharCode(event.keyCode);
+						match = this._filterMenuItems(character);
+					}
+
+					if (match.length) {
+						this.focus(event, match);
+						this.previousFilter = character;
+						this.filterTimer = this._delay(function () {
+							delete this.previousFilter;
+						}, 1000);
+					} else {
+						delete this.previousFilter;
+					}
+			}
+
+			if (preventDefault) {
+				event.preventDefault();
+			}
+		},
+
+		_activate: function _activate(event) {
+			if (this.active && !this.active.is(".ui-state-disabled")) {
+				if (this.active.children("[aria-haspopup='true']").length) {
+					this.expand(event);
+				} else {
+					this.select(event);
+				}
+			}
+		},
+
+		refresh: function refresh() {
+			var menus,
+			    items,
+			    newSubmenus,
+			    newItems,
+			    newWrappers,
+			    that = this,
+			    icon = this.options.icons.submenu,
+			    submenus = this.element.find(this.options.menus);
+
+			this._toggleClass("ui-menu-icons", null, !!this.element.find(".ui-icon").length);
+
+			// Initialize nested menus
+			newSubmenus = submenus.filter(":not(.ui-menu)").hide().attr({
+				role: this.options.role,
+				"aria-hidden": "true",
+				"aria-expanded": "false"
+			}).each(function () {
+				var menu = $(this),
+				    item = menu.prev(),
+				    submenuCaret = $("<span>").data("ui-menu-submenu-caret", true);
+
+				that._addClass(submenuCaret, "ui-menu-icon", "ui-icon " + icon);
+				item.attr("aria-haspopup", "true").prepend(submenuCaret);
+				menu.attr("aria-labelledby", item.attr("id"));
+			});
+
+			this._addClass(newSubmenus, "ui-menu", "ui-widget ui-widget-content ui-front");
+
+			menus = submenus.add(this.element);
+			items = menus.find(this.options.items);
+
+			// Initialize menu-items containing spaces and/or dashes only as dividers
+			items.not(".ui-menu-item").each(function () {
+				var item = $(this);
+				if (that._isDivider(item)) {
+					that._addClass(item, "ui-menu-divider", "ui-widget-content");
+				}
+			});
+
+			// Don't refresh list items that are already adapted
+			newItems = items.not(".ui-menu-item, .ui-menu-divider");
+			newWrappers = newItems.children().not(".ui-menu").uniqueId().attr({
+				tabIndex: -1,
+				role: this._itemRole()
+			});
+			this._addClass(newItems, "ui-menu-item")._addClass(newWrappers, "ui-menu-item-wrapper");
+
+			// Add aria-disabled attribute to any disabled menu item
+			items.filter(".ui-state-disabled").attr("aria-disabled", "true");
+
+			// If the active item has been removed, blur the menu
+			if (this.active && !$.contains(this.element[0], this.active[0])) {
+				this.blur();
+			}
+		},
+
+		_itemRole: function _itemRole() {
+			return {
+				menu: "menuitem",
+				listbox: "option"
+			}[this.options.role];
+		},
+
+		_setOption: function _setOption(key, value) {
+			if (key === "icons") {
+				var icons = this.element.find(".ui-menu-icon");
+				this._removeClass(icons, null, this.options.icons.submenu)._addClass(icons, null, value.submenu);
+			}
+			this._super(key, value);
+		},
+
+		_setOptionDisabled: function _setOptionDisabled(value) {
+			this._super(value);
+
+			this.element.attr("aria-disabled", String(value));
+			this._toggleClass(null, "ui-state-disabled", !!value);
+		},
+
+		focus: function focus(event, item) {
+			var nested, focused, activeParent;
+			this.blur(event, event && event.type === "focus");
+
+			this._scrollIntoView(item);
+
+			this.active = item.first();
+
+			focused = this.active.children(".ui-menu-item-wrapper");
+			this._addClass(focused, null, "ui-state-active");
+
+			// Only update aria-activedescendant if there's a role
+			// otherwise we assume focus is managed elsewhere
+			if (this.options.role) {
+				this.element.attr("aria-activedescendant", focused.attr("id"));
+			}
+
+			// Highlight active parent menu item, if any
+			activeParent = this.active.parent().closest(".ui-menu-item").children(".ui-menu-item-wrapper");
+			this._addClass(activeParent, null, "ui-state-active");
+
+			if (event && event.type === "keydown") {
+				this._close();
+			} else {
+				this.timer = this._delay(function () {
+					this._close();
+				}, this.delay);
+			}
+
+			nested = item.children(".ui-menu");
+			if (nested.length && event && /^mouse/.test(event.type)) {
+				this._startOpening(nested);
+			}
+			this.activeMenu = item.parent();
+
+			this._trigger("focus", event, { item: item });
+		},
+
+		_scrollIntoView: function _scrollIntoView(item) {
+			var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
+			if (this._hasScroll()) {
+				borderTop = parseFloat($.css(this.activeMenu[0], "borderTopWidth")) || 0;
+				paddingTop = parseFloat($.css(this.activeMenu[0], "paddingTop")) || 0;
+				offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
+				scroll = this.activeMenu.scrollTop();
+				elementHeight = this.activeMenu.height();
+				itemHeight = item.outerHeight();
+
+				if (offset < 0) {
+					this.activeMenu.scrollTop(scroll + offset);
+				} else if (offset + itemHeight > elementHeight) {
+					this.activeMenu.scrollTop(scroll + offset - elementHeight + itemHeight);
+				}
+			}
+		},
+
+		blur: function blur(event, fromFocus) {
+			if (!fromFocus) {
+				clearTimeout(this.timer);
+			}
+
+			if (!this.active) {
+				return;
+			}
+
+			this._removeClass(this.active.children(".ui-menu-item-wrapper"), null, "ui-state-active");
+
+			this._trigger("blur", event, { item: this.active });
+			this.active = null;
+		},
+
+		_startOpening: function _startOpening(submenu) {
+			clearTimeout(this.timer);
+
+			// Don't open if already open fixes a Firefox bug that caused a .5 pixel
+			// shift in the submenu position when mousing over the caret icon
+			if (submenu.attr("aria-hidden") !== "true") {
+				return;
+			}
+
+			this.timer = this._delay(function () {
+				this._close();
+				this._open(submenu);
+			}, this.delay);
+		},
+
+		_open: function _open(submenu) {
+			var position = $.extend({
+				of: this.active
+			}, this.options.position);
+
+			clearTimeout(this.timer);
+			this.element.find(".ui-menu").not(submenu.parents(".ui-menu")).hide().attr("aria-hidden", "true");
+
+			submenu.show().removeAttr("aria-hidden").attr("aria-expanded", "true").position(position);
+		},
+
+		collapseAll: function collapseAll(event, all) {
+			clearTimeout(this.timer);
+			this.timer = this._delay(function () {
+
+				// If we were passed an event, look for the submenu that contains the event
+				var currentMenu = all ? this.element : $(event && event.target).closest(this.element.find(".ui-menu"));
+
+				// If we found no valid submenu ancestor, use the main menu to close all
+				// sub menus anyway
+				if (!currentMenu.length) {
+					currentMenu = this.element;
+				}
+
+				this._close(currentMenu);
+
+				this.blur(event);
+
+				// Work around active item staying active after menu is blurred
+				this._removeClass(currentMenu.find(".ui-state-active"), null, "ui-state-active");
+
+				this.activeMenu = currentMenu;
+			}, this.delay);
+		},
+
+		// With no arguments, closes the currently active menu - if nothing is active
+		// it closes all menus.  If passed an argument, it will search for menus BELOW
+		_close: function _close(startMenu) {
+			if (!startMenu) {
+				startMenu = this.active ? this.active.parent() : this.element;
+			}
+
+			startMenu.find(".ui-menu").hide().attr("aria-hidden", "true").attr("aria-expanded", "false");
+		},
+
+		_closeOnDocumentClick: function _closeOnDocumentClick(event) {
+			return !$(event.target).closest(".ui-menu").length;
+		},
+
+		_isDivider: function _isDivider(item) {
+
+			// Match hyphen, em dash, en dash
+			return !/[^\-\u2014\u2013\s]/.test(item.text());
+		},
+
+		collapse: function collapse(event) {
+			var newItem = this.active && this.active.parent().closest(".ui-menu-item", this.element);
+			if (newItem && newItem.length) {
+				this._close();
+				this.focus(event, newItem);
+			}
+		},
+
+		expand: function expand(event) {
+			var newItem = this.active && this.active.children(".ui-menu ").find(this.options.items).first();
+
+			if (newItem && newItem.length) {
+				this._open(newItem.parent());
+
+				// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
+				this._delay(function () {
+					this.focus(event, newItem);
+				});
+			}
+		},
+
+		next: function next(event) {
+			this._move("next", "first", event);
+		},
+
+		previous: function previous(event) {
+			this._move("prev", "last", event);
+		},
+
+		isFirstItem: function isFirstItem() {
+			return this.active && !this.active.prevAll(".ui-menu-item").length;
+		},
+
+		isLastItem: function isLastItem() {
+			return this.active && !this.active.nextAll(".ui-menu-item").length;
+		},
+
+		_move: function _move(direction, filter, event) {
+			var next;
+			if (this.active) {
+				if (direction === "first" || direction === "last") {
+					next = this.active[direction === "first" ? "prevAll" : "nextAll"](".ui-menu-item").eq(-1);
+				} else {
+					next = this.active[direction + "All"](".ui-menu-item").eq(0);
+				}
+			}
+			if (!next || !next.length || !this.active) {
+				next = this.activeMenu.find(this.options.items)[filter]();
+			}
+
+			this.focus(event, next);
+		},
+
+		nextPage: function nextPage(event) {
+			var item, base, height;
+
+			if (!this.active) {
+				this.next(event);
+				return;
+			}
+			if (this.isLastItem()) {
+				return;
+			}
+			if (this._hasScroll()) {
+				base = this.active.offset().top;
+				height = this.element.height();
+				this.active.nextAll(".ui-menu-item").each(function () {
+					item = $(this);
+					return item.offset().top - base - height < 0;
+				});
+
+				this.focus(event, item);
+			} else {
+				this.focus(event, this.activeMenu.find(this.options.items)[!this.active ? "first" : "last"]());
+			}
+		},
+
+		previousPage: function previousPage(event) {
+			var item, base, height;
+			if (!this.active) {
+				this.next(event);
+				return;
+			}
+			if (this.isFirstItem()) {
+				return;
+			}
+			if (this._hasScroll()) {
+				base = this.active.offset().top;
+				height = this.element.height();
+				this.active.prevAll(".ui-menu-item").each(function () {
+					item = $(this);
+					return item.offset().top - base + height > 0;
+				});
+
+				this.focus(event, item);
+			} else {
+				this.focus(event, this.activeMenu.find(this.options.items).first());
+			}
+		},
+
+		_hasScroll: function _hasScroll() {
+			return this.element.outerHeight() < this.element.prop("scrollHeight");
+		},
+
+		select: function select(event) {
+
+			// TODO: It should never be possible to not have an active item at this
+			// point, but the tests don't trigger mouseenter before click.
+			this.active = this.active || $(event.target).closest(".ui-menu-item");
+			var ui = { item: this.active };
+			if (!this.active.has(".ui-menu").length) {
+				this.collapseAll(event, true);
+			}
+			this._trigger("select", event, ui);
+		},
+
+		_filterMenuItems: function _filterMenuItems(character) {
+			var escapedCharacter = character.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"),
+			    regex = new RegExp("^" + escapedCharacter, "i");
+
+			return this.activeMenu.find(this.options.items)
+
+			// Only match on items, not dividers or other content (#10571)
+			.filter(".ui-menu-item").filter(function () {
+				return regex.test($.trim($(this).children(".ui-menu-item-wrapper").text()));
+			});
+		}
+	});
+});
+
+/***/ }),
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45900,9 +47728,9 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(127);
+__webpack_require__(128);
 
-__webpack_require__(147);
+__webpack_require__(151);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -45930,7 +47758,7 @@ function overridePrompt(args) {
 exports.overridePrompt = overridePrompt;
 
 /***/ }),
-/* 147 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45958,7 +47786,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(148), __webpack_require__(128), __webpack_require__(125), __webpack_require__(154), __webpack_require__(140), __webpack_require__(139), __webpack_require__(156), __webpack_require__(131), __webpack_require__(130), __webpack_require__(157), __webpack_require__(158), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(152), __webpack_require__(129), __webpack_require__(125), __webpack_require__(158), __webpack_require__(142), __webpack_require__(132), __webpack_require__(139), __webpack_require__(7), __webpack_require__(131), __webpack_require__(160), __webpack_require__(140), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -46830,7 +48658,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 148 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46864,7 +48692,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(149), __webpack_require__(150), __webpack_require__(139), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(153), __webpack_require__(154), __webpack_require__(132), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47215,7 +49043,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 149 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47243,7 +49071,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47511,7 +49339,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 150 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47540,7 +49368,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(138), __webpack_require__(151), __webpack_require__(153), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(141), __webpack_require__(155), __webpack_require__(157), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47797,7 +49625,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 151 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47821,7 +49649,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(152), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(156), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47878,7 +49706,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 152 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47908,7 +49736,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 153 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47932,7 +49760,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(138)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(141)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47979,7 +49807,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 154 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -48007,7 +49835,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(155), __webpack_require__(129), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(159), __webpack_require__(130), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -49151,7 +50979,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 155 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49205,478 +51033,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 156 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Position 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- *
- * http://api.jqueryui.com/position/
- */
-
-//>>label: Position
-//>>group: Core
-//>>description: Positions elements relative to other elements.
-//>>docs: http://api.jqueryui.com/position/
-//>>demos: http://jqueryui.com/position/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	(function () {
-		var cachedScrollbarWidth,
-		    max = Math.max,
-		    abs = Math.abs,
-		    rhorizontal = /left|center|right/,
-		    rvertical = /top|center|bottom/,
-		    roffset = /[\+\-]\d+(\.[\d]+)?%?/,
-		    rposition = /^\w+/,
-		    rpercent = /%$/,
-		    _position = $.fn.position;
-
-		function getOffsets(offsets, width, height) {
-			return [parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1), parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)];
-		}
-
-		function parseCss(element, property) {
-			return parseInt($.css(element, property), 10) || 0;
-		}
-
-		function getDimensions(elem) {
-			var raw = elem[0];
-			if (raw.nodeType === 9) {
-				return {
-					width: elem.width(),
-					height: elem.height(),
-					offset: { top: 0, left: 0 }
-				};
-			}
-			if ($.isWindow(raw)) {
-				return {
-					width: elem.width(),
-					height: elem.height(),
-					offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
-				};
-			}
-			if (raw.preventDefault) {
-				return {
-					width: 0,
-					height: 0,
-					offset: { top: raw.pageY, left: raw.pageX }
-				};
-			}
-			return {
-				width: elem.outerWidth(),
-				height: elem.outerHeight(),
-				offset: elem.offset()
-			};
-		}
-
-		$.position = {
-			scrollbarWidth: function scrollbarWidth() {
-				if (cachedScrollbarWidth !== undefined) {
-					return cachedScrollbarWidth;
-				}
-				var w1,
-				    w2,
-				    div = $("<div " + "style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" + "<div style='height:100px;width:auto;'></div></div>"),
-				    innerDiv = div.children()[0];
-
-				$("body").append(div);
-				w1 = innerDiv.offsetWidth;
-				div.css("overflow", "scroll");
-
-				w2 = innerDiv.offsetWidth;
-
-				if (w1 === w2) {
-					w2 = div[0].clientWidth;
-				}
-
-				div.remove();
-
-				return cachedScrollbarWidth = w1 - w2;
-			},
-			getScrollInfo: function getScrollInfo(within) {
-				var overflowX = within.isWindow || within.isDocument ? "" : within.element.css("overflow-x"),
-				    overflowY = within.isWindow || within.isDocument ? "" : within.element.css("overflow-y"),
-				    hasOverflowX = overflowX === "scroll" || overflowX === "auto" && within.width < within.element[0].scrollWidth,
-				    hasOverflowY = overflowY === "scroll" || overflowY === "auto" && within.height < within.element[0].scrollHeight;
-				return {
-					width: hasOverflowY ? $.position.scrollbarWidth() : 0,
-					height: hasOverflowX ? $.position.scrollbarWidth() : 0
-				};
-			},
-			getWithinInfo: function getWithinInfo(element) {
-				var withinElement = $(element || window),
-				    isWindow = $.isWindow(withinElement[0]),
-				    isDocument = !!withinElement[0] && withinElement[0].nodeType === 9,
-				    hasOffset = !isWindow && !isDocument;
-				return {
-					element: withinElement,
-					isWindow: isWindow,
-					isDocument: isDocument,
-					offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
-					scrollLeft: withinElement.scrollLeft(),
-					scrollTop: withinElement.scrollTop(),
-					width: withinElement.outerWidth(),
-					height: withinElement.outerHeight()
-				};
-			}
-		};
-
-		$.fn.position = function (options) {
-			if (!options || !options.of) {
-				return _position.apply(this, arguments);
-			}
-
-			// Make a copy, we don't want to modify arguments
-			options = $.extend({}, options);
-
-			var atOffset,
-			    targetWidth,
-			    targetHeight,
-			    targetOffset,
-			    basePosition,
-			    dimensions,
-			    target = $(options.of),
-			    within = $.position.getWithinInfo(options.within),
-			    scrollInfo = $.position.getScrollInfo(within),
-			    collision = (options.collision || "flip").split(" "),
-			    offsets = {};
-
-			dimensions = getDimensions(target);
-			if (target[0].preventDefault) {
-
-				// Force left top to allow flipping
-				options.at = "left top";
-			}
-			targetWidth = dimensions.width;
-			targetHeight = dimensions.height;
-			targetOffset = dimensions.offset;
-
-			// Clone to reuse original targetOffset later
-			basePosition = $.extend({}, targetOffset);
-
-			// Force my and at to have valid horizontal and vertical positions
-			// if a value is missing or invalid, it will be converted to center
-			$.each(["my", "at"], function () {
-				var pos = (options[this] || "").split(" "),
-				    horizontalOffset,
-				    verticalOffset;
-
-				if (pos.length === 1) {
-					pos = rhorizontal.test(pos[0]) ? pos.concat(["center"]) : rvertical.test(pos[0]) ? ["center"].concat(pos) : ["center", "center"];
-				}
-				pos[0] = rhorizontal.test(pos[0]) ? pos[0] : "center";
-				pos[1] = rvertical.test(pos[1]) ? pos[1] : "center";
-
-				// Calculate offsets
-				horizontalOffset = roffset.exec(pos[0]);
-				verticalOffset = roffset.exec(pos[1]);
-				offsets[this] = [horizontalOffset ? horizontalOffset[0] : 0, verticalOffset ? verticalOffset[0] : 0];
-
-				// Reduce to just the positions without the offsets
-				options[this] = [rposition.exec(pos[0])[0], rposition.exec(pos[1])[0]];
-			});
-
-			// Normalize collision option
-			if (collision.length === 1) {
-				collision[1] = collision[0];
-			}
-
-			if (options.at[0] === "right") {
-				basePosition.left += targetWidth;
-			} else if (options.at[0] === "center") {
-				basePosition.left += targetWidth / 2;
-			}
-
-			if (options.at[1] === "bottom") {
-				basePosition.top += targetHeight;
-			} else if (options.at[1] === "center") {
-				basePosition.top += targetHeight / 2;
-			}
-
-			atOffset = getOffsets(offsets.at, targetWidth, targetHeight);
-			basePosition.left += atOffset[0];
-			basePosition.top += atOffset[1];
-
-			return this.each(function () {
-				var collisionPosition,
-				    using,
-				    elem = $(this),
-				    elemWidth = elem.outerWidth(),
-				    elemHeight = elem.outerHeight(),
-				    marginLeft = parseCss(this, "marginLeft"),
-				    marginTop = parseCss(this, "marginTop"),
-				    collisionWidth = elemWidth + marginLeft + parseCss(this, "marginRight") + scrollInfo.width,
-				    collisionHeight = elemHeight + marginTop + parseCss(this, "marginBottom") + scrollInfo.height,
-				    position = $.extend({}, basePosition),
-				    myOffset = getOffsets(offsets.my, elem.outerWidth(), elem.outerHeight());
-
-				if (options.my[0] === "right") {
-					position.left -= elemWidth;
-				} else if (options.my[0] === "center") {
-					position.left -= elemWidth / 2;
-				}
-
-				if (options.my[1] === "bottom") {
-					position.top -= elemHeight;
-				} else if (options.my[1] === "center") {
-					position.top -= elemHeight / 2;
-				}
-
-				position.left += myOffset[0];
-				position.top += myOffset[1];
-
-				collisionPosition = {
-					marginLeft: marginLeft,
-					marginTop: marginTop
-				};
-
-				$.each(["left", "top"], function (i, dir) {
-					if ($.ui.position[collision[i]]) {
-						$.ui.position[collision[i]][dir](position, {
-							targetWidth: targetWidth,
-							targetHeight: targetHeight,
-							elemWidth: elemWidth,
-							elemHeight: elemHeight,
-							collisionPosition: collisionPosition,
-							collisionWidth: collisionWidth,
-							collisionHeight: collisionHeight,
-							offset: [atOffset[0] + myOffset[0], atOffset[1] + myOffset[1]],
-							my: options.my,
-							at: options.at,
-							within: within,
-							elem: elem
-						});
-					}
-				});
-
-				if (options.using) {
-
-					// Adds feedback as second argument to using callback, if present
-					using = function using(props) {
-						var left = targetOffset.left - position.left,
-						    right = left + targetWidth - elemWidth,
-						    top = targetOffset.top - position.top,
-						    bottom = top + targetHeight - elemHeight,
-						    feedback = {
-							target: {
-								element: target,
-								left: targetOffset.left,
-								top: targetOffset.top,
-								width: targetWidth,
-								height: targetHeight
-							},
-							element: {
-								element: elem,
-								left: position.left,
-								top: position.top,
-								width: elemWidth,
-								height: elemHeight
-							},
-							horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
-							vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
-						};
-						if (targetWidth < elemWidth && abs(left + right) < targetWidth) {
-							feedback.horizontal = "center";
-						}
-						if (targetHeight < elemHeight && abs(top + bottom) < targetHeight) {
-							feedback.vertical = "middle";
-						}
-						if (max(abs(left), abs(right)) > max(abs(top), abs(bottom))) {
-							feedback.important = "horizontal";
-						} else {
-							feedback.important = "vertical";
-						}
-						options.using.call(this, props, feedback);
-					};
-				}
-
-				elem.offset($.extend(position, { using: using }));
-			});
-		};
-
-		$.ui.position = {
-			fit: {
-				left: function left(position, data) {
-					var within = data.within,
-					    withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
-					    outerWidth = within.width,
-					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-					    overLeft = withinOffset - collisionPosLeft,
-					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
-					    newOverRight;
-
-					// Element is wider than within
-					if (data.collisionWidth > outerWidth) {
-
-						// Element is initially over the left side of within
-						if (overLeft > 0 && overRight <= 0) {
-							newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
-							position.left += overLeft - newOverRight;
-
-							// Element is initially over right side of within
-						} else if (overRight > 0 && overLeft <= 0) {
-							position.left = withinOffset;
-
-							// Element is initially over both left and right sides of within
-						} else {
-							if (overLeft > overRight) {
-								position.left = withinOffset + outerWidth - data.collisionWidth;
-							} else {
-								position.left = withinOffset;
-							}
-						}
-
-						// Too far left -> align with left edge
-					} else if (overLeft > 0) {
-						position.left += overLeft;
-
-						// Too far right -> align with right edge
-					} else if (overRight > 0) {
-						position.left -= overRight;
-
-						// Adjust based on position and margin
-					} else {
-						position.left = max(position.left - collisionPosLeft, position.left);
-					}
-				},
-				top: function top(position, data) {
-					var within = data.within,
-					    withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
-					    outerHeight = data.within.height,
-					    collisionPosTop = position.top - data.collisionPosition.marginTop,
-					    overTop = withinOffset - collisionPosTop,
-					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
-					    newOverBottom;
-
-					// Element is taller than within
-					if (data.collisionHeight > outerHeight) {
-
-						// Element is initially over the top of within
-						if (overTop > 0 && overBottom <= 0) {
-							newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
-							position.top += overTop - newOverBottom;
-
-							// Element is initially over bottom of within
-						} else if (overBottom > 0 && overTop <= 0) {
-							position.top = withinOffset;
-
-							// Element is initially over both top and bottom of within
-						} else {
-							if (overTop > overBottom) {
-								position.top = withinOffset + outerHeight - data.collisionHeight;
-							} else {
-								position.top = withinOffset;
-							}
-						}
-
-						// Too far up -> align with top
-					} else if (overTop > 0) {
-						position.top += overTop;
-
-						// Too far down -> align with bottom edge
-					} else if (overBottom > 0) {
-						position.top -= overBottom;
-
-						// Adjust based on position and margin
-					} else {
-						position.top = max(position.top - collisionPosTop, position.top);
-					}
-				}
-			},
-			flip: {
-				left: function left(position, data) {
-					var within = data.within,
-					    withinOffset = within.offset.left + within.scrollLeft,
-					    outerWidth = within.width,
-					    offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
-					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-					    overLeft = collisionPosLeft - offsetLeft,
-					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
-					    myOffset = data.my[0] === "left" ? -data.elemWidth : data.my[0] === "right" ? data.elemWidth : 0,
-					    atOffset = data.at[0] === "left" ? data.targetWidth : data.at[0] === "right" ? -data.targetWidth : 0,
-					    offset = -2 * data.offset[0],
-					    newOverRight,
-					    newOverLeft;
-
-					if (overLeft < 0) {
-						newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
-						if (newOverRight < 0 || newOverRight < abs(overLeft)) {
-							position.left += myOffset + atOffset + offset;
-						}
-					} else if (overRight > 0) {
-						newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
-						if (newOverLeft > 0 || abs(newOverLeft) < overRight) {
-							position.left += myOffset + atOffset + offset;
-						}
-					}
-				},
-				top: function top(position, data) {
-					var within = data.within,
-					    withinOffset = within.offset.top + within.scrollTop,
-					    outerHeight = within.height,
-					    offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
-					    collisionPosTop = position.top - data.collisionPosition.marginTop,
-					    overTop = collisionPosTop - offsetTop,
-					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
-					    top = data.my[1] === "top",
-					    myOffset = top ? -data.elemHeight : data.my[1] === "bottom" ? data.elemHeight : 0,
-					    atOffset = data.at[1] === "top" ? data.targetHeight : data.at[1] === "bottom" ? -data.targetHeight : 0,
-					    offset = -2 * data.offset[1],
-					    newOverTop,
-					    newOverBottom;
-					if (overTop < 0) {
-						newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
-						if (newOverBottom < 0 || newOverBottom < abs(overTop)) {
-							position.top += myOffset + atOffset + offset;
-						}
-					} else if (overBottom > 0) {
-						newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
-						if (newOverTop > 0 || abs(newOverTop) < overBottom) {
-							position.top += myOffset + atOffset + offset;
-						}
-					}
-				}
-			},
-			flipfit: {
-				left: function left() {
-					$.ui.position.flip.left.apply(this, arguments);
-					$.ui.position.fit.left.apply(this, arguments);
-				},
-				top: function top() {
-					$.ui.position.flip.top.apply(this, arguments);
-					$.ui.position.fit.top.apply(this, arguments);
-				}
-			}
-		};
-	})();
-
-	return $.ui.position;
-});
-
-/***/ }),
-/* 157 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49700,7 +51057,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(140)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(142)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -49721,66 +51078,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 158 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Unique ID 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: uniqueId
-//>>group: Core
-//>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.fn.extend({
-		uniqueId: function () {
-			var uuid = 0;
-
-			return function () {
-				return this.each(function () {
-					if (!this.id) {
-						this.id = "ui-id-" + ++uuid;
-					}
-				});
-			};
-		}(),
-
-		removeUniqueId: function removeUniqueId() {
-			return this.each(function () {
-				if (/^ui-id-\d+$/.test(this.id)) {
-					$(this).removeAttr("id");
-				}
-			});
-		}
-	});
-});
-
-/***/ }),
-/* 159 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49798,11 +51096,11 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
-var _uifunc = __webpack_require__(8);
+var _uifunc = __webpack_require__(9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -49960,7 +51258,7 @@ var UserAdmin = function () {
 exports.default = UserAdmin;
 
 /***/ }),
-/* 160 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49976,15 +51274,15 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(4);
+var _utils = __webpack_require__(5);
 
 var _textfieldlisteners = __webpack_require__(126);
 
 var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(3);
+var _userfeedback = __webpack_require__(4);
 
-var _cal = __webpack_require__(9);
+var _cal = __webpack_require__(127);
 
 var _cal2 = _interopRequireDefault(_cal);
 
@@ -50005,6 +51303,7 @@ var SettingsAdmin = function () {
     this.facilityNameListener();
     this.facilityEmailListener();
     this.notificationEmailListeners();
+    this.testEmailListeners();
     this.initScheduleSubmitListeners();
     this.initIrregularHoursButtonListener();
 
@@ -50141,6 +51440,43 @@ var SettingsAdmin = function () {
       });
     }
   }, {
+    key: 'testEmailListeners',
+    value: function testEmailListeners() {
+      var that = this;
+
+      (0, _jquery2.default)('.new-res-email .btn-warning').click(function (event) {
+        that.testNotificationEmail('new_res_email_test', (0, _jquery2.default)(this).parent());
+      });
+      (0, _jquery2.default)('.late-res-admin-email .btn-warning').click(function (event) {
+        that.testNotificationEmail('late_res_admin_email_test', (0, _jquery2.default)(this).parent());
+      });
+      (0, _jquery2.default)('.late-res-user-email .btn-warning').click(function (event) {
+        that.testNotificationEmail('late_res_user_email_test', (0, _jquery2.default)(this).parent());
+      });
+    }
+  }, {
+    key: 'testNotificationEmail',
+    value: function testNotificationEmail(action, $panelBody) {
+      var that = this;
+      (0, _userfeedback.submissionStart)();
+      _jquery2.default.ajax({
+        url: ajaxurl,
+        type: 'POST',
+        data: { 'action': action,
+          'subject': $panelBody.find('.email-subject').val(),
+          'body': $panelBody.find('.email-body').val(),
+          'link': that.link
+        },
+        success: function success(data) {
+          (0, _serverresponse.handleServerResponse)(data);
+          (0, _userfeedback.submissionEnd)();
+        },
+        error: function error(data) {
+          (0, _serverresponse.handleServerError)(data, new Error());
+        }
+      });
+    }
+  }, {
     key: 'updateNotificationEmail',
     value: function updateNotificationEmail(action, $panelBody) {
       var that = this;
@@ -50245,1304 +51581,6 @@ var SettingsAdmin = function () {
 }();
 
 exports.default = SettingsAdmin;
-
-/***/ }),
-/* 161 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Autocomplete 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Autocomplete
-//>>group: Widgets
-//>>description: Lists suggested words as the user is typing.
-//>>docs: http://api.jqueryui.com/autocomplete/
-//>>demos: http://jqueryui.com/autocomplete/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/autocomplete.css
-//>>css.theme: ../../themes/base/theme.css
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(162), __webpack_require__(139), __webpack_require__(156), __webpack_require__(131), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	$.widget("ui.autocomplete", {
-		version: "1.12.1",
-		defaultElement: "<input>",
-		options: {
-			appendTo: null,
-			autoFocus: false,
-			delay: 300,
-			minLength: 1,
-			position: {
-				my: "left top",
-				at: "left bottom",
-				collision: "none"
-			},
-			source: null,
-
-			// Callbacks
-			change: null,
-			close: null,
-			focus: null,
-			open: null,
-			response: null,
-			search: null,
-			select: null
-		},
-
-		requestIndex: 0,
-		pending: 0,
-
-		_create: function _create() {
-
-			// Some browsers only repeat keydown events, not keypress events,
-			// so we use the suppressKeyPress flag to determine if we've already
-			// handled the keydown event. #7269
-			// Unfortunately the code for & in keypress is the same as the up arrow,
-			// so we use the suppressKeyPressRepeat flag to avoid handling keypress
-			// events when we know the keydown event was used to modify the
-			// search term. #7799
-			var suppressKeyPress,
-			    suppressKeyPressRepeat,
-			    suppressInput,
-			    nodeName = this.element[0].nodeName.toLowerCase(),
-			    isTextarea = nodeName === "textarea",
-			    isInput = nodeName === "input";
-
-			// Textareas are always multi-line
-			// Inputs are always single-line, even if inside a contentEditable element
-			// IE also treats inputs as contentEditable
-			// All other element types are determined by whether or not they're contentEditable
-			this.isMultiLine = isTextarea || !isInput && this._isContentEditable(this.element);
-
-			this.valueMethod = this.element[isTextarea || isInput ? "val" : "text"];
-			this.isNewMenu = true;
-
-			this._addClass("ui-autocomplete-input");
-			this.element.attr("autocomplete", "off");
-
-			this._on(this.element, {
-				keydown: function keydown(event) {
-					if (this.element.prop("readOnly")) {
-						suppressKeyPress = true;
-						suppressInput = true;
-						suppressKeyPressRepeat = true;
-						return;
-					}
-
-					suppressKeyPress = false;
-					suppressInput = false;
-					suppressKeyPressRepeat = false;
-					var keyCode = $.ui.keyCode;
-					switch (event.keyCode) {
-						case keyCode.PAGE_UP:
-							suppressKeyPress = true;
-							this._move("previousPage", event);
-							break;
-						case keyCode.PAGE_DOWN:
-							suppressKeyPress = true;
-							this._move("nextPage", event);
-							break;
-						case keyCode.UP:
-							suppressKeyPress = true;
-							this._keyEvent("previous", event);
-							break;
-						case keyCode.DOWN:
-							suppressKeyPress = true;
-							this._keyEvent("next", event);
-							break;
-						case keyCode.ENTER:
-
-							// when menu is open and has focus
-							if (this.menu.active) {
-
-								// #6055 - Opera still allows the keypress to occur
-								// which causes forms to submit
-								suppressKeyPress = true;
-								event.preventDefault();
-								this.menu.select(event);
-							}
-							break;
-						case keyCode.TAB:
-							if (this.menu.active) {
-								this.menu.select(event);
-							}
-							break;
-						case keyCode.ESCAPE:
-							if (this.menu.element.is(":visible")) {
-								if (!this.isMultiLine) {
-									this._value(this.term);
-								}
-								this.close(event);
-
-								// Different browsers have different default behavior for escape
-								// Single press can mean undo or clear
-								// Double press in IE means clear the whole form
-								event.preventDefault();
-							}
-							break;
-						default:
-							suppressKeyPressRepeat = true;
-
-							// search timeout should be triggered before the input value is changed
-							this._searchTimeout(event);
-							break;
-					}
-				},
-				keypress: function keypress(event) {
-					if (suppressKeyPress) {
-						suppressKeyPress = false;
-						if (!this.isMultiLine || this.menu.element.is(":visible")) {
-							event.preventDefault();
-						}
-						return;
-					}
-					if (suppressKeyPressRepeat) {
-						return;
-					}
-
-					// Replicate some key handlers to allow them to repeat in Firefox and Opera
-					var keyCode = $.ui.keyCode;
-					switch (event.keyCode) {
-						case keyCode.PAGE_UP:
-							this._move("previousPage", event);
-							break;
-						case keyCode.PAGE_DOWN:
-							this._move("nextPage", event);
-							break;
-						case keyCode.UP:
-							this._keyEvent("previous", event);
-							break;
-						case keyCode.DOWN:
-							this._keyEvent("next", event);
-							break;
-					}
-				},
-				input: function input(event) {
-					if (suppressInput) {
-						suppressInput = false;
-						event.preventDefault();
-						return;
-					}
-					this._searchTimeout(event);
-				},
-				focus: function focus() {
-					this.selectedItem = null;
-					this.previous = this._value();
-				},
-				blur: function blur(event) {
-					if (this.cancelBlur) {
-						delete this.cancelBlur;
-						return;
-					}
-
-					clearTimeout(this.searching);
-					this.close(event);
-					this._change(event);
-				}
-			});
-
-			this._initSource();
-			this.menu = $("<ul>").appendTo(this._appendTo()).menu({
-
-				// disable ARIA support, the live region takes care of that
-				role: null
-			}).hide().menu("instance");
-
-			this._addClass(this.menu.element, "ui-autocomplete", "ui-front");
-			this._on(this.menu.element, {
-				mousedown: function mousedown(event) {
-
-					// prevent moving focus out of the text field
-					event.preventDefault();
-
-					// IE doesn't prevent moving focus even with event.preventDefault()
-					// so we set a flag to know when we should ignore the blur event
-					this.cancelBlur = true;
-					this._delay(function () {
-						delete this.cancelBlur;
-
-						// Support: IE 8 only
-						// Right clicking a menu item or selecting text from the menu items will
-						// result in focus moving out of the input. However, we've already received
-						// and ignored the blur event because of the cancelBlur flag set above. So
-						// we restore focus to ensure that the menu closes properly based on the user's
-						// next actions.
-						if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
-							this.element.trigger("focus");
-						}
-					});
-				},
-				menufocus: function menufocus(event, ui) {
-					var label, item;
-
-					// support: Firefox
-					// Prevent accidental activation of menu items in Firefox (#7024 #9118)
-					if (this.isNewMenu) {
-						this.isNewMenu = false;
-						if (event.originalEvent && /^mouse/.test(event.originalEvent.type)) {
-							this.menu.blur();
-
-							this.document.one("mousemove", function () {
-								$(event.target).trigger(event.originalEvent);
-							});
-
-							return;
-						}
-					}
-
-					item = ui.item.data("ui-autocomplete-item");
-					if (false !== this._trigger("focus", event, { item: item })) {
-
-						// use value to match what will end up in the input, if it was a key event
-						if (event.originalEvent && /^key/.test(event.originalEvent.type)) {
-							this._value(item.value);
-						}
-					}
-
-					// Announce the value in the liveRegion
-					label = ui.item.attr("aria-label") || item.value;
-					if (label && $.trim(label).length) {
-						this.liveRegion.children().hide();
-						$("<div>").text(label).appendTo(this.liveRegion);
-					}
-				},
-				menuselect: function menuselect(event, ui) {
-					var item = ui.item.data("ui-autocomplete-item"),
-					    previous = this.previous;
-
-					// Only trigger when focus was lost (click on menu)
-					if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
-						this.element.trigger("focus");
-						this.previous = previous;
-
-						// #6109 - IE triggers two focus events and the second
-						// is asynchronous, so we need to reset the previous
-						// term synchronously and asynchronously :-(
-						this._delay(function () {
-							this.previous = previous;
-							this.selectedItem = item;
-						});
-					}
-
-					if (false !== this._trigger("select", event, { item: item })) {
-						this._value(item.value);
-					}
-
-					// reset the term after the select event
-					// this allows custom select handling to work properly
-					this.term = this._value();
-
-					this.close(event);
-					this.selectedItem = item;
-				}
-			});
-
-			this.liveRegion = $("<div>", {
-				role: "status",
-				"aria-live": "assertive",
-				"aria-relevant": "additions"
-			}).appendTo(this.document[0].body);
-
-			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
-
-			// Turning off autocomplete prevents the browser from remembering the
-			// value when navigating through history, so we re-enable autocomplete
-			// if the page is unloaded before the widget is destroyed. #7790
-			this._on(this.window, {
-				beforeunload: function beforeunload() {
-					this.element.removeAttr("autocomplete");
-				}
-			});
-		},
-
-		_destroy: function _destroy() {
-			clearTimeout(this.searching);
-			this.element.removeAttr("autocomplete");
-			this.menu.element.remove();
-			this.liveRegion.remove();
-		},
-
-		_setOption: function _setOption(key, value) {
-			this._super(key, value);
-			if (key === "source") {
-				this._initSource();
-			}
-			if (key === "appendTo") {
-				this.menu.element.appendTo(this._appendTo());
-			}
-			if (key === "disabled" && value && this.xhr) {
-				this.xhr.abort();
-			}
-		},
-
-		_isEventTargetInWidget: function _isEventTargetInWidget(event) {
-			var menuElement = this.menu.element[0];
-
-			return event.target === this.element[0] || event.target === menuElement || $.contains(menuElement, event.target);
-		},
-
-		_closeOnClickOutside: function _closeOnClickOutside(event) {
-			if (!this._isEventTargetInWidget(event)) {
-				this.close();
-			}
-		},
-
-		_appendTo: function _appendTo() {
-			var element = this.options.appendTo;
-
-			if (element) {
-				element = element.jquery || element.nodeType ? $(element) : this.document.find(element).eq(0);
-			}
-
-			if (!element || !element[0]) {
-				element = this.element.closest(".ui-front, dialog");
-			}
-
-			if (!element.length) {
-				element = this.document[0].body;
-			}
-
-			return element;
-		},
-
-		_initSource: function _initSource() {
-			var array,
-			    url,
-			    that = this;
-			if ($.isArray(this.options.source)) {
-				array = this.options.source;
-				this.source = function (request, response) {
-					response($.ui.autocomplete.filter(array, request.term));
-				};
-			} else if (typeof this.options.source === "string") {
-				url = this.options.source;
-				this.source = function (request, response) {
-					if (that.xhr) {
-						that.xhr.abort();
-					}
-					that.xhr = $.ajax({
-						url: url,
-						data: request,
-						dataType: "json",
-						success: function success(data) {
-							response(data);
-						},
-						error: function error() {
-							response([]);
-						}
-					});
-				};
-			} else {
-				this.source = this.options.source;
-			}
-		},
-
-		_searchTimeout: function _searchTimeout(event) {
-			clearTimeout(this.searching);
-			this.searching = this._delay(function () {
-
-				// Search if the value has changed, or if the user retypes the same value (see #7434)
-				var equalValues = this.term === this._value(),
-				    menuVisible = this.menu.element.is(":visible"),
-				    modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-
-				if (!equalValues || equalValues && !menuVisible && !modifierKey) {
-					this.selectedItem = null;
-					this.search(null, event);
-				}
-			}, this.options.delay);
-		},
-
-		search: function search(value, event) {
-			value = value != null ? value : this._value();
-
-			// Always save the actual value, not the one passed as an argument
-			this.term = this._value();
-
-			if (value.length < this.options.minLength) {
-				return this.close(event);
-			}
-
-			if (this._trigger("search", event) === false) {
-				return;
-			}
-
-			return this._search(value);
-		},
-
-		_search: function _search(value) {
-			this.pending++;
-			this._addClass("ui-autocomplete-loading");
-			this.cancelSearch = false;
-
-			this.source({ term: value }, this._response());
-		},
-
-		_response: function _response() {
-			var index = ++this.requestIndex;
-
-			return $.proxy(function (content) {
-				if (index === this.requestIndex) {
-					this.__response(content);
-				}
-
-				this.pending--;
-				if (!this.pending) {
-					this._removeClass("ui-autocomplete-loading");
-				}
-			}, this);
-		},
-
-		__response: function __response(content) {
-			if (content) {
-				content = this._normalize(content);
-			}
-			this._trigger("response", null, { content: content });
-			if (!this.options.disabled && content && content.length && !this.cancelSearch) {
-				this._suggest(content);
-				this._trigger("open");
-			} else {
-
-				// use ._close() instead of .close() so we don't cancel future searches
-				this._close();
-			}
-		},
-
-		close: function close(event) {
-			this.cancelSearch = true;
-			this._close(event);
-		},
-
-		_close: function _close(event) {
-
-			// Remove the handler that closes the menu on outside clicks
-			this._off(this.document, "mousedown");
-
-			if (this.menu.element.is(":visible")) {
-				this.menu.element.hide();
-				this.menu.blur();
-				this.isNewMenu = true;
-				this._trigger("close", event);
-			}
-		},
-
-		_change: function _change(event) {
-			if (this.previous !== this._value()) {
-				this._trigger("change", event, { item: this.selectedItem });
-			}
-		},
-
-		_normalize: function _normalize(items) {
-
-			// assume all items have the right format when the first item is complete
-			if (items.length && items[0].label && items[0].value) {
-				return items;
-			}
-			return $.map(items, function (item) {
-				if (typeof item === "string") {
-					return {
-						label: item,
-						value: item
-					};
-				}
-				return $.extend({}, item, {
-					label: item.label || item.value,
-					value: item.value || item.label
-				});
-			});
-		},
-
-		_suggest: function _suggest(items) {
-			var ul = this.menu.element.empty();
-			this._renderMenu(ul, items);
-			this.isNewMenu = true;
-			this.menu.refresh();
-
-			// Size and position menu
-			ul.show();
-			this._resizeMenu();
-			ul.position($.extend({
-				of: this.element
-			}, this.options.position));
-
-			if (this.options.autoFocus) {
-				this.menu.next();
-			}
-
-			// Listen for interactions outside of the widget (#6642)
-			this._on(this.document, {
-				mousedown: "_closeOnClickOutside"
-			});
-		},
-
-		_resizeMenu: function _resizeMenu() {
-			var ul = this.menu.element;
-			ul.outerWidth(Math.max(
-
-			// Firefox wraps long text (possibly a rounding bug)
-			// so we add 1px to avoid the wrapping (#7513)
-			ul.width("").outerWidth() + 1, this.element.outerWidth()));
-		},
-
-		_renderMenu: function _renderMenu(ul, items) {
-			var that = this;
-			$.each(items, function (index, item) {
-				that._renderItemData(ul, item);
-			});
-		},
-
-		_renderItemData: function _renderItemData(ul, item) {
-			return this._renderItem(ul, item).data("ui-autocomplete-item", item);
-		},
-
-		_renderItem: function _renderItem(ul, item) {
-			return $("<li>").append($("<div>").text(item.label)).appendTo(ul);
-		},
-
-		_move: function _move(direction, event) {
-			if (!this.menu.element.is(":visible")) {
-				this.search(null, event);
-				return;
-			}
-			if (this.menu.isFirstItem() && /^previous/.test(direction) || this.menu.isLastItem() && /^next/.test(direction)) {
-
-				if (!this.isMultiLine) {
-					this._value(this.term);
-				}
-
-				this.menu.blur();
-				return;
-			}
-			this.menu[direction](event);
-		},
-
-		widget: function widget() {
-			return this.menu.element;
-		},
-
-		_value: function _value() {
-			return this.valueMethod.apply(this.element, arguments);
-		},
-
-		_keyEvent: function _keyEvent(keyEvent, event) {
-			if (!this.isMultiLine || this.menu.element.is(":visible")) {
-				this._move(keyEvent, event);
-
-				// Prevents moving cursor to beginning/end of the text field in some browsers
-				event.preventDefault();
-			}
-		},
-
-		// Support: Chrome <=50
-		// We should be able to just use this.element.prop( "isContentEditable" )
-		// but hidden elements always report false in Chrome.
-		// https://code.google.com/p/chromium/issues/detail?id=313082
-		_isContentEditable: function _isContentEditable(element) {
-			if (!element.length) {
-				return false;
-			}
-
-			var editable = element.prop("contentEditable");
-
-			if (editable === "inherit") {
-				return this._isContentEditable(element.parent());
-			}
-
-			return editable === "true";
-		}
-	});
-
-	$.extend($.ui.autocomplete, {
-		escapeRegex: function escapeRegex(value) {
-			return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-		},
-		filter: function filter(array, term) {
-			var matcher = new RegExp($.ui.autocomplete.escapeRegex(term), "i");
-			return $.grep(array, function (value) {
-				return matcher.test(value.label || value.value || value);
-			});
-		}
-	});
-
-	// Live region extension, adding a `messages` option
-	// NOTE: This is an experimental API. We are still investigating
-	// a full solution for string manipulation and internationalization.
-	$.widget("ui.autocomplete", $.ui.autocomplete, {
-		options: {
-			messages: {
-				noResults: "No search results.",
-				results: function results(amount) {
-					return amount + (amount > 1 ? " results are" : " result is") + " available, use up and down arrow keys to navigate.";
-				}
-			}
-		},
-
-		__response: function __response(content) {
-			var message;
-			this._superApply(arguments);
-			if (this.options.disabled || this.cancelSearch) {
-				return;
-			}
-			if (content && content.length) {
-				message = this.options.messages.results(content.length);
-			} else {
-				message = this.options.messages.noResults;
-			}
-			this.liveRegion.children().hide();
-			$("<div>").text(message).appendTo(this.liveRegion);
-		}
-	});
-
-	return $.ui.autocomplete;
-});
-
-/***/ }),
-/* 162 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Menu 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Menu
-//>>group: Widgets
-//>>description: Creates nestable menus.
-//>>docs: http://api.jqueryui.com/menu/
-//>>demos: http://jqueryui.com/menu/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/menu.css
-//>>css.theme: ../../themes/base/theme.css
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(139), __webpack_require__(156), __webpack_require__(131), __webpack_require__(158), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.widget("ui.menu", {
-		version: "1.12.1",
-		defaultElement: "<ul>",
-		delay: 300,
-		options: {
-			icons: {
-				submenu: "ui-icon-caret-1-e"
-			},
-			items: "> *",
-			menus: "ul",
-			position: {
-				my: "left top",
-				at: "right top"
-			},
-			role: "menu",
-
-			// Callbacks
-			blur: null,
-			focus: null,
-			select: null
-		},
-
-		_create: function _create() {
-			this.activeMenu = this.element;
-
-			// Flag used to prevent firing of the click handler
-			// as the event bubbles up through nested menus
-			this.mouseHandled = false;
-			this.element.uniqueId().attr({
-				role: this.options.role,
-				tabIndex: 0
-			});
-
-			this._addClass("ui-menu", "ui-widget ui-widget-content");
-			this._on({
-
-				// Prevent focus from sticking to links inside menu after clicking
-				// them (focus should always stay on UL during navigation).
-				"mousedown .ui-menu-item": function mousedownUiMenuItem(event) {
-					event.preventDefault();
-				},
-				"click .ui-menu-item": function clickUiMenuItem(event) {
-					var target = $(event.target);
-					var active = $($.ui.safeActiveElement(this.document[0]));
-					if (!this.mouseHandled && target.not(".ui-state-disabled").length) {
-						this.select(event);
-
-						// Only set the mouseHandled flag if the event will bubble, see #9469.
-						if (!event.isPropagationStopped()) {
-							this.mouseHandled = true;
-						}
-
-						// Open submenu on click
-						if (target.has(".ui-menu").length) {
-							this.expand(event);
-						} else if (!this.element.is(":focus") && active.closest(".ui-menu").length) {
-
-							// Redirect focus to the menu
-							this.element.trigger("focus", [true]);
-
-							// If the active item is on the top level, let it stay active.
-							// Otherwise, blur the active item since it is no longer visible.
-							if (this.active && this.active.parents(".ui-menu").length === 1) {
-								clearTimeout(this.timer);
-							}
-						}
-					}
-				},
-				"mouseenter .ui-menu-item": function mouseenterUiMenuItem(event) {
-
-					// Ignore mouse events while typeahead is active, see #10458.
-					// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
-					// is over an item in the menu
-					if (this.previousFilter) {
-						return;
-					}
-
-					var actualTarget = $(event.target).closest(".ui-menu-item"),
-					    target = $(event.currentTarget);
-
-					// Ignore bubbled events on parent items, see #11641
-					if (actualTarget[0] !== target[0]) {
-						return;
-					}
-
-					// Remove ui-state-active class from siblings of the newly focused menu item
-					// to avoid a jump caused by adjacent elements both having a class with a border
-					this._removeClass(target.siblings().children(".ui-state-active"), null, "ui-state-active");
-					this.focus(event, target);
-				},
-				mouseleave: "collapseAll",
-				"mouseleave .ui-menu": "collapseAll",
-				focus: function focus(event, keepActiveItem) {
-
-					// If there's already an active item, keep it active
-					// If not, activate the first item
-					var item = this.active || this.element.find(this.options.items).eq(0);
-
-					if (!keepActiveItem) {
-						this.focus(event, item);
-					}
-				},
-				blur: function blur(event) {
-					this._delay(function () {
-						var notContained = !$.contains(this.element[0], $.ui.safeActiveElement(this.document[0]));
-						if (notContained) {
-							this.collapseAll(event);
-						}
-					});
-				},
-				keydown: "_keydown"
-			});
-
-			this.refresh();
-
-			// Clicks outside of a menu collapse any open menus
-			this._on(this.document, {
-				click: function click(event) {
-					if (this._closeOnDocumentClick(event)) {
-						this.collapseAll(event);
-					}
-
-					// Reset the mouseHandled flag
-					this.mouseHandled = false;
-				}
-			});
-		},
-
-		_destroy: function _destroy() {
-			var items = this.element.find(".ui-menu-item").removeAttr("role aria-disabled"),
-			    submenus = items.children(".ui-menu-item-wrapper").removeUniqueId().removeAttr("tabIndex role aria-haspopup");
-
-			// Destroy (sub)menus
-			this.element.removeAttr("aria-activedescendant").find(".ui-menu").addBack().removeAttr("role aria-labelledby aria-expanded aria-hidden aria-disabled " + "tabIndex").removeUniqueId().show();
-
-			submenus.children().each(function () {
-				var elem = $(this);
-				if (elem.data("ui-menu-submenu-caret")) {
-					elem.remove();
-				}
-			});
-		},
-
-		_keydown: function _keydown(event) {
-			var match,
-			    prev,
-			    character,
-			    skip,
-			    preventDefault = true;
-
-			switch (event.keyCode) {
-				case $.ui.keyCode.PAGE_UP:
-					this.previousPage(event);
-					break;
-				case $.ui.keyCode.PAGE_DOWN:
-					this.nextPage(event);
-					break;
-				case $.ui.keyCode.HOME:
-					this._move("first", "first", event);
-					break;
-				case $.ui.keyCode.END:
-					this._move("last", "last", event);
-					break;
-				case $.ui.keyCode.UP:
-					this.previous(event);
-					break;
-				case $.ui.keyCode.DOWN:
-					this.next(event);
-					break;
-				case $.ui.keyCode.LEFT:
-					this.collapse(event);
-					break;
-				case $.ui.keyCode.RIGHT:
-					if (this.active && !this.active.is(".ui-state-disabled")) {
-						this.expand(event);
-					}
-					break;
-				case $.ui.keyCode.ENTER:
-				case $.ui.keyCode.SPACE:
-					this._activate(event);
-					break;
-				case $.ui.keyCode.ESCAPE:
-					this.collapse(event);
-					break;
-				default:
-					preventDefault = false;
-					prev = this.previousFilter || "";
-					skip = false;
-
-					// Support number pad values
-					character = event.keyCode >= 96 && event.keyCode <= 105 ? (event.keyCode - 96).toString() : String.fromCharCode(event.keyCode);
-
-					clearTimeout(this.filterTimer);
-
-					if (character === prev) {
-						skip = true;
-					} else {
-						character = prev + character;
-					}
-
-					match = this._filterMenuItems(character);
-					match = skip && match.index(this.active.next()) !== -1 ? this.active.nextAll(".ui-menu-item") : match;
-
-					// If no matches on the current filter, reset to the last character pressed
-					// to move down the menu to the first item that starts with that character
-					if (!match.length) {
-						character = String.fromCharCode(event.keyCode);
-						match = this._filterMenuItems(character);
-					}
-
-					if (match.length) {
-						this.focus(event, match);
-						this.previousFilter = character;
-						this.filterTimer = this._delay(function () {
-							delete this.previousFilter;
-						}, 1000);
-					} else {
-						delete this.previousFilter;
-					}
-			}
-
-			if (preventDefault) {
-				event.preventDefault();
-			}
-		},
-
-		_activate: function _activate(event) {
-			if (this.active && !this.active.is(".ui-state-disabled")) {
-				if (this.active.children("[aria-haspopup='true']").length) {
-					this.expand(event);
-				} else {
-					this.select(event);
-				}
-			}
-		},
-
-		refresh: function refresh() {
-			var menus,
-			    items,
-			    newSubmenus,
-			    newItems,
-			    newWrappers,
-			    that = this,
-			    icon = this.options.icons.submenu,
-			    submenus = this.element.find(this.options.menus);
-
-			this._toggleClass("ui-menu-icons", null, !!this.element.find(".ui-icon").length);
-
-			// Initialize nested menus
-			newSubmenus = submenus.filter(":not(.ui-menu)").hide().attr({
-				role: this.options.role,
-				"aria-hidden": "true",
-				"aria-expanded": "false"
-			}).each(function () {
-				var menu = $(this),
-				    item = menu.prev(),
-				    submenuCaret = $("<span>").data("ui-menu-submenu-caret", true);
-
-				that._addClass(submenuCaret, "ui-menu-icon", "ui-icon " + icon);
-				item.attr("aria-haspopup", "true").prepend(submenuCaret);
-				menu.attr("aria-labelledby", item.attr("id"));
-			});
-
-			this._addClass(newSubmenus, "ui-menu", "ui-widget ui-widget-content ui-front");
-
-			menus = submenus.add(this.element);
-			items = menus.find(this.options.items);
-
-			// Initialize menu-items containing spaces and/or dashes only as dividers
-			items.not(".ui-menu-item").each(function () {
-				var item = $(this);
-				if (that._isDivider(item)) {
-					that._addClass(item, "ui-menu-divider", "ui-widget-content");
-				}
-			});
-
-			// Don't refresh list items that are already adapted
-			newItems = items.not(".ui-menu-item, .ui-menu-divider");
-			newWrappers = newItems.children().not(".ui-menu").uniqueId().attr({
-				tabIndex: -1,
-				role: this._itemRole()
-			});
-			this._addClass(newItems, "ui-menu-item")._addClass(newWrappers, "ui-menu-item-wrapper");
-
-			// Add aria-disabled attribute to any disabled menu item
-			items.filter(".ui-state-disabled").attr("aria-disabled", "true");
-
-			// If the active item has been removed, blur the menu
-			if (this.active && !$.contains(this.element[0], this.active[0])) {
-				this.blur();
-			}
-		},
-
-		_itemRole: function _itemRole() {
-			return {
-				menu: "menuitem",
-				listbox: "option"
-			}[this.options.role];
-		},
-
-		_setOption: function _setOption(key, value) {
-			if (key === "icons") {
-				var icons = this.element.find(".ui-menu-icon");
-				this._removeClass(icons, null, this.options.icons.submenu)._addClass(icons, null, value.submenu);
-			}
-			this._super(key, value);
-		},
-
-		_setOptionDisabled: function _setOptionDisabled(value) {
-			this._super(value);
-
-			this.element.attr("aria-disabled", String(value));
-			this._toggleClass(null, "ui-state-disabled", !!value);
-		},
-
-		focus: function focus(event, item) {
-			var nested, focused, activeParent;
-			this.blur(event, event && event.type === "focus");
-
-			this._scrollIntoView(item);
-
-			this.active = item.first();
-
-			focused = this.active.children(".ui-menu-item-wrapper");
-			this._addClass(focused, null, "ui-state-active");
-
-			// Only update aria-activedescendant if there's a role
-			// otherwise we assume focus is managed elsewhere
-			if (this.options.role) {
-				this.element.attr("aria-activedescendant", focused.attr("id"));
-			}
-
-			// Highlight active parent menu item, if any
-			activeParent = this.active.parent().closest(".ui-menu-item").children(".ui-menu-item-wrapper");
-			this._addClass(activeParent, null, "ui-state-active");
-
-			if (event && event.type === "keydown") {
-				this._close();
-			} else {
-				this.timer = this._delay(function () {
-					this._close();
-				}, this.delay);
-			}
-
-			nested = item.children(".ui-menu");
-			if (nested.length && event && /^mouse/.test(event.type)) {
-				this._startOpening(nested);
-			}
-			this.activeMenu = item.parent();
-
-			this._trigger("focus", event, { item: item });
-		},
-
-		_scrollIntoView: function _scrollIntoView(item) {
-			var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
-			if (this._hasScroll()) {
-				borderTop = parseFloat($.css(this.activeMenu[0], "borderTopWidth")) || 0;
-				paddingTop = parseFloat($.css(this.activeMenu[0], "paddingTop")) || 0;
-				offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
-				scroll = this.activeMenu.scrollTop();
-				elementHeight = this.activeMenu.height();
-				itemHeight = item.outerHeight();
-
-				if (offset < 0) {
-					this.activeMenu.scrollTop(scroll + offset);
-				} else if (offset + itemHeight > elementHeight) {
-					this.activeMenu.scrollTop(scroll + offset - elementHeight + itemHeight);
-				}
-			}
-		},
-
-		blur: function blur(event, fromFocus) {
-			if (!fromFocus) {
-				clearTimeout(this.timer);
-			}
-
-			if (!this.active) {
-				return;
-			}
-
-			this._removeClass(this.active.children(".ui-menu-item-wrapper"), null, "ui-state-active");
-
-			this._trigger("blur", event, { item: this.active });
-			this.active = null;
-		},
-
-		_startOpening: function _startOpening(submenu) {
-			clearTimeout(this.timer);
-
-			// Don't open if already open fixes a Firefox bug that caused a .5 pixel
-			// shift in the submenu position when mousing over the caret icon
-			if (submenu.attr("aria-hidden") !== "true") {
-				return;
-			}
-
-			this.timer = this._delay(function () {
-				this._close();
-				this._open(submenu);
-			}, this.delay);
-		},
-
-		_open: function _open(submenu) {
-			var position = $.extend({
-				of: this.active
-			}, this.options.position);
-
-			clearTimeout(this.timer);
-			this.element.find(".ui-menu").not(submenu.parents(".ui-menu")).hide().attr("aria-hidden", "true");
-
-			submenu.show().removeAttr("aria-hidden").attr("aria-expanded", "true").position(position);
-		},
-
-		collapseAll: function collapseAll(event, all) {
-			clearTimeout(this.timer);
-			this.timer = this._delay(function () {
-
-				// If we were passed an event, look for the submenu that contains the event
-				var currentMenu = all ? this.element : $(event && event.target).closest(this.element.find(".ui-menu"));
-
-				// If we found no valid submenu ancestor, use the main menu to close all
-				// sub menus anyway
-				if (!currentMenu.length) {
-					currentMenu = this.element;
-				}
-
-				this._close(currentMenu);
-
-				this.blur(event);
-
-				// Work around active item staying active after menu is blurred
-				this._removeClass(currentMenu.find(".ui-state-active"), null, "ui-state-active");
-
-				this.activeMenu = currentMenu;
-			}, this.delay);
-		},
-
-		// With no arguments, closes the currently active menu - if nothing is active
-		// it closes all menus.  If passed an argument, it will search for menus BELOW
-		_close: function _close(startMenu) {
-			if (!startMenu) {
-				startMenu = this.active ? this.active.parent() : this.element;
-			}
-
-			startMenu.find(".ui-menu").hide().attr("aria-hidden", "true").attr("aria-expanded", "false");
-		},
-
-		_closeOnDocumentClick: function _closeOnDocumentClick(event) {
-			return !$(event.target).closest(".ui-menu").length;
-		},
-
-		_isDivider: function _isDivider(item) {
-
-			// Match hyphen, em dash, en dash
-			return !/[^\-\u2014\u2013\s]/.test(item.text());
-		},
-
-		collapse: function collapse(event) {
-			var newItem = this.active && this.active.parent().closest(".ui-menu-item", this.element);
-			if (newItem && newItem.length) {
-				this._close();
-				this.focus(event, newItem);
-			}
-		},
-
-		expand: function expand(event) {
-			var newItem = this.active && this.active.children(".ui-menu ").find(this.options.items).first();
-
-			if (newItem && newItem.length) {
-				this._open(newItem.parent());
-
-				// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
-				this._delay(function () {
-					this.focus(event, newItem);
-				});
-			}
-		},
-
-		next: function next(event) {
-			this._move("next", "first", event);
-		},
-
-		previous: function previous(event) {
-			this._move("prev", "last", event);
-		},
-
-		isFirstItem: function isFirstItem() {
-			return this.active && !this.active.prevAll(".ui-menu-item").length;
-		},
-
-		isLastItem: function isLastItem() {
-			return this.active && !this.active.nextAll(".ui-menu-item").length;
-		},
-
-		_move: function _move(direction, filter, event) {
-			var next;
-			if (this.active) {
-				if (direction === "first" || direction === "last") {
-					next = this.active[direction === "first" ? "prevAll" : "nextAll"](".ui-menu-item").eq(-1);
-				} else {
-					next = this.active[direction + "All"](".ui-menu-item").eq(0);
-				}
-			}
-			if (!next || !next.length || !this.active) {
-				next = this.activeMenu.find(this.options.items)[filter]();
-			}
-
-			this.focus(event, next);
-		},
-
-		nextPage: function nextPage(event) {
-			var item, base, height;
-
-			if (!this.active) {
-				this.next(event);
-				return;
-			}
-			if (this.isLastItem()) {
-				return;
-			}
-			if (this._hasScroll()) {
-				base = this.active.offset().top;
-				height = this.element.height();
-				this.active.nextAll(".ui-menu-item").each(function () {
-					item = $(this);
-					return item.offset().top - base - height < 0;
-				});
-
-				this.focus(event, item);
-			} else {
-				this.focus(event, this.activeMenu.find(this.options.items)[!this.active ? "first" : "last"]());
-			}
-		},
-
-		previousPage: function previousPage(event) {
-			var item, base, height;
-			if (!this.active) {
-				this.next(event);
-				return;
-			}
-			if (this.isFirstItem()) {
-				return;
-			}
-			if (this._hasScroll()) {
-				base = this.active.offset().top;
-				height = this.element.height();
-				this.active.prevAll(".ui-menu-item").each(function () {
-					item = $(this);
-					return item.offset().top - base + height > 0;
-				});
-
-				this.focus(event, item);
-			} else {
-				this.focus(event, this.activeMenu.find(this.options.items).first());
-			}
-		},
-
-		_hasScroll: function _hasScroll() {
-			return this.element.outerHeight() < this.element.prop("scrollHeight");
-		},
-
-		select: function select(event) {
-
-			// TODO: It should never be possible to not have an active item at this
-			// point, but the tests don't trigger mouseenter before click.
-			this.active = this.active || $(event.target).closest(".ui-menu-item");
-			var ui = { item: this.active };
-			if (!this.active.has(".ui-menu").length) {
-				this.collapseAll(event, true);
-			}
-			this._trigger("select", event, ui);
-		},
-
-		_filterMenuItems: function _filterMenuItems(character) {
-			var escapedCharacter = character.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"),
-			    regex = new RegExp("^" + escapedCharacter, "i");
-
-			return this.activeMenu.find(this.options.items)
-
-			// Only match on items, not dividers or other content (#10571)
-			.filter(".ui-menu-item").filter(function () {
-				return regex.test($.trim($(this).children(".ui-menu-item-wrapper").text()));
-			});
-		}
-	});
-});
 
 /***/ })
 /******/ ]);

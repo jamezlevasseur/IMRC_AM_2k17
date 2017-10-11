@@ -262,7 +262,9 @@ class IAM {
 		$this->loader->add_action('wp_ajax_new_res_email_change', 'Settings_Page', 'new_res_email_change');
 		$this->loader->add_action('wp_ajax_late_res_admin_email_change', 'Settings_Page', 'late_res_admin_email_change');
 		$this->loader->add_action('wp_ajax_late_res_user_email_change', 'Settings_Page', 'late_res_user_email_change');
-		$this->loader->add_action('wp_ajax_test_email', 'Settings_Page', 'test_email');
+		$this->loader->add_action('wp_ajax_new_res_email_test', 'Settings_Page', 'new_res_email_test');
+		$this->loader->add_action('wp_ajax_late_res_admin_email_test', 'Settings_Page', 'late_res_admin_email_test');
+		$this->loader->add_action('wp_ajax_late_res_user_email_test', 'Settings_Page', 'late_res_user_email_test');
 		$this->loader->add_action('wp_ajax_update_facility_schedule', 'Settings_Page', 'update_facility_schedule');
 		$this->loader->add_action('wp_ajax_admin_get_irregular_hours', 'Settings_Page', 'admin_get_irregular_hours');
 		$this->loader->add_action('wp_ajax_admin_update_irregular_hours', 'Settings_Page', 'admin_update_irregular_hours');
