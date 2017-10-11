@@ -218,7 +218,7 @@ export default class SettingsAdmin {
       $.ajax({
         url: ajaxurl,
         type: 'POST',
-        data: {action: 'admin_update_irregular_hours', facility:that.facilityName, events: newEvents},
+        data: {action: 'admin_update_irregular_hours', facility:that.facilityName, events: newEvents, to_delete: that.irregularCal.eventsToDelete},
         success: function (data) {
           handleServerResponse(data);
           submissionEnd();

@@ -384,6 +384,43 @@ class Settings_Page
         return $html_string;
     }
 
+    public static function admin_get_irregular_hours()
+    {
+        global $wpdb;
+        $key = $_GET['facility'].'_irregular_hours_event';
+        $key = str_replace(' ', '_', $key);
+        $ih_results = $wpdb->get_results("SELECT * FROM ".IAM_META_TABLE." WHERE Meta_Key='$key'");
+        $ret = [];
+        foreach ($ih_results as $row) {
+            $obj = json_decode($row->Meta_Value);
+            $obj->nid = IAM_Sec::iamEncrypt($row->Meta_ID);
+            $ret[] = $obj;
+        }
+        //no respond for fullcal
+        echo json_encode($ret);
+        exit;
+    }
+
+    public static function admin_update_irregular_hours()
+    {
+        global $wpdb;
+        $events = $_POST['events'];
+        $key = IAM_Sec::textfield_cleaner($_POST['facility']).'_irregular_hours_event';
+        $key = str_replace(' ', '_', $key);
+        foreach ($events as $k => $value) {
+            $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",$key,json_encode($value)));
+        }
+
+        foreach ($_POST['to_delete'] as $encryptedID) {
+          $id = IAM_Sec::iamDecrypt($encryptedID);
+          if (!is_numeric($id))
+              iam_throw_error(INVALID_INPUT_EXCEPTION);
+          $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_META_TABLE." WHERE Meta_ID=%d",$id));
+        }
+
+        iam_respond(SUCCESS);
+    }
+
     public static function make_timepicker($time_string='12:00 am',$class='')
     {
       if (empty($time_string))
