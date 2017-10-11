@@ -89,6 +89,9 @@ class IAM_Cal
 					$title;
 					if ($is_admin) {
 						$uinfo = $wpdb->get_results($wpdb->prepare("SELECT WP_ID,WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$row->IAM_ID));
+						if (empty($uinfo)) {
+							continue;
+						}
 						$title = $uinfo[0]->WP_Username;
 						$wp_id = $uinfo[0]->WP_ID;
 						$email = $wpdb->get_results($wpdb->prepare("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login=%s",$title))[0]->user_email;

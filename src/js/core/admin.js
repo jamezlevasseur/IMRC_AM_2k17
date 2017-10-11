@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import 'jquery-ui/ui/widgets/autocomplete';
 
 import { rStr, isEmail, getSize } from '../core/utils';
 import { publicDebug, debugWarn } from '../core/debug';
@@ -6,7 +7,6 @@ import { publicDebug, debugWarn } from '../core/debug';
 import { itemNameListener, maxLengthListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
-import { ERinvalidTimePrompt, eventFallsOnWeekend, eventIsLongerThan } from '../module/cal';
 import { overridePrompt } from '../module/override';
 import { initCSVButtonListener, initCSVAJAXButtonListener, initSearchListener } from '../module/uifunc';
 
@@ -18,6 +18,8 @@ import SettingsAdmin from '../page/settingsadmin';
 	 $(function () {
 			//global vars
 			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false, releventResEventStart = null;
+
+			var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
 
 			var debugSuccess = function() {
 				$('#debug-success').removeClass('iam-ninja');
@@ -851,6 +853,7 @@ import SettingsAdmin from '../page/settingsadmin';
 			}
 
 			var initTagAutoCompleteListener = function () {
+
 				//jquery ui code from http://jqueryui.com/autocomplete/#multiple
 			    function split( val ) {
 			      return val.split( /,\s*/ );
@@ -925,6 +928,7 @@ import SettingsAdmin from '../page/settingsadmin';
 
 				var initCheckinCheckout = function () {
 						userEmails = $('.iam-on-load-data').data('users').split(',');
+						console.log(userEmails)
 						$('.iam-er-user-emails').autocomplete({
 				      source: userEmails
 				    });
@@ -1825,6 +1829,21 @@ import SettingsAdmin from '../page/settingsadmin';
 				});
 			}
 
+			var eventFallsOnWeekend = function (e) {
+				let dayOfWeekStart = e.start.format('ddd').toLowerCase();
+				let dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+				//for now it ends at midnight of the following day
+				return (dayOfWeekStart=='sat' || dayOfWeekStart=='sun'
+						|| dayOfWeekEnd=='sun' || dayOfWeekEnd=='mon');
+			}
+
+			var eventIsLongerThan = function (e, days) {
+				let start = moment( e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
+				let end = moment( e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
+				return end.diff(start, 'days') > days;
+			}
+
 			//pricing wrap functions
 			var initNewMaterialButtonListener = function () {
 				$.ajax({
@@ -2086,9 +2105,7 @@ import SettingsAdmin from '../page/settingsadmin';
 				itemNameListener($('#iam-new-form #name'));
 				itemNameListener($('#iam-update-form #name'));
 				updateSearchOnLoad();
-				if ($('.iam-er').length>0) {
-					initCheckinCheckout();
-				}
+				initCheckinCheckout();
 				initCSVAJAXButtonListener('admin_equipment_csv');
 				$(document).tooltip();
 				findItemAgain($('#iam-equipment-list'));

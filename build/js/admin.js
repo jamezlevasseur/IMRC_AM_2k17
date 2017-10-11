@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 146);
+/******/ 	return __webpack_require__(__webpack_require__.s = 145);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -14300,6 +14300,35 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.submissionEnd = exports.submissionStart = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var submissionStart = function submissionStart() {
+  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
+};
+
+var submissionEnd = function submissionEnd() {
+  (0, _jquery2.default)('.iam-loading-anim').remove();
+};
+
+exports.submissionStart = submissionStart;
+exports.submissionEnd = submissionEnd;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
 
 var _jquery = __webpack_require__(1);
@@ -14410,7 +14439,7 @@ exports.detectIE = detectIE;
 exports.doError = doError;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15123,7 +15152,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15163,35 +15192,6 @@ var handleServerError = function handleServerError(e, err) {
 
 exports.handleServerResponse = handleServerResponse;
 exports.handleServerError = handleServerError;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.submissionEnd = exports.submissionStart = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var submissionStart = function submissionStart() {
-  (0, _jquery2.default)('body').append('<div class="iam-loading-anim"><div class="iam-loading-bg"></div></div>');
-};
-
-var submissionEnd = function submissionEnd() {
-  (0, _jquery2.default)('.iam-loading-anim').remove();
-};
-
-exports.submissionStart = submissionStart;
-exports.submissionEnd = submissionEnd;
 
 /***/ }),
 /* 7 */
@@ -15239,9 +15239,9 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _serverresponse = __webpack_require__(5);
+var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(6);
+var _userfeedback = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15351,7 +15351,7 @@ __webpack_require__(127);
 
 __webpack_require__(128);
 
-var _userfeedback = __webpack_require__(6);
+var _userfeedback = __webpack_require__(3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -27906,7 +27906,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -28115,7 +28115,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -28221,7 +28221,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(136), __webpack_require__(129), __webpack_require__(131), __webpack_require__(130), __webpack_require__(137), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(136), __webpack_require__(129), __webpack_require__(131), __webpack_require__(130), __webpack_require__(137), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -29482,7 +29482,7 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(4);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43485,8 +43485,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 138 */,
-/* 139 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43517,7 +43516,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 140 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43572,7 +43571,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 141 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43670,11 +43669,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
+/* 141 */,
 /* 142 */,
 /* 143 */,
 /* 144 */,
-/* 145 */,
-/* 146 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43686,27 +43685,27 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+__webpack_require__(161);
+
+var _utils = __webpack_require__(4);
 
 var _debug = __webpack_require__(132);
 
 var _textfieldlisteners = __webpack_require__(126);
 
-var _serverresponse = __webpack_require__(5);
+var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(6);
+var _userfeedback = __webpack_require__(3);
 
-var _cal = __webpack_require__(9);
-
-var _override = __webpack_require__(147);
+var _override = __webpack_require__(146);
 
 var _uifunc = __webpack_require__(8);
 
-var _useradmin = __webpack_require__(160);
+var _useradmin = __webpack_require__(159);
 
 var _useradmin2 = _interopRequireDefault(_useradmin);
 
-var _settingsadmin = __webpack_require__(161);
+var _settingsadmin = __webpack_require__(160);
 
 var _settingsadmin2 = _interopRequireDefault(_settingsadmin);
 
@@ -43738,6 +43737,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    comparableTags,
 		    didLoadAllRes = false,
 		    releventResEventStart = null;
+
+		var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
 
 		var debugSuccess = function debugSuccess() {
 			$('#debug-success').removeClass('iam-ninja');
@@ -44554,6 +44555,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 
 		var initTagAutoCompleteListener = function initTagAutoCompleteListener() {
+
 			//jquery ui code from http://jqueryui.com/autocomplete/#multiple
 			function split(val) {
 				return val.split(/,\s*/);
@@ -44624,6 +44626,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		var initCheckinCheckout = function initCheckinCheckout() {
 			userEmails = $('.iam-on-load-data').data('users').split(',');
+			console.log(userEmails);
 			$('.iam-er-user-emails').autocomplete({
 				source: userEmails
 			});
@@ -44845,10 +44848,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						initContextMenu('rental');
 					},
 					eventDrop: function eventDrop(event, d, revert) {
-						if ((0, _cal.eventFallsOnWeekend)(event)) {
+						if (eventFallsOnWeekend(event)) {
 							(0, _override.overridePrompt)({
 								title: 'Confirm Override',
-								body: _cal.ERinvalidTimePrompt,
+								body: ERinvalidTimePrompt,
 								cancel: function cancel() {
 									revert();
 								},
@@ -44861,10 +44864,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						}
 					},
 					eventResize: function eventResize(event, d, revert, jsevent) {
-						if ((0, _cal.eventIsLongerThan)(event, parseInt(thisRentalDays) + 1)) {
+						if (eventIsLongerThan(event, parseInt(thisRentalDays) + 1)) {
 							(0, _override.overridePrompt)({
 								title: 'Confirm Override',
-								body: _cal.ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+								body: ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
 								cancel: function cancel() {
 									revert();
 								},
@@ -44877,7 +44880,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						}
 					},
 					eventReceive: function eventReceive(e) {
-						if ((0, _cal.eventFallsOnWeekend)(e)) {
+						if (eventFallsOnWeekend(e)) {
 							$('.iam-res-cal').fullCalendar('removeEvents', e._id);
 							return false;
 						}
@@ -45504,6 +45507,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		};
 
+		var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
+			var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+			var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+			//for now it ends at midnight of the following day
+			return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+		};
+
+		var eventIsLongerThan = function eventIsLongerThan(e, days) {
+			var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+			var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+			return end.diff(start, 'days') > days;
+		};
+
 		//pricing wrap functions
 		var initNewMaterialButtonListener = function initNewMaterialButtonListener() {
 			$.ajax({
@@ -45754,9 +45771,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			(0, _textfieldlisteners.itemNameListener)($('#iam-new-form #name'));
 			(0, _textfieldlisteners.itemNameListener)($('#iam-update-form #name'));
 			updateSearchOnLoad();
-			if ($('.iam-er').length > 0) {
-				initCheckinCheckout();
-			}
+			initCheckinCheckout();
 			(0, _uifunc.initCSVAJAXButtonListener)('admin_equipment_csv');
 			$(document).tooltip();
 			findItemAgain($('#iam-equipment-list'));
@@ -45870,7 +45885,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 147 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45887,7 +45902,7 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 __webpack_require__(127);
 
-__webpack_require__(148);
+__webpack_require__(147);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -45915,7 +45930,7 @@ function overridePrompt(args) {
 exports.overridePrompt = overridePrompt;
 
 /***/ }),
-/* 148 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45943,7 +45958,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(149), __webpack_require__(128), __webpack_require__(125), __webpack_require__(155), __webpack_require__(141), __webpack_require__(140), __webpack_require__(157), __webpack_require__(131), __webpack_require__(130), __webpack_require__(158), __webpack_require__(159), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(148), __webpack_require__(128), __webpack_require__(125), __webpack_require__(154), __webpack_require__(140), __webpack_require__(139), __webpack_require__(156), __webpack_require__(131), __webpack_require__(130), __webpack_require__(157), __webpack_require__(158), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -46815,7 +46830,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 149 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46849,7 +46864,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(150), __webpack_require__(151), __webpack_require__(140), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(149), __webpack_require__(150), __webpack_require__(139), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47200,7 +47215,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 150 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47228,7 +47243,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47496,7 +47511,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 151 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47525,7 +47540,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(139), __webpack_require__(152), __webpack_require__(154), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(138), __webpack_require__(151), __webpack_require__(153), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47782,7 +47797,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 152 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47806,7 +47821,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(153), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(152), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47863,7 +47878,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 153 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47893,7 +47908,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 154 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47917,7 +47932,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(139)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(138)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47964,7 +47979,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 155 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47992,7 +48007,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(156), __webpack_require__(129), __webpack_require__(2), __webpack_require__(4)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(125), __webpack_require__(155), __webpack_require__(129), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -49136,7 +49151,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 156 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49190,7 +49205,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 157 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49661,7 +49676,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 158 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49685,7 +49700,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(141)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(140)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -49706,7 +49721,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 159 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49765,7 +49780,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 160 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49781,11 +49796,11 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _serverresponse = __webpack_require__(5);
+var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(6);
+var _userfeedback = __webpack_require__(3);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(4);
 
 var _uifunc = __webpack_require__(8);
 
@@ -49945,7 +49960,7 @@ var UserAdmin = function () {
 exports.default = UserAdmin;
 
 /***/ }),
-/* 161 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49961,13 +49976,13 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-var _utils = __webpack_require__(3);
+var _utils = __webpack_require__(4);
 
 var _textfieldlisteners = __webpack_require__(126);
 
-var _serverresponse = __webpack_require__(5);
+var _serverresponse = __webpack_require__(6);
 
-var _userfeedback = __webpack_require__(6);
+var _userfeedback = __webpack_require__(3);
 
 var _cal = __webpack_require__(9);
 
@@ -50230,6 +50245,1304 @@ var SettingsAdmin = function () {
 }();
 
 exports.default = SettingsAdmin;
+
+/***/ }),
+/* 161 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Autocomplete 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Autocomplete
+//>>group: Widgets
+//>>description: Lists suggested words as the user is typing.
+//>>docs: http://api.jqueryui.com/autocomplete/
+//>>demos: http://jqueryui.com/autocomplete/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/autocomplete.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(162), __webpack_require__(139), __webpack_require__(156), __webpack_require__(131), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	$.widget("ui.autocomplete", {
+		version: "1.12.1",
+		defaultElement: "<input>",
+		options: {
+			appendTo: null,
+			autoFocus: false,
+			delay: 300,
+			minLength: 1,
+			position: {
+				my: "left top",
+				at: "left bottom",
+				collision: "none"
+			},
+			source: null,
+
+			// Callbacks
+			change: null,
+			close: null,
+			focus: null,
+			open: null,
+			response: null,
+			search: null,
+			select: null
+		},
+
+		requestIndex: 0,
+		pending: 0,
+
+		_create: function _create() {
+
+			// Some browsers only repeat keydown events, not keypress events,
+			// so we use the suppressKeyPress flag to determine if we've already
+			// handled the keydown event. #7269
+			// Unfortunately the code for & in keypress is the same as the up arrow,
+			// so we use the suppressKeyPressRepeat flag to avoid handling keypress
+			// events when we know the keydown event was used to modify the
+			// search term. #7799
+			var suppressKeyPress,
+			    suppressKeyPressRepeat,
+			    suppressInput,
+			    nodeName = this.element[0].nodeName.toLowerCase(),
+			    isTextarea = nodeName === "textarea",
+			    isInput = nodeName === "input";
+
+			// Textareas are always multi-line
+			// Inputs are always single-line, even if inside a contentEditable element
+			// IE also treats inputs as contentEditable
+			// All other element types are determined by whether or not they're contentEditable
+			this.isMultiLine = isTextarea || !isInput && this._isContentEditable(this.element);
+
+			this.valueMethod = this.element[isTextarea || isInput ? "val" : "text"];
+			this.isNewMenu = true;
+
+			this._addClass("ui-autocomplete-input");
+			this.element.attr("autocomplete", "off");
+
+			this._on(this.element, {
+				keydown: function keydown(event) {
+					if (this.element.prop("readOnly")) {
+						suppressKeyPress = true;
+						suppressInput = true;
+						suppressKeyPressRepeat = true;
+						return;
+					}
+
+					suppressKeyPress = false;
+					suppressInput = false;
+					suppressKeyPressRepeat = false;
+					var keyCode = $.ui.keyCode;
+					switch (event.keyCode) {
+						case keyCode.PAGE_UP:
+							suppressKeyPress = true;
+							this._move("previousPage", event);
+							break;
+						case keyCode.PAGE_DOWN:
+							suppressKeyPress = true;
+							this._move("nextPage", event);
+							break;
+						case keyCode.UP:
+							suppressKeyPress = true;
+							this._keyEvent("previous", event);
+							break;
+						case keyCode.DOWN:
+							suppressKeyPress = true;
+							this._keyEvent("next", event);
+							break;
+						case keyCode.ENTER:
+
+							// when menu is open and has focus
+							if (this.menu.active) {
+
+								// #6055 - Opera still allows the keypress to occur
+								// which causes forms to submit
+								suppressKeyPress = true;
+								event.preventDefault();
+								this.menu.select(event);
+							}
+							break;
+						case keyCode.TAB:
+							if (this.menu.active) {
+								this.menu.select(event);
+							}
+							break;
+						case keyCode.ESCAPE:
+							if (this.menu.element.is(":visible")) {
+								if (!this.isMultiLine) {
+									this._value(this.term);
+								}
+								this.close(event);
+
+								// Different browsers have different default behavior for escape
+								// Single press can mean undo or clear
+								// Double press in IE means clear the whole form
+								event.preventDefault();
+							}
+							break;
+						default:
+							suppressKeyPressRepeat = true;
+
+							// search timeout should be triggered before the input value is changed
+							this._searchTimeout(event);
+							break;
+					}
+				},
+				keypress: function keypress(event) {
+					if (suppressKeyPress) {
+						suppressKeyPress = false;
+						if (!this.isMultiLine || this.menu.element.is(":visible")) {
+							event.preventDefault();
+						}
+						return;
+					}
+					if (suppressKeyPressRepeat) {
+						return;
+					}
+
+					// Replicate some key handlers to allow them to repeat in Firefox and Opera
+					var keyCode = $.ui.keyCode;
+					switch (event.keyCode) {
+						case keyCode.PAGE_UP:
+							this._move("previousPage", event);
+							break;
+						case keyCode.PAGE_DOWN:
+							this._move("nextPage", event);
+							break;
+						case keyCode.UP:
+							this._keyEvent("previous", event);
+							break;
+						case keyCode.DOWN:
+							this._keyEvent("next", event);
+							break;
+					}
+				},
+				input: function input(event) {
+					if (suppressInput) {
+						suppressInput = false;
+						event.preventDefault();
+						return;
+					}
+					this._searchTimeout(event);
+				},
+				focus: function focus() {
+					this.selectedItem = null;
+					this.previous = this._value();
+				},
+				blur: function blur(event) {
+					if (this.cancelBlur) {
+						delete this.cancelBlur;
+						return;
+					}
+
+					clearTimeout(this.searching);
+					this.close(event);
+					this._change(event);
+				}
+			});
+
+			this._initSource();
+			this.menu = $("<ul>").appendTo(this._appendTo()).menu({
+
+				// disable ARIA support, the live region takes care of that
+				role: null
+			}).hide().menu("instance");
+
+			this._addClass(this.menu.element, "ui-autocomplete", "ui-front");
+			this._on(this.menu.element, {
+				mousedown: function mousedown(event) {
+
+					// prevent moving focus out of the text field
+					event.preventDefault();
+
+					// IE doesn't prevent moving focus even with event.preventDefault()
+					// so we set a flag to know when we should ignore the blur event
+					this.cancelBlur = true;
+					this._delay(function () {
+						delete this.cancelBlur;
+
+						// Support: IE 8 only
+						// Right clicking a menu item or selecting text from the menu items will
+						// result in focus moving out of the input. However, we've already received
+						// and ignored the blur event because of the cancelBlur flag set above. So
+						// we restore focus to ensure that the menu closes properly based on the user's
+						// next actions.
+						if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
+							this.element.trigger("focus");
+						}
+					});
+				},
+				menufocus: function menufocus(event, ui) {
+					var label, item;
+
+					// support: Firefox
+					// Prevent accidental activation of menu items in Firefox (#7024 #9118)
+					if (this.isNewMenu) {
+						this.isNewMenu = false;
+						if (event.originalEvent && /^mouse/.test(event.originalEvent.type)) {
+							this.menu.blur();
+
+							this.document.one("mousemove", function () {
+								$(event.target).trigger(event.originalEvent);
+							});
+
+							return;
+						}
+					}
+
+					item = ui.item.data("ui-autocomplete-item");
+					if (false !== this._trigger("focus", event, { item: item })) {
+
+						// use value to match what will end up in the input, if it was a key event
+						if (event.originalEvent && /^key/.test(event.originalEvent.type)) {
+							this._value(item.value);
+						}
+					}
+
+					// Announce the value in the liveRegion
+					label = ui.item.attr("aria-label") || item.value;
+					if (label && $.trim(label).length) {
+						this.liveRegion.children().hide();
+						$("<div>").text(label).appendTo(this.liveRegion);
+					}
+				},
+				menuselect: function menuselect(event, ui) {
+					var item = ui.item.data("ui-autocomplete-item"),
+					    previous = this.previous;
+
+					// Only trigger when focus was lost (click on menu)
+					if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
+						this.element.trigger("focus");
+						this.previous = previous;
+
+						// #6109 - IE triggers two focus events and the second
+						// is asynchronous, so we need to reset the previous
+						// term synchronously and asynchronously :-(
+						this._delay(function () {
+							this.previous = previous;
+							this.selectedItem = item;
+						});
+					}
+
+					if (false !== this._trigger("select", event, { item: item })) {
+						this._value(item.value);
+					}
+
+					// reset the term after the select event
+					// this allows custom select handling to work properly
+					this.term = this._value();
+
+					this.close(event);
+					this.selectedItem = item;
+				}
+			});
+
+			this.liveRegion = $("<div>", {
+				role: "status",
+				"aria-live": "assertive",
+				"aria-relevant": "additions"
+			}).appendTo(this.document[0].body);
+
+			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
+
+			// Turning off autocomplete prevents the browser from remembering the
+			// value when navigating through history, so we re-enable autocomplete
+			// if the page is unloaded before the widget is destroyed. #7790
+			this._on(this.window, {
+				beforeunload: function beforeunload() {
+					this.element.removeAttr("autocomplete");
+				}
+			});
+		},
+
+		_destroy: function _destroy() {
+			clearTimeout(this.searching);
+			this.element.removeAttr("autocomplete");
+			this.menu.element.remove();
+			this.liveRegion.remove();
+		},
+
+		_setOption: function _setOption(key, value) {
+			this._super(key, value);
+			if (key === "source") {
+				this._initSource();
+			}
+			if (key === "appendTo") {
+				this.menu.element.appendTo(this._appendTo());
+			}
+			if (key === "disabled" && value && this.xhr) {
+				this.xhr.abort();
+			}
+		},
+
+		_isEventTargetInWidget: function _isEventTargetInWidget(event) {
+			var menuElement = this.menu.element[0];
+
+			return event.target === this.element[0] || event.target === menuElement || $.contains(menuElement, event.target);
+		},
+
+		_closeOnClickOutside: function _closeOnClickOutside(event) {
+			if (!this._isEventTargetInWidget(event)) {
+				this.close();
+			}
+		},
+
+		_appendTo: function _appendTo() {
+			var element = this.options.appendTo;
+
+			if (element) {
+				element = element.jquery || element.nodeType ? $(element) : this.document.find(element).eq(0);
+			}
+
+			if (!element || !element[0]) {
+				element = this.element.closest(".ui-front, dialog");
+			}
+
+			if (!element.length) {
+				element = this.document[0].body;
+			}
+
+			return element;
+		},
+
+		_initSource: function _initSource() {
+			var array,
+			    url,
+			    that = this;
+			if ($.isArray(this.options.source)) {
+				array = this.options.source;
+				this.source = function (request, response) {
+					response($.ui.autocomplete.filter(array, request.term));
+				};
+			} else if (typeof this.options.source === "string") {
+				url = this.options.source;
+				this.source = function (request, response) {
+					if (that.xhr) {
+						that.xhr.abort();
+					}
+					that.xhr = $.ajax({
+						url: url,
+						data: request,
+						dataType: "json",
+						success: function success(data) {
+							response(data);
+						},
+						error: function error() {
+							response([]);
+						}
+					});
+				};
+			} else {
+				this.source = this.options.source;
+			}
+		},
+
+		_searchTimeout: function _searchTimeout(event) {
+			clearTimeout(this.searching);
+			this.searching = this._delay(function () {
+
+				// Search if the value has changed, or if the user retypes the same value (see #7434)
+				var equalValues = this.term === this._value(),
+				    menuVisible = this.menu.element.is(":visible"),
+				    modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+
+				if (!equalValues || equalValues && !menuVisible && !modifierKey) {
+					this.selectedItem = null;
+					this.search(null, event);
+				}
+			}, this.options.delay);
+		},
+
+		search: function search(value, event) {
+			value = value != null ? value : this._value();
+
+			// Always save the actual value, not the one passed as an argument
+			this.term = this._value();
+
+			if (value.length < this.options.minLength) {
+				return this.close(event);
+			}
+
+			if (this._trigger("search", event) === false) {
+				return;
+			}
+
+			return this._search(value);
+		},
+
+		_search: function _search(value) {
+			this.pending++;
+			this._addClass("ui-autocomplete-loading");
+			this.cancelSearch = false;
+
+			this.source({ term: value }, this._response());
+		},
+
+		_response: function _response() {
+			var index = ++this.requestIndex;
+
+			return $.proxy(function (content) {
+				if (index === this.requestIndex) {
+					this.__response(content);
+				}
+
+				this.pending--;
+				if (!this.pending) {
+					this._removeClass("ui-autocomplete-loading");
+				}
+			}, this);
+		},
+
+		__response: function __response(content) {
+			if (content) {
+				content = this._normalize(content);
+			}
+			this._trigger("response", null, { content: content });
+			if (!this.options.disabled && content && content.length && !this.cancelSearch) {
+				this._suggest(content);
+				this._trigger("open");
+			} else {
+
+				// use ._close() instead of .close() so we don't cancel future searches
+				this._close();
+			}
+		},
+
+		close: function close(event) {
+			this.cancelSearch = true;
+			this._close(event);
+		},
+
+		_close: function _close(event) {
+
+			// Remove the handler that closes the menu on outside clicks
+			this._off(this.document, "mousedown");
+
+			if (this.menu.element.is(":visible")) {
+				this.menu.element.hide();
+				this.menu.blur();
+				this.isNewMenu = true;
+				this._trigger("close", event);
+			}
+		},
+
+		_change: function _change(event) {
+			if (this.previous !== this._value()) {
+				this._trigger("change", event, { item: this.selectedItem });
+			}
+		},
+
+		_normalize: function _normalize(items) {
+
+			// assume all items have the right format when the first item is complete
+			if (items.length && items[0].label && items[0].value) {
+				return items;
+			}
+			return $.map(items, function (item) {
+				if (typeof item === "string") {
+					return {
+						label: item,
+						value: item
+					};
+				}
+				return $.extend({}, item, {
+					label: item.label || item.value,
+					value: item.value || item.label
+				});
+			});
+		},
+
+		_suggest: function _suggest(items) {
+			var ul = this.menu.element.empty();
+			this._renderMenu(ul, items);
+			this.isNewMenu = true;
+			this.menu.refresh();
+
+			// Size and position menu
+			ul.show();
+			this._resizeMenu();
+			ul.position($.extend({
+				of: this.element
+			}, this.options.position));
+
+			if (this.options.autoFocus) {
+				this.menu.next();
+			}
+
+			// Listen for interactions outside of the widget (#6642)
+			this._on(this.document, {
+				mousedown: "_closeOnClickOutside"
+			});
+		},
+
+		_resizeMenu: function _resizeMenu() {
+			var ul = this.menu.element;
+			ul.outerWidth(Math.max(
+
+			// Firefox wraps long text (possibly a rounding bug)
+			// so we add 1px to avoid the wrapping (#7513)
+			ul.width("").outerWidth() + 1, this.element.outerWidth()));
+		},
+
+		_renderMenu: function _renderMenu(ul, items) {
+			var that = this;
+			$.each(items, function (index, item) {
+				that._renderItemData(ul, item);
+			});
+		},
+
+		_renderItemData: function _renderItemData(ul, item) {
+			return this._renderItem(ul, item).data("ui-autocomplete-item", item);
+		},
+
+		_renderItem: function _renderItem(ul, item) {
+			return $("<li>").append($("<div>").text(item.label)).appendTo(ul);
+		},
+
+		_move: function _move(direction, event) {
+			if (!this.menu.element.is(":visible")) {
+				this.search(null, event);
+				return;
+			}
+			if (this.menu.isFirstItem() && /^previous/.test(direction) || this.menu.isLastItem() && /^next/.test(direction)) {
+
+				if (!this.isMultiLine) {
+					this._value(this.term);
+				}
+
+				this.menu.blur();
+				return;
+			}
+			this.menu[direction](event);
+		},
+
+		widget: function widget() {
+			return this.menu.element;
+		},
+
+		_value: function _value() {
+			return this.valueMethod.apply(this.element, arguments);
+		},
+
+		_keyEvent: function _keyEvent(keyEvent, event) {
+			if (!this.isMultiLine || this.menu.element.is(":visible")) {
+				this._move(keyEvent, event);
+
+				// Prevents moving cursor to beginning/end of the text field in some browsers
+				event.preventDefault();
+			}
+		},
+
+		// Support: Chrome <=50
+		// We should be able to just use this.element.prop( "isContentEditable" )
+		// but hidden elements always report false in Chrome.
+		// https://code.google.com/p/chromium/issues/detail?id=313082
+		_isContentEditable: function _isContentEditable(element) {
+			if (!element.length) {
+				return false;
+			}
+
+			var editable = element.prop("contentEditable");
+
+			if (editable === "inherit") {
+				return this._isContentEditable(element.parent());
+			}
+
+			return editable === "true";
+		}
+	});
+
+	$.extend($.ui.autocomplete, {
+		escapeRegex: function escapeRegex(value) {
+			return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+		},
+		filter: function filter(array, term) {
+			var matcher = new RegExp($.ui.autocomplete.escapeRegex(term), "i");
+			return $.grep(array, function (value) {
+				return matcher.test(value.label || value.value || value);
+			});
+		}
+	});
+
+	// Live region extension, adding a `messages` option
+	// NOTE: This is an experimental API. We are still investigating
+	// a full solution for string manipulation and internationalization.
+	$.widget("ui.autocomplete", $.ui.autocomplete, {
+		options: {
+			messages: {
+				noResults: "No search results.",
+				results: function results(amount) {
+					return amount + (amount > 1 ? " results are" : " result is") + " available, use up and down arrow keys to navigate.";
+				}
+			}
+		},
+
+		__response: function __response(content) {
+			var message;
+			this._superApply(arguments);
+			if (this.options.disabled || this.cancelSearch) {
+				return;
+			}
+			if (content && content.length) {
+				message = this.options.messages.results(content.length);
+			} else {
+				message = this.options.messages.noResults;
+			}
+			this.liveRegion.children().hide();
+			$("<div>").text(message).appendTo(this.liveRegion);
+		}
+	});
+
+	return $.ui.autocomplete;
+});
+
+/***/ }),
+/* 162 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Menu 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Menu
+//>>group: Widgets
+//>>description: Creates nestable menus.
+//>>docs: http://api.jqueryui.com/menu/
+//>>demos: http://jqueryui.com/menu/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/menu.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(139), __webpack_require__(156), __webpack_require__(131), __webpack_require__(158), __webpack_require__(2), __webpack_require__(5)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.widget("ui.menu", {
+		version: "1.12.1",
+		defaultElement: "<ul>",
+		delay: 300,
+		options: {
+			icons: {
+				submenu: "ui-icon-caret-1-e"
+			},
+			items: "> *",
+			menus: "ul",
+			position: {
+				my: "left top",
+				at: "right top"
+			},
+			role: "menu",
+
+			// Callbacks
+			blur: null,
+			focus: null,
+			select: null
+		},
+
+		_create: function _create() {
+			this.activeMenu = this.element;
+
+			// Flag used to prevent firing of the click handler
+			// as the event bubbles up through nested menus
+			this.mouseHandled = false;
+			this.element.uniqueId().attr({
+				role: this.options.role,
+				tabIndex: 0
+			});
+
+			this._addClass("ui-menu", "ui-widget ui-widget-content");
+			this._on({
+
+				// Prevent focus from sticking to links inside menu after clicking
+				// them (focus should always stay on UL during navigation).
+				"mousedown .ui-menu-item": function mousedownUiMenuItem(event) {
+					event.preventDefault();
+				},
+				"click .ui-menu-item": function clickUiMenuItem(event) {
+					var target = $(event.target);
+					var active = $($.ui.safeActiveElement(this.document[0]));
+					if (!this.mouseHandled && target.not(".ui-state-disabled").length) {
+						this.select(event);
+
+						// Only set the mouseHandled flag if the event will bubble, see #9469.
+						if (!event.isPropagationStopped()) {
+							this.mouseHandled = true;
+						}
+
+						// Open submenu on click
+						if (target.has(".ui-menu").length) {
+							this.expand(event);
+						} else if (!this.element.is(":focus") && active.closest(".ui-menu").length) {
+
+							// Redirect focus to the menu
+							this.element.trigger("focus", [true]);
+
+							// If the active item is on the top level, let it stay active.
+							// Otherwise, blur the active item since it is no longer visible.
+							if (this.active && this.active.parents(".ui-menu").length === 1) {
+								clearTimeout(this.timer);
+							}
+						}
+					}
+				},
+				"mouseenter .ui-menu-item": function mouseenterUiMenuItem(event) {
+
+					// Ignore mouse events while typeahead is active, see #10458.
+					// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
+					// is over an item in the menu
+					if (this.previousFilter) {
+						return;
+					}
+
+					var actualTarget = $(event.target).closest(".ui-menu-item"),
+					    target = $(event.currentTarget);
+
+					// Ignore bubbled events on parent items, see #11641
+					if (actualTarget[0] !== target[0]) {
+						return;
+					}
+
+					// Remove ui-state-active class from siblings of the newly focused menu item
+					// to avoid a jump caused by adjacent elements both having a class with a border
+					this._removeClass(target.siblings().children(".ui-state-active"), null, "ui-state-active");
+					this.focus(event, target);
+				},
+				mouseleave: "collapseAll",
+				"mouseleave .ui-menu": "collapseAll",
+				focus: function focus(event, keepActiveItem) {
+
+					// If there's already an active item, keep it active
+					// If not, activate the first item
+					var item = this.active || this.element.find(this.options.items).eq(0);
+
+					if (!keepActiveItem) {
+						this.focus(event, item);
+					}
+				},
+				blur: function blur(event) {
+					this._delay(function () {
+						var notContained = !$.contains(this.element[0], $.ui.safeActiveElement(this.document[0]));
+						if (notContained) {
+							this.collapseAll(event);
+						}
+					});
+				},
+				keydown: "_keydown"
+			});
+
+			this.refresh();
+
+			// Clicks outside of a menu collapse any open menus
+			this._on(this.document, {
+				click: function click(event) {
+					if (this._closeOnDocumentClick(event)) {
+						this.collapseAll(event);
+					}
+
+					// Reset the mouseHandled flag
+					this.mouseHandled = false;
+				}
+			});
+		},
+
+		_destroy: function _destroy() {
+			var items = this.element.find(".ui-menu-item").removeAttr("role aria-disabled"),
+			    submenus = items.children(".ui-menu-item-wrapper").removeUniqueId().removeAttr("tabIndex role aria-haspopup");
+
+			// Destroy (sub)menus
+			this.element.removeAttr("aria-activedescendant").find(".ui-menu").addBack().removeAttr("role aria-labelledby aria-expanded aria-hidden aria-disabled " + "tabIndex").removeUniqueId().show();
+
+			submenus.children().each(function () {
+				var elem = $(this);
+				if (elem.data("ui-menu-submenu-caret")) {
+					elem.remove();
+				}
+			});
+		},
+
+		_keydown: function _keydown(event) {
+			var match,
+			    prev,
+			    character,
+			    skip,
+			    preventDefault = true;
+
+			switch (event.keyCode) {
+				case $.ui.keyCode.PAGE_UP:
+					this.previousPage(event);
+					break;
+				case $.ui.keyCode.PAGE_DOWN:
+					this.nextPage(event);
+					break;
+				case $.ui.keyCode.HOME:
+					this._move("first", "first", event);
+					break;
+				case $.ui.keyCode.END:
+					this._move("last", "last", event);
+					break;
+				case $.ui.keyCode.UP:
+					this.previous(event);
+					break;
+				case $.ui.keyCode.DOWN:
+					this.next(event);
+					break;
+				case $.ui.keyCode.LEFT:
+					this.collapse(event);
+					break;
+				case $.ui.keyCode.RIGHT:
+					if (this.active && !this.active.is(".ui-state-disabled")) {
+						this.expand(event);
+					}
+					break;
+				case $.ui.keyCode.ENTER:
+				case $.ui.keyCode.SPACE:
+					this._activate(event);
+					break;
+				case $.ui.keyCode.ESCAPE:
+					this.collapse(event);
+					break;
+				default:
+					preventDefault = false;
+					prev = this.previousFilter || "";
+					skip = false;
+
+					// Support number pad values
+					character = event.keyCode >= 96 && event.keyCode <= 105 ? (event.keyCode - 96).toString() : String.fromCharCode(event.keyCode);
+
+					clearTimeout(this.filterTimer);
+
+					if (character === prev) {
+						skip = true;
+					} else {
+						character = prev + character;
+					}
+
+					match = this._filterMenuItems(character);
+					match = skip && match.index(this.active.next()) !== -1 ? this.active.nextAll(".ui-menu-item") : match;
+
+					// If no matches on the current filter, reset to the last character pressed
+					// to move down the menu to the first item that starts with that character
+					if (!match.length) {
+						character = String.fromCharCode(event.keyCode);
+						match = this._filterMenuItems(character);
+					}
+
+					if (match.length) {
+						this.focus(event, match);
+						this.previousFilter = character;
+						this.filterTimer = this._delay(function () {
+							delete this.previousFilter;
+						}, 1000);
+					} else {
+						delete this.previousFilter;
+					}
+			}
+
+			if (preventDefault) {
+				event.preventDefault();
+			}
+		},
+
+		_activate: function _activate(event) {
+			if (this.active && !this.active.is(".ui-state-disabled")) {
+				if (this.active.children("[aria-haspopup='true']").length) {
+					this.expand(event);
+				} else {
+					this.select(event);
+				}
+			}
+		},
+
+		refresh: function refresh() {
+			var menus,
+			    items,
+			    newSubmenus,
+			    newItems,
+			    newWrappers,
+			    that = this,
+			    icon = this.options.icons.submenu,
+			    submenus = this.element.find(this.options.menus);
+
+			this._toggleClass("ui-menu-icons", null, !!this.element.find(".ui-icon").length);
+
+			// Initialize nested menus
+			newSubmenus = submenus.filter(":not(.ui-menu)").hide().attr({
+				role: this.options.role,
+				"aria-hidden": "true",
+				"aria-expanded": "false"
+			}).each(function () {
+				var menu = $(this),
+				    item = menu.prev(),
+				    submenuCaret = $("<span>").data("ui-menu-submenu-caret", true);
+
+				that._addClass(submenuCaret, "ui-menu-icon", "ui-icon " + icon);
+				item.attr("aria-haspopup", "true").prepend(submenuCaret);
+				menu.attr("aria-labelledby", item.attr("id"));
+			});
+
+			this._addClass(newSubmenus, "ui-menu", "ui-widget ui-widget-content ui-front");
+
+			menus = submenus.add(this.element);
+			items = menus.find(this.options.items);
+
+			// Initialize menu-items containing spaces and/or dashes only as dividers
+			items.not(".ui-menu-item").each(function () {
+				var item = $(this);
+				if (that._isDivider(item)) {
+					that._addClass(item, "ui-menu-divider", "ui-widget-content");
+				}
+			});
+
+			// Don't refresh list items that are already adapted
+			newItems = items.not(".ui-menu-item, .ui-menu-divider");
+			newWrappers = newItems.children().not(".ui-menu").uniqueId().attr({
+				tabIndex: -1,
+				role: this._itemRole()
+			});
+			this._addClass(newItems, "ui-menu-item")._addClass(newWrappers, "ui-menu-item-wrapper");
+
+			// Add aria-disabled attribute to any disabled menu item
+			items.filter(".ui-state-disabled").attr("aria-disabled", "true");
+
+			// If the active item has been removed, blur the menu
+			if (this.active && !$.contains(this.element[0], this.active[0])) {
+				this.blur();
+			}
+		},
+
+		_itemRole: function _itemRole() {
+			return {
+				menu: "menuitem",
+				listbox: "option"
+			}[this.options.role];
+		},
+
+		_setOption: function _setOption(key, value) {
+			if (key === "icons") {
+				var icons = this.element.find(".ui-menu-icon");
+				this._removeClass(icons, null, this.options.icons.submenu)._addClass(icons, null, value.submenu);
+			}
+			this._super(key, value);
+		},
+
+		_setOptionDisabled: function _setOptionDisabled(value) {
+			this._super(value);
+
+			this.element.attr("aria-disabled", String(value));
+			this._toggleClass(null, "ui-state-disabled", !!value);
+		},
+
+		focus: function focus(event, item) {
+			var nested, focused, activeParent;
+			this.blur(event, event && event.type === "focus");
+
+			this._scrollIntoView(item);
+
+			this.active = item.first();
+
+			focused = this.active.children(".ui-menu-item-wrapper");
+			this._addClass(focused, null, "ui-state-active");
+
+			// Only update aria-activedescendant if there's a role
+			// otherwise we assume focus is managed elsewhere
+			if (this.options.role) {
+				this.element.attr("aria-activedescendant", focused.attr("id"));
+			}
+
+			// Highlight active parent menu item, if any
+			activeParent = this.active.parent().closest(".ui-menu-item").children(".ui-menu-item-wrapper");
+			this._addClass(activeParent, null, "ui-state-active");
+
+			if (event && event.type === "keydown") {
+				this._close();
+			} else {
+				this.timer = this._delay(function () {
+					this._close();
+				}, this.delay);
+			}
+
+			nested = item.children(".ui-menu");
+			if (nested.length && event && /^mouse/.test(event.type)) {
+				this._startOpening(nested);
+			}
+			this.activeMenu = item.parent();
+
+			this._trigger("focus", event, { item: item });
+		},
+
+		_scrollIntoView: function _scrollIntoView(item) {
+			var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
+			if (this._hasScroll()) {
+				borderTop = parseFloat($.css(this.activeMenu[0], "borderTopWidth")) || 0;
+				paddingTop = parseFloat($.css(this.activeMenu[0], "paddingTop")) || 0;
+				offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
+				scroll = this.activeMenu.scrollTop();
+				elementHeight = this.activeMenu.height();
+				itemHeight = item.outerHeight();
+
+				if (offset < 0) {
+					this.activeMenu.scrollTop(scroll + offset);
+				} else if (offset + itemHeight > elementHeight) {
+					this.activeMenu.scrollTop(scroll + offset - elementHeight + itemHeight);
+				}
+			}
+		},
+
+		blur: function blur(event, fromFocus) {
+			if (!fromFocus) {
+				clearTimeout(this.timer);
+			}
+
+			if (!this.active) {
+				return;
+			}
+
+			this._removeClass(this.active.children(".ui-menu-item-wrapper"), null, "ui-state-active");
+
+			this._trigger("blur", event, { item: this.active });
+			this.active = null;
+		},
+
+		_startOpening: function _startOpening(submenu) {
+			clearTimeout(this.timer);
+
+			// Don't open if already open fixes a Firefox bug that caused a .5 pixel
+			// shift in the submenu position when mousing over the caret icon
+			if (submenu.attr("aria-hidden") !== "true") {
+				return;
+			}
+
+			this.timer = this._delay(function () {
+				this._close();
+				this._open(submenu);
+			}, this.delay);
+		},
+
+		_open: function _open(submenu) {
+			var position = $.extend({
+				of: this.active
+			}, this.options.position);
+
+			clearTimeout(this.timer);
+			this.element.find(".ui-menu").not(submenu.parents(".ui-menu")).hide().attr("aria-hidden", "true");
+
+			submenu.show().removeAttr("aria-hidden").attr("aria-expanded", "true").position(position);
+		},
+
+		collapseAll: function collapseAll(event, all) {
+			clearTimeout(this.timer);
+			this.timer = this._delay(function () {
+
+				// If we were passed an event, look for the submenu that contains the event
+				var currentMenu = all ? this.element : $(event && event.target).closest(this.element.find(".ui-menu"));
+
+				// If we found no valid submenu ancestor, use the main menu to close all
+				// sub menus anyway
+				if (!currentMenu.length) {
+					currentMenu = this.element;
+				}
+
+				this._close(currentMenu);
+
+				this.blur(event);
+
+				// Work around active item staying active after menu is blurred
+				this._removeClass(currentMenu.find(".ui-state-active"), null, "ui-state-active");
+
+				this.activeMenu = currentMenu;
+			}, this.delay);
+		},
+
+		// With no arguments, closes the currently active menu - if nothing is active
+		// it closes all menus.  If passed an argument, it will search for menus BELOW
+		_close: function _close(startMenu) {
+			if (!startMenu) {
+				startMenu = this.active ? this.active.parent() : this.element;
+			}
+
+			startMenu.find(".ui-menu").hide().attr("aria-hidden", "true").attr("aria-expanded", "false");
+		},
+
+		_closeOnDocumentClick: function _closeOnDocumentClick(event) {
+			return !$(event.target).closest(".ui-menu").length;
+		},
+
+		_isDivider: function _isDivider(item) {
+
+			// Match hyphen, em dash, en dash
+			return !/[^\-\u2014\u2013\s]/.test(item.text());
+		},
+
+		collapse: function collapse(event) {
+			var newItem = this.active && this.active.parent().closest(".ui-menu-item", this.element);
+			if (newItem && newItem.length) {
+				this._close();
+				this.focus(event, newItem);
+			}
+		},
+
+		expand: function expand(event) {
+			var newItem = this.active && this.active.children(".ui-menu ").find(this.options.items).first();
+
+			if (newItem && newItem.length) {
+				this._open(newItem.parent());
+
+				// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
+				this._delay(function () {
+					this.focus(event, newItem);
+				});
+			}
+		},
+
+		next: function next(event) {
+			this._move("next", "first", event);
+		},
+
+		previous: function previous(event) {
+			this._move("prev", "last", event);
+		},
+
+		isFirstItem: function isFirstItem() {
+			return this.active && !this.active.prevAll(".ui-menu-item").length;
+		},
+
+		isLastItem: function isLastItem() {
+			return this.active && !this.active.nextAll(".ui-menu-item").length;
+		},
+
+		_move: function _move(direction, filter, event) {
+			var next;
+			if (this.active) {
+				if (direction === "first" || direction === "last") {
+					next = this.active[direction === "first" ? "prevAll" : "nextAll"](".ui-menu-item").eq(-1);
+				} else {
+					next = this.active[direction + "All"](".ui-menu-item").eq(0);
+				}
+			}
+			if (!next || !next.length || !this.active) {
+				next = this.activeMenu.find(this.options.items)[filter]();
+			}
+
+			this.focus(event, next);
+		},
+
+		nextPage: function nextPage(event) {
+			var item, base, height;
+
+			if (!this.active) {
+				this.next(event);
+				return;
+			}
+			if (this.isLastItem()) {
+				return;
+			}
+			if (this._hasScroll()) {
+				base = this.active.offset().top;
+				height = this.element.height();
+				this.active.nextAll(".ui-menu-item").each(function () {
+					item = $(this);
+					return item.offset().top - base - height < 0;
+				});
+
+				this.focus(event, item);
+			} else {
+				this.focus(event, this.activeMenu.find(this.options.items)[!this.active ? "first" : "last"]());
+			}
+		},
+
+		previousPage: function previousPage(event) {
+			var item, base, height;
+			if (!this.active) {
+				this.next(event);
+				return;
+			}
+			if (this.isFirstItem()) {
+				return;
+			}
+			if (this._hasScroll()) {
+				base = this.active.offset().top;
+				height = this.element.height();
+				this.active.prevAll(".ui-menu-item").each(function () {
+					item = $(this);
+					return item.offset().top - base + height > 0;
+				});
+
+				this.focus(event, item);
+			} else {
+				this.focus(event, this.activeMenu.find(this.options.items).first());
+			}
+		},
+
+		_hasScroll: function _hasScroll() {
+			return this.element.outerHeight() < this.element.prop("scrollHeight");
+		},
+
+		select: function select(event) {
+
+			// TODO: It should never be possible to not have an active item at this
+			// point, but the tests don't trigger mouseenter before click.
+			this.active = this.active || $(event.target).closest(".ui-menu-item");
+			var ui = { item: this.active };
+			if (!this.active.has(".ui-menu").length) {
+				this.collapseAll(event, true);
+			}
+			this._trigger("select", event, ui);
+		},
+
+		_filterMenuItems: function _filterMenuItems(character) {
+			var escapedCharacter = character.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"),
+			    regex = new RegExp("^" + escapedCharacter, "i");
+
+			return this.activeMenu.find(this.options.items)
+
+			// Only match on items, not dividers or other content (#10571)
+			.filter(".ui-menu-item").filter(function () {
+				return regex.test($.trim($(this).children(".ui-menu-item-wrapper").text()));
+			});
+		}
+	});
+});
 
 /***/ })
 /******/ ]);

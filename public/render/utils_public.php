@@ -27,7 +27,8 @@ class Utils_Public
 
     send_to_debug_file('CHECKED AT '.date(DATE_FORMAT).' PAST 8 HOUR CHECK');
 
-    $hours = $wpdb->get_results("SELECT Rental_Hours_Description FROM ".IAM_FACILITY_TABLE." WHERE Schedule_Type='Rental'")[0]->Rental_Hours_Description;
+    $hours = $wpdb->get_results("SELECT Schedule FROM ".IAM_FACILITY_TABLE." WHERE Name='Equipment Room'")[0]->Schedule;
+    $hours = json_decode($hours)->description;
 
     $active = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Checked_In IS NULL AND Checked_Out IS NOT NULL");
 
