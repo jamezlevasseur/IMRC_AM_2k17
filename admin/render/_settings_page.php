@@ -158,7 +158,9 @@ class Settings_Page
 
     public static function new_res_email_test ()
     {
-      $components = ezget("SELECT ".IAM_FACILITY_TABLE." Name,Email,Schedule WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+      $components = ezget("SELECT Name,Email,Schedule FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+
+      date_default_timezone_set(IMRC_TIME_ZONE);
 
       $now = new DateTime();
 
@@ -169,12 +171,13 @@ class Settings_Page
 																							'end'=>$now->format('M d, Y \a\t g:i a')
 																						]);
 
-      iam_respond(SUCCESS);
+      iam_respond(SUCCESS,'new');
     }
 
     public static function late_res_admin_email_test ()
     {
-      $components = ezget("SELECT ".IAM_FACILITY_TABLE." Name,Email,Schedule WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+      $components = ezget("SELECT Name,Email,Schedule FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+
 
       $description = json_decode($components->Schedule)->description;
 
@@ -185,12 +188,12 @@ class Settings_Page
                                             'notification_num'=>ordinal_format(3)
                                           ]);
 
-      iam_respond(SUCCESS);
+      iam_respond(SUCCESS,'admin');
     }
 
     public static function late_res_user_email_test ()
     {
-      $components = ezget("SELECT ".IAM_FACILITY_TABLE." Name,Email,Schedule WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
+      $components = ezget("SELECT Name,Email,Schedule FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
 
       $description = json_decode($components->Schedule)->description;
 
@@ -201,38 +204,38 @@ class Settings_Page
                                             'schedule_description'=>$description
                                           ]);
 
-      iam_respond(SUCCESS);
+      iam_respond(SUCCESS,'user');
     }
 
-    public static function new_res_email_change ()
-    {
-      $subject = IAM_Sec::textfield_cleaner($_POST['subject']);
-      $body = IAM_Sec::textfield_cleaner($_POST['body']);
+  public static function new_res_email_change ()
+  {
+    $subject = $_POST['subject'];
+    $body = $_POST['body'];
 
-      ezquery("UPDATE ".IAM_FACILITY_TABLE." SET New_Reservation_Email_Subject=%s, New_Reservation_Email_Body=%s WHERE Facility_ID=%d", $subject, $body, IAM_Sec::iamDecrypt($_POST['link']));
+    ezquery("UPDATE ".IAM_FACILITY_TABLE." SET New_Reservation_Email_Subject=%s, New_Reservation_Email_Body=%s WHERE Facility_ID=%d", $subject, $body, IAM_Sec::iamDecrypt($_POST['link']));
 
-      iam_respond(SUCCESS);
-    }
+    iam_respond(SUCCESS);
+  }
 
-    public static function late_res_admin_email_change ()
-    {
-      $subject = IAM_Sec::textfield_cleaner($_POST['subject']);
-      $body = IAM_Sec::textfield_cleaner($_POST['body']);
+  public static function late_res_admin_email_change ()
+  {
+    $subject = $_POST['subject'];
+    $body = $_POST['body'];
 
-      ezquery("UPDATE ".IAM_FACILITY_TABLE." SET Late_Reservation_Admin_Email_Subject=%s, Late_Reservation_Admin_Email_Body=%s WHERE Facility_ID=%d", $subject, $body, IAM_Sec::iamDecrypt($_POST['link']));
+    ezquery("UPDATE ".IAM_FACILITY_TABLE." SET Late_Reservation_Admin_Email_Subject=%s, Late_Reservation_Admin_Email_Body=%s WHERE Facility_ID=%d", $subject, $body, IAM_Sec::iamDecrypt($_POST['link']));
 
-      iam_respond(SUCCESS);
-    }
+    iam_respond(SUCCESS);
+  }
 
-    public static function late_res_user_email_change ()
-    {
-      $subject = IAM_Sec::textfield_cleaner($_POST['subject']);
-      $body = IAM_Sec::textfield_cleaner($_POST['body']);
+  public static function late_res_user_email_change ()
+  {
+    $subject = $_POST['subject'];
+    $body = $_POST['body'];
 
-      ezquery("UPDATE ".IAM_FACILITY_TABLE." SET Late_Reservation_User_Email_Subject=%s, Late_Reservation_User_Email_Body=%s WHERE Facility_ID=%d", $subject, $body, IAM_Sec::iamDecrypt($_POST['link']));
+    ezquery("UPDATE ".IAM_FACILITY_TABLE." SET Late_Reservation_User_Email_Subject=%s, Late_Reservation_User_Email_Body=%s WHERE Facility_ID=%d", $subject, $body, IAM_Sec::iamDecrypt($_POST['link']));
 
-      iam_respond(SUCCESS);
-    }
+    iam_respond(SUCCESS);
+  }
 
     public static function email_tags_list()
     {

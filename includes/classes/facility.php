@@ -47,40 +47,44 @@ class Facility
     return $f[0];
   }
 
-  public static function apply_email_filters(&$subject, &$body, $email_args)
+  public static function apply_email_filters($string, $email_args)
   {
+    $search = [];
+    $replace = [];
     if (isset($email_args['fee'])) {
-      $subject = str_replace('%fee%',$email_args['fee'],$subject);
-      $body = str_replace('%fee%',$email_args['fee'],$body);
+      $search[] = '%fee%';
+      $replace[] = $email_args['fee'];
     }
     if (isset($email_args['datetime'])) {
-      $subject = str_replace('%time_of_reservation%',$email_args['datetime'],$subject);
-      $body = str_replace('%time_of_reservation%',$email_args['datetime'],$body);
+      $search[] = '%time_of_reservation%';
+      $replace[] = $email_args['datetime'];
     }
     if (isset($email_args['schedule_description'])) {
-      $subject = str_replace('%schedule_description%',$email_args['schedule_description'],$subject);
-      $body = str_replace('%schedule_description%',$email_args['schedule_description'],$body);
+      $search[] = '%schedule_description%';
+      $replace[] = $email_args['schedule_description'];
     }
     if (isset($email_args['equipment'])) {
-      $subject = str_replace('%equipment%',$email_args['equipment'],$subject);
-      $body = str_replace('%equipment%',$email_args['equipment'],$body);
+      $search[] = '%equipment%';
+      $replace[] = $email_args['equipment'];
     }
     if (isset($email_args['notification_num'])) {
-      $subject = str_replace('%notification_number%',$email_args['notification_num'],$subject);
-      $body = str_replace('%notification_number%',$email_args['notification_num'],$body);
+      $search[] = '%notification_num%';
+      $replace[] = $email_args['notification_num'];
     }
     if (isset($email_args['username'])) {
-      $subject = str_replace('%username%',$email_args['username'],$subject);
-      $body = str_replace('%username%',$email_args['username'],$body);
+      $search[] = '%username%';
+      $replace[] = $email_args['username'];
     }
     if (isset($email_args['start'])) {
-      $subject = str_replace('%start_time%',$email_args['start'],$subject);
-      $body = str_replace('%start_time%',$email_args['start'],$body);
+      $search[] = '%start_time%';
+      $replace[] = $email_args['start'];
     }
     if (isset($email_args['end'])) {
-      $subject = str_replace('%end_time%',$email_args['end'],$subject);
-      $body = str_replace('%end_time%',$email_args['end'],$body);
+      $search[] = '%end_time%';
+      $replace[] = $email_args['end'];
     }
+    $string = str_replace($search,$replace,$string);
+    return $string;
   }
 
   public static function send_admin_late_res_email($facility_name, $email_args)
@@ -90,7 +94,8 @@ class Facility
     $email_subject = $email_info->Late_Reservation_Admin_Email_Subject;
     $email_template = $email_info->Late_Reservation_Admin_Email_Body;
 
-    self::apply_email_filters($email_subject, $email_template, $email_args);
+    $email_subject = self::apply_email_filters($email_subject, $email_args);
+    $email_template = self::apply_email_filters($email_template, $email_args);
 
     iam_mail( $email_info->Email,
               $email_subject,
@@ -108,7 +113,8 @@ class Facility
     $email_subject = $email_info->Late_Reservation_User_Email_Subject;
     $email_template = $email_info->Late_Reservation_User_Email_Body;
 
-    self::apply_email_filters($email_subject, $email_template, $email_args);
+    $email_subject = self::apply_email_filters($email_subject, $email_args);
+    $email_template = self::apply_email_filters($email_template, $email_args);
 
     iam_mail( $email_args['user_email'],
               $email_subject,
@@ -126,7 +132,8 @@ class Facility
     $email_subject = $email_info->New_Reservation_Email_Subject;
     $email_template = $email_info->New_Reservation_Email_Body;
 
-    self::apply_email_filters($email_subject, $email_template, $email_args);
+    $email_subject = self::apply_email_filters($email_subject, $email_args);
+    $email_template = self::apply_email_filters($email_template, $email_args);
 
     iam_mail( $email_info->Email,
               $email_subject,
