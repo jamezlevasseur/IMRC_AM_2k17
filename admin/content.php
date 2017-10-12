@@ -38,6 +38,7 @@ class Admin_Content
 
 	 public function info_content()
 	 {
+		 send_to_debug_file("THE CRON WORKED.");
 		 ?>
 		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
 	 <?php

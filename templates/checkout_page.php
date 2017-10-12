@@ -134,16 +134,27 @@ class IAM_Checkout_Page
 					$user_email,
 					'You didn\'t check out!',
 					'Greetings, User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to a lab tech alerting them of the issue. Please resolve this as soon as possible.');*/
+				$fablab = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name=%s", 'Fab_Lab')[0];
+
+				$scheduling = json_decode($fablab->Schedule);
+
 				Facility::send_admin_late_res_email( 'Fab Lab',
 																						[ 'equipment'=>$equip_name,
 																							'datetime'=>$date.' '.$time,
-																							'username'=>$username
+																							'username'=>$username,
+																							'schedule_description'=>$scheduling->description,
+																							'start'=>format_res_time($row->Start_Time),
+																							'end'=>format_res_time($row->End_Time)
 																						]);
 
 				Facility::send_user_late_res_email( 'Fab Lab',
 																						[ 'user_email'=>$user_email,
 																							'equipment'=>$equip_name,
-																							'datetime'=>$date.' '.$time
+																							'datetime'=>$date.' '.$time,
+																							'username'=>$username,
+																							'schedule_description'=>$scheduling->description,
+																							'start'=>format_res_time($row->Start_Time),
+																							'end'=>format_res_time($row->End_Time)
 																						]);
 			}
 		}

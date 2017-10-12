@@ -78,14 +78,23 @@ class Utils_Public
                                             [ 'equipment'=>$eq->Name,
                                               'fee'=>cash_format($fee),
                                               'username'=>$user->WP_Username,
-                                              'notification_num'=>ordinal_format($notifcation_num)
+                                              'notification_num'=>ordinal_format($notifcation_num),
+                                              'schedule_description'=>$hours,
+                                              'datetime'=>format_res_time($entry->Start_Time),
+                                              'start'=>format_res_time($entry->Start_Time),
+                                              'end'=>format_res_time($entry->End_Time),
                                             ]);
 
         Facility::send_user_late_res_email( $facility_name,
                                             [ 'user_email'=>get_email($user->IAM_ID),
                                               'equipment'=>$eq->Name,
                                               'fee'=>cash_format($fee),
-                                              'schedule_description'=>$hours
+                                              'schedule_description'=>$hours,
+                                              'notification_num'=>ordinal_format($notifcation_num),
+                                              'username'=>$user->WP_Username,
+                                              'datetime'=>format_res_time($entry->Start_Time),
+                                              'start'=>format_res_time($entry->Start_Time),
+                                              'end'=>format_res_time($entry->End_Time),
                                             ]);
 /*
         iam_mail(get_setting_iam('equipment_room_email'),

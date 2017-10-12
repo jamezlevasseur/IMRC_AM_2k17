@@ -197,10 +197,16 @@ class Settings_Page
 
       $description = json_decode($components->Schedule)->description;
 
+      date_default_timezone_set(IMRC_TIME_ZONE);
+
+      $now = new DateTime();
+
       Facility::send_user_late_res_email( $components->Name,
                                           [ 'user_email'=>$components->Email,
+                                            'username'=>'some.username',
                                             'equipment'=>'Test Equipment',
                                             'fee'=>'9.99',
+                                            'datetime'=>$now->format('M d, Y \a\t g:i a'),
                                             'schedule_description'=>$description
                                           ]);
 
