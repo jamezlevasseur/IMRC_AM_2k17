@@ -1,11 +1,15 @@
 <?php
 
 /**
-* 
+*
 */
 class Public_Content
 {
-    
+    public static function render_cron_page()
+    {
+      send_to_debug_file("THE CRON WORKED PUBLIC.");
+    }
+
     public static function render_reservation_page()
     {
         echo IAM_Reservation_Page::get();
