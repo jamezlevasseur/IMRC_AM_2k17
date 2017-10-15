@@ -310,8 +310,8 @@ class IAM {
 		$this->loader->add_action('wp_ajax_nopriv_iam_login', 'Utils_Public', 'iam_login_callback');
 		$this->loader->add_filter('show_admin_bar', 'Utils_Public', 'allow_admin_bar');
 
-		$this->loader->add_action('wp_ajax_reservation_popup', 'Reservation_Public', 'reservation_popup_callback');
-		$this->loader->add_action('wp_ajax_nopriv_reservation_popup', 'Reservation_Public', 'reservation_popup_callback');
+		//$this->loader->add_action('wp_ajax_reservation_popup', 'Reservation_Public', 'reservation_popup_callback');
+		//$this->loader->add_action('wp_ajax_nopriv_reservation_popup', 'Reservation_Public', 'reservation_popup_callback');
 		$this->loader->add_action('wp_ajax_nopriv_get_equipment_calendar', 'Reservation_Public', 'get_equipment_calendar_callback');
 		$this->loader->add_action('wp_ajax_get_equipment_calendar', 'Reservation_Public', 'get_equipment_calendar_callback');
 		$this->loader->add_action('wp_ajax_nopriv_get_irregular_hours_calendar', 'Reservation_Public', 'get_irregular_hours_calendar_callback');

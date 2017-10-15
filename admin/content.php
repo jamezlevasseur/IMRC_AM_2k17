@@ -36,9 +36,8 @@ class Admin_Content
 			add_submenu_page ($slug, 'Pricing', 'Pricing', 'manage_options', $_slug.'_pricing', array($this, 'pricing_content') );
 	 }
 
-	 public function info_content()
+	 public static function info_content()
 	 {
-		 send_to_debug_file("THE CRON WORKED.");
 		 ?>
 		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
 	 <?php

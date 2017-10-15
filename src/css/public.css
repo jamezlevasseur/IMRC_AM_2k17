@@ -567,6 +567,14 @@
 	white-space: nowrap;
 }
 
+.fc-event {
+  cursor: pointer;
+}
+
+tbody .fc-event:hover {
+  opacity: .9;
+}
+
 .iam-events .fc-event{
 	cursor: pointer;
 	white-space: nowrap;

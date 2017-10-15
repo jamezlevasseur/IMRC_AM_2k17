@@ -483,7 +483,11 @@ class Settings_Page
         $key = IAM_Sec::textfield_cleaner($_POST['facility']).'_irregular_hours_event';
         $key = str_replace(' ', '_', $key);
         foreach ($events as $k => $value) {
-            $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",$key,json_encode($value)));
+          $start_closed = DateTime::createFromFormat(DATE_FORMAT,$value['start'])->format('M j g:i a');
+          $end_closed = DateTime::createFromFormat(DATE_FORMAT,$value['end'])->format('M j g:i a');
+          $title = $value['title'].' '.$start_closed.'-'.$end_closed;
+          $value['title'] = $title;
+          $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",$key,json_encode($value)));
         }
 
         foreach ($_POST['to_delete'] as $encryptedID) {

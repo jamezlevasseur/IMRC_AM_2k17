@@ -676,6 +676,7 @@ import ReservationPublic from '../page/reservationpublic';
 		if ($('#iam-res').length>0) { //reservation page
 
 			var resPage = new ReservationPublic();
+			$('[data-toggle="tooltip"]').tooltip(); 
 
 		} else if ($('#signupform').length>0) {
 			removeNav();

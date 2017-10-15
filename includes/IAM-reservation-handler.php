@@ -51,7 +51,8 @@ class IAM_Reservation_Handler
 																						[ 'equipment'=>$equip_name,
 																							'username'=>$user,
 																							'start'=>$format_start,
-																							'end'=>$format_end
+																							'end'=>$format_end,
+																							'datetime'=>$format_start
 																						]);
 
 		}

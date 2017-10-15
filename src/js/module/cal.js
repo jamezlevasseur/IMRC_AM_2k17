@@ -3,6 +3,7 @@ import $ from 'jquery';
 import 'fullcalendar';
 import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widgets/draggable';
+import 'jquery-ui/ui/widgets/tooltip';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 
 
@@ -236,6 +237,12 @@ export default class Cal {
       $(that.calID+' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
   }
 
+  toolTipsForEvents (event, element) {
+    let e = $(element);
+    e.attr('title',event.title);
+    e.data('toggle','tooltip');
+  }
+
   setCalArgs () {
 
     let that = this;
@@ -256,6 +263,7 @@ export default class Cal {
         if (that.eventsToDelete.indexOf(event.nid)!=-1) {
           $(element).addClass('marked-for-delete');
         }
+        that.toolTipsForEvents(event,element);
       },
       eventAfterAllRender: () => {
         that.initContextMenu(that.page.cal);
@@ -322,6 +330,9 @@ export default class Cal {
           alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.')
           revert();
         }
+      },
+      eventRender: function (event, element) {
+        that.toolTipsForEvents(event,element);
       },
       defaultAllDayEventDuration: {days: (parseInt(that.page.rentalPeriod) + 1) }
     };
