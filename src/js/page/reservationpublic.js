@@ -105,7 +105,7 @@ export default class ReservationPublic {
       that.activeEquipName = $(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text().split(' ').join('_');
 
       if(that.canReserveER==0 && that.currentRootTag=='equipment_room') {
-        alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $'+erLateFee+'.');
+        alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $'+that.erLateFee+'.');
         return;
       }
 
