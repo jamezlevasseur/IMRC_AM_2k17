@@ -7,7 +7,56 @@
 class Utils_Public
 {
 
-  public static function late_reservations_check()
+  public static function get_late_appointment_reservations()
+  {
+    date_default_timezone_set(IMRC_TIME_ZONE);
+		$today = date("Y-m-d 00:00:00");
+		return ezget("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ORDER BY Reservation_ID DESC");
+  }
+
+  public static function appointment_late_reservations_check()
+  {
+    $late_reservations = Utils_Public::get_late_appointment_reservations();
+
+    $fablab = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name=%s", 'Fab_Lab')[0];
+
+    $scheduling = json_decode($fablab->Schedule);
+
+    foreach ($late_reservations as $row) {
+
+      if ($row->Late_Notification_Sent==0) {
+        $res_id = $row->Reservation_ID;
+
+        ezquery("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent='1', Status=".NO_PAY." WHERE Reservation_ID=%d",$res_id);
+
+        $user_email = get_email($row->IAM_ID);
+
+        Facility::send_admin_late_res_email( 'Fab Lab',
+                                            [ 'equipment'=>$equip_name,
+                                              'datetime'=>$date.' '.$time,
+                                              'username'=>$username,
+                                              'schedule_description'=>$scheduling->description,
+                                              'start'=>format_res_time($row->Start_Time),
+                                              'end'=>format_res_time($row->End_Time)
+                                            ]);
+
+        Facility::send_user_late_res_email( 'Fab Lab',
+                                            [ 'user_email'=>$user_email,
+                                              'equipment'=>$equip_name,
+                                              'datetime'=>$date.' '.$time,
+                                              'username'=>$username,
+                                              'schedule_description'=>$scheduling->description,
+                                              'start'=>format_res_time($row->Start_Time),
+                                              'end'=>format_res_time($row->End_Time)
+                                            ]);
+      }//if
+
+    }//for
+
+  }
+
+
+  public static function rental_late_reservations_check()
   {
     global $wpdb;
     date_default_timezone_set(IMRC_TIME_ZONE);

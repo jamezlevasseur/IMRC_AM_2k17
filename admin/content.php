@@ -340,9 +340,6 @@ class Admin_Content
 				</div>
 			</div>
 		<?php
-		//TODO remove after cron is in place
-		require_once iam_dir().'public/render/utils_public.php';
-		Utils_Public::late_reservations_check();
 	}
 
 	public function user_certification_content()

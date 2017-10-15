@@ -96,17 +96,12 @@ class IAM_Checkout_Page
 	public static function get_old_reservations()
 	{
 		global $wpdb;
-		date_default_timezone_set(IMRC_TIME_ZONE);
-		$today = date("Y-m-d 00:00:00");
 		$validReservationsEchoed = false;
-		$reservation_not_checked_out_results = $wpdb->get_results("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE Start_Time < '$today' AND Checked_Out IS NULL AND Checked_In IS NOT NULL ORDER BY Reservation_ID DESC");
+		$reservation_not_checked_out_results = Utils_Public::get_late_appointment_reservations();
 		$html = '';
 		foreach ($reservation_not_checked_out_results as $row) {
 			$iam_id = $row->IAM_ID;
 			$equip_id = $row->Equipment_ID;
-			if ($row->Is_Room) {
-				continue;
-			}
 			$equip_results = $wpdb->get_results("SELECT Name,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID='$equip_id'");
 			if ($equip_results[0]->Root_Tag!='Fab Lab') {
 				continue;
@@ -119,48 +114,8 @@ class IAM_Checkout_Page
 			$time = $time1->format('g:i a').' - '.$time2->format('g:i a');
 			$options = '<button type="button" class="iam-check-out-button" data-nid="'.iam_output($row->NI_ID).'"></button>';
 			$html.= '<tr><td class="iam-checkout-username">'.iam_output($username).'</td><td>'.iam_output($equip_name).'</td><td>'.iam_output($date).'</td><td>'.iam_output($time).'</td><td>'.$options.'</td></tr>';
-			if ($row->Late_Notification_Sent==0) {
-				$res_id = $row->Reservation_ID;
-				$wpdb->query("UPDATE ".IAM_RESERVATION_TABLE." SET Late_Notification_Sent='1', Status=".NO_PAY." WHERE Reservation_ID='$res_id'");
-				$user_email = $wpdb->get_results("SELECT user_email FROM ".$wpdb->prefix."users WHERE user_login='$username'")[0]->user_email;
-
-/*
-				iam_mail(
-					get_setting_iam('late_reservations_email'),
-					$username.' didn\'t check out',
-					'User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to them alerting them of the issue.');
-
-				iam_mail(
-					$user_email,
-					'You didn\'t check out!',
-					'Greetings, User '.$username.' did not check out for their reservation on '.$date.' '.$time.' for the '.$equip_name.'. An email has been sent to a lab tech alerting them of the issue. Please resolve this as soon as possible.');*/
-				$fablab = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name=%s", 'Fab_Lab')[0];
-
-				$scheduling = json_decode($fablab->Schedule);
-
-				Facility::send_admin_late_res_email( 'Fab Lab',
-																						[ 'equipment'=>$equip_name,
-																							'datetime'=>$date.' '.$time,
-																							'username'=>$username,
-																							'schedule_description'=>$scheduling->description,
-																							'start'=>format_res_time($row->Start_Time),
-																							'end'=>format_res_time($row->End_Time)
-																						]);
-
-				Facility::send_user_late_res_email( 'Fab Lab',
-																						[ 'user_email'=>$user_email,
-																							'equipment'=>$equip_name,
-																							'datetime'=>$date.' '.$time,
-																							'username'=>$username,
-																							'schedule_description'=>$scheduling->description,
-																							'start'=>format_res_time($row->Start_Time),
-																							'end'=>format_res_time($row->End_Time)
-																						]);
-			}
 		}
 
-
-		Utils_Public::late_reservations_check();
 		return $html;
 	}
 

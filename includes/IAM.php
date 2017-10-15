@@ -300,7 +300,8 @@ class IAM {
 		$this->loader->add_shortcode( 'imrc-account-balances', 'Public_Content', 'render_account_balances_page' );
 		$this->loader->add_shortcode( 'imrc-training', 'Public_Content', 'render_training_page' );
 		$this->loader->add_shortcode( 'imrc-checkout', 'Public_Content', 'render_checkout_page' );
-		$this->loader->add_shortcode( 'imrc-cron', 'Public_Content', 'render_cron_page' );
+		$this->loader->add_shortcode( 'fablab-cron', 'Public_Content', 'render_appointment_cron_page' );
+		$this->loader->add_shortcode( 'equipmentroom-cron', 'Public_Content', 'render_rental_cron_page' );
 
 		$this->loader->add_action('wp_ajax_nopriv_iam_register_user', 'Utils_Public', 'register_user_callback');
 		$this->loader->add_action('wp_ajax_report_bug', 'Utils_Public', 'report_bug_callback');

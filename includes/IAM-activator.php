@@ -323,6 +323,8 @@ class IAM_Activator {
 				wp_insert_post(['post_content'=>'[imrc-register]','post_title'=>'Register','post_status'=>'publish','post_type'=>'page']);
 				wp_insert_post(['post_content'=>'[imrc-reservations]','post_title'=>'Reservations','post_status'=>'publish','post_type'=>'page']);
 				wp_insert_post(['post_content'=>'[imrc-training]','post_title'=>'Training','post_status'=>'publish','post_type'=>'page']);
+				wp_insert_post(['post_content'=>'[fablab-cron]','post_title'=>'fablabcron','post_status'=>'publish','post_type'=>'page']);
+				wp_insert_post(['post_content'=>'[equipmentroom-cron]','post_title'=>'equipmentroocron','post_status'=>'publish','post_type'=>'page']);
 			}
 		}
 
