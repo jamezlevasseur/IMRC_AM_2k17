@@ -26,7 +26,7 @@ class Settings_Page
     {
       $defaultArgs = ['id'=>'','label'=>'','duration'=>'','default'=>'','class'=>''];
       $args = array_merge($defaultArgs, $args);
-      return '<div data-id="'.$args['id'].'" style="border-bottom:1px solid #ddd;padding:5px 0;margin-bottom:5px;" class="rental-period-container '.$args['class'].'"><span><label>Label: <input type="text" class="rental-label" value="'.$args['label'].'"></label></span><span><label>Duration (in days): <input type="number" class="rental-duration" value="'.$args['duration'].'"></label></span><span><i class="iam-delete-rental-type fa fa-close fa-3"></i><br /><label style="display:block;">Default Rental Type: <input type="radio" name="default-rental" class="default-rental-type" '.$args['default'].' ></label></span></div>';
+      return '<div data-id="'.$args['id'].'" style="padding:8px 0;margin-bottom:5px;" class="rental-period-container '.$args['class'].'"><span><label>Label: <input type="text" class="rental-label" value="'.$args['label'].'"></label></span><span><label>Duration (in days): <input type="number" class="rental-duration" value="'.$args['duration'].'"></label></span><span><i class="iam-delete-rental-type fa fa-close fa-3"></i><br /><label style="display:block;">Default Rental Type: <input type="radio" name="default-rental" class="default-rental-type" '.$args['default'].' ></label></span></div>';
     }
 
     public static function reset_rental_default()
@@ -318,8 +318,8 @@ class Settings_Page
           <div class="late-check-time">Late check time: '.self::make_timepicker($scheduling->late_check_time,'',true).' </div><br />
           '.$hours_ui.'<br />
           <div><textarea class="scheduling-description" cols="80" rows="5" placeholder="Scheduling description and additional information go here. Example: We\'re open 10-4 weekdays, please bring a deposit to rent your equipment.">'.$scheduling->description.'</textarea></div><br />
-          <button type="button" class="btn btn-success">Save</button>
-          <div><button type="button" class="btn btn-primary iam-irregular-hours-button" data-toggle="modal" data-target="#irregular-hours-modal">Irregular Hours</button></div>
+          <button type="button" class="iam-button btn-success">Save Changes</button>
+          <div><button type="button" class="iam-secondary-button iam-irregular-hours-button" data-toggle="modal" data-target="#irregular-hours-modal">Irregular Hours</button></div>
       </div>
       <div id="irregular-hours-modal" class="modal" role="dialog">
         <div class="modal-dialog modal-lg">

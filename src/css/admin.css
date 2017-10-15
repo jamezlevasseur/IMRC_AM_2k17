@@ -3,6 +3,17 @@
  * included in this file.
  */
 
+.iam-settings-container > section {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.iam-settings-container h1 {
+  font-weight: bold;
+  margin-bottom: 10px;
+  ;
+}
+
  .iam-pretty-table {
   border-collapse: collapse;
  }
