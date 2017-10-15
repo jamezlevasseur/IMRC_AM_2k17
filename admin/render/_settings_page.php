@@ -160,6 +160,8 @@ class Settings_Page
     {
       $components = ezget("SELECT Name,Email,Schedule FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
 
+      $description = json_decode($components->Schedule)->description;
+
       date_default_timezone_set(IMRC_TIME_ZONE);
 
       $now = new DateTime();
@@ -168,7 +170,11 @@ class Settings_Page
 																						[ 'equipment'=>'Test Equipment',
 																							'username'=>'some.user',
 																							'start'=>$now->format('M d, Y \a\t g:i a'),
-																							'end'=>$now->format('M d, Y \a\t g:i a')
+																							'end'=>$now->format('M d, Y \a\t g:i a'),
+                                              'datetime'=>$now->format('M d, Y \a\t g:i a'),
+                                              'schedule_description'=>$description,
+                                              'notification_num'=>ordinal_format(3),
+                                              'fee'=>'9.99'
 																						]);
 
       iam_respond(SUCCESS,'new');
@@ -178,14 +184,21 @@ class Settings_Page
     {
       $components = ezget("SELECT Name,Email,Schedule FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d", IAM_Sec::iamDecrypt($_POST['link']))[0];
 
-
       $description = json_decode($components->Schedule)->description;
+
+      date_default_timezone_set(IMRC_TIME_ZONE);
+
+      $now = new DateTime();
 
       Facility::send_admin_late_res_email( $components->Name,
                                           [ 'equipment'=>'Test Equipment',
-                                            'fee'=>'9.99',
-                                            'username'=>'some.username',
-                                            'notification_num'=>ordinal_format(3)
+                                            'username'=>'some.user',
+                                            'start'=>$now->format('M d, Y \a\t g:i a'),
+                                            'end'=>$now->format('M d, Y \a\t g:i a'),
+                                            'datetime'=>$now->format('M d, Y \a\t g:i a'),
+                                            'schedule_description'=>$description,
+                                            'notification_num'=>ordinal_format(3),
+                                            'fee'=>'9.99'
                                           ]);
 
       iam_respond(SUCCESS,'admin');
@@ -202,12 +215,14 @@ class Settings_Page
       $now = new DateTime();
 
       Facility::send_user_late_res_email( $components->Name,
-                                          [ 'user_email'=>$components->Email,
-                                            'username'=>'some.username',
-                                            'equipment'=>'Test Equipment',
-                                            'fee'=>'9.99',
+                                          [ 'equipment'=>'Test Equipment',
+                                            'username'=>'some.user',
+                                            'start'=>$now->format('M d, Y \a\t g:i a'),
+                                            'end'=>$now->format('M d, Y \a\t g:i a'),
                                             'datetime'=>$now->format('M d, Y \a\t g:i a'),
-                                            'schedule_description'=>$description
+                                            'schedule_description'=>$description,
+                                            'notification_num'=>ordinal_format(3),
+                                            'fee'=>'9.99'
                                           ]);
 
       iam_respond(SUCCESS,'user');
@@ -243,7 +258,7 @@ class Settings_Page
     iam_respond(SUCCESS);
   }
 
-    public static function email_tags_list()
+    public static function email_appointment_tags_list()
     {
       ?>
       <p>%username% - The username of the user who made a reservation.</p>
@@ -251,6 +266,19 @@ class Settings_Page
       <p>%start_time% - The start data and time of the reservation.</p>
       <p>%end_time% - The end data and time of the reservation.</p>
       <p>%time_of_reservation% - The start data and time of the reservation.</p>
+      <p>%schedule_description% - The description of facility operating hours. Set in the facility settings menu.</p>
+      <?php
+    }
+
+    public static function email_rental_tags_list()
+    {
+      ?>
+      <p>%username% - The username of the user who made a reservation.</p>
+      <p>%equipment% - The piece of equipment being reserved.</p>
+      <p>%start_time% - The start data and time of the reservation.</p>
+      <p>%end_time% - The end data and time of the reservation.</p>
+      <p>%time_of_reservation% - The start data and time of the reservation.</p>
+      <p>%schedule_description% - The description of facility operating hours. Set in the facility settings menu.</p>
       <p>%notification_number% - The number of times this person has been notified. Comes in ordinal format (1st, 2nd, 3rd).</p>
       <p>%fee% - The late fee applied to a users account. For rentals only.</p>
       <?php
@@ -287,11 +315,11 @@ class Settings_Page
                   '.$scheduling_type_options.'
               </select>
           </div><br />
-          <div class="late-check-time">Late check time: '.self::make_timepicker($scheduling->late_check_time).' </div><br />
-          <div><button type="button" class="btn btn-primary iam-irregular-hours-button" data-toggle="modal" data-target="#irregular-hours-modal">Irregular Hours</button></div><br />
+          <div class="late-check-time">Late check time: '.self::make_timepicker($scheduling->late_check_time,'',true).' </div><br />
           '.$hours_ui.'<br />
           <div><textarea class="scheduling-description" cols="80" rows="5" placeholder="Scheduling description and additional information go here. Example: We\'re open 10-4 weekdays, please bring a deposit to rent your equipment.">'.$scheduling->description.'</textarea></div><br />
           <button type="button" class="btn btn-success">Save</button>
+          <div><button type="button" class="btn btn-primary iam-irregular-hours-button" data-toggle="modal" data-target="#irregular-hours-modal">Irregular Hours</button></div>
       </div>
       <div id="irregular-hours-modal" class="modal" role="dialog">
         <div class="modal-dialog modal-lg">
@@ -322,10 +350,14 @@ class Settings_Page
         $facility = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Facility_ID=%d",IAM_Sec::iamDecrypt($_POST['link']))[0];
         $scheduling = json_decode($facility->Schedule);
 
+        $late_check_time = DateTime::createFromFormat( 'h:i a', IAM_Sec::textfield_cleaner( $_POST['late_check_time'] ) );
+
+        $late_check_time = $late_check_time->format('H:i:s');
+
         $new_scheduling = [ 'type' => $scheduling->type,
                             'business_hours' => $_POST['business_hours'],
                             'description' => IAM_Sec::textfield_cleaner( $_POST['description'] ),
-                            'late_check_time' => IAM_Sec::textfield_cleaner( $_POST['late_check_time'] )
+                            'late_check_time' => $late_check_time
                           ];
 
         ezquery("UPDATE ".IAM_FACILITY_TABLE." SET Schedule=%s WHERE Facility_ID=%d", stripslashes_deep(json_encode($new_scheduling)), $facility->Facility_ID);
@@ -464,32 +496,34 @@ class Settings_Page
         iam_respond(SUCCESS);
     }
 
-    public static function make_timepicker($time_string='12:00 am',$class='')
+    public static function make_timepicker($time_string='12:00 am',$class='',$disabled=false)
     {
       if (empty($time_string))
         $time_string = '12:00 am';
+      $disabled_prop = $disabled ? 'disabled' : '';
 
       $hour = empty($time_string) ? '' : (int) substr($time_string, 0,2);
       $min = empty($time_string) ? '' : (int) substr($time_string, 3,5);
       $m = substr($time_string, -2);
 
-      $html_string = '<select class="iam-hour-select '.$class.'">';
+
+      $html_string = '<select '.$disabled_prop.' class="iam-hour-select '.$class.'">';
       for ($i=1; $i < 13; $i++) {
         $hour_selected = '';
         if ($hour==$i)
           $hour_selected = 'selected';
         $html_string.='<option value="'.sprintf("%02d", $i).'" '.$hour_selected.'>'.sprintf("%02d", $i).'</option>';
       }
-      $html_string.='</select><select class="iam-min-select '.$class.'">';
+      $html_string.='</select><select '.$disabled_prop.' class="iam-min-select '.$class.'">';
       for ($i=0; $i < 60; $i+=5) {
         $min_selected = '';
         if ($min==$i)
           $min_selected = 'selected';
         $html_string.='<option value="'.sprintf("%02d", $i).'" '.$min_selected.'>'.sprintf("%02d", $i).'</option>';
       }
-      $html_string.='</select><select class="iam-am-pm-select '.$class.'">';
-      if ($m=='pm')
-        $html_string.='<option value="am">am</option><option value="pm" selected>pm</option>';
+      $html_string.='</select><select '.$disabled_prop.' class="iam-am-pm-select '.$class.'">';
+      if ($m=='pm' || $hour>12)
+        $html_string.='<option value="am">am</option><option value="pm" selected>pm</option></select>';
       else
         $html_string.='<option value="am" selected>am</option><option value="pm">pm</option></select>';
 

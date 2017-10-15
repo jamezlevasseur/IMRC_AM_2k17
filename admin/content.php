@@ -660,7 +660,13 @@ class Admin_Content
 					      <div class="panel-body new-res-email">
 									<p>This email will be sent to the facility email when a new reservation is made.<?php Settings_Page::email_guidelines(); ?></p>
 									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
-									<?php Settings_Page::email_tags_list(); ?>
+									<?php
+									if ($this->schedule->type=='rental') {
+										Settings_Page::email_rental_tags_list();
+									} else if ($this->schedule->type=='appointment') {
+										Settings_Page::email_appointment_tags_list();
+									}
+									?>
 									<input type="text" class="email-subject" value="<?php echo $this->facility->New_Reservation_Email_Subject; ?>" placeholder="Subject"><br>
 									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->New_Reservation_Email_Body; ?></textarea><br>
 									<button type="button" class="btn btn-success">Save</button>&nbsp;<button type="button" class="btn btn-warning">Test Email</button>
@@ -678,7 +684,13 @@ class Admin_Content
 					      <div class="panel-body late-res-admin-email">
 									<p>This email will be sent to the facility email when a user does not complete a reservation on time.<?php Settings_Page::email_guidelines(); ?></p>
 									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
-									<?php Settings_Page::email_tags_list(); ?>
+									<?php
+									if ($this->schedule->type=='rental') {
+										Settings_Page::email_rental_tags_list();
+									} else if ($this->schedule->type=='appointment') {
+										Settings_Page::email_appointment_tags_list();
+									}
+									?>
 									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_Admin_Email_Subject; ?>" placeholder="Subject"><br>
 									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_Admin_Email_Body; ?></textarea><br>
 									<button type="button" class="btn btn-success">Save</button>&nbsp;<button type="button" class="btn btn-warning">Test Email</button>
@@ -696,7 +708,13 @@ class Admin_Content
 					      <div class="panel-body late-res-user-email">
 									<p>This email will be sent to the users email when that user does not complete a reservation on time. <?php Settings_Page::email_guidelines(); ?></p>
 									<p>Template tags are as follows: <?php echo make_tooltip('Template tags represent information relevant to individual emails such as the username. When using a template tag like %username% the emailing system will replace the tag with the revelvant user\'s name for that email.'); ?></p>
-									<?php Settings_Page::email_tags_list(); ?>
+									<?php
+									if ($this->schedule->type=='rental') {
+										Settings_Page::email_rental_tags_list();
+									} else if ($this->schedule->type=='appointment') {
+										Settings_Page::email_appointment_tags_list();
+									}
+									?>
 									<input type="text" class="email-subject" value="<?php echo $this->facility->Late_Reservation_User_Email_Subject; ?>" placeholder="Subject"><br>
 									<textarea class="email-body" rows="8" cols="80" placeholder="Body..."><?php echo $this->facility->Late_Reservation_User_Email_Body; ?></textarea><br>
 									<button type="button" class="btn btn-success">Save</button>&nbsp;<button type="button" class="btn btn-warning">Test Email</button>
@@ -795,6 +813,7 @@ class Admin_Content
 			<?php echo Settings_Page::make_rental_seg(['class'=>'iam-ninja template-rental-seg']); ?>
 			<h3>Powered by &nbsp;&nbsp; <img width="250" src="<?php echo plugins_url( 'assets/qlogo.png', dirname(__FILE__) ); ?>" alt="Qiupura Logo"></h3>
 		</div>
+		<style>.modal-body .iam-cal{width:auto !important;}</style>
 		<?php
 	}
 
