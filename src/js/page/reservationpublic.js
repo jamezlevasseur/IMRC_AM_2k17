@@ -23,7 +23,6 @@ export default class ReservationPublic {
     //listeners
     this.initEquipmentButtonListener();
     this.initResDelete();
-    this.initIrregularHoursButtonListener();
     initSearchListener('.iam-reservations-search','.iam-equipment-title',2);
   }
 
