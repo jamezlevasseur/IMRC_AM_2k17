@@ -226,7 +226,7 @@ class IAM_Activator {
 		}
 		send_to_debug_file($d);
 
-		if (get_setting_iam('init_tags')=='false') {
+		if (empty(ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name='Fab Lab'"))) {
 
 			//insert required tags
 			Facility::create(['name'=>'Fab Lab','type'=>'a']);

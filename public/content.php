@@ -9,14 +9,12 @@ class Public_Content
     {
       send_to_debug_file("RUNNING RENTAL CRON");
       Utils_Public::rental_late_reservations_check();
-      header("location: http://".$_SERVER['HTTP_HOST']);
     }
 
     public static function render_appointment_cron_page()
     {
       send_to_debug_file("RUNNING APPOINTMENT CRON");
       Utils_Public::appointment_late_reservations_check();
-      header("location: http://".$_SERVER['HTTP_HOST']);
     }
 
     public static function render_reservation_page()

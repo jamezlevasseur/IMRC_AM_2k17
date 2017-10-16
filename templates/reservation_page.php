@@ -47,12 +47,8 @@ class IAM_Reservation_Page
 	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag)
 	{
 		global $wpdb;
-
 		$current_username = wp_get_current_user()->user_login;
 		$current_user_results = ezget("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_Username=%s", $current_username);
-		if (empty($current_user_results)) {
-			exit("You are not a registered as a user.");
-		}
 		$iam_id = $current_user_results[0]->IAM_ID;
 		$user_certs_results = $wpdb->get_results("SELECT Certification_ID FROM ".IAM_USER_CERTIFICATIONS_TABLE." WHERE IAM_ID='$iam_id'");
 		$user_certs = [0];

@@ -24,6 +24,12 @@ function ezquery($string, ...$rest)
 	return $wpdb->query($wpdb->prepare($string, $rest));
 }
 
+function get_iam_prefix()
+{
+	global $wpdb;
+	return $wpdb->prefix.'iam_';
+}
+
 function get_rental_period($id)
 {
 	global $wpdb;

@@ -29,12 +29,6 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-function wp_prefix()
-{
-	global $wpdb;
-	return $wpdb->prefix;
-}
-
 //global functions
 require __DIR__ . '/vendor/autoload.php';
 require __DIR__ . '/utils.php';
