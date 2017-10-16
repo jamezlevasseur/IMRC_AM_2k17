@@ -242,8 +242,6 @@ class IAM_Reservation_Page
 		global $wpdb;
 		//global $current_user;
 		$current_user = wp_get_current_user();
-		print_r($current_user);
-
   	get_currentuserinfo();
   	$has_priv = get_user_meta($current_user->ID,IAM_RESERVATIONS_PRIVILEGE_META);
 
