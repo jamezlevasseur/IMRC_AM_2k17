@@ -240,7 +240,9 @@ class IAM_Reservation_Page
 	{
 
 		global $wpdb;
-		global $current_user;
+		//global $current_user;
+		$current_user = wp_get_current_user();
+		print_r($current_user);
 
   	get_currentuserinfo();
   	$has_priv = get_user_meta($current_user->ID,IAM_RESERVATIONS_PRIVILEGE_META);
@@ -250,6 +252,7 @@ class IAM_Reservation_Page
 			return;
 		} else {
 			$can_reserve_er = 1;
+			echo "SELECT Balance FROM ".IAM_USERS_TABLE." WHERE WP_ID=".$current_user->ID;
 			$user_bal = $wpdb->get_results("SELECT Balance FROM ".IAM_USERS_TABLE." WHERE WP_ID=".$current_user->ID)[0]->Balance;
 			if ((float)$user_bal<(float)get_setting_iam(LATE_CHARGE_FEE_KEY)) {
 				$can_reserve_er = 0;

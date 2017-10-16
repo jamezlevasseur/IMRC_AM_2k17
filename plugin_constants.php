@@ -1,6 +1,6 @@
 <?php
 
-define('IAM_PREFIX', get_iam_prefix().'iam_');
+define('IAM_PREFIX', get_iam_prefix());
 
 define('IAM_USERS_TABLE', IAM_PREFIX.'users');
 
