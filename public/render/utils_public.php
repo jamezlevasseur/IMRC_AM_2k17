@@ -61,7 +61,7 @@ class Utils_Public
     global $wpdb;
     date_default_timezone_set(IMRC_TIME_ZONE);
     $rightnow = date('U');
-
+/*
     send_to_debug_file('CHECK START '.date(DATE_FORMAT).' BEFORE 8 HOUR CHECK');
 
     $do_check = false;
@@ -75,7 +75,7 @@ class Utils_Public
       return;
 
     send_to_debug_file('CHECKED AT '.date(DATE_FORMAT).' PAST 8 HOUR CHECK');
-
+*/
     $hours = $wpdb->get_results("SELECT Schedule FROM ".IAM_FACILITY_TABLE." WHERE Name='Equipment Room'")[0]->Schedule;
     $hours = json_decode($hours)->description;
 
@@ -85,7 +85,7 @@ class Utils_Public
     foreach ($active as $entry) {
       $d = date_create_from_format(DATE_FORMAT, $entry->End_Time);
 
-      if ((int) $rightnow > (int) $d->format('U')-37800) {// is late
+      if ((int) $rightnow > (int) $d->format('U')) {// is late
 
         $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
