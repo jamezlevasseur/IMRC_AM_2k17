@@ -106,7 +106,6 @@ class IAM_Admin {
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-structure', iam_url().'static/' . 'css/jquery-ui.structure.min.css');
 		wp_enqueue_style($this->plugin_name.'-jquery-ui-css-theme', iam_url().'static/' . 'css/jquery-ui.theme.min.css');
 		wp_enqueue_style($this->plugin_name.'-fullcalendar-css', iam_url().'static/' . 'css/fullcalendar.min.css', $this->version, 'all' );
-		wp_enqueue_style($this->plugin_name.'-timepicker-css', iam_url().'static/' . 'css/timepicker.min.css', $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name.'font-awesome', iam_url().'static/' . 'css/font-awesome.min.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name.'context-menu-css', iam_url().'static/' . 'css/contextMenu.css', array(), $this->version, 'all' );
 		wp_enqueue_style( $this->plugin_name, iam_url().'src/css/admin.css', array(), $this->version, 'all' );
