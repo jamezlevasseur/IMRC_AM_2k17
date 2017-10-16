@@ -222,7 +222,8 @@ class Settings_Page
                                             'datetime'=>$now->format('M d, Y \a\t g:i a'),
                                             'schedule_description'=>$description,
                                             'notification_num'=>ordinal_format(3),
-                                            'fee'=>'9.99'
+                                            'fee'=>'9.99',
+                                            'user_email'=>$components->Email
                                           ]);
 
       iam_respond(SUCCESS,'user');
