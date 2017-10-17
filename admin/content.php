@@ -60,6 +60,7 @@ class Admin_Content
 		asort($emails);
 
 		?>
+		<style>.modal-body .iam-cal{width:auto !important;}</style>
 		<div class="wrap iam-equipment-wrap <?php echo $c; ?>">
 			<div class="iam-ninja iam-on-load-data" data-fee="<?php echo get_setting_iam(LATE_CHARGE_FEE_KEY); ?>" data-balances="<?php echo iam_output(json_encode($bal_dict)); ?>" data-users="<?php echo iam_output(implode(',', $emails)) ?>"></div>
 			<h1 class="iam-admin-header">Equipment</h1>
