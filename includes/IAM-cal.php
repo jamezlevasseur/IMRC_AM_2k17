@@ -100,7 +100,22 @@ class IAM_Cal
 					}
 					if ($is_admin) {
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
-						$formatted_events[] = ['nid'=>$row->NI_ID, 'fullname'=> get_full_name($wp_id), 'title'=>$title, 'start'=>$row->Start_Time, 'end'=>$row->End_Time,'email'=>$email,'equipment'=>$item_name,'status'=>$RES_STATUS_CLASS_DICT[$row->Status]];
+						$new_event = [	'nid'=>$row->NI_ID,
+																		'fullname'=> get_full_name($wp_id),
+																		'title'=>$title,
+																		'start'=>$row->Start_Time,
+																		'end'=>$row->End_Time,
+																		'email'=>$email,
+																		'equipment'=>$item_name,
+																		'status'=>$RES_STATUS_CLASS_DICT[$row->Status],
+																	];
+						$optional_event_args = [];
+						if ($row->Status==3 || $row->Status==6) {
+							$optional_event_args['editable'] = false;
+						} else if ($row->Status==1 || $row->Status==4 || $row->Status==5) {
+							$optional_event_args['startEditable'] = false;
+						}
+						$formatted_events[] = array_merge($optional_event_args, $new_event);
 						if (array_key_exists('allDay', $_GET)) {
 							$formatted_events[count($formatted_events)-1]['allDay'] = true;
 						}

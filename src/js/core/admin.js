@@ -1634,7 +1634,7 @@ import SettingsAdmin from '../page/settingsadmin';
 			}
 
 			var initAdminResCal = function () {
-
+				console.log('fasdfasf')
 				$('.iam-res-cal').fullCalendar({
 					header: {
 						left: 'prev,next today',
@@ -1656,6 +1656,9 @@ import SettingsAdmin from '../page/settingsadmin';
 						$(element).data('equipment', event.equipment);
             $(element).data('nid', event.nid);
 						$(element).addClass('iam-status-'+event.status);
+						if (event.status=='completed' || event.status=='was-late') {
+							$(element).addClass('event-not-editable');
+						}
 						if (eventsToDelete.indexOf(event.nid)!=-1) {
 							$(element).addClass('marked-for-delete');
 						}
