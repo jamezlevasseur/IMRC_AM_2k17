@@ -203,17 +203,29 @@ class IAM_Reservation_Page
 			$equip_id = $res_row->Equipment_ID;
 			$equip_results;
 
-			$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d ",$equip_id));
+			$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Name,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d ",$equip_id));
 
+			$root_tag = $equip_results[0]->Root_Tag;
 			$equip_name = $equip_results[0]->Name;
 			if ($equip_name===null || $equip_name===false) {
 				continue;
 			}
-			$start_time = DateTime::createFromFormat('Y-m-d H:i:s',$res_row->Start_Time);
-			$start_time = $start_time->format('M d, y \a\t g:i a');
 
-			$end_time = DateTime::createFromFormat('Y-m-d H:i:s',$res_row->End_Time);
-			$end_time = $end_time->format('M d, y \a\t g:i a');
+			if ($root_tag=='Equipment Room') {
+				$end_time = explode(' ', $res_row->End_Time)[0].' '.get_late_check_time($root_tag);
+				$start_format = 'M d';
+				$end_format = 'M d \d\u\e \a\t g:i a';
+			} else {
+				$end_time = $res_row->End_Time;
+				$start_format = 'M d \a\t g:i a';
+				$end_format = 'M d \a\t g:i a';
+			}
+
+			$start_time = DateTime::createFromFormat('Y-m-d H:i:s',$res_row->Start_Time);
+			$start_time = $start_time->format($start_format);
+
+			$end_time = DateTime::createFromFormat('Y-m-d H:i:s',$end_time);
+			$end_time = $end_time->format($end_format);
 
 			$html.= '<div class="iam-existing-res">
 						<input class="iam-ninja" value="'.iam_output($res_row->NI_ID).'">

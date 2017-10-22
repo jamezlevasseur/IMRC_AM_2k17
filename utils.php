@@ -30,6 +30,15 @@ function get_iam_prefix()
 	return $wpdb->prefix.'iam_';
 }
 
+function get_root_tag($equip_name) {
+	return ezget("SELECT Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$equip_name)[0]->Root_Tag;
+}
+
+function get_late_check_time($facility_name) {
+	$s = json_decode(ezget("SELECT Schedule FROM ".IAM_FACILITY_TABLE." WHERE Name=%s",$facility_name)[0]->Schedule);
+	return $s->late_check_time;
+}
+
 function get_rental_period($id)
 {
 	global $wpdb;
