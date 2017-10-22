@@ -68,6 +68,7 @@ class IAM_Cal
 	{
 		$is_admin = isset($param_array['is']);
 		$get_all_reservations = isset($param_array['all']);
+		$all_day = isset($param_array['allDay']);
 
 		global $wpdb;
 
@@ -116,7 +117,7 @@ class IAM_Cal
 							$optional_event_args['startEditable'] = false;
 						}
 						$formatted_events[] = array_merge($optional_event_args, $new_event);
-						if (array_key_exists('allDay', $_GET)) {
+						if ($all_day) {
 							$formatted_events[count($formatted_events)-1]['allDay'] = true;
 						}
 					} else {
