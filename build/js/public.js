@@ -28018,7 +28018,6 @@ var Cal = function () {
                     right: 'month'
                 },
                 weekends: true,
-                defaultTimedEventDuration: that.page.rentalPeriod * 24 + ':00:00',
                 defaultView: 'month',
                 eventReceive: function eventReceive(e) {
                     if (that.eventFallsOnWeekend(e)) {
@@ -28042,7 +28041,7 @@ var Cal = function () {
                 eventRender: function eventRender(event, element) {
                     that.toolTipsForEvents(event, element);
                 },
-                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) + 1 }
+                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) }
             };
         }
     }, {

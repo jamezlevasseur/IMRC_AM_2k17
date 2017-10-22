@@ -24,9 +24,10 @@ class Settings_Page
 
     public static function make_rental_seg($args=[])
     {
+      //-1 to rental period on for settings and +1 when submit to db
       $defaultArgs = ['id'=>'','label'=>'','duration'=>'','default'=>'','class'=>''];
       $args = array_merge($defaultArgs, $args);
-      return '<div data-id="'.$args['id'].'" style="padding:8px 0;margin-bottom:5px;" class="rental-period-container '.$args['class'].'"><span><label>Label: <input type="text" class="rental-label" value="'.$args['label'].'"></label></span><span><label>Duration (in days): <input type="number" class="rental-duration" value="'.$args['duration'].'"></label></span><span><i class="iam-delete-rental-type fa fa-close fa-3"></i><br /><label style="display:block;">Default Rental Type: <input type="radio" name="default-rental" class="default-rental-type" '.$args['default'].' ></label></span></div>';
+      return '<div data-id="'.$args['id'].'" style="padding:8px 0;margin-bottom:5px;" class="rental-period-container '.$args['class'].'"><span><label>Label: <input type="text" class="rental-label" value="'.$args['label'].'"></label></span><span><label>Duration (in days): <input type="number" class="rental-duration" value="'.($args['duration']-1).'"></label></span><span><i class="iam-delete-rental-type fa fa-close fa-3"></i><br /><label style="display:block;">Default Rental Type: <input type="radio" name="default-rental" class="default-rental-type" '.$args['default'].' ></label></span></div>';
     }
 
     public static function reset_rental_default()
@@ -55,6 +56,8 @@ class Settings_Page
         $updated_vals = isset($_POST['updated_rental_types']) ? $_POST['updated_rental_types'] : [] ;
         $new_vals = isset($_POST['new_rental_types']) ? $_POST['new_rental_types'] : [] ;
         foreach ($updated_vals as $key => $value) {
+
+            $value['duration']+=1;
 
             if (!is_numeric($value['duration'])) {
                 iam_throw_error(INVALID_INPUT_EXCEPTION);

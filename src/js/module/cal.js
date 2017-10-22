@@ -310,7 +310,6 @@ export default class Cal {
         right: 'month'
       },
       weekends: true,
-      defaultTimedEventDuration: (that.page.rentalPeriod*24)+':00:00',
       defaultView: 'month',
       eventReceive: function (e) {
         if (that.eventFallsOnWeekend(e)) {
@@ -334,7 +333,7 @@ export default class Cal {
       eventRender: function (event, element) {
         that.toolTipsForEvents(event,element);
       },
-      defaultAllDayEventDuration: {days: (parseInt(that.page.rentalPeriod) + 1) }
+      defaultAllDayEventDuration: {days: parseInt(that.page.rentalPeriod) }
     };
   }
 
