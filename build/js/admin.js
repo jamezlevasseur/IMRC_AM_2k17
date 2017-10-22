@@ -44787,7 +44787,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    lastReservationResource = '',
 		    lastBalClick = null,
 		    userEmails = [],
-		    erRentalDays = null,
 		    releventRes = null,
 		    persistentRelEvent = null,
 		    eventCount = 0,
@@ -45688,10 +45687,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 
 		var initRentalButton = function initRentalButton() {
-			if (erRentalDays == null) {
-				var erInfo = $('.iam-facility-data').data('facility');
-				erRentalDays = erInfo['rental_period'];
-			}
+			var erInfo = $('.iam-facility-data').data('facility');
+
 			$('.iam-er-action-button').off();
 			$('.iam-er-action-button.iam-er-checkout').off();
 			$('.iam-er-action-button.iam-er-checkout').click(function (event) {
@@ -45798,7 +45795,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 				var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
 				var useremail = $('.iam-er-user-emails').val();
-				var thisRentalDays = $('.iam-rental-types-list').data('onload-duration') > 0 ? $('.iam-rental-types-list').data('onload-duration') : erRentalDays;
+				var thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
 
 				$('.modal-header .fc-event').each(function () {
 
@@ -45834,7 +45831,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					editable: true,
 					durationEditable: true,
 					allDay: true,
-					defaultAllDayEventDuration: { days: parseInt(thisRentalDays) + 1 },
+					defaultAllDayEventDuration: { days: parseInt(thisRentalDays) },
 					eventLimit: true, // allow "more" link when too many events
 					eventRender: function eventRender(event, element) {
 						$(element).data('fullname', event.fullname);

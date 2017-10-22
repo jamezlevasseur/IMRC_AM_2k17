@@ -18,7 +18,7 @@ import DebugAdmin from '../page/debugadmin';
 
 	 $(function () {
 			//global vars
-			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], erRentalDays = null, releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false, releventResEventStart = null;
+			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false, releventResEventStart = null;
 
 			var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
 
@@ -929,10 +929,8 @@ import DebugAdmin from '../page/debugadmin';
 				}
 
 				var initRentalButton = function () {
-					if (erRentalDays==null) {
-						var erInfo = $('.iam-facility-data').data('facility');
-						erRentalDays = erInfo['rental_period'];
-					}
+					var erInfo = $('.iam-facility-data').data('facility');
+
 					$('.iam-er-action-button').off();
 					$('.iam-er-action-button.iam-er-checkout').off();
 					$('.iam-er-action-button.iam-er-checkout').click(function(event) {
@@ -1038,7 +1036,7 @@ import DebugAdmin from '../page/debugadmin';
 
 						var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
 						var useremail = $('.iam-er-user-emails').val();
-						var thisRentalDays = $('.iam-rental-types-list').data('onload-duration')>0 ? $('.iam-rental-types-list').data('onload-duration') : erRentalDays;
+						var thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
 
 						$('.modal-header .fc-event').each(function() {
 
@@ -1075,7 +1073,7 @@ import DebugAdmin from '../page/debugadmin';
 							editable: true,
 							durationEditable: true,
 							allDay: true,
-							defaultAllDayEventDuration: {days: (parseInt(thisRentalDays) + 1 )},
+							defaultAllDayEventDuration: {days: parseInt(thisRentalDays)},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
 								$(element).data('fullname', event.fullname);

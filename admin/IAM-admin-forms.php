@@ -131,20 +131,17 @@ class IAM_Admin_Forms
 		return IAM_Admin_Forms::make_admin_form($update_cert_fields,'Update Existing Certification',false, false,'c');
 	}
 
-	public static function make_rental_list($chosen=null)
+	public static function make_rental_list($chosen=0)
 	{
 		global $wpdb;
 		$rental_types = $wpdb->get_results(RENTAL_ALL_QUERY);
 		$rental_list = ' class="iam-rental-types-list"><option data-nid="">None</option>';
-		$onload_duration = 0;
 		foreach ($rental_types as $row) {
 			$r = json_decode($row->Meta_Value);
 			$selected = $chosen==$r->id ? 'selected' : '';
-			if ($selected!='')
-			$onload_duration = $r->duration;
 			$rental_list.='<option value="'.$r->id.'" '.$selected.'>'.$r->label.' ('.$r->duration.')</option>';
 		}
-		$rental_list = '<select data-onload-duration="'.$onload_duration.'" '.$rental_list;
+		$rental_list = '<select data-onload-duration="'.get_rental_period($chosen).'" '.$rental_list;
 		$rental_list.='</select>';
 		return $rental_list;
 	}
