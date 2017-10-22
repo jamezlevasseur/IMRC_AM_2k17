@@ -32,12 +32,6 @@ class IAM_Reservation_Handler
 			$iam_id = $user_result[0]->IAM_ID;
 			$start = IAM_Sec::is_date($events[$i]['start']);
 			$end = IAM_Sec::is_date($events[$i]['end']);
-			if ($late_check_time!=null) {
-				$end = explode(' ', $end)[0].' '.$late_check_time;
-				$end = DateTime::createFromFormat(DATE_FORMAT, $end);
-				$end->sub(new DateInterval("P1D"));
-				$end = $end->format(DATE_FORMAT);
-			}
 			$ni_id = md5(uniqid());
 			$ni_id = strlen($ni_id)>=200 ? substr($ni_id, 0, 195) : $ni_id;
 			$format_start = DateTime::createFromFormat('Y-m-d H:i:s',$start);//m-d-Y g:i a
