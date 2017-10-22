@@ -12,6 +12,7 @@ import { initCSVButtonListener, initCSVAJAXButtonListener, initSearchListener } 
 
 import UserAdmin from '../page/useradmin';
 import SettingsAdmin from '../page/settingsadmin';
+import DebugAdmin from '../page/debugadmin';
 
 (function( $ ) {
 
@@ -21,30 +22,7 @@ import SettingsAdmin from '../page/settingsadmin';
 
 			var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
 
-			var debugSuccess = function() {
-				$('#debug-success').removeClass('iam-ninja');
-				$('#debug-success').fadeOut('500', function() {
-					$(this).remove();
-					$('.debug-wrap').append('<h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>');
-				});
-			}
-
-			if ( $('.debug-wrap').length>0 ) {
-				$('.make-dummy-res input[type=submit]').click(function(event) {
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: {action: 'debug_make_res', mod: $('.make-dummy-res input[name=hour-mod]').val() },
-						success: function (data) {
-							handleServerResponse(data);
-							debugSuccess();
-						},
-						error: function (data) {
-							handleServerError(data, new Error());
-						}
-					});
-				});
-			}
+			var debugadmin = new DebugAdmin();
 
 			//url reload functions
 

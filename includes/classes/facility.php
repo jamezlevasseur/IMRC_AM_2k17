@@ -68,7 +68,7 @@ class Facility
       $replace[] = $email_args['equipment'];
     }
     if (isset($email_args['notification_num'])) {
-      $search[] = '%notification_num%';
+      $search[] = '%notification_number%';
       $replace[] = $email_args['notification_num'];
     }
     if (isset($email_args['username'])) {

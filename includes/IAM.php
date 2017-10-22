@@ -78,10 +78,6 @@ class IAM {
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 
-		//register hooks for non-specific parts
-		$this->loader->add_action( 'delete_user', $this, 'on_delete_user' );
-		$this->loader->add_action( 'wp_mail_failed', $this, 'on_mail_failed' );
-
 		$plugin_login = new IAM_Login();
 
 		$this->loader->add_shortcode( 'imrc-login', $plugin_login, 'render_login_form' );
@@ -89,29 +85,6 @@ class IAM {
 
 	}
 
-	public function on_mail_failed($error)
-	{
-
-		add_user_meta(1, 'failed_email_'.uniqid(), $error);
-		print_r($error);exit;
-	}
-
-	/**
-	 * Function deletes users in the iam table if also deleted from wp_users
-	 *
-	 * @since 	1.0.0
-	 *
-	 * @return void
-	 */
-	public function on_delete_user($user_id)
-	{
-		global $wpdb;
-		//res, charge, user certs
-		$iam_id = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$user_id))[0]->IAM_ID;
-		$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE IAM_ID=%d",$iam_id));
-		$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_USER_CERTIFICATIONS_TABLE." WHERE IAM_ID=%d",$iam_id));
-		$wpdb->query($wpdb->prepare("DELETE FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$user_id));
-	}
 
 	/**
 	 * Load the required dependencies for this plugin.
@@ -204,6 +177,7 @@ class IAM {
 		$this->loader->add_action('admin_menu', $plugin_admin, 'admin_setup_menu');
 
 		$this->loader->add_action('wp_ajax_debug_make_res', 'Debug_Page', 'make_dummy_res');
+		$this->loader->add_action('wp_ajax_late_res_testing', 'Debug_Page', 'late_res_testing');
 
 		$this->loader->add_action('wp_ajax_add_charge_to_user', 'Users_Page', 'add_charge_to_user');
 		$this->loader->add_action('wp_ajax_get_user_charge_table', 'Users_Page', 'get_user_charge_table');
@@ -304,7 +278,6 @@ class IAM {
 		$this->loader->add_shortcode( 'equipmentroom-cron', 'Public_Content', 'render_rental_cron_page' );
 
 		$this->loader->add_action('wp_ajax_nopriv_iam_register_user', 'Utils_Public', 'register_user_callback');
-		$this->loader->add_action('wp_ajax_report_bug', 'Utils_Public', 'report_bug_callback');
 		$this->loader->add_action('wp_ajax_nopriv_public_login', 'Utils_Public', 'public_login_callback');
 		$this->loader->add_action('wp_ajax_public_login', 'Utils_Public', 'public_login_callback');
 		$this->loader->add_action('wp_ajax_nopriv_iam_login', 'Utils_Public', 'iam_login_callback');

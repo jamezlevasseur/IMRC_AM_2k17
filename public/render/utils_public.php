@@ -18,7 +18,7 @@ class Utils_Public
   {
     $late_reservations = Utils_Public::get_late_appointment_reservations();
 
-    $fablab = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name=%s", 'Fab_Lab')[0];
+    $fablab = ezget("SELECT * FROM ".IAM_FACILITY_TABLE." WHERE Name=%s", 'Fab Lab')[0];
 
     $scheduling = json_decode($fablab->Schedule);
 
@@ -31,10 +31,17 @@ class Utils_Public
 
         $user_email = get_email($row->IAM_ID);
 
+        $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$row->IAM_ID)[0];
+        $equip_name = ezget("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$row->Equipment_ID)[0]->Name;
+        $date = explode(' ', $row->Start_Time)[0];
+        $time1 = DateTime::createFromFormat('H:i:s',explode(' ', $row->Start_Time)[1]);
+  			$time2 = DateTime::createFromFormat('H:i:s',explode(' ', $row->End_Time)[1]);
+  			$time = $time1->format('g:i a').' - '.$time2->format('g:i a');
+
         Facility::send_admin_late_res_email( 'Fab Lab',
                                             [ 'equipment'=>$equip_name,
                                               'datetime'=>$date.' '.$time,
-                                              'username'=>$username,
+                                              'username'=>$user->WP_Username,
                                               'schedule_description'=>$scheduling->description,
                                               'start'=>format_res_time($row->Start_Time),
                                               'end'=>format_res_time($row->End_Time)
@@ -44,7 +51,7 @@ class Utils_Public
                                             [ 'user_email'=>$user_email,
                                               'equipment'=>$equip_name,
                                               'datetime'=>$date.' '.$time,
-                                              'username'=>$username,
+                                              'username'=>$user->WP_Username,
                                               'schedule_description'=>$scheduling->description,
                                               'start'=>format_res_time($row->Start_Time),
                                               'end'=>format_res_time($row->End_Time)
@@ -110,7 +117,7 @@ class Utils_Public
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$rightnow,LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
         $eq = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Checked_Out=%d",$entry->Reservation_ID))[0];
-        $user = $wpdb->get_results("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=".$entry->IAM_ID)[0];
+        $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%s",$entry->IAM_ID)[0];
 
         $fee = get_setting_iam(LATE_CHARGE_FEE_KEY);
 
@@ -123,7 +130,7 @@ class Utils_Public
 
         $user_email_body = 'Greetings, <br /><br /> You were due to return the '.$eq->Name.' yesterday. An automatic late charge of '.cash_format($fee).' has been applied and an email has been sent to an equipment room tech. Please return the equipment to the IMRC Equipment Room as soon as possible.<br /><br /> The hours of operations are "'.$hours.'". <br /><br /> Thank you, <br /><br /> - The IMRC Team';*/
 
-        Facility::send_admin_late_res_email( $facility_name,
+        Facility::send_admin_late_res_email( 'Equipment Room',
                                             [ 'equipment'=>$eq->Name,
                                               'fee'=>cash_format($fee),
                                               'username'=>$user->WP_Username,
@@ -134,7 +141,7 @@ class Utils_Public
                                               'end'=>format_res_time($entry->End_Time),
                                             ]);
 
-        Facility::send_user_late_res_email( $facility_name,
+        Facility::send_user_late_res_email( 'Equipment Room',
                                             [ 'user_email'=>get_email($user->IAM_ID),
                                               'equipment'=>$eq->Name,
                                               'fee'=>cash_format($fee),

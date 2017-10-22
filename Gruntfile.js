@@ -72,14 +72,14 @@ module.exports = function(grunt) {
         command: [
           'webpack --optimize-minimize',
           '> config/operations.json',
-          'echo \'{"dev":0,"small_db":0}\' >> config/operations.json'
+          'echo \'{"dev":0,"small_db":0,"ereporting":0}\' >> config/operations.json'
         ].join('&&')
       },
       prepdev: {
         command: [
           'webpack',
           '> config/operations.json',
-          'echo \'{"dev":1,"small_db":1}\' >> config/operations.json'
+          'echo \'{"dev":1,"small_db":1,"ereporting":0}\' >> config/operations.json'
         ].join('&&')
       },
     }

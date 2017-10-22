@@ -76,7 +76,8 @@ require plugin_dir_path( __FILE__ ) . 'includes/IAM.php';
  * @since    1.0.0
  */
 function run_iam() {
-  //show_all_errors();
+  if (E_REPORTING===1)
+    show_all_errors();
 	$plugin = new IAM();
 	$plugin->run();
 

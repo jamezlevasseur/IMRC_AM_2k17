@@ -309,7 +309,7 @@ export default class Cal {
         center: 'title',
         right: 'month'
       },
-      weekends: false,
+      weekends: true,
       defaultTimedEventDuration: (that.page.rentalPeriod*24)+':00:00',
       defaultView: 'month',
       eventReceive: function (e) {

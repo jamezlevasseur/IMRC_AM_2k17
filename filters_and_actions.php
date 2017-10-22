@@ -57,3 +57,25 @@ function iam_remove_dashboard()
 add_action('admin_menu', 'iam_remove_dashboard');
 
 add_filter( 'send_email_change_email', '__return_false' );
+
+add_action( 'wp_mail_failed', 'on_mail_failed' );
+
+function on_mail_failed($error)
+{
+  add_user_meta(1, 'failed_email_'.uniqid(), $error);
+  print_r($error);exit;
+}
+
+add_action('delete_user', 'prevent_user_deletion');
+
+function prevent_user_deletion($user_id)
+{
+  exit("The IMRC Account Manager plugin does not allow user deletion.");
+  /* old code for when users could be deleted
+  global $wpdb;
+  //res, charge, user certs
+  $iam_id = $wpdb->get_results($wpdb->prepare("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$user_id))[0]->IAM_ID;
+  $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_RESERVATION_TABLE." WHERE IAM_ID=%d",$iam_id));
+  $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_USER_CERTIFICATIONS_TABLE." WHERE IAM_ID=%d",$iam_id));
+  $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_USERS_TABLE." WHERE WP_ID=%d",$user_id));*/
+}

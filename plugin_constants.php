@@ -86,7 +86,7 @@ define('INVALID_REQUEST_EXCEPTION', 'Error: Invalid Request.');
 
 define('DEBUG_FILE', plugin_dir_path( dirname( __FILE__ ) ).'imrc-account-manager/logs/iam_debug.txt');
 
-define('BUG_REPORTING', json_decode( file_get_contents(iam_dir().'config/operations.json') )->dev);
+define('E_REPORTING', json_decode( file_get_contents(iam_dir().'config/operations.json') )->ereporting);
 
 define('DEV_MODE', json_decode( file_get_contents(iam_dir().'config/operations.json') )->dev);
 
