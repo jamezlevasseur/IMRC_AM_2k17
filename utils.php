@@ -191,6 +191,14 @@ function iam_respond($status='success',$content='',$message='',$redirect='')
 	exit;
 }
 
+function make_human_readable_date($date)
+{
+	if (empty($date))
+		return 'No time set.';
+	$dt = DateTime::createFromFormat(DATE_FORMAT,$date);
+	return $dt->format('M-d-y g:i a');
+}
+
 function make_nid()
 {
 	return md5(uniqid());

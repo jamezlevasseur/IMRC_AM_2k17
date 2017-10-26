@@ -45027,7 +45027,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		var eventToolTip = function eventToolTip(event, element) {
 			var e = $(element);
-			e.attr('title', 'Name: ' + event.fullname + '\n Email: ' + event.email + ' \n Equipment: ' + event.equipment);
+			e.attr('title', 'Name: ' + event.fullname + '\n Email: ' + event.email + ' \n Equipment: ' + event.equipment + '\n Checked In: ' + event.in + '\n Checked Out: ' + event.out);
 		};
 
 		var makeSubmitPopup = function makeSubmitPopup(heading, body, callback, a) {

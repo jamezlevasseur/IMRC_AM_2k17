@@ -101,11 +101,15 @@ class IAM_Cal
 					}
 					if ($is_admin) {
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
+						$in = make_human_readable_date($row->Checked_In);
+						$out = make_human_readable_date($row->Checked_Out);
 						$new_event = [	'nid'=>$row->NI_ID,
 																		'fullname'=> get_full_name($wp_id),
 																		'title'=>$title,
 																		'start'=>$row->Start_Time,
 																		'end'=>$row->End_Time,
+																		'in'=>$in,
+																		'out'=>$out,
 																		'email'=>$email,
 																		'equipment'=>$item_name,
 																		'status'=>$RES_STATUS_CLASS_DICT[$row->Status],
