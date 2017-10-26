@@ -44797,7 +44797,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    availableTags,
 		    comparableTags,
 		    didLoadAllRes = false,
-		    releventResEventStart = null;
+		    releventResEventStart = null,
+		    thisRentalDays;
 
 		var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
 
@@ -45794,7 +45795,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 				var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
 				var useremail = $('.iam-er-user-emails').val();
-				var thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
+				thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
 
 				$('.modal-header .fc-event').each(function () {
 
@@ -45884,42 +45885,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						initContextMenu('rental');
 					},
 					eventDrop: function eventDrop(event, d, revert) {
-						if (eventFallsOnWeekend(event)) {
-							(0, _override.overridePrompt)({
-								title: 'Confirm Override',
-								body: ERinvalidTimePrompt,
-								cancel: function cancel() {
-									revert();
-								},
-								override: function override() {
-									updateEventsModified(event);
-								}
-							});
-						} else {
-							updateEventsModified(event);
-						}
+						adminCalEventDrop(event, d, revert);
 					},
 					eventResize: function eventResize(event, d, revert, jsevent) {
-						if (eventIsLongerThan(event, parseInt(thisRentalDays) + 1)) {
-							(0, _override.overridePrompt)({
-								title: 'Confirm Override',
-								body: ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
-								cancel: function cancel() {
-									revert();
-								},
-								override: function override() {
-									updateEventsModified(event);
-								}
-							});
-						} else {
-							updateEventsModified(event);
-						}
+						adminCalEventResize(event, d, revert, jsevent);
 					},
 					eventReceive: function eventReceive(e) {
-						if (eventFallsOnWeekend(e)) {
-							$('.iam-res-cal').fullCalendar('removeEvents', e._id);
-							return false;
-						}
+						adminCalEventReceive(e);
 					},
 					events: ajaxurl + "?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name=" + equip_name
 				});
@@ -46271,6 +46243,47 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			}
 		};
 
+		function adminCalEventDrop(event, d, revert) {
+			if (eventFallsOnWeekend(event)) {
+				(0, _override.overridePrompt)({
+					title: 'Confirm Override',
+					body: ERinvalidTimePrompt,
+					cancel: function cancel() {
+						revert();
+					},
+					override: function override() {
+						updateEventsModified(event);
+					}
+				});
+			} else {
+				updateEventsModified(event);
+			}
+		}
+
+		function adminCalEventResize(event, d, revert, jsevent) {
+			if (eventIsLongerThan(event, parseInt(thisRentalDays))) {
+				(0, _override.overridePrompt)({
+					title: 'Confirm Override',
+					body: ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+					cancel: function cancel() {
+						revert();
+					},
+					override: function override() {
+						updateEventsModified(event);
+					}
+				});
+			} else {
+				updateEventsModified(event);
+			}
+		}
+
+		function adminCalEventReceive(e) {
+			if (eventFallsOnWeekend(e)) {
+				$('.iam-res-cal').fullCalendar('removeEvents', e._id);
+				return false;
+			}
+		}
+
 		var handleEventCopyEmail = function handleEventCopyEmail(event) {
 			var e = $('<div>' + event.email + '</div>');
 			copyToClipboard(e[0]);
@@ -46349,7 +46362,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 
 		var initAdminResCal = function initAdminResCal() {
-			console.log('fasdfasf');
 			$('.iam-res-cal').fullCalendar({
 				header: {
 					left: 'prev,next today',
@@ -46391,13 +46403,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					initStatusHideListeners();
 					(0, _userfeedback.submissionEnd)();
 				},
-				eventDrop: function eventDrop(event) {
+				eventDrop: function eventDrop(event, d, revert) {
 					eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+					if (resFacilityType == 'rental') adminCalEventDrop(event, d, revert);
 				},
-				eventResize: function eventResize(event) {
+				eventResize: function eventResize(event, d, revert, jsevent) {
 					eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+					thisRentalDays = event.period;
+					if (resFacilityType == 'rental') adminCalEventResize(event, d, revert, jsevent);
 				},
-				eventClick: function eventClick(event, jsEvent, view) {},
 				events: lastReservationResource
 			});
 		};
@@ -46729,7 +46743,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initSubmitRentalTypeListener();
 		} else if ($('.iam-reservation-wrap').length > 0) {
 			resetEvents();
-
+			console.log($('.iam-reservation-wrap').data('facility-type'));
+			var resFacilityType = $('.iam-reservation-wrap').data('facility-type');
 			$('.iam-load-all-reservations').click(function (event) {
 				if ($('.iam-res-cal-placeholder').length > 0) return;
 

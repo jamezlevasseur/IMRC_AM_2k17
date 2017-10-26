@@ -279,7 +279,7 @@ class Admin_Content
 	public function reservation_content()
 	{
 		?>
-			<div class="wrap iam-reservation-wrap" data-facility="<?php echo $this->facility->Name; ?>">
+			<div class="wrap iam-reservation-wrap" data-facility-type="<?php echo $this->schedule->type; ?>" data-facility="<?php echo $this->facility->Name; ?>">
 				<h1 class="iam-admin-header">Reservations</h1>
 				<div class="res-col-left">
 					<h3 style ="margin-top:0 !important;"> <?php echo $this->facility->Name; ?></h3>
