@@ -15859,7 +15859,8 @@ var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
       data: { action: ajaxaction },
       success: function success(data) {
         (0, _userfeedback.submissionEnd)();
-        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + (0, _serverresponse.handleServerResponse)(data));
+        var d = (0, _serverresponse.handleServerResponse)(data);
+        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + d);
         window.open(encodedUri);
       },
       error: function error(data) {

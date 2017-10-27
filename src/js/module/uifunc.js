@@ -44,7 +44,8 @@ let initCSVAJAXButtonListener = function (ajaxaction) {
 			data: {action: ajaxaction},
 			success: function (data) {
 				submissionEnd();
-				let encodedUri = encodeURI('data:text/csv;charset=utf-8,'+handleServerResponse(data));
+        let d = handleServerResponse(data);
+				let encodedUri = encodeURI('data:text/csv;charset=utf-8,'+d);
 				window.open(encodedUri);
 			},
 			error: function (data) {

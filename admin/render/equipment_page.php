@@ -60,7 +60,7 @@ class Equipment_Page extends Item_Mgmt
 
       $r = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." ORDER BY Name ASC");
 
-      $csv = 'Name,Description,Pricing Description,Manufacturer Info,Certification,Status,Facility,Comments,Photo,Rental Type,Tags,Include in Slideshow'.PHP_EOL;
+      $csv = 'ID,Manual Edit Status,Name,Description,Pricing Description,Manufacturer Info,Certification,Status,Facility,Comments,Photo,Rental Type,Tags,Include in Slideshow'.PHP_EOL;
 
       foreach ($r as $row) {
         $cert = 'None';
@@ -74,8 +74,21 @@ class Equipment_Page extends Item_Mgmt
         $rental_type = $rental_type === 0 ? 'None' : $rental_type->label;
 
         $tags = get_list_of_tags_for($row->Equipment_ID, ' & ');
-
-        $csv.='"'.escape_CSV_quotes($row->Name).'","'.escape_CSV_quotes($row->Description).'","'.escape_CSV_quotes($row->Pricing_Description).'","'.escape_CSV_quotes($row->Manufacturer_Info).'","'.escape_CSV_quotes($cert).'","'.escape_CSV_quotes($row->Out_Of_Order).'","'.escape_CSV_quotes($row->Root_Tag).'","'.escape_CSV_quotes($row->Comments).'","'.escape_CSV_quotes($row->Photo).'","'.escape_CSV_quotes($rental_type).'","'.escape_CSV_quotes($tags).'","'.escape_CSV_quotes($row->On_Slide_Show).'"'.PHP_EOL;
+        
+        $csv.='"'.escape_CSV_quotes($row->Equipment_ID).'","'.
+                  escape_CSV_quotes('').'","'.
+                  escape_CSV_quotes($row->Name).'","'.
+                  escape_CSV_quotes($row->Description).'","'.
+                  escape_CSV_quotes($row->Pricing_Description).'","'.
+                  escape_CSV_quotes($row->Manufacturer_Info).'","'.
+                  escape_CSV_quotes($cert).'","'.
+                  escape_CSV_quotes($row->Out_Of_Order).'","'.
+                  escape_CSV_quotes($row->Root_Tag).'","'.
+                  escape_CSV_quotes($row->Comments).'","'.
+                  escape_CSV_quotes($row->Photo).'","'.
+                  escape_CSV_quotes($rental_type).'","'.
+                  escape_CSV_quotes($tags).'","'.
+                  escape_CSV_quotes($row->On_Slide_Show).'"'.PHP_EOL;
       }
       iam_respond(SUCCESS,$csv);
     }
