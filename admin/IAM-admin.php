@@ -90,7 +90,7 @@ class IAM_Admin {
 
 		require_once iam_dir() . 'admin/content.php';
 
-        require_once iam_dir() . 'admin/debug.php';
+    require_once iam_dir() . 'admin/debug.php';
 
 	}
 

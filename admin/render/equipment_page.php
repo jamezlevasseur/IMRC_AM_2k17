@@ -6,6 +6,117 @@
 class Equipment_Page extends Item_Mgmt
 {
 
+    public static function equipment_csv_upload()
+    {
+      $row = 1;
+      $output = '';
+      $has_id = false;
+      $header_row = null;
+      if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
+          while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+              $num = count($data);
+              //$output.= "<p> $num fields in line $row: <br /></p>\n";
+              if ($row==1) {
+                $header_row = $data;
+                for ($i=0; $i < count($header_row); $i++) {
+                  $header_row[$i] = str_replace(' ', '_', $header_row[$i]);
+                }
+                if ($data[0]=='ID')
+                  $has_id = true;
+                $row++;
+                continue;
+              }
+
+              if ($has_id) {
+                $action = trim(strtolower($data[1]));
+                if ($action=='update') {
+                  $p = self::make_update_params($data,$header_row,[0,1]);
+                  $p['args'][] = $data[0];
+                  ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET ".$p['string']." WHERE Equipment_ID=%d", $p['args']);
+                  self::csv_update_tags($data[0],$data[12]);
+                  self::csv_update_certification($data[0],$data[6]);
+                } else if ($action=='delete') {
+                  ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d", $data[0]);
+                }//TODO: create
+              } else { //one time use case
+                $action = trim(strtolower($data[0]));
+                if ($action=='update') {
+                  $id = self::find_id_for_idless_row($data, $header_row);
+                  if ($id==null) {
+                    $output.='<br>Failed to update on '.$row.' - '.$data[1].'<br>';
+                  } else {
+                    $p = self::make_update_params($data,$header_row,[0,13]);
+                    $p['args'][] = $id;
+                    ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET ".$p['string']." WHERE Equipment_ID=%d", $p['args']);
+                    self::csv_update_tags($id,$data[11]);
+                    self::csv_update_certification($id,$data[5]);
+                  }
+                } else if ($action=='delete') {
+                  $id = self::find_id_for_idless_row($data, $header_row);
+                  if ($id==null) {
+                    $output.='<br>Failed to delete on '.$row.' - '.$data[1].'<br>';
+                  } else {
+                    ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d", $id);
+                  }
+                }
+              }
+              $row++;
+          }
+          fclose($handle);
+      }
+      iam_respond(SUCCESS,$output);
+    }
+
+    public static function csv_update_tags($id,$tagstring)
+    {
+      ezquery("DELETE FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$id);
+      $tags = explode('&', $tagstring);
+      for ($i=0; $i < count($tags); $i++) {
+        $target_tag = ezget("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s", trim($tags[$i]));
+        if (empty($target_tag))
+          continue;
+        $target_tag = $target_tag[0]->Tag_ID;
+        ezquery("INSERT INTO ".IAM_TAGS_EQUIPMENT_TABLE." (Equipment_ID,Tag_ID,Unique_ID) VALUES (%d,%d,%d)",$id,$target_tag,$id.$target_tag);
+      }
+    }
+
+    public static function csv_update_certification($id,$certname)
+    {
+      $c = ezget("SELECT Certification_ID FROM ".IAM_CERTIFICATION_TABLE." WHERE Name=%s",trim($certname));
+
+      if (empty($c))
+        return;
+      $c = $c[0]->Certification_ID;
+
+      ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d WHERE Equipment_ID=%d",$c,$id);
+    }
+
+    public static function find_id_for_idless_row($row, $header)
+    {
+      for ($i=1; $i < count($row); $i++) {
+        $get_attempt = ezget("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE {$header[$i]}='{$row[$i]}'");
+        if (count($get_attempt)===1) {
+          return $get_attempt[0]->Equipment_ID;
+        }
+      }
+      return null;
+    }
+
+    public static function make_update_params($row, $header, $skip)
+    {
+      $s = ' ';
+      $a = [];
+      for ($i=0; $i < count($row); $i++) {
+        if (in_array($i, $skip) || $header[$i]=='Tags' || $header[$i]=='Certification')
+          continue;
+        $symbol = is_numeric($row[$i]) ? '%d' : '%s' ;
+        $s.=$header[$i]."=$symbol, ";
+        $a[] = $row[$i];
+      }
+      //print_r($a);exit;
+      return ['string'=>substr($s,0,-2),'args'=>$a];
+    }
+
     public static function duplicate_equipment()
     {
       global $wpdb;
@@ -60,7 +171,7 @@ class Equipment_Page extends Item_Mgmt
 
       $r = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." ORDER BY Name ASC");
 
-      $csv = 'ID,Manual Edit Status,Name,Description,Pricing Description,Manufacturer Info,Certification,Status,Facility,Comments,Photo,Rental Type,Tags,Include in Slideshow'.PHP_EOL;
+      $csv = 'ID,Manual Edit Status,Name,Description,Pricing Description,Manufacturer Info,Certification,Out Of Order,Root Tag,Comments,Photo,Rental Type,Tags,On Slide Show'.PHP_EOL;
 
       foreach ($r as $row) {
         $cert = 'None';
@@ -74,7 +185,7 @@ class Equipment_Page extends Item_Mgmt
         $rental_type = $rental_type === 0 ? 'None' : $rental_type->label;
 
         $tags = get_list_of_tags_for($row->Equipment_ID, ' & ');
-        
+
         $csv.='"'.escape_CSV_quotes($row->Equipment_ID).'","'.
                   escape_CSV_quotes('').'","'.
                   escape_CSV_quotes($row->Name).'","'.

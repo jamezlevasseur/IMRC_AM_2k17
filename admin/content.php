@@ -39,7 +39,13 @@ class Admin_Content
 	 public static function info_content()
 	 {
 		 ?>
+		 <h3>Debug Files</h3>
 		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
+		 <h3>Equipment CSV Upload</h3>
+		 <form class="equipment-csv-upload" method="post">
+			 <input type="file" name="">
+			 <input type="submit">
+		 </form>
 	 <?php
 	 }
 

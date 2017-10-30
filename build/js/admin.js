@@ -46934,6 +46934,28 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initDeletePricingDropDownListener();
 			initPricingRowDeleteListener();
 			(0, _uifunc.initCSVAJAXButtonListener)('admin_pricing_csv');
+		} else if ($('.equipment-csv-upload')) {
+			$('.equipment-csv-upload input[type=submit]').click(function (event) {
+				event.preventDefault();
+				var formData = new FormData();
+				formData.append('action', 'equipment_csv_upload');
+				formData.append('file', $('.equipment-csv-upload input[type=file]').prop('files')[0]);
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					processData: false,
+					contentType: false,
+					data: formData,
+					success: function success(data) {
+						//handleServerResponse(data);
+						$('.equipment-csv-upload').append((0, _serverresponse.handleServerResponse)(data));
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
 		}
 	});
 	(0, _debug.debugWarn)();

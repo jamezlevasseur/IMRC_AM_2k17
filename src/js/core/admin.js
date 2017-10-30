@@ -2209,6 +2209,28 @@ import DebugAdmin from '../page/debugadmin';
 				initDeletePricingDropDownListener();
 				initPricingRowDeleteListener();
 				initCSVAJAXButtonListener('admin_pricing_csv');
+			} else if ($('.equipment-csv-upload')) {
+				$('.equipment-csv-upload input[type=submit]').click(function(event) {
+					event.preventDefault();
+					var formData = new FormData();
+					formData.append('action', 'equipment_csv_upload')
+					formData.append('file',$('.equipment-csv-upload input[type=file]').prop('files')[0]);
+
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						processData: false,
+						contentType: false,
+						data: formData,
+						success: function (data) {
+							//handleServerResponse(data);
+							$('.equipment-csv-upload').append( handleServerResponse(data) );
+						},
+						error: function (data) {
+							handleServerError(data, new Error());
+						}
+					});
+				});
 			}
 	 });
 	 debugWarn();

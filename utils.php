@@ -14,12 +14,19 @@ function escape_CSV_quotes($str)
 function ezget($string, ...$rest)
 {
 	global $wpdb;
+	if (is_array($rest[0])=='array') {
+		$rest = $rest[0];
+	}
 	return $wpdb->get_results($wpdb->prepare($string, $rest));
 }
 
 function ezquery($string, ...$rest)
 {
 	global $wpdb;
+	if (is_array($rest[0])=='array') {
+		$rest = $rest[0];
+	}
+	//print_r($rest);exit;
 	//echo $wpdb->prepare($string, $rest).'<br>';exit;
 	return $wpdb->query($wpdb->prepare($string, $rest));
 }
