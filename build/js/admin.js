@@ -45568,6 +45568,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				formData.append('pricing-description', form.children('.iam-form-row').children('#pricing-description').val());
 				formData.append('internal-comments', form.children('.iam-form-row').children('#internal-comments').val());
 				formData.append('manufacturer-info', form.children('.iam-form-row').children('#manufacturer-info').val());
+				formData.append('serial-number', form.children('.iam-form-row').children('#serial-number').val());
 				if ($('.iam-rental-types-list').length > 0) formData.append('rental_type', form.find('.iam-rental-types-list').val());
 				formData.append('out-of-order', outOfOrder);
 				formData.append('on-slide-show', slideShow);

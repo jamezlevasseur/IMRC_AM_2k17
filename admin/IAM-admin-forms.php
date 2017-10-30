@@ -34,6 +34,7 @@ class IAM_Admin_Forms
 	const EQUIPMENT_PHOTO_LABEL = '<label for="photo">Item Photo:</label>';
 	const EQUIPMENT_NAME_LABEL = '<label for="name">Item Name <span style="background:none;" title="Does not accept underscores, semi-colons, or single quotes"><i style="font-size:20px;" class="fa fa-question-circle"></i></span>:</label>';
 	const EQUIPMENT_MANUFACTURER_INFO_LABEL = '<label for="manufacturer-info">Manufacturer Info:</label>';
+	const EQUIPMENT_SERIAL_NUMBER_LABEL = '<label for="serial-number">Serial Number:</label>';
 	const EQUIPMENT_DESCRIPTION_LABEL = '<label for="description">Item Description:</label>';
 	const EQUIPMENT_PRICING_DESCRIPTION_LABEL = '<label for="pricing-description">Pricing Description:</label>';
 	const EQUIPMENT_CERTICATION_LABEL = '<label for="certification">Certification Required:</label>';
@@ -163,6 +164,7 @@ class IAM_Admin_Forms
 		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_PHOTO_LABEL.'<input type="file" id="photo" name="photo" accept="image/*">';
 		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_NAME_LABEL.'<input type="text" id="name" name="name" max="100" value="">';
 		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_MANUFACTURER_INFO_LABEL.'<input type="text" id="manufacturer-info" name="manufacturer-info" value="">';
+		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_SERIAL_NUMBER_LABEL.'<input type="text" id="serial-number" name="serial-number" value="">';
 		$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_DESCRIPTION_LABEL.'<textarea id="description" name="description" rows="4" cols="50"></textarea>';
 	 	$new_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_PRICING_DESCRIPTION_LABEL.'<textarea id="pricing-description" name="pricing-description" rows="4" cols="50"></textarea>';
 	 	$list_html = '<option value="">None</option>';
@@ -212,6 +214,7 @@ class IAM_Admin_Forms
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_PHOTO_LABEL.'<input type="file" id="photo" name="photo" accept="image/*">';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_NAME_LABEL.'<input type="text" id="name" name="name" max="100" data-original="'.iam_output($init_equipment_results[0]->Name).'" value="'.iam_output($init_equipment_results[0]->Name).' ">';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_MANUFACTURER_INFO_LABEL.'<input type="text" id="manufacturer-info" name="manufacturer-info" value="'.iam_output($init_equipment_results[0]->Manufacturer_Info).' ">';
+		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_SERIAL_NUMBER_LABEL.'<input type="text" id="serial-number" name="serial-number" value="'.iam_output($init_equipment_results[0]->Serial_Number).' ">';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_DESCRIPTION_LABEL.'<textarea id="description" name="description" rows="4" cols="50">'.iam_output($init_equipment_results[0]->Description).'</textarea>';
 	 	$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_PRICING_DESCRIPTION_LABEL.'<textarea id="pricing-description" name="pricing-description" rows="4" cols="50">'.iam_output($init_equipment_results[0]->Pricing_Description).'</textarea>';
 	 	$update_equipment_fields[] = '<label for="certification">Certification Required: '.iam_output($current_cert).'</label>';
