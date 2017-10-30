@@ -40,6 +40,9 @@ class Equipment_Page extends Item_Mgmt
                 } else if ($action=='create') {
                   $p = self::make_create_params($data,$header_row,[0,1]);
                   ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." ({$p['fields']}) VALUES ({$p['symbols']})",$p['args']);
+                  $id = ezget("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID=%s",$p['nid'])[0]->Equipment_ID;
+                  self::csv_update_tags($id,$data[12]);
+                  self::csv_update_certification($id,$data[6]);
                 }
               } else { //one time use case
                 $action = trim(strtolower($data[0]));
@@ -67,6 +70,8 @@ class Equipment_Page extends Item_Mgmt
           }
           fclose($handle);
       }
+      date_default_timezone_set(IMRC_TIME_ZONE);
+      $output.='<br>upload finished - '.date('H:i');
       iam_respond(SUCCESS,$output);
     }
 
@@ -118,9 +123,14 @@ class Equipment_Page extends Item_Mgmt
         $symbols.=$symbol.',';
         $args[] = $row[$i];
       }
-      return ['fields'=>substr($fields,0,-1),
-              'symbols'=>substr($symbols,0,-1),
-              'args'=>$args];
+      $fields.='NI_ID';
+      $symbols.='%s';
+      $args[]=make_nid();
+      return ['fields'=>$fields,
+              'symbols'=>$symbols,
+              'args'=>$args,
+              'nid'=>$args[count($args)-1]
+            ];
     }
 
     public static function make_update_params($row, $header, $skip)
