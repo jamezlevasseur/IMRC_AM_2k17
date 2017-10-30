@@ -51,7 +51,7 @@ class Equipment_Page extends Item_Mgmt
                   if ($id==null) {
                     $output.='<br>Failed to update on '.$row.' - '.$data[1].'<br>';
                   } else {
-                    $p = self::make_update_params($data,$header_row,[0,13]);
+                    $p = self::make_update_params($data,$header_row,[0]);
                     $p['args'][] = $id;
                     ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET ".$p['string']." WHERE Equipment_ID=%d", $p['args']);
                     self::csv_update_tags($id,$data[11]);
@@ -181,7 +181,7 @@ class Equipment_Page extends Item_Mgmt
 
       //TODO this deletes the photo from disk some how????
 
-      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo,Root_Tag) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo,$equipment->Root_Tag) );
+      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo,Root_Tag,Serial Number) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo,$equipment->Root_Tag,$equipment->Serial_Number) );
 
       $new_id = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID='$ni_id'")[0]->Equipment_ID;
 
