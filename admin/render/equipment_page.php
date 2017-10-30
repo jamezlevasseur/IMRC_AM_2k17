@@ -37,7 +37,10 @@ class Equipment_Page extends Item_Mgmt
                   self::csv_update_certification($data[0],$data[6]);
                 } else if ($action=='delete') {
                   ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d", $data[0]);
-                }//TODO: create
+                } else if ($action=='create') {
+                  $p = self::make_create_params($data,$header_row,[0,1]);
+                  ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." ({$p['fields']}) VALUES ({$p['symbols']})",$p['args']);
+                }
               } else { //one time use case
                 $action = trim(strtolower($data[0]));
                 if ($action=='update') {
@@ -102,6 +105,24 @@ class Equipment_Page extends Item_Mgmt
       return null;
     }
 
+    public static function make_create_params($row, $header, $skip)
+    {
+      $fields = '';
+      $symbols = '';
+      $args = [];
+      for ($i=0; $i < count($row); $i++) {
+        if (in_array($i, $skip) || $header[$i]=='Tags' || $header[$i]=='Certification')
+          continue;
+        $symbol = is_numeric($row[$i]) ? '%d' : '%s' ;
+        $fields.=$header[$i].',';
+        $symbols.=$symbol.',';
+        $args[] = $row[$i];
+      }
+      return ['fields'=>substr($fields,0,-1),
+              'symbols'=>substr($symbols,0,-1),
+              'args'=>$args];
+    }
+
     public static function make_update_params($row, $header, $skip)
     {
       $s = ' ';
@@ -113,7 +134,6 @@ class Equipment_Page extends Item_Mgmt
         $s.=$header[$i]."=$symbol, ";
         $a[] = $row[$i];
       }
-      //print_r($a);exit;
       return ['string'=>substr($s,0,-2),'args'=>$a];
     }
 
