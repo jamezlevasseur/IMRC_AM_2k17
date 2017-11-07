@@ -1190,7 +1190,7 @@ import DebugAdmin from '../page/debugadmin';
 						$.ajax({
 							url: ajaxurl,
 							type: 'GET',
-							data: {action: 'get_admin_forms', request: 'u_equipment', name: $(this).html()},
+							data: {action: 'get_admin_forms', request: 'u_equipment', name: $(this).html(), facility: facilityType},
 							success: function (data) {
 								$('#iam-update-form').replaceWith(handleServerResponse(data));
 								initTagAutoCompleteListener();
@@ -2014,7 +2014,6 @@ import DebugAdmin from '../page/debugadmin';
 
 			} else if ( $('.iam-reservation-wrap').length>0 ) {
 				resetEvents();
-				console.log($('.iam-reservation-wrap').data('facility-type'));
 				var resFacilityType = $('.iam-reservation-wrap').data('facility-type');
 				$('.iam-load-all-reservations').click(function(event) {
 					if ($('.iam-res-cal-placeholder').length>0)
@@ -2084,7 +2083,7 @@ import DebugAdmin from '../page/debugadmin';
 				$(document).tooltip();
 
 			} else if ( $('.iam-equipment-wrap').length>0 ) {
-
+				var facilityType = $('.iam-facility-data').data('facility-type');
 				//on load
 				loadComparableTags();
 

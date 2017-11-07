@@ -45944,7 +45944,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				$.ajax({
 					url: ajaxurl,
 					type: 'GET',
-					data: { action: 'get_admin_forms', request: 'u_equipment', name: $(this).html() },
+					data: { action: 'get_admin_forms', request: 'u_equipment', name: $(this).html(), facility: facilityType },
 					success: function success(data) {
 						$('#iam-update-form').replaceWith((0, _serverresponse.handleServerResponse)(data));
 						initTagAutoCompleteListener();
@@ -46745,7 +46745,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initSubmitRentalTypeListener();
 		} else if ($('.iam-reservation-wrap').length > 0) {
 			resetEvents();
-			console.log($('.iam-reservation-wrap').data('facility-type'));
 			var resFacilityType = $('.iam-reservation-wrap').data('facility-type');
 			$('.iam-load-all-reservations').click(function (event) {
 				if ($('.iam-res-cal-placeholder').length > 0) return;
@@ -46811,7 +46810,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			initChargeTable();
 			$(document).tooltip();
 		} else if ($('.iam-equipment-wrap').length > 0) {
-
+			var facilityType = $('.iam-facility-data').data('facility-type');
 			//on load
 			loadComparableTags();
 

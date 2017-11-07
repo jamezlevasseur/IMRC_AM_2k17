@@ -9,15 +9,15 @@ class Item_Mgmt
     public static function get_admin_forms_callback ()
     {
         $request = $_GET['request'];
-
+        
         if ($request=='n_certification') {
             iam_respond(SUCCESS, IAM_Admin_Forms::new_certification_form() );
         } else if ($request=='u_certification') {
             iam_respond(SUCCESS, IAM_Admin_Forms::update_certification_form(IAM_Sec::textfield_cleaner($_GET['name'])) );
         }  else if ($request=='n_equipment') {
-            iam_respond(SUCCESS, IAM_Admin_Forms::new_equipment_form() );
+            iam_respond(SUCCESS, IAM_Admin_Forms::new_equipment_form($_GET['facility']) );
         }  else if ($request=='u_equipment') {
-            iam_respond(SUCCESS, IAM_Admin_Forms::update_equipment_form(IAM_Sec::textfield_cleaner($_GET['name'])) );
+            iam_respond(SUCCESS, IAM_Admin_Forms::update_equipment_form(IAM_Sec::textfield_cleaner($_GET['name']),$_GET['facility']) );
         } else if ($request=='n_room') {
             iam_respond(SUCCESS, IAM_Admin_Forms::new_room_form() );
         }  else if ($request=='u_room') {

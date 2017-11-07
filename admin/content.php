@@ -135,9 +135,7 @@ class Admin_Content
 				<?php } ?>
 			</div>
 			<?php
-
-			if ($this->schedule->type=='rental')
-				echo '<div class="iam-ninja iam-facility-data" '.'data-facility="'.iam_output($facility->Schedule).'" ></div>';
+			echo '<div class="iam-ninja iam-facility-data" data-facility-type="'.json_decode($this->facility->Schedule)->type.'" '.'data-facility="'.iam_output($this->facility->Schedule).'" ></div>';
 			 ?>
 
 			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
