@@ -6,6 +6,148 @@
 class Equipment_Page extends Item_Mgmt
 {
 
+    public static function equipment_csv_upload()
+    {
+      $row = 1;
+      $output = '';
+      $has_id = false;
+      $header_row = null;
+      if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
+          while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+              $num = count($data);
+              //$output.= "<p> $num fields in line $row: <br /></p>\n";
+              if ($row==1) {
+                $header_row = $data;
+                for ($i=0; $i < count($header_row); $i++) {
+                  $header_row[$i] = str_replace(' ', '_', $header_row[$i]);
+                }
+                if ($data[0]=='ID')
+                  $has_id = true;
+                $row++;
+                continue;
+              }
+              $output.=$data[0];
+              if ($has_id) {
+                $action = trim(strtolower($data[1]));
+                if ($action=='update') {
+                  $p = self::make_update_params($data,$header_row,[0,1]);
+                  $p['args'][] = $data[0];
+                  ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET ".$p['string']." WHERE Equipment_ID=%d", $p['args']);
+                  self::csv_update_tags($data[0],$data[12]);
+                  self::csv_update_certification($data[0],$data[6]);
+                } else if ($action=='delete') {
+                  ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d", $data[0]);
+                } else if ($action=='create') {
+                  $p = self::make_create_params($data,$header_row,[0,1]);
+                  ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." ({$p['fields']}) VALUES ({$p['symbols']})",$p['args']);
+                  $id = ezget("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID=%s",$p['nid'])[0]->Equipment_ID;
+                  self::csv_update_tags($id,$data[12]);
+                  self::csv_update_certification($id,$data[6]);
+                }
+              } else { //one time use case
+                $action = trim(strtolower($data[0]));
+                $output.= $action.'///';
+                if ($action=='update') {
+                  $id = self::find_id_for_idless_row($data, $header_row);
+                  if ($id==null) {
+                    $output.='<br>Failed to update on '.$row.' - '.$data[1].'<br>';
+                  } else {
+                    $p = self::make_update_params($data,$header_row,[0]);
+                    $p['args'][] = $id;
+                    ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET ".$p['string']." WHERE Equipment_ID=%d", $p['args']);
+                    self::csv_update_tags($id,$data[11]);
+                    self::csv_update_certification($id,$data[5]);
+                  }
+                } else if ($action=='delete') {
+                  $id = self::find_id_for_idless_row($data, $header_row);
+                  if (empty($id)) {
+                    $output.='<br>Failed to delete on '.$row.' - '.$data[1].'<br>';
+                  } else {
+                    ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d", $id);
+                  }
+                }
+              }
+              $row++;
+          }
+          fclose($handle);
+      }
+      date_default_timezone_set(IMRC_TIME_ZONE);
+      $output.='<br>upload finished - '.date('H:i');
+      iam_respond(SUCCESS,$output);
+    }
+
+    public static function csv_update_tags($id,$tagstring)
+    {
+      ezquery("DELETE FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$id);
+      $tags = explode('&', $tagstring);
+      for ($i=0; $i < count($tags); $i++) {
+        $target_tag = ezget("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s", trim($tags[$i]));
+        if (empty($target_tag))
+          continue;
+        $target_tag = $target_tag[0]->Tag_ID;
+        ezquery("INSERT INTO ".IAM_TAGS_EQUIPMENT_TABLE." (Equipment_ID,Tag_ID,Unique_ID) VALUES (%d,%d,%d)",$id,$target_tag,$id.$target_tag);
+      }
+    }
+
+    public static function csv_update_certification($id,$certname)
+    {
+      $c = ezget("SELECT Certification_ID FROM ".IAM_CERTIFICATION_TABLE." WHERE Name=%s",trim($certname));
+
+      if (empty($c))
+        return;
+      $c = $c[0]->Certification_ID;
+
+      ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d WHERE Equipment_ID=%d",$c,$id);
+    }
+
+    public static function find_id_for_idless_row($row, $header)
+    {
+      for ($i=1; $i < count($row); $i++) {
+        $get_attempt = ezget("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE {$header[$i]}='{$row[$i]}'");
+        if (count($get_attempt)===1) {
+          return $get_attempt[0]->Equipment_ID;
+        }
+      }
+      return null;
+    }
+
+    public static function make_create_params($row, $header, $skip)
+    {
+      $fields = '';
+      $symbols = '';
+      $args = [];
+      for ($i=0; $i < count($row); $i++) {
+        if (in_array($i, $skip) || $header[$i]=='Tags' || $header[$i]=='Certification')
+          continue;
+        $symbol = is_numeric($row[$i]) ? '%d' : '%s' ;
+        $fields.=$header[$i].',';
+        $symbols.=$symbol.',';
+        $args[] = $row[$i];
+      }
+      $fields.='NI_ID';
+      $symbols.='%s';
+      $args[]=make_nid();
+      return ['fields'=>$fields,
+              'symbols'=>$symbols,
+              'args'=>$args,
+              'nid'=>$args[count($args)-1]
+            ];
+    }
+
+    public static function make_update_params($row, $header, $skip)
+    {
+      $s = ' ';
+      $a = [];
+      for ($i=0; $i < count($row); $i++) {
+        if (in_array($i, $skip) || $header[$i]=='Tags' || $header[$i]=='Certification')
+          continue;
+        $symbol = is_numeric($row[$i]) ? '%d' : '%s' ;
+        $s.=$header[$i]."=$symbol, ";
+        $a[] = $row[$i];
+      }
+      return ['string'=>substr($s,0,-2),'args'=>$a];
+    }
+
     public static function duplicate_equipment()
     {
       global $wpdb;
@@ -40,7 +182,7 @@ class Equipment_Page extends Item_Mgmt
 
       //TODO this deletes the photo from disk some how????
 
-      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments,Photo,Root_Tag) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo,$equipment->Root_Tag) );
+      $wpdb->query( $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Serial_Number,On_Slide_Show,Out_Of_Order,Comments,Photo,Root_Tag,Serial Number) VALUES (%s,'%d',%s,%s,%s,%s,%s,%d,%d,%s,%s,%s,%s)",$ni_id,$equipment->Certification_ID,$name,$equipment->Description,$equipment->Pricing_Description,$equipment->Manufacturer_Info,$equipment->Serial_Number,$equipment->On_Slide_Show,$equipment->Out_Of_Order,$equipment->Comments,$equipment->Photo,$equipment->Root_Tag,$equipment->Serial_Number) );
 
       $new_id = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE NI_ID='$ni_id'")[0]->Equipment_ID;
 
@@ -60,7 +202,7 @@ class Equipment_Page extends Item_Mgmt
 
       $r = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." ORDER BY Name ASC");
 
-      $csv = 'Name,Description,Pricing Description,Manufacturer Info,Certification,Status,Facility,Comments,Photo,Rental Type,Tags,Include in Slideshow'.PHP_EOL;
+      $csv = 'ID,Manual Edit Status,Name,Description,Pricing Description,Manufacturer Info,Certification,Out Of Order,Root Tag,Comments,Photo,Rental Type,Tags,On Slide Show'.PHP_EOL;
 
       foreach ($r as $row) {
         $cert = 'None';
@@ -75,7 +217,20 @@ class Equipment_Page extends Item_Mgmt
 
         $tags = get_list_of_tags_for($row->Equipment_ID, ' & ');
 
-        $csv.='"'.escape_CSV_quotes($row->Name).'","'.escape_CSV_quotes($row->Description).'","'.escape_CSV_quotes($row->Pricing_Description).'","'.escape_CSV_quotes($row->Manufacturer_Info).'","'.escape_CSV_quotes($cert).'","'.escape_CSV_quotes($row->Out_Of_Order).'","'.escape_CSV_quotes($row->Root_Tag).'","'.escape_CSV_quotes($row->Comments).'","'.escape_CSV_quotes($row->Photo).'","'.escape_CSV_quotes($rental_type).'","'.escape_CSV_quotes($tags).'","'.escape_CSV_quotes($row->On_Slide_Show).'"'.PHP_EOL;
+        $csv.='"'.escape_CSV_quotes($row->Equipment_ID).'","'.
+                  escape_CSV_quotes('').'","'.
+                  escape_CSV_quotes($row->Name).'","'.
+                  escape_CSV_quotes($row->Description).'","'.
+                  escape_CSV_quotes($row->Pricing_Description).'","'.
+                  escape_CSV_quotes($row->Manufacturer_Info).'","'.
+                  escape_CSV_quotes($cert).'","'.
+                  escape_CSV_quotes($row->Out_Of_Order).'","'.
+                  escape_CSV_quotes($row->Root_Tag).'","'.
+                  escape_CSV_quotes($row->Comments).'","'.
+                  escape_CSV_quotes($row->Photo).'","'.
+                  escape_CSV_quotes($rental_type).'","'.
+                  escape_CSV_quotes($tags).'","'.
+                  escape_CSV_quotes($row->On_Slide_Show).'"'.PHP_EOL;
       }
       iam_respond(SUCCESS,$csv);
     }
@@ -201,6 +356,16 @@ class Equipment_Page extends Item_Mgmt
                 }
             }
 
+            $serial_number = null;
+            if (isset($_POST['serial-number'])) {
+                $serial_number = IAM_Sec::textfield_cleaner($_POST['serial-number']);
+                //desc checks
+                if (gettype($serial_number)!='string') {
+                    iam_throw_error ( 'Error - Invalid Input in Field: "Serial Number"');
+                    exit;
+                }
+            }
+
             $pricing_description = null;
             if (isset($_POST['pricing-description'])) {
                 $pricing_description = IAM_Sec::textfield_cleaner($_POST['pricing-description']);
@@ -244,16 +409,16 @@ class Equipment_Page extends Item_Mgmt
                 //TODO: more complex ni_id
                 $ni_id = make_nid();
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,%d,%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$photo,$on_slide_show,$out_of_order,$internal_comments);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Serial_Number,Photo,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,%d,%s,%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$serial_number,$photo,$on_slide_show,$out_of_order,$internal_comments);
                 } else {
-                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,'%d',%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments);
+                    $insert_query = $wpdb->prepare("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Serial_Number,On_Slide_Show,Out_Of_Order,Comments) VALUES (%s,'%d',%s,%s,%s,%s,%s,%d,%d,%s)",$ni_id,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$serial_number,$on_slide_show,$out_of_order,$internal_comments);
                 }
             } else if ($interaction=='u') {
                 $ni_id = IAM_Sec::textfield_cleaner($_POST['x']);
                 if ($photo!=null) {
-                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Photo=%s,Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$photo,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
+                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Photo=%s,Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,Serial_Number=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$photo,$cert_id,$name,$description,$pricing_description,$manufacturer_info,$serial_number,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
                 } else {
-                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$cert_id,$name,$description,$pricing_description,$manufacturer_info,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
+                    $insert_query = $wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Certification_ID=%d,Name=%s,Description=%s,Pricing_Description=%s,Manufacturer_Info=%s,Serial_Number=%s,On_Slide_Show=%d,Out_Of_Order=%d,Comments=%s WHERE NI_ID=%s ",$cert_id,$name,$description,$pricing_description,$manufacturer_info,$serial_number,$on_slide_show,$out_of_order,$internal_comments,$ni_id);
                 }
             } else {
                 iam_throw_error(INVALID_INPUT_EXCEPTION);

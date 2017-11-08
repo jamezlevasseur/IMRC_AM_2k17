@@ -203,6 +203,7 @@ class IAM {
 		$this->loader->add_action('wp_ajax_admin_end_rental', 'Equipment_Page', 'admin_end_rental');
 		$this->loader->add_action('wp_ajax_admin_equipment_csv', 'Equipment_Page', 'equipment_csv');
 		$this->loader->add_action('wp_ajax_duplicate_equipment', 'Equipment_Page', 'duplicate_equipment');
+		$this->loader->add_action('wp_ajax_equipment_csv_upload', 'Equipment_Page', 'equipment_csv_upload');
 
 		$this->loader->add_action('wp_ajax_get_admin_forms', 'Item_Mgmt', 'get_admin_forms_callback');
 		$this->loader->add_action('wp_ajax_admin_delete_form', 'Item_Mgmt', 'admin_delete_form');

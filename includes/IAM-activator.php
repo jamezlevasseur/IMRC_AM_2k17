@@ -71,6 +71,7 @@ class IAM_Activator {
 			Checked_Out bigint(20) DEFAULT 0,
 			Rental_Type varchar(32) DEFAULT 0,
 			Comments text DEFAULT NULL,
+			Serial_Number varchar(120) DEFAULT NULL,
 			PRIMARY KEY(Equipment_ID),
 			UNIQUE(NI_ID),
 			UNIQUE(Name)

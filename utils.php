@@ -14,12 +14,19 @@ function escape_CSV_quotes($str)
 function ezget($string, ...$rest)
 {
 	global $wpdb;
+	if (is_array($rest[0])=='array') {
+		$rest = $rest[0];
+	}
 	return $wpdb->get_results($wpdb->prepare($string, $rest));
 }
 
 function ezquery($string, ...$rest)
 {
 	global $wpdb;
+	if (is_array($rest[0])=='array') {
+		$rest = $rest[0];
+	}
+	//print_r($rest);exit;
 	//echo $wpdb->prepare($string, $rest).'<br>';exit;
 	return $wpdb->query($wpdb->prepare($string, $rest));
 }
@@ -189,6 +196,14 @@ function iam_respond($status='success',$content='',$message='',$redirect='')
 {
 	echo json_encode(['status'=>$status,'content'=>$content,'message'=>$message,'redirect'=>$redirect]);
 	exit;
+}
+
+function make_human_readable_date($date)
+{
+	if (empty($date))
+		return 'No time set.';
+	$dt = DateTime::createFromFormat(DATE_FORMAT,$date);
+	return $dt->format('M-d-y g:i a');
 }
 
 function make_nid()

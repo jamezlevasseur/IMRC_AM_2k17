@@ -18,7 +18,7 @@ import DebugAdmin from '../page/debugadmin';
 
 	 $(function () {
 			//global vars
-			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false, releventResEventStart = null;
+			var selectedBalUser, eventsToDelete = [], eventsModified = {}, eventsConfirmed = [], reservationSources = [], reservationSourcesMap = {}, lastReservationResource = '', lastBalClick = null, userEmails = [], releventRes = null, persistentRelEvent = null, eventCount = 0, lastequipclick = $('.iam-existing-list li[selected]'), updatedAccountTypes = {}, updatedRentalTypes = {}, userBalances = {}, eqLateFee = null,availableTags,comparableTags, didLoadAllRes = false, releventResEventStart = null, thisRentalDays;
 
 			var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
 
@@ -247,7 +247,7 @@ import DebugAdmin from '../page/debugadmin';
 
 			var eventToolTip = function (event,element) {
 				var e = $(element);
-				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment);
+				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment+'\n Checked In: '+event.in+'\n Checked Out: '+event.out);
 			}
 
 			var makeSubmitPopup = function (heading,body,callback,a) {
@@ -801,6 +801,7 @@ import DebugAdmin from '../page/debugadmin';
 					formData.append('pricing-description',form.children('.iam-form-row').children('#pricing-description').val());
 					formData.append('internal-comments',form.children('.iam-form-row').children('#internal-comments').val());
 					formData.append('manufacturer-info',form.children('.iam-form-row').children('#manufacturer-info').val());
+					formData.append('serial-number',form.children('.iam-form-row').children('#serial-number').val());
 					if ($('.iam-rental-types-list').length>0)
 						formData.append('rental_type', form.find('.iam-rental-types-list').val());
 					formData.append('out-of-order',outOfOrder);
@@ -1036,7 +1037,7 @@ import DebugAdmin from '../page/debugadmin';
 
 						var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
 						var useremail = $('.iam-er-user-emails').val();
-						var thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
+						thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
 
 						$('.modal-header .fc-event').each(function() {
 
@@ -1131,36 +1132,13 @@ import DebugAdmin from '../page/debugadmin';
 								initContextMenu('rental');
 							},
 							eventDrop: function (event, d ,revert) {
-								if (eventFallsOnWeekend(event)) {
-									overridePrompt({
-										title: 'Confirm Override',
-										body: ERinvalidTimePrompt,
-										cancel: () => { revert(); },
-										override: () => { updateEventsModified(event); }
-									});
-								} else {
-									updateEventsModified(event);
-								}
+								adminCalEventDrop(event, d ,revert);
 							},
 							eventResize: function (event, d ,revert, jsevent) {
-								if (eventIsLongerThan(event, (parseInt(thisRentalDays) + 1))) {
-									overridePrompt({
-										title: 'Confirm Override',
-										body: ERinvalidTimePrompt,//'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
-										cancel: () => {
-											revert();
-										},
-										override: () => { updateEventsModified(event); }
-									});
-								} else {
-									updateEventsModified(event);
-								}
+								adminCalEventResize(event, d ,revert, jsevent);
 							},
 							eventReceive: function (e) {
-								if (eventFallsOnWeekend(e)) {
-									$('.iam-res-cal').fullCalendar('removeEvents',e._id);
-									return false;
-								}
+								adminCalEventReceive(e);
 							},
 							events: ajaxurl+"?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name="+equip_name
 						});
@@ -1212,7 +1190,7 @@ import DebugAdmin from '../page/debugadmin';
 						$.ajax({
 							url: ajaxurl,
 							type: 'GET',
-							data: {action: 'get_admin_forms', request: 'u_equipment', name: $(this).html()},
+							data: {action: 'get_admin_forms', request: 'u_equipment', name: $(this).html(), facility: facilityType},
 							success: function (data) {
 								$('#iam-update-form').replaceWith(handleServerResponse(data));
 								initTagAutoCompleteListener();
@@ -1530,6 +1508,41 @@ import DebugAdmin from '../page/debugadmin';
 				}
 			}
 
+			function adminCalEventDrop(event, d ,revert) {
+				if (eventFallsOnWeekend(event)) {
+					overridePrompt({
+						title: 'Confirm Override',
+						body: ERinvalidTimePrompt,
+						cancel: () => { revert(); },
+						override: () => { updateEventsModified(event); }
+					});
+				} else {
+					updateEventsModified(event);
+				}
+			}
+
+			function adminCalEventResize(event, d ,revert, jsevent) {
+				if (eventIsLongerThan(event, parseInt(thisRentalDays))) {
+					overridePrompt({
+						title: 'Confirm Override',
+						body: ERinvalidTimePrompt,//'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+						cancel: () => {
+							revert();
+						},
+						override: () => { updateEventsModified(event); }
+					});
+				} else {
+					updateEventsModified(event);
+				}
+			}
+
+			function adminCalEventReceive(e) {
+				if (eventFallsOnWeekend(e)) {
+					$('.iam-res-cal').fullCalendar('removeEvents',e._id);
+					return false;
+				}
+			}
+
 			var handleEventCopyEmail = function(event) {
 				var e = $('<div>'+event.email+'</div>');
 				copyToClipboard(e[0]);
@@ -1610,7 +1623,6 @@ import DebugAdmin from '../page/debugadmin';
 			}
 
 			var initAdminResCal = function () {
-				console.log('fasdfasf')
 				$('.iam-res-cal').fullCalendar({
 					header: {
 						left: 'prev,next today',
@@ -1652,13 +1664,16 @@ import DebugAdmin from '../page/debugadmin';
 						 initStatusHideListeners();
 						 submissionEnd();
           },
-					eventDrop: function (event) {
+					eventDrop: function (event, d ,revert) {
 						eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+						if (resFacilityType=='rental')
+							adminCalEventDrop(event, d ,revert);
 					},
-					eventResize: function (event) {
+					eventResize: function (event, d ,revert, jsevent) {
 						eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
-					},
-					eventClick: function (event, jsEvent, view) {
+						thisRentalDays = event.period;
+						if (resFacilityType=='rental')
+							adminCalEventResize(event, d ,revert, jsevent);
 					},
 					events: lastReservationResource
 				});
@@ -1999,7 +2014,7 @@ import DebugAdmin from '../page/debugadmin';
 
 			} else if ( $('.iam-reservation-wrap').length>0 ) {
 				resetEvents();
-
+				var resFacilityType = $('.iam-reservation-wrap').data('facility-type');
 				$('.iam-load-all-reservations').click(function(event) {
 					if ($('.iam-res-cal-placeholder').length>0)
 						return;
@@ -2068,7 +2083,7 @@ import DebugAdmin from '../page/debugadmin';
 				$(document).tooltip();
 
 			} else if ( $('.iam-equipment-wrap').length>0 ) {
-
+				var facilityType = $('.iam-facility-data').data('facility-type');
 				//on load
 				loadComparableTags();
 
@@ -2194,6 +2209,28 @@ import DebugAdmin from '../page/debugadmin';
 				initDeletePricingDropDownListener();
 				initPricingRowDeleteListener();
 				initCSVAJAXButtonListener('admin_pricing_csv');
+			} else if ($('.equipment-csv-upload')) {
+				$('.equipment-csv-upload input[type=submit]').click(function(event) {
+					event.preventDefault();
+					var formData = new FormData();
+					formData.append('action', 'equipment_csv_upload')
+					formData.append('file',$('.equipment-csv-upload input[type=file]').prop('files')[0]);
+
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						processData: false,
+						contentType: false,
+						data: formData,
+						success: function (data) {
+							//handleServerResponse(data);
+							$('.equipment-csv-upload').append( handleServerResponse(data) );
+						},
+						error: function (data) {
+							handleServerError(data, new Error());
+						}
+					});
+				});
 			}
 	 });
 	 debugWarn();

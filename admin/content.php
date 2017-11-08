@@ -39,7 +39,13 @@ class Admin_Content
 	 public static function info_content()
 	 {
 		 ?>
+		 <h3>Debug Files</h3>
 		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
+		 <h3>Equipment CSV Upload</h3>
+		 <form class="equipment-csv-upload" method="post">
+			 <input type="file" name="">
+			 <input type="submit">
+		 </form>
 	 <?php
 	 }
 
@@ -129,9 +135,7 @@ class Admin_Content
 				<?php } ?>
 			</div>
 			<?php
-
-			if ($this->schedule->type=='rental')
-				echo '<div class="iam-ninja iam-facility-data" '.'data-facility="'.iam_output($facility->Schedule).'" ></div>';
+			echo '<div class="iam-ninja iam-facility-data" data-facility-type="'.json_decode($this->facility->Schedule)->type.'" '.'data-facility="'.iam_output($this->facility->Schedule).'" ></div>';
 			 ?>
 
 			<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -279,7 +283,7 @@ class Admin_Content
 	public function reservation_content()
 	{
 		?>
-			<div class="wrap iam-reservation-wrap" data-facility="<?php echo $this->facility->Name; ?>">
+			<div class="wrap iam-reservation-wrap" data-facility-type="<?php echo $this->schedule->type; ?>" data-facility="<?php echo $this->facility->Name; ?>">
 				<h1 class="iam-admin-header">Reservations</h1>
 				<div class="res-col-left">
 					<h3 style ="margin-top:0 !important;"> <?php echo $this->facility->Name; ?></h3>

@@ -72,7 +72,7 @@ class IAM_Cal
 
 		global $wpdb;
 
-		$equip_result = $wpdb->get_results("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
+		$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
 
 		if ($equip_result) {
 			$equip_id = $equip_result[0]->Equipment_ID;
@@ -101,15 +101,20 @@ class IAM_Cal
 					}
 					if ($is_admin) {
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
+						$in = make_human_readable_date($row->Checked_In);
+						$out = make_human_readable_date($row->Checked_Out);
 						$new_event = [	'nid'=>$row->NI_ID,
-																		'fullname'=> get_full_name($wp_id),
-																		'title'=>$title,
-																		'start'=>$row->Start_Time,
-																		'end'=>$row->End_Time,
-																		'email'=>$email,
-																		'equipment'=>$item_name,
-																		'status'=>$RES_STATUS_CLASS_DICT[$row->Status],
-																	];
+														'fullname'=> get_full_name($wp_id),
+														'title'=>$title,
+														'start'=>$row->Start_Time,
+														'end'=>$row->End_Time,
+														'in'=>$in,
+														'out'=>$out,
+														'email'=>$email,
+														'equipment'=>$item_name,
+														'status'=>$RES_STATUS_CLASS_DICT[$row->Status],
+														'period'=>get_rental_period($equip_result[0]->Rental_Type)
+													];
 						$optional_event_args = [];
 						if ($row->Status==3 || $row->Status==6) {
 							$optional_event_args['editable'] = false;
