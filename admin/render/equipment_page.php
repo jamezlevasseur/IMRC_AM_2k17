@@ -26,7 +26,7 @@ class Equipment_Page extends Item_Mgmt
                 $row++;
                 continue;
               }
-
+              $output.=$data[0];
               if ($has_id) {
                 $action = trim(strtolower($data[1]));
                 if ($action=='update') {
@@ -46,6 +46,7 @@ class Equipment_Page extends Item_Mgmt
                 }
               } else { //one time use case
                 $action = trim(strtolower($data[0]));
+                $output.= $action.'///';
                 if ($action=='update') {
                   $id = self::find_id_for_idless_row($data, $header_row);
                   if ($id==null) {
@@ -59,7 +60,7 @@ class Equipment_Page extends Item_Mgmt
                   }
                 } else if ($action=='delete') {
                   $id = self::find_id_for_idless_row($data, $header_row);
-                  if ($id==null) {
+                  if (empty($id)) {
                     $output.='<br>Failed to delete on '.$row.' - '.$data[1].'<br>';
                   } else {
                     ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d", $id);
