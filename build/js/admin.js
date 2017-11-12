@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 148);
+/******/ 	return __webpack_require__(__webpack_require__.s = 160);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1893,7 +1893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (!locales[name] && typeof module !== 'undefined' && module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
-                __webpack_require__(137)("./" + name);
+                __webpack_require__(140)("./" + name);
                 // because defineLocale currently also sets the global locale, we
                 // want to undo that for lazy loaded locales
                 getSetGlobalLocale(oldLocale);
@@ -4425,7 +4425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     return hooks;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
 /***/ }),
 /* 1 */
@@ -14261,7 +14261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
 /***/ }),
 /* 2 */
@@ -15255,6 +15255,224 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 "use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
+/*!
+ * jQuery UI Mouse 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Mouse
+//>>group: Widgets
+//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
+//>>docs: http://api.jqueryui.com/mouse/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(141), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	var mouseHandled = false;
+	$(document).on("mouseup", function () {
+		mouseHandled = false;
+	});
+
+	return $.widget("ui.mouse", {
+		version: "1.12.1",
+		options: {
+			cancel: "input, textarea, button, select, option",
+			distance: 1,
+			delay: 0
+		},
+		_mouseInit: function _mouseInit() {
+			var that = this;
+
+			this.element.on("mousedown." + this.widgetName, function (event) {
+				return that._mouseDown(event);
+			}).on("click." + this.widgetName, function (event) {
+				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
+					$.removeData(event.target, that.widgetName + ".preventClickEvent");
+					event.stopImmediatePropagation();
+					return false;
+				}
+			});
+
+			this.started = false;
+		},
+
+		// TODO: make sure destroying one instance of mouse doesn't mess with
+		// other instances of mouse
+		_mouseDestroy: function _mouseDestroy() {
+			this.element.off("." + this.widgetName);
+			if (this._mouseMoveDelegate) {
+				this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
+			}
+		},
+
+		_mouseDown: function _mouseDown(event) {
+
+			// don't let more than one widget handle mouseStart
+			if (mouseHandled) {
+				return;
+			}
+
+			this._mouseMoved = false;
+
+			// We may have missed mouseup (out of window)
+			this._mouseStarted && this._mouseUp(event);
+
+			this._mouseDownEvent = event;
+
+			var that = this,
+			    btnIsLeft = event.which === 1,
+
+
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false;
+			if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
+				return true;
+			}
+
+			this.mouseDelayMet = !this.options.delay;
+			if (!this.mouseDelayMet) {
+				this._mouseDelayTimer = setTimeout(function () {
+					that.mouseDelayMet = true;
+				}, this.options.delay);
+			}
+
+			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+				this._mouseStarted = this._mouseStart(event) !== false;
+				if (!this._mouseStarted) {
+					event.preventDefault();
+					return true;
+				}
+			}
+
+			// Click event may never have fired (Gecko & Opera)
+			if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
+				$.removeData(event.target, this.widgetName + ".preventClickEvent");
+			}
+
+			// These delegates are required to keep context
+			this._mouseMoveDelegate = function (event) {
+				return that._mouseMove(event);
+			};
+			this._mouseUpDelegate = function (event) {
+				return that._mouseUp(event);
+			};
+
+			this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate);
+
+			event.preventDefault();
+
+			mouseHandled = true;
+			return true;
+		},
+
+		_mouseMove: function _mouseMove(event) {
+
+			// Only check for mouseups outside the document if you've moved inside the document
+			// at least once. This prevents the firing of mouseup in the case of IE<9, which will
+			// fire a mousemove event if content is placed under the cursor. See #7778
+			// Support: IE <9
+			if (this._mouseMoved) {
+
+				// IE mouseup check - mouseup happened when mouse was out of window
+				if ($.ui.ie && (!document.documentMode || document.documentMode < 9) && !event.button) {
+					return this._mouseUp(event);
+
+					// Iframe mouseup check - mouseup occurred in another document
+				} else if (!event.which) {
+
+					// Support: Safari <=8 - 9
+					// Safari sets which to 0 if you press any of the following keys
+					// during a drag (#14461)
+					if (event.originalEvent.altKey || event.originalEvent.ctrlKey || event.originalEvent.metaKey || event.originalEvent.shiftKey) {
+						this.ignoreMissingWhich = true;
+					} else if (!this.ignoreMissingWhich) {
+						return this._mouseUp(event);
+					}
+				}
+			}
+
+			if (event.which || event.button) {
+				this._mouseMoved = true;
+			}
+
+			if (this._mouseStarted) {
+				this._mouseDrag(event);
+				return event.preventDefault();
+			}
+
+			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+				this._mouseStarted = this._mouseStart(this._mouseDownEvent, event) !== false;
+				this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event);
+			}
+
+			return !this._mouseStarted;
+		},
+
+		_mouseUp: function _mouseUp(event) {
+			this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
+
+			if (this._mouseStarted) {
+				this._mouseStarted = false;
+
+				if (event.target === this._mouseDownEvent.target) {
+					$.data(event.target, this.widgetName + ".preventClickEvent", true);
+				}
+
+				this._mouseStop(event);
+			}
+
+			if (this._mouseDelayTimer) {
+				clearTimeout(this._mouseDelayTimer);
+				delete this._mouseDelayTimer;
+			}
+
+			this.ignoreMissingWhich = false;
+			mouseHandled = false;
+			event.preventDefault();
+		},
+
+		_mouseDistanceMet: function _mouseDistanceMet(event) {
+			return Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance;
+		},
+
+		_mouseDelayMet: function _mouseDelayMet() /* event */{
+			return this.mouseDelayMet;
+		},
+
+		// These are placeholder methods, to be overriden by extending plugin
+		_mouseStart: function _mouseStart() /* event */{},
+		_mouseDrag: function _mouseDrag() /* event */{},
+		_mouseStop: function _mouseStop() /* event */{},
+		_mouseCapture: function _mouseCapture() /* event */{
+			return true;
+		}
+	});
+});
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
 (function (factory) {
 	if (true) {
 
@@ -15299,7 +15517,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15770,7 +15988,66 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 10 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Unique ID 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: uniqueId
+//>>group: Core
+//>>description: Functions to generate and remove uniqueId's
+//>>docs: http://api.jqueryui.com/uniqueId/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.extend({
+		uniqueId: function () {
+			var uuid = 0;
+
+			return function () {
+				return this.each(function () {
+					if (!this.id) {
+						this.id = "ui-id-" + ++uuid;
+					}
+				});
+			};
+		}(),
+
+		removeUniqueId: function removeUniqueId() {
+			return this.each(function () {
+				if (/^ui-id-\d+$/.test(this.id)) {
+					$(this).removeAttr("id");
+				}
+			});
+		}
+	});
+});
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15800,7 +16077,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15904,7 +16181,672 @@ exports.initSearchListener = initSearchListener;
 exports.initPopupXListener = initPopupXListener;
 
 /***/ }),
-/* 12 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
+			return false;
+		}
+	});
+};
+
+var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z.]*$/)) {
+			return false;
+		}
+	});
+};
+
+var emailOnlyListener = function emailOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
+			return false;
+		}
+	});
+};
+
+var itemNameListener = function itemNameListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (event.key.match(/^[;'_]*$/)) {
+			return false;
+		}
+	});
+};
+
+var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
+			return false;
+		}
+	});
+};
+
+var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
+			if (!event.key.match(/^[0-9.]*$/)) {
+				return false;
+			}
+		}
+	});
+};
+
+exports.alphaNumericOnlyListener = alphaNumericOnlyListener;
+exports.alphaOnlyListener = alphaOnlyListener;
+exports.emailOnlyListener = emailOnlyListener;
+exports.itemNameListener = itemNameListener;
+exports.maxLengthListener = maxLengthListener;
+exports.numbersOnlyListener = numbersOnlyListener;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(139);
+
+__webpack_require__(131);
+
+__webpack_require__(132);
+
+var _userfeedback = __webpack_require__(4);
+
+var _override = __webpack_require__(137);
+
+var _contextmenu = __webpack_require__(155);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cal = function () {
+  function Cal(page, facing) {
+    _classCallCheck(this, Cal);
+
+    this.page = page;
+    this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+    this.setCalArgs();
+    this.initCalFor(facing);
+  }
+
+  _createClass(Cal, [{
+    key: 'adminCalEventDrop',
+    value: function adminCalEventDrop(event, d, revert) {
+      if (eventFallsOnWeekend(event)) {
+        (0, _override.overridePrompt)({
+          title: 'Confirm Override',
+          body: this.ERinvalidTimePrompt,
+          cancel: function cancel() {
+            revert();
+          },
+          override: function override() {
+            updateEventsModified(event);
+          }
+        });
+      } else {
+        updateEventsModified(event);
+      }
+    }
+  }, {
+    key: 'adminCalEventResize',
+    value: function adminCalEventResize(event, d, revert, jsevent) {
+      if (eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
+        (0, _override.overridePrompt)({
+          title: 'Confirm Override',
+          body: this.ERinvalidTimePrompt,
+          cancel: function cancel() {
+            revert();
+          },
+          override: function override() {
+            updateEventsModified(event);
+          }
+        });
+      } else {
+        updateEventsModified(event);
+      }
+    }
+  }, {
+    key: 'adminCalEventReceive',
+    value: function adminCalEventReceive(e) {
+      if (eventFallsOnWeekend(e)) {
+        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+        return false;
+      }
+    }
+  }, {
+    key: 'convertBusinessHours',
+    value: function convertBusinessHours(jsonString) {
+      var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+      var converted = [];
+      var counter = 1;
+      for (var key in json) {
+        var day = _jquery2.default.extend({}, json[key]);
+        if (day.start != '') {
+          day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
+          day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
+          converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
+        } else {
+          converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
+        }
+        counter++;
+      }
+      return converted;
+    }
+  }, {
+    key: 'eventFallsOnWeekend',
+    value: function eventFallsOnWeekend(e) {
+      var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+      var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+      //for now it ends at midnight of the following day
+      return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+    }
+  }, {
+    key: 'eventIsLongerThan',
+    value: function eventIsLongerThan(e, days) {
+      var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      return end.diff(start, 'days') > days;
+    }
+  }, {
+    key: 'getCalID',
+    value: function getCalID() {
+      if ((0, _jquery2.default)('.iam-cal').length > 0) return '.iam-cal';
+      if ((0, _jquery2.default)('.iam-res-cal').length > 0) return '.iam-res-cal';
+    }
+  }, {
+    key: 'handleEventToDelete',
+    value: function handleEventToDelete(event, j) {
+
+      if (j.hasClass('event-not-editable')) return;
+      if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
+
+      var index = this.eventsToDelete.indexOf(event.nid);
+      if (index != -1) {
+        this.eventsToDelete.splice(index, 1);
+      } else {
+        this.eventsToDelete.push(event.nid);
+      }
+      (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
+    }
+  }, {
+    key: 'initCalFor',
+    value: function initCalFor(facing) {
+      if (facing == 'public') {
+        this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+        this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+        this.initDraggable();
+        this.initPubResCal(this.page.getFacilityInfo('type'));
+      } else if (facing == 'admin') {
+        this.initDraggable();
+        this.initAdminCal(this.page.cal);
+      }
+    }
+  }, {
+    key: 'initStatusHideListeners',
+    value: function initStatusHideListeners() {
+      (0, _jquery2.default)('.res-toolbar input[name=upcoming]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=active]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=completed]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=no-show]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=no-pay]').off();
+
+      (0, _jquery2.default)('.res-toolbar input[name=upcoming]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-upcoming').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=active]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-active').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=completed]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-completed').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=no-show]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-no-show').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=no-pay]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-no-pay').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=is-late]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-is-late').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=was-late]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-was-late').toggleClass('iam-ninja');
+      });
+    }
+  }, {
+    key: 'initDraggable',
+    value: function initDraggable() {
+
+      (0, _jquery2.default)('.iam-events .fc-event').each(function () {
+
+        // store data so the calendar knows to render an event upon drop
+        (0, _jquery2.default)(this).data('event', {
+          title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
+          editable: true,
+          eventDurationEditable: true,
+          color: '#4cad57',
+          className: 'iam-new-event'
+        });
+
+        // make the event draggable using jQuery UI
+        (0, _jquery2.default)(this).draggable({
+          zIndex: 999,
+          revert: true, // will cause the event to go back to its
+          revertDuration: 0 //  original position after the drag
+        });
+      });
+    }
+  }, {
+    key: 'initAdminCal',
+    value: function initAdminCal(cal) {
+      var _this = this;
+
+      this.resetEvents();
+      this.removePlaceholder();
+
+      if (this.page.cal == 'ResAdmin') this.updateResListSource();
+
+      var neutralArgs = {
+        editable: false, //new events will be made editable else where
+        eventLimit: true, // allow "more" link when too many events
+        allDay: false,
+        height: 500,
+        forceEventDuration: true,
+        droppable: true,
+        eventOverlap: false,
+        allDaySlot: false
+      };
+
+      var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
+      this.calID = this.getCalID();
+      (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
+      (0, _userfeedback.submissionStart)();
+      setTimeout(function () {
+        _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
+      }, 1000);
+    }
+  }, {
+    key: 'initPubResCal',
+    value: function initPubResCal(facilitType) {
+      var facilityNeutralArgs = {
+        editable: false, //new events will be made editable else where
+        eventLimit: true, // allow "more" link when too many events
+        allDay: false,
+        height: 500,
+        forceEventDuration: true,
+        businessHours: this.businessHoursConverted,
+        droppable: true,
+        eventOverlap: false,
+        allDaySlot: false,
+        eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
+          color: '#f13d39' }]
+      };
+
+      var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
+
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
+    }
+  }, {
+    key: 'initContextMenu',
+    value: function initContextMenu(menuToUse) {
+      var that = this;
+      (0, _contextmenu.initContextMenuLib)();
+      menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
+
+      var menu = [{
+        name: 'mark for deletion',
+        title: 'delete button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          that.handleEventToDelete(event, t);
+        }
+      }, {
+        name: 'copy email',
+        title: 'copy button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { email: t.data('email') };
+          that.handleEventCopyEmail(event);
+        }
+      }];
+
+      var rentalMenu = [{
+        name: 'use this reservation',
+        title: 'select reservation button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          makeRelevantReservation(t.data('fcSeg').event);
+        }
+      }, {
+        name: 'mark for deletion',
+        title: 'delete button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          that.handleEventToDelete(event, t);
+        }
+      }];
+
+      var irregularMenu = [{
+        name: 'mark for deletion',
+        title: 'delete button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          that.handleEventToDelete(t.data('fcSeg').event, t);
+          (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
+        }
+      }];
+
+      var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
+      var menuOfChoice = menuDict[menuToUse];
+
+      (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
+    }
+  }, {
+    key: 'preventPastReservation',
+    value: function preventPastReservation(e) {
+
+      var targetTimeStart = null;
+
+      if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+
+      if (targetTimeStart.isBefore(moment())) {
+        alert('You cannot make reservations in the past.');
+        return false;
+      }
+      return true;
+    }
+  }, {
+    key: 'resetEvents',
+    value: function resetEvents() {
+      this.eventsToDelete = [];
+      this.eventsModified = {};
+      this.eventsConfirmed = [];
+    }
+  }, {
+    key: 'removePlaceholder',
+    value: function removePlaceholder() {
+      (0, _jquery2.default)('.iam-res-cal-placeholder').remove();
+      (0, _jquery2.default)('.iam-cal-placeholder').remove();
+    }
+  }, {
+    key: 'setCalArgs',
+    value: function setCalArgs() {
+      var that = this;
+      this.calArgs = {};
+
+      this.calArgs['adminRes'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        droppable: true,
+        eventOverlap: true,
+        weekends: true,
+        height: 600,
+        forceEventDuration: true,
+        defaultView: 'month',
+        editable: true,
+        eventLimit: true, // allow "more" link when too many events
+        eventRender: function eventRender(event, element) {
+          //that.toolTipsForEvents(event,element);
+          (0, _jquery2.default)(element).data('fullname', event.fullname);
+          (0, _jquery2.default)(element).data('email', event.email);
+          (0, _jquery2.default)(element).data('equipment', event.equipment);
+          (0, _jquery2.default)(element).data('nid', event.nid);
+          (0, _jquery2.default)(element).addClass('iam-status-' + event.status);
+          if (event.status == 'completed' || event.status == 'was-late') {
+            (0, _jquery2.default)(element).addClass('event-not-editable');
+          }
+          if (that.eventsToDelete.indexOf(event.nid) != -1) {
+            (0, _jquery2.default)(element).addClass('marked-for-delete');
+          }
+        },
+        eventAfterRender: function eventAfterRender(event, element) {
+          if (event.toDelete == 1) {
+            (0, _jquery2.default)(element).css({
+              'background-color': '#ef4040',
+              'border': '1px solid #ef4040'
+            });
+          }
+        },
+        eventAfterAllRender: function eventAfterAllRender() {
+          that.initContextMenu();
+          that.initStatusHideListeners();
+          (0, _userfeedback.submissionEnd)();
+        },
+        eventDrop: function eventDrop(event, d, revert) {
+          that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+          if (that.page.facility.Schedule.type == 'rental') that.adminCalEventDrop(event, d, revert);
+        },
+        eventResize: function eventResize(event, d, revert, jsevent) {
+          that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+          that.currenRentalPeriod = event.period;
+          if (that.page.facility.Schedule.type == 'rental') that.adminCalEventResize(event, d, revert, jsevent);
+        },
+        eventMouseover: function eventMouseover(calEvent, jsEvent) {
+          var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: ' + calEvent.fullname + '<br /> Email: ' + calEvent.email + ' <br /> Equipment: ' + calEvent.equipment + '<br /> Checked In: ' + calEvent.in + '<br /> Checked Out: ' + calEvent.out + '</div>';
+
+          var $tooltip = (0, _jquery2.default)(tooltip).appendTo('body');
+
+          (0, _jquery2.default)(this).mouseover(function (e) {
+            (0, _jquery2.default)(this).css('z-index', 10000);
+            $tooltip.fadeIn('500');
+            $tooltip.fadeTo('10', 1.9);
+          }).mousemove(function (e) {
+            $tooltip.css('top', e.pageY + 10);
+            $tooltip.css('left', e.pageX + 20);
+          });
+        },
+        eventMouseout: function eventMouseout(calEvent, jsEvent) {
+          (0, _jquery2.default)(this).css('z-index', 8);
+          (0, _jquery2.default)('.tooltipevent').remove();
+        },
+        events: that.lastReservationResource
+      };
+
+      this.calArgs['irregular'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        defaultView: 'agendaWeek',
+        title: 'closed',
+        eventReceive: function eventReceive(e, d, revert) {
+          e.title = 'closed';
+        },
+        eventRender: function eventRender(event, element) {
+          if (that.eventsToDelete.indexOf(event.nid) != -1) {
+            (0, _jquery2.default)(element).addClass('marked-for-delete');
+          }
+          that.toolTipsForEvents(event, element);
+        },
+        eventAfterAllRender: function eventAfterAllRender() {
+          that.initContextMenu(that.page.cal);
+        },
+        events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
+      };
+
+      this.calArgs['appointment'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'agendaWeek,agendaDay'
+        },
+        defaultTimedEventDuration: '00:30:00',
+        weekends: true,
+        defaultView: 'agendaWeek',
+        eventReceive: function eventReceive(e, d, revert) {
+          if (!that.preventPastReservation(e)) {
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
+          that.warnIfOutOfBounds(e);
+        },
+        eventDrop: function eventDrop(e, d, revert) {
+          if (!that.preventPastReservation(e)) {
+            revert();
+            return;
+          }
+          that.warnIfOutOfBounds(e);
+        },
+        eventResize: function eventResize(e, d, revert) {
+          if (!that.preventPastReservation(e)) {
+            revert();
+            return;
+          }
+          that.warnIfOutOfBounds(e);
+        }
+      };
+
+      this.calArgs['rental'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month'
+        },
+        weekends: true,
+        defaultView: 'month',
+        eventReceive: function eventReceive(e) {
+          if (that.eventFallsOnWeekend(e)) {
+            alert(that.ERinvalidTimePrompt);
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
+        },
+        eventDrop: function eventDrop(e, d, revert) {
+          if (that.eventFallsOnWeekend(e)) {
+            alert(that.ERinvalidTimePrompt);
+            revert();
+          }
+        },
+        eventResize: function eventResize(e, d, revert) {
+          if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
+            alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
+            revert();
+          }
+        },
+        eventRender: function eventRender(event, element) {
+          that.toolTipsForEvents(event, element);
+        },
+        defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) }
+      };
+    }
+  }, {
+    key: 'toolTipsForEvents',
+    value: function toolTipsForEvents(event, element) {
+      return;
+      var e = (0, _jquery2.default)(element);
+      e.attr('title', event.title);
+      e.data('toggle', 'tooltip');
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEventSource', this.lastReservationResource);
+      this.updateResListSource();
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar('addEventSource', this.lastReservationResource);
+    }
+  }, {
+    key: 'updateResListSource',
+    value: function updateResListSource() {
+      var selectedEquipment = (0, _jquery2.default)('.iam-reservations-equipment-list-item.iam-highlighted');
+      var newEventResource = [];
+      (0, _jquery2.default)(selectedEquipment).each(function (index, el) {
+        newEventResource = newEventResource.concat((0, _jquery2.default)(this).data('calevents'));
+      });
+      this.lastReservationResource = newEventResource;
+    }
+  }, {
+    key: 'warnIfOutOfBounds',
+    value: function warnIfOutOfBounds(e) {
+      var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+
+      var thisStart = moment(thisDay.start, 'HH:mm');
+      var thisEnd = moment(thisDay.end, 'HH:mm');
+
+      var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
+      var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
+
+      if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
+        alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+      }
+    }
+  }]);
+
+  return Cal;
+}();
+
+exports.default = Cal;
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15987,7 +16929,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16125,7 +17067,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16193,7 +17135,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16261,7 +17203,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16383,7 +17325,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 17 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16452,7 +17394,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 18 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16566,7 +17508,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 19 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16634,7 +17576,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 20 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16750,7 +17692,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16892,7 +17834,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16991,7 +17933,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17117,7 +18059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17243,7 +18185,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17360,7 +18302,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17512,7 +18454,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17606,7 +18548,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17801,7 +18743,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17873,7 +18815,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17962,7 +18904,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18031,7 +18973,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18118,7 +19060,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18206,7 +19148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18293,7 +19235,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18381,7 +19323,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18491,7 +19433,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18564,7 +19506,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18633,7 +19575,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18706,7 +19648,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 40 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18779,7 +19721,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 41 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18852,7 +19794,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 42 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18934,7 +19876,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 43 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19026,7 +19968,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 44 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19117,7 +20059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19206,7 +20148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 46 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19281,7 +20223,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19398,7 +20340,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19511,7 +20453,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19580,7 +20522,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19672,7 +20614,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19755,7 +20697,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 52 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19842,7 +20784,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 53 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19926,7 +20868,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20009,7 +20951,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20095,7 +21037,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20226,7 +21168,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 57 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20335,7 +21277,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20468,7 +21410,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20622,7 +21564,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20740,7 +21682,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20845,7 +21787,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20937,7 +21879,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21073,7 +22015,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21152,7 +22094,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 65 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21241,7 +22183,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 66 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21333,7 +22275,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 67 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21430,7 +22372,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 68 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21526,7 +22468,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 69 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21593,7 +22535,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 70 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21728,7 +22670,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 71 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21806,7 +22748,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 72 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21902,7 +22844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 73 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22049,7 +22991,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 74 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22128,7 +23070,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 75 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22254,7 +23196,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 76 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22360,7 +23302,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 77 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22472,7 +23414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 78 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22545,7 +23487,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 79 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22644,7 +23586,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 80 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22732,7 +23674,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 81 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22920,7 +23862,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 82 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23011,7 +23953,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 83 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23103,7 +24045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 84 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23208,7 +24150,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 85 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23280,7 +24222,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 86 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23412,7 +24354,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 87 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23509,7 +24451,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 88 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23606,7 +24548,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 89 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23675,7 +24617,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 90 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23808,7 +24750,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 91 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23924,7 +24866,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 92 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23997,7 +24939,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 93 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24066,7 +25008,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 94 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24150,7 +25092,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 95 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24342,7 +25284,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 96 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24428,7 +25370,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 97 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24497,7 +25439,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 98 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24578,7 +25520,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 99 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24748,7 +25690,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 100 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24919,7 +25861,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 101 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24998,7 +25940,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 102 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25109,7 +26051,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 103 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25220,7 +26162,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 104 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25317,7 +26259,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 105 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25392,7 +26334,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 106 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25460,7 +26402,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 107 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25599,7 +26541,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 108 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25697,7 +26639,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 109 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25771,7 +26713,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 110 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25847,7 +26789,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 111 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25918,7 +26860,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 112 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26035,7 +26977,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 113 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26135,7 +27077,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 114 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26236,7 +27178,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 115 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26303,7 +27245,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 116 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26370,7 +27312,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 117 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26525,7 +27467,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 118 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26612,7 +27554,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 119 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26679,7 +27621,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 120 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26746,7 +27688,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 121 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26835,7 +27777,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 122 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26909,7 +27851,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 123 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26978,7 +27920,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 124 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27097,7 +28039,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 125 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27211,7 +28153,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 126 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27324,1509 +28266,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 127 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Mouse 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Mouse
-//>>group: Widgets
-//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
-//>>docs: http://api.jqueryui.com/mouse/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(138), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	var mouseHandled = false;
-	$(document).on("mouseup", function () {
-		mouseHandled = false;
-	});
-
-	return $.widget("ui.mouse", {
-		version: "1.12.1",
-		options: {
-			cancel: "input, textarea, button, select, option",
-			distance: 1,
-			delay: 0
-		},
-		_mouseInit: function _mouseInit() {
-			var that = this;
-
-			this.element.on("mousedown." + this.widgetName, function (event) {
-				return that._mouseDown(event);
-			}).on("click." + this.widgetName, function (event) {
-				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
-					$.removeData(event.target, that.widgetName + ".preventClickEvent");
-					event.stopImmediatePropagation();
-					return false;
-				}
-			});
-
-			this.started = false;
-		},
-
-		// TODO: make sure destroying one instance of mouse doesn't mess with
-		// other instances of mouse
-		_mouseDestroy: function _mouseDestroy() {
-			this.element.off("." + this.widgetName);
-			if (this._mouseMoveDelegate) {
-				this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
-			}
-		},
-
-		_mouseDown: function _mouseDown(event) {
-
-			// don't let more than one widget handle mouseStart
-			if (mouseHandled) {
-				return;
-			}
-
-			this._mouseMoved = false;
-
-			// We may have missed mouseup (out of window)
-			this._mouseStarted && this._mouseUp(event);
-
-			this._mouseDownEvent = event;
-
-			var that = this,
-			    btnIsLeft = event.which === 1,
-
-
-			// event.target.nodeName works around a bug in IE 8 with
-			// disabled inputs (#7620)
-			elIsCancel = typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false;
-			if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
-				return true;
-			}
-
-			this.mouseDelayMet = !this.options.delay;
-			if (!this.mouseDelayMet) {
-				this._mouseDelayTimer = setTimeout(function () {
-					that.mouseDelayMet = true;
-				}, this.options.delay);
-			}
-
-			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
-				this._mouseStarted = this._mouseStart(event) !== false;
-				if (!this._mouseStarted) {
-					event.preventDefault();
-					return true;
-				}
-			}
-
-			// Click event may never have fired (Gecko & Opera)
-			if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
-				$.removeData(event.target, this.widgetName + ".preventClickEvent");
-			}
-
-			// These delegates are required to keep context
-			this._mouseMoveDelegate = function (event) {
-				return that._mouseMove(event);
-			};
-			this._mouseUpDelegate = function (event) {
-				return that._mouseUp(event);
-			};
-
-			this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate);
-
-			event.preventDefault();
-
-			mouseHandled = true;
-			return true;
-		},
-
-		_mouseMove: function _mouseMove(event) {
-
-			// Only check for mouseups outside the document if you've moved inside the document
-			// at least once. This prevents the firing of mouseup in the case of IE<9, which will
-			// fire a mousemove event if content is placed under the cursor. See #7778
-			// Support: IE <9
-			if (this._mouseMoved) {
-
-				// IE mouseup check - mouseup happened when mouse was out of window
-				if ($.ui.ie && (!document.documentMode || document.documentMode < 9) && !event.button) {
-					return this._mouseUp(event);
-
-					// Iframe mouseup check - mouseup occurred in another document
-				} else if (!event.which) {
-
-					// Support: Safari <=8 - 9
-					// Safari sets which to 0 if you press any of the following keys
-					// during a drag (#14461)
-					if (event.originalEvent.altKey || event.originalEvent.ctrlKey || event.originalEvent.metaKey || event.originalEvent.shiftKey) {
-						this.ignoreMissingWhich = true;
-					} else if (!this.ignoreMissingWhich) {
-						return this._mouseUp(event);
-					}
-				}
-			}
-
-			if (event.which || event.button) {
-				this._mouseMoved = true;
-			}
-
-			if (this._mouseStarted) {
-				this._mouseDrag(event);
-				return event.preventDefault();
-			}
-
-			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
-				this._mouseStarted = this._mouseStart(this._mouseDownEvent, event) !== false;
-				this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event);
-			}
-
-			return !this._mouseStarted;
-		},
-
-		_mouseUp: function _mouseUp(event) {
-			this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
-
-			if (this._mouseStarted) {
-				this._mouseStarted = false;
-
-				if (event.target === this._mouseDownEvent.target) {
-					$.data(event.target, this.widgetName + ".preventClickEvent", true);
-				}
-
-				this._mouseStop(event);
-			}
-
-			if (this._mouseDelayTimer) {
-				clearTimeout(this._mouseDelayTimer);
-				delete this._mouseDelayTimer;
-			}
-
-			this.ignoreMissingWhich = false;
-			mouseHandled = false;
-			event.preventDefault();
-		},
-
-		_mouseDistanceMet: function _mouseDistanceMet(event) {
-			return Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance;
-		},
-
-		_mouseDelayMet: function _mouseDelayMet() /* event */{
-			return this.mouseDelayMet;
-		},
-
-		// These are placeholder methods, to be overriden by extending plugin
-		_mouseStart: function _mouseStart() /* event */{},
-		_mouseDrag: function _mouseDrag() /* event */{},
-		_mouseStop: function _mouseStop() /* event */{},
-		_mouseCapture: function _mouseCapture() /* event */{
-			return true;
-		}
-	});
-});
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Unique ID 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: uniqueId
-//>>group: Core
-//>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.fn.extend({
-		uniqueId: function () {
-			var uuid = 0;
-
-			return function () {
-				return this.each(function () {
-					if (!this.id) {
-						this.id = "ui-id-" + ++uuid;
-					}
-				});
-			};
-		}(),
-
-		removeUniqueId: function removeUniqueId() {
-			return this.each(function () {
-				if (/^ui-id-\d+$/.test(this.id)) {
-					$(this).removeAttr("id");
-				}
-			});
-		}
-	});
-});
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
-			return false;
-		}
-	});
-};
-
-var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z.]*$/)) {
-			return false;
-		}
-	});
-};
-
-var emailOnlyListener = function emailOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
-			return false;
-		}
-	});
-};
-
-var itemNameListener = function itemNameListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (event.key.match(/^[;'_]*$/)) {
-			return false;
-		}
-	});
-};
-
-var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
-	if ((0, _utils.detectIE)() === false) return false;
-	jqueryObject.keydown(function (event) {
-		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
-			return false;
-		}
-	});
-};
-
-var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
-	if ((0, _utils.detectIE)() === false) return false;
-	jqueryObject.keydown(function (event) {
-		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
-			if (!event.key.match(/^[0-9.]*$/)) {
-				return false;
-			}
-		}
-	});
-};
-
-exports.alphaNumericOnlyListener = alphaNumericOnlyListener;
-exports.alphaOnlyListener = alphaOnlyListener;
-exports.emailOnlyListener = emailOnlyListener;
-exports.itemNameListener = itemNameListener;
-exports.maxLengthListener = maxLengthListener;
-exports.numbersOnlyListener = numbersOnlyListener;
-
-/***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(136);
-
-__webpack_require__(131);
-
-__webpack_require__(132);
-
-__webpack_require__(141);
-
-var _userfeedback = __webpack_require__(4);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Cal = function () {
-    function Cal(page, facing) {
-        _classCallCheck(this, Cal);
-
-        this.page = page;
-        this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
-        this.setCalArgs();
-        this.initCalFor(facing);
-    }
-
-    _createClass(Cal, [{
-        key: 'initCalFor',
-        value: function initCalFor(facing) {
-            if (facing == 'public') {
-                this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
-                this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-                this.initDraggable();
-                this.initPubResCal(this.page.getFacilityInfo('type'));
-            } else if (facing == 'admin') {
-                this.initDraggable();
-                this.initAdminCal(this.page.cal);
-            }
-        }
-    }, {
-        key: 'eventFallsOnWeekend',
-        value: function eventFallsOnWeekend(e) {
-            var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-            var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-            //for now it ends at midnight of the following day
-            return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-        }
-    }, {
-        key: 'eventIsLongerThan',
-        value: function eventIsLongerThan(e, days) {
-            var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            return end.diff(start, 'days') > days;
-        }
-    }, {
-        key: 'convertBusinessHours',
-        value: function convertBusinessHours(jsonString) {
-            var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
-            var converted = [];
-            var counter = 1;
-            for (var key in json) {
-                var day = _jquery2.default.extend({}, json[key]);
-                if (day.start != '') {
-                    day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
-                    day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
-                    converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
-                } else {
-                    converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
-                }
-                counter++;
-            }
-            return converted;
-        }
-    }, {
-        key: 'preventPastReservation',
-        value: function preventPastReservation(e) {
-
-            var targetTimeStart = null;
-
-            if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-
-            if (targetTimeStart.isBefore(moment())) {
-                alert('You cannot make reservations in the past.');
-                return false;
-            }
-            return true;
-        }
-    }, {
-        key: 'warnIfOutOfBounds',
-        value: function warnIfOutOfBounds(e) {
-            var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
-
-            var thisStart = moment(thisDay.start, 'HH:mm');
-            var thisEnd = moment(thisDay.end, 'HH:mm');
-
-            var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
-            var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
-
-            if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
-                alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
-            }
-        }
-    }, {
-        key: 'initDraggable',
-        value: function initDraggable() {
-
-            (0, _jquery2.default)('.iam-events .fc-event').each(function () {
-
-                // store data so the calendar knows to render an event upon drop
-                (0, _jquery2.default)(this).data('event', {
-                    title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
-                    editable: true,
-                    eventDurationEditable: true,
-                    color: '#4cad57',
-                    className: 'iam-new-event'
-                });
-
-                // make the event draggable using jQuery UI
-                (0, _jquery2.default)(this).draggable({
-                    zIndex: 999,
-                    revert: true, // will cause the event to go back to its
-                    revertDuration: 0 //  original position after the drag
-                });
-            });
-        }
-    }, {
-        key: 'initAdminCal',
-        value: function initAdminCal(cal) {
-            var _this = this;
-
-            this.eventsToDelete = [];
-
-            var neutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false
-            };
-
-            var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
-            this.calID = '.iam-cal';
-            (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
-            (0, _userfeedback.submissionStart)();
-            setTimeout(function () {
-                _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
-            }, 1000);
-        }
-    }, {
-        key: 'initPubResCal',
-        value: function initPubResCal(facilitType) {
-            var facilityNeutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                businessHours: this.businessHoursConverted,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false,
-                eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
-                    color: '#f13d39' }]
-            };
-
-            var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
-
-            (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
-        }
-    }, {
-        key: 'handleEventToDelete',
-        value: function handleEventToDelete(event, j) {
-
-            if (j.hasClass('event-not-editable')) return;
-            if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
-
-            var index = this.eventsToDelete.indexOf(event.nid);
-            if (index != -1) {
-                this.eventsToDelete.splice(index, 1);
-            } else {
-                this.eventsToDelete.push(event.nid);
-            }
-            (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
-        }
-    }, {
-        key: 'initContextMenu',
-        value: function initContextMenu(menuToUse) {
-            var that = this;
-            this.cmlib();
-            menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
-
-            var menu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }, {
-                name: 'copy email',
-                title: 'copy button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { email: t.data('email') };
-                    that.handleEventCopyEmail(event);
-                }
-            }];
-
-            var rentalMenu = [{
-                name: 'use this reservation',
-                title: 'select reservation button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    makeRelevantReservation(t.data('fcSeg').event);
-                }
-            }, {
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }];
-
-            var irregularMenu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(t.data('fcSeg').event, t);
-                    (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
-                }
-            }];
-
-            var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
-            var menuOfChoice = menuDict[menuToUse];
-
-            (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
-        }
-    }, {
-        key: 'toolTipsForEvents',
-        value: function toolTipsForEvents(event, element) {
-            var e = (0, _jquery2.default)(element);
-            e.attr('title', event.title);
-            e.data('toggle', 'tooltip');
-        }
-    }, {
-        key: 'setCalArgs',
-        value: function setCalArgs() {
-
-            var that = this;
-            this.calArgs = {};
-
-            this.calArgs['irregular'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                defaultView: 'agendaWeek',
-                title: 'closed',
-                eventReceive: function eventReceive(e, d, revert) {
-                    e.title = 'closed';
-                },
-                eventRender: function eventRender(event, element) {
-                    if (that.eventsToDelete.indexOf(event.nid) != -1) {
-                        (0, _jquery2.default)(element).addClass('marked-for-delete');
-                    }
-                    that.toolTipsForEvents(event, element);
-                },
-                eventAfterAllRender: function eventAfterAllRender() {
-                    that.initContextMenu(that.page.cal);
-                },
-                events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
-            };
-
-            this.calArgs['appointment'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'agendaWeek,agendaDay'
-                },
-                defaultTimedEventDuration: '00:30:00',
-                weekends: true,
-                defaultView: 'agendaWeek',
-                eventReceive: function eventReceive(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                }
-            };
-
-            this.calArgs['rental'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month'
-                },
-                weekends: true,
-                defaultView: 'month',
-                eventReceive: function eventReceive(e) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        revert();
-                    }
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
-                        alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
-                        revert();
-                    }
-                },
-                eventRender: function eventRender(event, element) {
-                    that.toolTipsForEvents(event, element);
-                },
-                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) }
-            };
-        }
-    }, {
-        key: 'cmlib',
-        value: function cmlib() {
-            /*
-             *contextMenu.js v 1.4.1
-             *Author: Sudhanshu Yadav
-             *s-yadav.github.com
-             *Copyright (c) 2013-2015 Sudhanshu Yadav.
-             *Dual licensed under the MIT and GPL licenses
-             */
-
-            "use strict";
-            //jQuery, window, document
-
-            _jquery2.default.single = function () {
-                var single = (0, _jquery2.default)({});
-                return function (elm) {
-                    single[0] = elm;
-                    return single;
-                };
-            }();
-
-            _jquery2.default.fn.contextMenu = function (method, selector, option) {
-
-                //parameter fix
-                if (!methods[method]) {
-                    option = selector;
-                    selector = method;
-                    method = 'popup';
-                }
-                //need to check for array object
-                else if (selector) {
-                        if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
-                            option = selector;
-                            selector = null;
-                        }
-                    }
-
-                if (selector instanceof Array && method != 'update') {
-                    method = 'menu';
-                }
-
-                var myoptions = option;
-                if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
-                    option = iMethods.optionOtimizer(method, option);
-                    this.each(function () {
-                        var $this = (0, _jquery2.default)(this);
-                        myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
-                        if (!myoptions.baseTrigger) {
-                            myoptions.baseTrigger = $this;
-                        }
-                        methods[method].call($this, selector, myoptions);
-                    });
-                } else {
-                    methods[method].call(this, selector, myoptions);
-                }
-                return this;
-            };
-            _jquery2.default.fn.contextMenu.defaults = {
-                triggerOn: 'click', //avaliable options are all event related mouse plus enter option
-                subMenuTriggerOn: 'hover click',
-                displayAround: 'cursor', // cursor or trigger
-                mouseClick: 'left',
-                verAdjust: 0,
-                horAdjust: 0,
-                top: 'auto',
-                left: 'auto',
-                closeOther: true, //to close other already opened context menu
-                containment: window,
-                winEventClose: true,
-                position: 'auto', //allowed values are top, left, bottom and right
-                closeOnClick: true, //close context menu on click/ trigger of any item in menu
-
-                //callback
-                onOpen: function onOpen(data, event) {},
-                afterOpen: function afterOpen(data, event) {},
-                onClose: function onClose(data, event) {}
-            };
-
-            var methods = {
-                menu: function menu(selector, option) {
-                    selector = iMethods.createMenuList(this, selector, option);
-                    iMethods.contextMenuBind.call(this, selector, option, 'menu');
-                },
-                popup: function popup(selector, option) {
-                    (0, _jquery2.default)(selector).addClass('iw-contextMenu');
-                    iMethods.contextMenuBind.call(this, selector, option, 'popup');
-                },
-                update: function update(selector, option) {
-                    var self = this;
-                    option = option || {};
-
-                    this.each(function () {
-                        var trgr = (0, _jquery2.default)(this),
-                            menuData = trgr.data('iw-menuData');
-                        //refresh if any new element is added
-                        if (!menuData) {
-                            self.contextMenu('refresh');
-                            menuData = trgr.data('iw-menuData');
-                        }
-
-                        var menu = menuData.menu;
-                        if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
-
-                            for (var i = 0; i < selector.length; i++) {
-                                var name = selector[i].name,
-                                    disable = selector[i].disable,
-                                    fun = selector[i].fun,
-                                    icon = selector[i].icon,
-                                    img = selector[i].img,
-                                    title = selector[i].title,
-                                    className = selector[i].className,
-                                    elm = menu.children('li').filter(function () {
-                                    return (0, _jquery2.default)(this).contents().filter(function () {
-                                        return this.nodeType == 3;
-                                    }).text() == name;
-                                }),
-                                    subMenu = selector[i].subMenu;
-
-                                //toggle disable if provided on update method
-                                disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
-
-                                //bind new function if provided
-                                fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
-
-                                //update title
-                                title != undefined && elm.attr('title', title);
-
-                                //update class name
-                                className != undefined && elm.attr('class', className);
-
-                                var imgIcon = elm.find('.iw-mIcon');
-                                if (imgIcon.length) imgIcon.remove();
-
-                                //update image or icon
-                                if (img) {
-                                    elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                                } else if (icon) {
-                                    elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
-                                }
-
-                                //to change submenus
-                                if (subMenu) {
-                                    elm.contextMenu('update', subMenu);
-                                }
-                            }
-                        }
-
-                        iMethods.onOff(menu);
-
-                        //bind event again if trigger option has changed.
-                        var triggerOn = option.triggerOn;
-                        if (triggerOn) {
-                            trgr.unbind('.contextMenu');
-
-                            //add contextMenu identifier on all events
-                            triggerOn = triggerOn.split(" ");
-                            var events = [];
-                            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                                events.push(triggerOn[i] + '.contextMenu');
-                            }
-
-                            //to bind event
-                            trgr.bind(events.join(' '), iMethods.eventHandler);
-                        }
-
-                        //set menu data back to trigger element
-                        menuData.option = _jquery2.default.extend({}, menuData.option, option);
-                        trgr.data('iw-menuData', menuData);
-                    });
-                },
-                refresh: function refresh() {
-                    var menuData = this.filter(function () {
-                        return !!(0, _jquery2.default)(this).data('iw-menuData');
-                    }).data('iw-menuData'),
-                        newElm = this.filter(function () {
-                        return !(0, _jquery2.default)(this).data('iw-menuData');
-                    });
-                    //to change basetrigger on refresh
-                    menuData.option.baseTrigger = this;
-                    iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
-                },
-                open: function open(sel, data) {
-                    data = data || {};
-                    var e = data.event || _jquery2.default.Event('click');
-                    if (data.top) e.clientY = data.top;
-                    if (data.left) e.clientX = data.left;
-                    this.each(function () {
-                        iMethods.eventHandler.call(this, e);
-                    });
-                },
-                //to force context menu to close
-                close: function close() {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData) {
-                        iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
-                    }
-                },
-                //to get value of a key
-                value: function value(key) {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData[key]) {
-                        return menuData[key];
-                    } else if (menuData.option) {
-                        return menuData.option[key];
-                    }
-                    return null;
-                },
-                destroy: function destroy() {
-                    var trgr = this,
-                        menuId = trgr.data('iw-menuData').menuId,
-                        menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
-                        menuData = menu.data('iw-menuData');
-
-                    //Handle the situation of dynamically added element.
-                    if (!menuData) return;
-
-                    if (menuData.noTrigger == 1) {
-                        if (menu.hasClass('iw-created')) {
-                            menu.remove();
-                        } else {
-                            menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
-                            //to destroy submenus
-                            menu.find('li.iw-mTrigger').contextMenu('destroy');
-                        }
-                    } else {
-                        menuData.noTrigger--;
-                        menu.data('iw-menuData', menuData);
-                    }
-                    trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
-                }
-            };
-            var iMethods = {
-                contextMenuBind: function contextMenuBind(selector, option, method) {
-                    var trigger = this,
-                        menu = (0, _jquery2.default)(selector),
-                        menuData = menu.data('iw-menuData');
-
-                    //fallback
-                    if (menu.length == 0) {
-                        menu = trigger.find(selector);
-                        if (menu.length == 0) {
-                            return;
-                        }
-                    }
-
-                    if (method == 'menu') {
-                        iMethods.menuHover(menu);
-                    }
-                    //get base trigger
-                    var baseTrigger = option.baseTrigger;
-
-                    if (!menuData) {
-                        var menuId;
-                        if (!baseTrigger.data('iw-menuData')) {
-                            menuId = Math.ceil(Math.random() * 100000);
-                            baseTrigger.data('iw-menuData', {
-                                'menuId': menuId
-                            });
-                        } else {
-                            menuId = baseTrigger.data('iw-menuData').menuId;
-                        }
-                        //create clone menu to calculate exact height and width.
-                        var cloneMenu = menu.clone();
-                        cloneMenu.appendTo('body');
-
-                        menuData = {
-                            'menuId': menuId,
-                            'menuWidth': cloneMenu.outerWidth(true),
-                            'menuHeight': cloneMenu.outerHeight(true),
-                            'noTrigger': 1,
-                            'trigger': trigger
-                        };
-
-                        //to set data on selector
-                        menu.data('iw-menuData', menuData).attr('menuId', menuId);
-                        //remove clone menu
-                        cloneMenu.remove();
-                    } else {
-                        menuData.noTrigger++;
-                        menu.data('iw-menuData', menuData);
-                    }
-
-                    //to set data on trigger
-                    trigger.addClass('iw-mTrigger').data('iw-menuData', {
-                        'menuId': menuData.menuId,
-                        'option': option,
-                        'menu': menu,
-                        'menuSelector': selector,
-                        'method': method
-                    });
-
-                    //hover fix
-                    var triggerOn = option.triggerOn;
-                    if (triggerOn.indexOf('hover') != -1) {
-                        triggerOn = triggerOn.replace('hover', 'mouseenter');
-                        //hover out if display is of context menu is on hover
-                        if (baseTrigger.index(trigger) != -1) {
-                            baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
-                                if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
-                                    (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
-                                }
-                            });
-                        }
-                    }
-
-                    trigger.delegate('input,a,.needs-click', 'click', function (e) {
-                        e.stopImmediatePropagation();
-                    });
-
-                    //add contextMenu identifier on all events
-                    triggerOn = triggerOn.split(' ');
-                    var events = [];
-                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                        events.push(triggerOn[i] + '.contextMenu');
-                    }
-
-                    //to bind event
-                    trigger.bind(events.join(' '), iMethods.eventHandler);
-
-                    //to stop bubbling in menu
-                    menu.bind('click mouseenter', function (e) {
-                        e.stopPropagation();
-                    });
-
-                    menu.delegate('li', 'click', function (e) {
-                        if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
-                    });
-                },
-                eventHandler: function eventHandler(e) {
-                    e.preventDefault();
-                    var trigger = (0, _jquery2.default)(this),
-                        trgrData = trigger.data('iw-menuData'),
-                        menu = trgrData.menu,
-                        menuData = menu.data('iw-menuData'),
-                        option = trgrData.option,
-                        cntnmnt = option.containment,
-                        clbckData = {
-                        trigger: trigger,
-                        menu: menu
-                    },
-
-                    //check conditions
-                    cntWin = cntnmnt == window,
-                        btChck = option.baseTrigger.index(trigger) == -1;
-
-                    //to close previous open menu.
-                    if (!btChck && option.closeOther) {
-                        (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    }
-
-                    //to reset already selected menu item
-                    menu.find('.iw-mSelected').removeClass('iw-mSelected');
-
-                    //call open callback
-                    option.onOpen.call(this, clbckData, e);
-
-                    var cObj = (0, _jquery2.default)(cntnmnt),
-                        cHeight = cObj.innerHeight(),
-                        cWidth = cObj.innerWidth(),
-                        cTop = 0,
-                        cLeft = 0,
-                        menuHeight = menuData.menuHeight,
-                        menuWidth = menuData.menuWidth,
-                        va,
-                        ha,
-                        left = 0,
-                        top = 0,
-                        bottomMenu,
-                        rightMenu,
-                        verAdjust = va = parseInt(option.verAdjust),
-                        horAdjust = ha = parseInt(option.horAdjust);
-
-                    if (!cntWin) {
-                        cTop = cObj.offset().top;
-                        cLeft = cObj.offset().left;
-
-                        //to add relative position if no position is defined on containment
-                        if (cObj.css('position') == 'static') {
-                            cObj.css('position', 'relative');
-                        }
-                    }
-
-                    if (option.displayAround == 'cursor') {
-                        left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
-                        top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                }
-                            } else {
-                                left = left - menuWidth;
-                                ha = -1 * ha;
-                            }
-                        }
-                    } else if (option.displayAround == 'trigger') {
-                        var triggerHeight = trigger.outerHeight(true),
-                            triggerWidth = trigger.outerWidth(true),
-                            triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
-                            triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
-                            leftShift = triggerWidth;
-
-                        left = triggerLeft + triggerWidth;
-                        top = triggerTop;
-
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight + triggerHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                    leftShift = -triggerWidth;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                    leftShift = 0;
-                                }
-                            } else {
-                                left = left - menuWidth - triggerWidth;
-                                ha = -1 * ha;
-                                leftShift = -triggerWidth;
-                            }
-                        }
-                        //test end
-                        if (option.position == 'top') {
-                            top = triggerTop - menuHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'left') {
-                            left = triggerLeft - menuWidth;
-                            ha = horAdjust;
-                        } else if (option.position == 'bottom') {
-                            top = triggerTop + triggerHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'right') {
-                            left = triggerLeft + triggerWidth;
-                            ha = horAdjust;
-                        }
-                    }
-
-                    //applying css property
-                    var cssObj = {
-                        'position': cntWin || btChck ? 'fixed' : 'absolute',
-                        'display': 'inline-block',
-                        'height': '',
-                        'width': ''
-                    };
-
-                    //to get position from offset parent
-                    if (option.left != 'auto') {
-                        left = iMethods.getPxSize(option.left, cWidth);
-                    }
-                    if (option.top != 'auto') {
-                        top = iMethods.getPxSize(option.top, cHeight);
-                    }
-                    if (!cntWin) {
-                        var oParPos = trigger.offsetParent().offset();
-                        if (btChck) {
-                            left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
-                            top = top + cTop - (0, _jquery2.default)(window).scrollTop();
-                        } else {
-                            left = left - (cLeft - oParPos.left);
-                            top = top - (cTop - oParPos.top);
-                        }
-                    }
-                    cssObj.left = left + ha + 'px';
-                    cssObj.top = top + va + 'px';
-
-                    menu.css(cssObj);
-
-                    //to call after open call back
-                    option.afterOpen.call(this, clbckData, e);
-
-                    //to add current menu class
-                    if (trigger.closest('.iw-contextMenu').length == 0) {
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                    }
-
-                    var dataParm = {
-                        trigger: trigger,
-                        menu: menu,
-                        option: option,
-                        method: trgrData.method
-                    };
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
-                    if (option.winEventClose) {
-                        (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
-                    }
-                },
-
-                scrollEvent: function scrollEvent(e) {
-                    iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                },
-
-                clickEvent: function clickEvent(e) {
-                    var button = e.data.trigger.get(0);
-
-                    if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
-                        iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                    }
-                },
-                keyEvent: function keyEvent(e) {
-                    e.preventDefault();
-                    var menu = e.data.menu,
-                        option = e.data.option,
-                        keyCode = e.keyCode;
-                    // handle cursor keys
-                    if (keyCode == 27) {
-                        iMethods.closeContextMenu(option, e.data.trigger, menu, e);
-                    }
-                    if (e.data.method == 'menu') {
-                        var curMenu = (0, _jquery2.default)('.iw-curMenu'),
-                            optList = curMenu.children('li:not(.iw-mDisable)'),
-                            selected = optList.filter('.iw-mSelected'),
-                            index = optList.index(selected),
-                            focusOn = function focusOn(elm) {
-                            iMethods.selectMenu(curMenu, elm);
-                            var menuData = elm.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(elm[0], e);
-                            }
-                        },
-                            first = function first() {
-                            focusOn(optList.filter(':first'));
-                        },
-                            last = function last() {
-                            focusOn(optList.filter(':last'));
-                        },
-                            next = function next() {
-                            focusOn(optList.filter(':eq(' + (index + 1) + ')'));
-                        },
-                            prev = function prev() {
-                            focusOn(optList.filter(':eq(' + (index - 1) + ')'));
-                        },
-                            subMenu = function subMenu() {
-                            var menuData = selected.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(selected[0], e);
-                                var selector = menuData.menu;
-                                selector.addClass('iw-curMenu');
-                                curMenu.removeClass('iw-curMenu');
-                                curMenu = selector;
-                                optList = curMenu.children('li:not(.iw-mDisable)');
-                                selected = optList.filter('.iw-mSelected');
-                                first();
-                            }
-                        },
-                            parMenu = function parMenu() {
-                            var selector = curMenu.data('iw-menuData').trigger;
-                            var parMenu = selector.closest('.iw-contextMenu');
-                            if (parMenu.length != 0) {
-                                curMenu.removeClass('iw-curMenu').css('display', 'none');
-                                parMenu.addClass('iw-curMenu');
-                            }
-                        };
-                        switch (keyCode) {
-                            case 13:
-                                selected.click();
-                                break;
-                            case 40:
-                                index == optList.length - 1 || selected.length == 0 ? first() : next();
-                                break;
-                            case 38:
-                                index == 0 || selected.length == 0 ? last() : prev();
-                                break;
-                            case 33:
-                                first();
-                                break;
-                            case 34:
-                                last();
-                                break;
-                            case 37:
-                                parMenu();
-                                break;
-                            case 39:
-                                subMenu();
-                                break;
-                        }
-                    }
-                },
-                closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
-
-                    //unbind all events from top DOM
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
-                    (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
-                    (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    (0, _jquery2.default)(document).focus();
-
-                    //call close function
-                    option.onClose.call(this, {
-                        trigger: trigger,
-                        menu: menu
-                    }, e);
-                },
-                getPxSize: function getPxSize(size, of) {
-                    if (!isNaN(size)) {
-                        return size;
-                    }
-                    if (size.indexOf('%') != -1) {
-                        return parseInt(size) * of / 100;
-                    } else {
-                        return parseInt(size);
-                    }
-                },
-                selectMenu: function selectMenu(menu, elm) {
-                    //to select the list
-                    var selected = menu.find('li.iw-mSelected'),
-                        submenu = selected.find('.iw-contextMenu');
-                    if (submenu.length != 0 && selected[0] != elm[0]) {
-                        submenu.fadeOut(100);
-                    }
-                    selected.removeClass('iw-mSelected');
-                    elm.addClass('iw-mSelected');
-                },
-                menuHover: function menuHover(menu) {
-                    var lastEventTime = Date.now();
-                    menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
-                        //to make curmenu
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                        iMethods.selectMenu(menu, (0, _jquery2.default)(this));
-                    });
-                },
-                createMenuList: function createMenuList(trgr, selector, option) {
-                    var baseTrigger = option.baseTrigger,
-                        randomNum = Math.floor(Math.random() * 10000);
-                    if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
-                        var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
-                        _jquery2.default.each(selector, function (index, selObj) {
-                            var name = selObj.name,
-                                fun = selObj.fun || function () {},
-                                subMenu = selObj.subMenu,
-                                img = selObj.img || '',
-                                icon = selObj.icon || '',
-                                title = selObj.title || "",
-                                className = selObj.className || "",
-                                disable = selObj.disable,
-                                list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
-
-                            if (img) {
-                                list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                            } else if (icon) {
-                                list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
-                            }
-                            //to add disable
-                            if (disable) {
-                                list.addClass('iw-mDisable');
-                            }
-
-                            if (!subMenu) {
-                                list.bind('click.contextMenu', function (e) {
-                                    fun.call(this, {
-                                        trigger: baseTrigger,
-                                        menu: menuList
-                                    }, e);
-                                });
-                            }
-
-                            //to create sub menu
-                            menuList.append(list);
-                            if (subMenu) {
-                                list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
-                                iMethods.subMenu(list, subMenu, baseTrigger, option);
-                            }
-                        });
-
-                        if (baseTrigger.index(trgr[0]) == -1) {
-                            trgr.append(menuList);
-                        } else {
-                            var par = option.containment == window ? 'body' : option.containment;
-                            (0, _jquery2.default)(par).append(menuList);
-                        }
-
-                        iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
-                        return '#iw-contextMenu' + randomNum;
-                    } else if ((0, _jquery2.default)(selector).length != 0) {
-                        var element = (0, _jquery2.default)(selector);
-                        element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
-
-                        //to create subMenu
-                        element.find('ul').each(function (index, element) {
-                            var subMenu = (0, _jquery2.default)(this),
-                                parent = subMenu.parent('li');
-                            parent.append('<div class="iw-cm-arrow-right" />');
-                            subMenu.addClass('iw-contextMenuCurrent');
-                            iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
-                        });
-                        iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
-                        return '.iw-contextMenu' + randomNum;
-                    }
-                },
-                subMenu: function subMenu(trigger, selector, baseTrigger, option) {
-                    trigger.contextMenu('menu', selector, {
-                        triggerOn: option.subMenuTriggerOn,
-                        displayAround: 'trigger',
-                        position: 'auto',
-                        mouseClick: 'left',
-                        baseTrigger: baseTrigger,
-                        containment: option.containment
-                    });
-                },
-                onOff: function onOff(menu) {
-
-                    menu.find('.iw-mOverlay').remove();
-                    menu.find('.iw-mDisable').each(function () {
-                        var list = (0, _jquery2.default)(this);
-                        list.append('<div class="iw-mOverlay"/>');
-                        list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
-                            event.stopPropagation();
-                        });
-                    });
-                },
-                optionOtimizer: function optionOtimizer(method, option) {
-                    if (!option) {
-                        return;
-                    }
-                    if (method == 'menu') {
-                        if (!option.mouseClick) {
-                            option.mouseClick = 'right';
-                        }
-                    }
-                    if (option.mouseClick == 'right' && option.triggerOn == 'click') {
-                        option.triggerOn = 'contextmenu';
-                    }
-
-                    if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
-                        option.displayAround = 'trigger';
-                    }
-                    return option;
-                }
-            };
-        }
-    }]);
-
-    return Cal;
-}();
-
-exports.default = Cal;
-
-/***/ }),
 /* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -28869,7 +28308,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(127), __webpack_require__(139), __webpack_require__(133), __webpack_require__(8), __webpack_require__(134), __webpack_require__(140), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(142), __webpack_require__(133), __webpack_require__(9), __webpack_require__(134), __webpack_require__(143), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -30069,6 +29508,180 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	// Internal use only
+	return $.ui.escapeSelector = function () {
+		var selectorEscape = /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g;
+		return function (selector) {
+			return selector.replace(selectorEscape, "\\$1");
+		};
+	}();
+});
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Focusable 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: :focusable Selector
+//>>group: Core
+//>>description: Selects elements which can be focused.
+//>>docs: http://api.jqueryui.com/focusable-selector/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	// Selectors
+	$.ui.focusable = function (element, hasTabindex) {
+		var map,
+		    mapName,
+		    img,
+		    focusableIfVisible,
+		    fieldset,
+		    nodeName = element.nodeName.toLowerCase();
+
+		if ("area" === nodeName) {
+			map = element.parentNode;
+			mapName = map.name;
+			if (!element.href || !mapName || map.nodeName.toLowerCase() !== "map") {
+				return false;
+			}
+			img = $("img[usemap='#" + mapName + "']");
+			return img.length > 0 && img.is(":visible");
+		}
+
+		if (/^(input|select|textarea|button|object)$/.test(nodeName)) {
+			focusableIfVisible = !element.disabled;
+
+			if (focusableIfVisible) {
+
+				// Form controls within a disabled fieldset are disabled.
+				// However, controls within the fieldset's legend do not get disabled.
+				// Since controls generally aren't placed inside legends, we skip
+				// this portion of the check.
+				fieldset = $(element).closest("fieldset")[0];
+				if (fieldset) {
+					focusableIfVisible = !fieldset.disabled;
+				}
+			}
+		} else if ("a" === nodeName) {
+			focusableIfVisible = element.href || hasTabindex;
+		} else {
+			focusableIfVisible = hasTabindex;
+		}
+
+		return focusableIfVisible && $(element).is(":visible") && visible($(element));
+	};
+
+	// Support: IE 8 only
+	// IE 8 doesn't resolve inherit to visible/hidden for computed values
+	function visible(element) {
+		var visibility = element.css("visibility");
+		while (visibility === "inherit") {
+			element = element.parent();
+			visibility = element.css("visibility");
+		}
+		return visibility !== "hidden";
+	}
+
+	$.extend($.expr[":"], {
+		focusable: function focusable(element) {
+			return $.ui.focusable(element, $.attr(element, "tabindex") != null);
+		}
+	});
+
+	return $.ui.focusable;
+});
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.overridePrompt = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(131);
+
+__webpack_require__(145);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function overridePrompt(args) {
+  if ((0, _jquery2.default)('#dialog-override').length < 1) (0, _jquery2.default)('body').append('<div id="dialog-override" title="' + args.title + '" ><p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>' + args.body + '</p></div>');
+
+  (0, _jquery2.default)("#dialog-override").dialog({
+    resizable: false,
+    height: "auto",
+    width: 400,
+    modal: true,
+    buttons: {
+      Override: function Override() {
+        if (typeof args.override != 'undefined') args.override();
+        (0, _jquery2.default)(this).dialog("close");
+      },
+      Cancel: function Cancel() {
+        if (typeof args.cancel != 'undefined') args.cancel();
+        (0, _jquery2.default)(this).dialog("close");
+      }
+    }
+  });
+}
+
+exports.overridePrompt = overridePrompt;
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -30122,7 +29735,7 @@ exports.publicDebug = publicDebug;
 exports.debugWarn = debugWarn;
 
 /***/ }),
-/* 136 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43704,240 +43317,240 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 137 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 12,
-	"./af.js": 12,
-	"./ar": 13,
-	"./ar-dz": 14,
-	"./ar-dz.js": 14,
-	"./ar-kw": 15,
-	"./ar-kw.js": 15,
-	"./ar-ly": 16,
-	"./ar-ly.js": 16,
-	"./ar-ma": 17,
-	"./ar-ma.js": 17,
-	"./ar-sa": 18,
-	"./ar-sa.js": 18,
-	"./ar-tn": 19,
-	"./ar-tn.js": 19,
-	"./ar.js": 13,
-	"./az": 20,
-	"./az.js": 20,
-	"./be": 21,
-	"./be.js": 21,
-	"./bg": 22,
-	"./bg.js": 22,
-	"./bn": 23,
-	"./bn.js": 23,
-	"./bo": 24,
-	"./bo.js": 24,
-	"./br": 25,
-	"./br.js": 25,
-	"./bs": 26,
-	"./bs.js": 26,
-	"./ca": 27,
-	"./ca.js": 27,
-	"./cs": 28,
-	"./cs.js": 28,
-	"./cv": 29,
-	"./cv.js": 29,
-	"./cy": 30,
-	"./cy.js": 30,
-	"./da": 31,
-	"./da.js": 31,
-	"./de": 32,
-	"./de-at": 33,
-	"./de-at.js": 33,
-	"./de-ch": 34,
-	"./de-ch.js": 34,
-	"./de.js": 32,
-	"./dv": 35,
-	"./dv.js": 35,
-	"./el": 36,
-	"./el.js": 36,
-	"./en-au": 37,
-	"./en-au.js": 37,
-	"./en-ca": 38,
-	"./en-ca.js": 38,
-	"./en-gb": 39,
-	"./en-gb.js": 39,
-	"./en-ie": 40,
-	"./en-ie.js": 40,
-	"./en-nz": 41,
-	"./en-nz.js": 41,
-	"./eo": 42,
-	"./eo.js": 42,
-	"./es": 43,
-	"./es-do": 44,
-	"./es-do.js": 44,
-	"./es.js": 43,
-	"./et": 45,
-	"./et.js": 45,
-	"./eu": 46,
-	"./eu.js": 46,
-	"./fa": 47,
-	"./fa.js": 47,
-	"./fi": 48,
-	"./fi.js": 48,
-	"./fo": 49,
-	"./fo.js": 49,
-	"./fr": 50,
-	"./fr-ca": 51,
-	"./fr-ca.js": 51,
-	"./fr-ch": 52,
-	"./fr-ch.js": 52,
-	"./fr.js": 50,
-	"./fy": 53,
-	"./fy.js": 53,
-	"./gd": 54,
-	"./gd.js": 54,
-	"./gl": 55,
-	"./gl.js": 55,
-	"./gom-latn": 56,
-	"./gom-latn.js": 56,
-	"./he": 57,
-	"./he.js": 57,
-	"./hi": 58,
-	"./hi.js": 58,
-	"./hr": 59,
-	"./hr.js": 59,
-	"./hu": 60,
-	"./hu.js": 60,
-	"./hy-am": 61,
-	"./hy-am.js": 61,
-	"./id": 62,
-	"./id.js": 62,
-	"./is": 63,
-	"./is.js": 63,
-	"./it": 64,
-	"./it.js": 64,
-	"./ja": 65,
-	"./ja.js": 65,
-	"./jv": 66,
-	"./jv.js": 66,
-	"./ka": 67,
-	"./ka.js": 67,
-	"./kk": 68,
-	"./kk.js": 68,
-	"./km": 69,
-	"./km.js": 69,
-	"./kn": 70,
-	"./kn.js": 70,
-	"./ko": 71,
-	"./ko.js": 71,
-	"./ky": 72,
-	"./ky.js": 72,
-	"./lb": 73,
-	"./lb.js": 73,
-	"./lo": 74,
-	"./lo.js": 74,
-	"./lt": 75,
-	"./lt.js": 75,
-	"./lv": 76,
-	"./lv.js": 76,
-	"./me": 77,
-	"./me.js": 77,
-	"./mi": 78,
-	"./mi.js": 78,
-	"./mk": 79,
-	"./mk.js": 79,
-	"./ml": 80,
-	"./ml.js": 80,
-	"./mr": 81,
-	"./mr.js": 81,
-	"./ms": 82,
-	"./ms-my": 83,
-	"./ms-my.js": 83,
-	"./ms.js": 82,
-	"./my": 84,
-	"./my.js": 84,
-	"./nb": 85,
-	"./nb.js": 85,
-	"./ne": 86,
-	"./ne.js": 86,
-	"./nl": 87,
-	"./nl-be": 88,
-	"./nl-be.js": 88,
-	"./nl.js": 87,
-	"./nn": 89,
-	"./nn.js": 89,
-	"./pa-in": 90,
-	"./pa-in.js": 90,
-	"./pl": 91,
-	"./pl.js": 91,
-	"./pt": 92,
-	"./pt-br": 93,
-	"./pt-br.js": 93,
-	"./pt.js": 92,
-	"./ro": 94,
-	"./ro.js": 94,
-	"./ru": 95,
-	"./ru.js": 95,
-	"./sd": 96,
-	"./sd.js": 96,
-	"./se": 97,
-	"./se.js": 97,
-	"./si": 98,
-	"./si.js": 98,
-	"./sk": 99,
-	"./sk.js": 99,
-	"./sl": 100,
-	"./sl.js": 100,
-	"./sq": 101,
-	"./sq.js": 101,
-	"./sr": 102,
-	"./sr-cyrl": 103,
-	"./sr-cyrl.js": 103,
-	"./sr.js": 102,
-	"./ss": 104,
-	"./ss.js": 104,
-	"./sv": 105,
-	"./sv.js": 105,
-	"./sw": 106,
-	"./sw.js": 106,
-	"./ta": 107,
-	"./ta.js": 107,
-	"./te": 108,
-	"./te.js": 108,
-	"./tet": 109,
-	"./tet.js": 109,
-	"./th": 110,
-	"./th.js": 110,
-	"./tl-ph": 111,
-	"./tl-ph.js": 111,
-	"./tlh": 112,
-	"./tlh.js": 112,
-	"./tr": 113,
-	"./tr.js": 113,
-	"./tzl": 114,
-	"./tzl.js": 114,
-	"./tzm": 115,
-	"./tzm-latn": 116,
-	"./tzm-latn.js": 116,
-	"./tzm.js": 115,
-	"./uk": 117,
-	"./uk.js": 117,
-	"./ur": 118,
-	"./ur.js": 118,
-	"./uz": 119,
-	"./uz-latn": 120,
-	"./uz-latn.js": 120,
-	"./uz.js": 119,
-	"./vi": 121,
-	"./vi.js": 121,
-	"./x-pseudo": 122,
-	"./x-pseudo.js": 122,
-	"./yo": 123,
-	"./yo.js": 123,
-	"./zh-cn": 124,
-	"./zh-cn.js": 124,
-	"./zh-hk": 125,
-	"./zh-hk.js": 125,
-	"./zh-tw": 126,
-	"./zh-tw.js": 126
+	"./af": 16,
+	"./af.js": 16,
+	"./ar": 17,
+	"./ar-dz": 18,
+	"./ar-dz.js": 18,
+	"./ar-kw": 19,
+	"./ar-kw.js": 19,
+	"./ar-ly": 20,
+	"./ar-ly.js": 20,
+	"./ar-ma": 21,
+	"./ar-ma.js": 21,
+	"./ar-sa": 22,
+	"./ar-sa.js": 22,
+	"./ar-tn": 23,
+	"./ar-tn.js": 23,
+	"./ar.js": 17,
+	"./az": 24,
+	"./az.js": 24,
+	"./be": 25,
+	"./be.js": 25,
+	"./bg": 26,
+	"./bg.js": 26,
+	"./bn": 27,
+	"./bn.js": 27,
+	"./bo": 28,
+	"./bo.js": 28,
+	"./br": 29,
+	"./br.js": 29,
+	"./bs": 30,
+	"./bs.js": 30,
+	"./ca": 31,
+	"./ca.js": 31,
+	"./cs": 32,
+	"./cs.js": 32,
+	"./cv": 33,
+	"./cv.js": 33,
+	"./cy": 34,
+	"./cy.js": 34,
+	"./da": 35,
+	"./da.js": 35,
+	"./de": 36,
+	"./de-at": 37,
+	"./de-at.js": 37,
+	"./de-ch": 38,
+	"./de-ch.js": 38,
+	"./de.js": 36,
+	"./dv": 39,
+	"./dv.js": 39,
+	"./el": 40,
+	"./el.js": 40,
+	"./en-au": 41,
+	"./en-au.js": 41,
+	"./en-ca": 42,
+	"./en-ca.js": 42,
+	"./en-gb": 43,
+	"./en-gb.js": 43,
+	"./en-ie": 44,
+	"./en-ie.js": 44,
+	"./en-nz": 45,
+	"./en-nz.js": 45,
+	"./eo": 46,
+	"./eo.js": 46,
+	"./es": 47,
+	"./es-do": 48,
+	"./es-do.js": 48,
+	"./es.js": 47,
+	"./et": 49,
+	"./et.js": 49,
+	"./eu": 50,
+	"./eu.js": 50,
+	"./fa": 51,
+	"./fa.js": 51,
+	"./fi": 52,
+	"./fi.js": 52,
+	"./fo": 53,
+	"./fo.js": 53,
+	"./fr": 54,
+	"./fr-ca": 55,
+	"./fr-ca.js": 55,
+	"./fr-ch": 56,
+	"./fr-ch.js": 56,
+	"./fr.js": 54,
+	"./fy": 57,
+	"./fy.js": 57,
+	"./gd": 58,
+	"./gd.js": 58,
+	"./gl": 59,
+	"./gl.js": 59,
+	"./gom-latn": 60,
+	"./gom-latn.js": 60,
+	"./he": 61,
+	"./he.js": 61,
+	"./hi": 62,
+	"./hi.js": 62,
+	"./hr": 63,
+	"./hr.js": 63,
+	"./hu": 64,
+	"./hu.js": 64,
+	"./hy-am": 65,
+	"./hy-am.js": 65,
+	"./id": 66,
+	"./id.js": 66,
+	"./is": 67,
+	"./is.js": 67,
+	"./it": 68,
+	"./it.js": 68,
+	"./ja": 69,
+	"./ja.js": 69,
+	"./jv": 70,
+	"./jv.js": 70,
+	"./ka": 71,
+	"./ka.js": 71,
+	"./kk": 72,
+	"./kk.js": 72,
+	"./km": 73,
+	"./km.js": 73,
+	"./kn": 74,
+	"./kn.js": 74,
+	"./ko": 75,
+	"./ko.js": 75,
+	"./ky": 76,
+	"./ky.js": 76,
+	"./lb": 77,
+	"./lb.js": 77,
+	"./lo": 78,
+	"./lo.js": 78,
+	"./lt": 79,
+	"./lt.js": 79,
+	"./lv": 80,
+	"./lv.js": 80,
+	"./me": 81,
+	"./me.js": 81,
+	"./mi": 82,
+	"./mi.js": 82,
+	"./mk": 83,
+	"./mk.js": 83,
+	"./ml": 84,
+	"./ml.js": 84,
+	"./mr": 85,
+	"./mr.js": 85,
+	"./ms": 86,
+	"./ms-my": 87,
+	"./ms-my.js": 87,
+	"./ms.js": 86,
+	"./my": 88,
+	"./my.js": 88,
+	"./nb": 89,
+	"./nb.js": 89,
+	"./ne": 90,
+	"./ne.js": 90,
+	"./nl": 91,
+	"./nl-be": 92,
+	"./nl-be.js": 92,
+	"./nl.js": 91,
+	"./nn": 93,
+	"./nn.js": 93,
+	"./pa-in": 94,
+	"./pa-in.js": 94,
+	"./pl": 95,
+	"./pl.js": 95,
+	"./pt": 96,
+	"./pt-br": 97,
+	"./pt-br.js": 97,
+	"./pt.js": 96,
+	"./ro": 98,
+	"./ro.js": 98,
+	"./ru": 99,
+	"./ru.js": 99,
+	"./sd": 100,
+	"./sd.js": 100,
+	"./se": 101,
+	"./se.js": 101,
+	"./si": 102,
+	"./si.js": 102,
+	"./sk": 103,
+	"./sk.js": 103,
+	"./sl": 104,
+	"./sl.js": 104,
+	"./sq": 105,
+	"./sq.js": 105,
+	"./sr": 106,
+	"./sr-cyrl": 107,
+	"./sr-cyrl.js": 107,
+	"./sr.js": 106,
+	"./ss": 108,
+	"./ss.js": 108,
+	"./sv": 109,
+	"./sv.js": 109,
+	"./sw": 110,
+	"./sw.js": 110,
+	"./ta": 111,
+	"./ta.js": 111,
+	"./te": 112,
+	"./te.js": 112,
+	"./tet": 113,
+	"./tet.js": 113,
+	"./th": 114,
+	"./th.js": 114,
+	"./tl-ph": 115,
+	"./tl-ph.js": 115,
+	"./tlh": 116,
+	"./tlh.js": 116,
+	"./tr": 117,
+	"./tr.js": 117,
+	"./tzl": 118,
+	"./tzl.js": 118,
+	"./tzm": 119,
+	"./tzm-latn": 120,
+	"./tzm-latn.js": 120,
+	"./tzm.js": 119,
+	"./uk": 121,
+	"./uk.js": 121,
+	"./ur": 122,
+	"./ur.js": 122,
+	"./uz": 123,
+	"./uz-latn": 124,
+	"./uz-latn.js": 124,
+	"./uz.js": 123,
+	"./vi": 125,
+	"./vi.js": 125,
+	"./x-pseudo": 126,
+	"./x-pseudo.js": 126,
+	"./yo": 127,
+	"./yo.js": 127,
+	"./zh-cn": 128,
+	"./zh-cn.js": 128,
+	"./zh-hk": 129,
+	"./zh-hk.js": 129,
+	"./zh-tw": 130,
+	"./zh-tw.js": 130
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -43953,10 +43566,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 137;
+webpackContext.id = 140;
 
 /***/ }),
-/* 138 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43982,7 +43595,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 139 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44031,7 +43644,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 140 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44083,4229 +43696,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 141 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Tooltip 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Tooltip
-//>>group: Widgets
-//>>description: Shows additional information for any element on hover or focus.
-//>>docs: http://api.jqueryui.com/tooltip/
-//>>demos: http://jqueryui.com/tooltip/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/tooltip.css
-//>>css.theme: ../../themes/base/theme.css
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(9), __webpack_require__(128), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	$.widget("ui.tooltip", {
-		version: "1.12.1",
-		options: {
-			classes: {
-				"ui-tooltip": "ui-corner-all ui-widget-shadow"
-			},
-			content: function content() {
-
-				// support: IE<9, Opera in jQuery <1.7
-				// .text() can't accept undefined, so coerce to a string
-				var title = $(this).attr("title") || "";
-
-				// Escape title, since we're going from an attribute to raw HTML
-				return $("<a>").text(title).html();
-			},
-			hide: true,
-
-			// Disabled elements have inconsistent behavior across browsers (#8661)
-			items: "[title]:not([disabled])",
-			position: {
-				my: "left top+15",
-				at: "left bottom",
-				collision: "flipfit flip"
-			},
-			show: true,
-			track: false,
-
-			// Callbacks
-			close: null,
-			open: null
-		},
-
-		_addDescribedBy: function _addDescribedBy(elem, id) {
-			var describedby = (elem.attr("aria-describedby") || "").split(/\s+/);
-			describedby.push(id);
-			elem.data("ui-tooltip-id", id).attr("aria-describedby", $.trim(describedby.join(" ")));
-		},
-
-		_removeDescribedBy: function _removeDescribedBy(elem) {
-			var id = elem.data("ui-tooltip-id"),
-			    describedby = (elem.attr("aria-describedby") || "").split(/\s+/),
-			    index = $.inArray(id, describedby);
-
-			if (index !== -1) {
-				describedby.splice(index, 1);
-			}
-
-			elem.removeData("ui-tooltip-id");
-			describedby = $.trim(describedby.join(" "));
-			if (describedby) {
-				elem.attr("aria-describedby", describedby);
-			} else {
-				elem.removeAttr("aria-describedby");
-			}
-		},
-
-		_create: function _create() {
-			this._on({
-				mouseover: "open",
-				focusin: "open"
-			});
-
-			// IDs of generated tooltips, needed for destroy
-			this.tooltips = {};
-
-			// IDs of parent tooltips where we removed the title attribute
-			this.parents = {};
-
-			// Append the aria-live region so tooltips announce correctly
-			this.liveRegion = $("<div>").attr({
-				role: "log",
-				"aria-live": "assertive",
-				"aria-relevant": "additions"
-			}).appendTo(this.document[0].body);
-			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
-
-			this.disabledTitles = $([]);
-		},
-
-		_setOption: function _setOption(key, value) {
-			var that = this;
-
-			this._super(key, value);
-
-			if (key === "content") {
-				$.each(this.tooltips, function (id, tooltipData) {
-					that._updateContent(tooltipData.element);
-				});
-			}
-		},
-
-		_setOptionDisabled: function _setOptionDisabled(value) {
-			this[value ? "_disable" : "_enable"]();
-		},
-
-		_disable: function _disable() {
-			var that = this;
-
-			// Close open tooltips
-			$.each(this.tooltips, function (id, tooltipData) {
-				var event = $.Event("blur");
-				event.target = event.currentTarget = tooltipData.element[0];
-				that.close(event, true);
-			});
-
-			// Remove title attributes to prevent native tooltips
-			this.disabledTitles = this.disabledTitles.add(this.element.find(this.options.items).addBack().filter(function () {
-				var element = $(this);
-				if (element.is("[title]")) {
-					return element.data("ui-tooltip-title", element.attr("title")).removeAttr("title");
-				}
-			}));
-		},
-
-		_enable: function _enable() {
-
-			// restore title attributes
-			this.disabledTitles.each(function () {
-				var element = $(this);
-				if (element.data("ui-tooltip-title")) {
-					element.attr("title", element.data("ui-tooltip-title"));
-				}
-			});
-			this.disabledTitles = $([]);
-		},
-
-		open: function open(event) {
-			var that = this,
-			    target = $(event ? event.target : this.element)
-
-			// we need closest here due to mouseover bubbling,
-			// but always pointing at the same event target
-			.closest(this.options.items);
-
-			// No element to show a tooltip for or the tooltip is already open
-			if (!target.length || target.data("ui-tooltip-id")) {
-				return;
-			}
-
-			if (target.attr("title")) {
-				target.data("ui-tooltip-title", target.attr("title"));
-			}
-
-			target.data("ui-tooltip-open", true);
-
-			// Kill parent tooltips, custom or native, for hover
-			if (event && event.type === "mouseover") {
-				target.parents().each(function () {
-					var parent = $(this),
-					    blurEvent;
-					if (parent.data("ui-tooltip-open")) {
-						blurEvent = $.Event("blur");
-						blurEvent.target = blurEvent.currentTarget = this;
-						that.close(blurEvent, true);
-					}
-					if (parent.attr("title")) {
-						parent.uniqueId();
-						that.parents[this.id] = {
-							element: this,
-							title: parent.attr("title")
-						};
-						parent.attr("title", "");
-					}
-				});
-			}
-
-			this._registerCloseHandlers(event, target);
-			this._updateContent(target, event);
-		},
-
-		_updateContent: function _updateContent(target, event) {
-			var content,
-			    contentOption = this.options.content,
-			    that = this,
-			    eventType = event ? event.type : null;
-
-			if (typeof contentOption === "string" || contentOption.nodeType || contentOption.jquery) {
-				return this._open(event, target, contentOption);
-			}
-
-			content = contentOption.call(target[0], function (response) {
-
-				// IE may instantly serve a cached response for ajax requests
-				// delay this call to _open so the other call to _open runs first
-				that._delay(function () {
-
-					// Ignore async response if tooltip was closed already
-					if (!target.data("ui-tooltip-open")) {
-						return;
-					}
-
-					// JQuery creates a special event for focusin when it doesn't
-					// exist natively. To improve performance, the native event
-					// object is reused and the type is changed. Therefore, we can't
-					// rely on the type being correct after the event finished
-					// bubbling, so we set it back to the previous value. (#8740)
-					if (event) {
-						event.type = eventType;
-					}
-					this._open(event, target, response);
-				});
-			});
-			if (content) {
-				this._open(event, target, content);
-			}
-		},
-
-		_open: function _open(event, target, content) {
-			var tooltipData,
-			    tooltip,
-			    delayedShow,
-			    a11yContent,
-			    positionOption = $.extend({}, this.options.position);
-
-			if (!content) {
-				return;
-			}
-
-			// Content can be updated multiple times. If the tooltip already
-			// exists, then just update the content and bail.
-			tooltipData = this._find(target);
-			if (tooltipData) {
-				tooltipData.tooltip.find(".ui-tooltip-content").html(content);
-				return;
-			}
-
-			// If we have a title, clear it to prevent the native tooltip
-			// we have to check first to avoid defining a title if none exists
-			// (we don't want to cause an element to start matching [title])
-			//
-			// We use removeAttr only for key events, to allow IE to export the correct
-			// accessible attributes. For mouse events, set to empty string to avoid
-			// native tooltip showing up (happens only when removing inside mouseover).
-			if (target.is("[title]")) {
-				if (event && event.type === "mouseover") {
-					target.attr("title", "");
-				} else {
-					target.removeAttr("title");
-				}
-			}
-
-			tooltipData = this._tooltip(target);
-			tooltip = tooltipData.tooltip;
-			this._addDescribedBy(target, tooltip.attr("id"));
-			tooltip.find(".ui-tooltip-content").html(content);
-
-			// Support: Voiceover on OS X, JAWS on IE <= 9
-			// JAWS announces deletions even when aria-relevant="additions"
-			// Voiceover will sometimes re-read the entire log region's contents from the beginning
-			this.liveRegion.children().hide();
-			a11yContent = $("<div>").html(tooltip.find(".ui-tooltip-content").html());
-			a11yContent.removeAttr("name").find("[name]").removeAttr("name");
-			a11yContent.removeAttr("id").find("[id]").removeAttr("id");
-			a11yContent.appendTo(this.liveRegion);
-
-			function position(event) {
-				positionOption.of = event;
-				if (tooltip.is(":hidden")) {
-					return;
-				}
-				tooltip.position(positionOption);
-			}
-			if (this.options.track && event && /^mouse/.test(event.type)) {
-				this._on(this.document, {
-					mousemove: position
-				});
-
-				// trigger once to override element-relative positioning
-				position(event);
-			} else {
-				tooltip.position($.extend({
-					of: target
-				}, this.options.position));
-			}
-
-			tooltip.hide();
-
-			this._show(tooltip, this.options.show);
-
-			// Handle tracking tooltips that are shown with a delay (#8644). As soon
-			// as the tooltip is visible, position the tooltip using the most recent
-			// event.
-			// Adds the check to add the timers only when both delay and track options are set (#14682)
-			if (this.options.track && this.options.show && this.options.show.delay) {
-				delayedShow = this.delayedShow = setInterval(function () {
-					if (tooltip.is(":visible")) {
-						position(positionOption.of);
-						clearInterval(delayedShow);
-					}
-				}, $.fx.interval);
-			}
-
-			this._trigger("open", event, { tooltip: tooltip });
-		},
-
-		_registerCloseHandlers: function _registerCloseHandlers(event, target) {
-			var events = {
-				keyup: function keyup(event) {
-					if (event.keyCode === $.ui.keyCode.ESCAPE) {
-						var fakeEvent = $.Event(event);
-						fakeEvent.currentTarget = target[0];
-						this.close(fakeEvent, true);
-					}
-				}
-			};
-
-			// Only bind remove handler for delegated targets. Non-delegated
-			// tooltips will handle this in destroy.
-			if (target[0] !== this.element[0]) {
-				events.remove = function () {
-					this._removeTooltip(this._find(target).tooltip);
-				};
-			}
-
-			if (!event || event.type === "mouseover") {
-				events.mouseleave = "close";
-			}
-			if (!event || event.type === "focusin") {
-				events.focusout = "close";
-			}
-			this._on(true, target, events);
-		},
-
-		close: function close(event) {
-			var tooltip,
-			    that = this,
-			    target = $(event ? event.currentTarget : this.element),
-			    tooltipData = this._find(target);
-
-			// The tooltip may already be closed
-			if (!tooltipData) {
-
-				// We set ui-tooltip-open immediately upon open (in open()), but only set the
-				// additional data once there's actually content to show (in _open()). So even if the
-				// tooltip doesn't have full data, we always remove ui-tooltip-open in case we're in
-				// the period between open() and _open().
-				target.removeData("ui-tooltip-open");
-				return;
-			}
-
-			tooltip = tooltipData.tooltip;
-
-			// Disabling closes the tooltip, so we need to track when we're closing
-			// to avoid an infinite loop in case the tooltip becomes disabled on close
-			if (tooltipData.closing) {
-				return;
-			}
-
-			// Clear the interval for delayed tracking tooltips
-			clearInterval(this.delayedShow);
-
-			// Only set title if we had one before (see comment in _open())
-			// If the title attribute has changed since open(), don't restore
-			if (target.data("ui-tooltip-title") && !target.attr("title")) {
-				target.attr("title", target.data("ui-tooltip-title"));
-			}
-
-			this._removeDescribedBy(target);
-
-			tooltipData.hiding = true;
-			tooltip.stop(true);
-			this._hide(tooltip, this.options.hide, function () {
-				that._removeTooltip($(this));
-			});
-
-			target.removeData("ui-tooltip-open");
-			this._off(target, "mouseleave focusout keyup");
-
-			// Remove 'remove' binding only on delegated targets
-			if (target[0] !== this.element[0]) {
-				this._off(target, "remove");
-			}
-			this._off(this.document, "mousemove");
-
-			if (event && event.type === "mouseleave") {
-				$.each(this.parents, function (id, parent) {
-					$(parent.element).attr("title", parent.title);
-					delete that.parents[id];
-				});
-			}
-
-			tooltipData.closing = true;
-			this._trigger("close", event, { tooltip: tooltip });
-			if (!tooltipData.hiding) {
-				tooltipData.closing = false;
-			}
-		},
-
-		_tooltip: function _tooltip(element) {
-			var tooltip = $("<div>").attr("role", "tooltip"),
-			    content = $("<div>").appendTo(tooltip),
-			    id = tooltip.uniqueId().attr("id");
-
-			this._addClass(content, "ui-tooltip-content");
-			this._addClass(tooltip, "ui-tooltip", "ui-widget ui-widget-content");
-
-			tooltip.appendTo(this._appendTo(element));
-
-			return this.tooltips[id] = {
-				element: element,
-				tooltip: tooltip
-			};
-		},
-
-		_find: function _find(target) {
-			var id = target.data("ui-tooltip-id");
-			return id ? this.tooltips[id] : null;
-		},
-
-		_removeTooltip: function _removeTooltip(tooltip) {
-			tooltip.remove();
-			delete this.tooltips[tooltip.attr("id")];
-		},
-
-		_appendTo: function _appendTo(target) {
-			var element = target.closest(".ui-front, dialog");
-
-			if (!element.length) {
-				element = this.document[0].body;
-			}
-
-			return element;
-		},
-
-		_destroy: function _destroy() {
-			var that = this;
-
-			// Close open tooltips
-			$.each(this.tooltips, function (id, tooltipData) {
-
-				// Delegate to close method to handle common cleanup
-				var event = $.Event("blur"),
-				    element = tooltipData.element;
-				event.target = event.currentTarget = element[0];
-				that.close(event, true);
-
-				// Remove immediately; destroying an open tooltip doesn't use the
-				// hide animation
-				$("#" + id).remove();
-
-				// Restore the title
-				if (element.data("ui-tooltip-title")) {
-
-					// If the title attribute has changed since open(), don't restore
-					if (!element.attr("title")) {
-						element.attr("title", element.data("ui-tooltip-title"));
-					}
-					element.removeData("ui-tooltip-title");
-				}
-			});
-			this.liveRegion.remove();
-		}
-	});
-
-	// DEPRECATED
-	// TODO: Switch return back to widget declaration at top of file when this is removed
-	if ($.uiBackCompat !== false) {
-
-		// Backcompat for tooltipClass option
-		$.widget("ui.tooltip", $.ui.tooltip, {
-			options: {
-				tooltipClass: null
-			},
-			_tooltip: function _tooltip() {
-				var tooltipData = this._superApply(arguments);
-				if (this.options.tooltipClass) {
-					tooltipData.tooltip.addClass(this.options.tooltipClass);
-				}
-				return tooltipData;
-			}
-		});
-	}
-
-	return $.ui.tooltip;
-});
-
-/***/ }),
-/* 142 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	// Internal use only
-	return $.ui.escapeSelector = function () {
-		var selectorEscape = /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g;
-		return function (selector) {
-			return selector.replace(selectorEscape, "\\$1");
-		};
-	}();
-});
-
-/***/ }),
-/* 143 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Focusable 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: :focusable Selector
-//>>group: Core
-//>>description: Selects elements which can be focused.
-//>>docs: http://api.jqueryui.com/focusable-selector/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	// Selectors
-	$.ui.focusable = function (element, hasTabindex) {
-		var map,
-		    mapName,
-		    img,
-		    focusableIfVisible,
-		    fieldset,
-		    nodeName = element.nodeName.toLowerCase();
-
-		if ("area" === nodeName) {
-			map = element.parentNode;
-			mapName = map.name;
-			if (!element.href || !mapName || map.nodeName.toLowerCase() !== "map") {
-				return false;
-			}
-			img = $("img[usemap='#" + mapName + "']");
-			return img.length > 0 && img.is(":visible");
-		}
-
-		if (/^(input|select|textarea|button|object)$/.test(nodeName)) {
-			focusableIfVisible = !element.disabled;
-
-			if (focusableIfVisible) {
-
-				// Form controls within a disabled fieldset are disabled.
-				// However, controls within the fieldset's legend do not get disabled.
-				// Since controls generally aren't placed inside legends, we skip
-				// this portion of the check.
-				fieldset = $(element).closest("fieldset")[0];
-				if (fieldset) {
-					focusableIfVisible = !fieldset.disabled;
-				}
-			}
-		} else if ("a" === nodeName) {
-			focusableIfVisible = element.href || hasTabindex;
-		} else {
-			focusableIfVisible = hasTabindex;
-		}
-
-		return focusableIfVisible && $(element).is(":visible") && visible($(element));
-	};
-
-	// Support: IE 8 only
-	// IE 8 doesn't resolve inherit to visible/hidden for computed values
-	function visible(element) {
-		var visibility = element.css("visibility");
-		while (visibility === "inherit") {
-			element = element.parent();
-			visibility = element.css("visibility");
-		}
-		return visibility !== "hidden";
-	}
-
-	$.extend($.expr[":"], {
-		focusable: function focusable(element) {
-			return $.ui.focusable(element, $.attr(element, "tabindex") != null);
-		}
-	});
-
-	return $.ui.focusable;
-});
-
-/***/ }),
 /* 144 */,
-/* 145 */,
-/* 146 */,
-/* 147 */,
-/* 148 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(149);
-
-var _utils = __webpack_require__(5);
-
-var _debug = __webpack_require__(135);
-
-var _textfieldlisteners = __webpack_require__(129);
-
-var _serverresponse = __webpack_require__(6);
-
-var _userfeedback = __webpack_require__(4);
-
-var _override = __webpack_require__(151);
-
-var _uifunc = __webpack_require__(11);
-
-var _useradmin = __webpack_require__(162);
-
-var _useradmin2 = _interopRequireDefault(_useradmin);
-
-var _settingsadmin = __webpack_require__(163);
-
-var _settingsadmin2 = _interopRequireDefault(_settingsadmin);
-
-var _debugadmin = __webpack_require__(164);
-
-var _debugadmin2 = _interopRequireDefault(_debugadmin);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-(function ($) {
-
-	$(function () {
-		//global vars
-		var selectedBalUser,
-		    eventsToDelete = [],
-		    eventsModified = {},
-		    eventsConfirmed = [],
-		    reservationSources = [],
-		    reservationSourcesMap = {},
-		    lastReservationResource = '',
-		    lastBalClick = null,
-		    userEmails = [],
-		    releventRes = null,
-		    persistentRelEvent = null,
-		    eventCount = 0,
-		    lastequipclick = $('.iam-existing-list li[selected]'),
-		    updatedAccountTypes = {},
-		    updatedRentalTypes = {},
-		    userBalances = {},
-		    eqLateFee = null,
-		    availableTags,
-		    comparableTags,
-		    didLoadAllRes = false,
-		    releventResEventStart = null,
-		    thisRentalDays;
-
-		var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-
-		var debugadmin = new _debugadmin2.default();
-
-		//url reload functions
-
-		var getUrlArg = function getUrlArg(argname) {
-			var url = new URL(window.location.href);
-			return url.searchParams.get(argname);
-		};
-
-		var findItemAgain = function findItemAgain(list) {
-			if (window.location.href.indexOf('&finditem=') == -1) return;
-
-			var target = getUrlArg('finditem').split('_').join(' ');
-
-			$.each(list.children('li'), function (index, el) {
-				if ($(this).html().trim() == target) {
-					$(this).click();
-					return false;
-				}
-			});
-		};
-
-		var findTableItemAgain = function findTableItemAgain(table, colNum) {
-			if (window.location.href.indexOf('&finditem=') == -1) return;
-
-			var target = getUrlArg('finditem').split('_').join(' ');
-
-			$.each(table.find('tbody').find('tr'), function (index, el) {
-				if ($(this).find('td').eq(colNum).html().trim() == target) {
-					$(this).click();
-					return false;
-				}
-			});
-		};
-
-		var reloadAndFind = function reloadAndFind(target) {
-			window.location.href = window.location.href + '&finditem=' + target.trim().split(' ').join('_');
-		};
-
-		//charge table
-
-		var initChargeTableActions = function initChargeTableActions() {
-			$.each($('tr'), function (index, val) {
-				if (index != 0) {
-					if ($(this).children('.iam-charge-table-approver').html() == 'n/a') {
-						$(this).append('<td><div class="iam-button iam-approve-charge-button" data-status="0">approve</div></td>');
-					} else {
-						$(this).append('<td><div class="iam-secondary-button iam-approve-charge-button" data-status="1">cancel</div></td>');
-					}
-				}
-			});
-			initApproveChargeButtonListener();
-		};
-
-		var initChargeTable = function initChargeTable() {
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'admin_get_charge_table_json' },
-				success: function success(data) {
-					data = JSON.parse(data);
-					makeEditableTableHeaders(data, '#iam-table-container', 'iam-charge-table');
-					initSearchWithTableDataSetListener($('.iam-search'), data['data'], ['username', 'email', 'account_type', 'certifications', 'equipment_used', 'Charge_Description', 'date', 'approver', 'Comment', 'values'], function (searchResults) {
-						$('#iam-table-container').pagination({
-							position: 'top',
-							pageSize: 10,
-							dataSource: searchResults,
-							callback: function callback(pgData, pagination) {
-								makeEditableTableBody(pgData, '#iam-table-container', 'iam-charge-table', chargeTableEditingCallback);
-								initChargeTableActions();
-							}
-						});
-					});
-					updateSearch();
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		var editableTableRowData = [];
-
-		var makeEditableTableHeaders = function makeEditableTableHeaders(json, container, tableName) {
-			var table = '<table id="' + tableName + '"><thead><tr class="table-header">',
-			    rowData = [];
-			for (var i = 0; i < json.metadata.length; i++) {
-				var editMark = json.metadata[i]['editable'] ? '<b style="color:red;">*</b>' : '';
-				table += '<th>' + json.metadata[i]['label'] + editMark + '</th>';
-				editableTableRowData.push(json.metadata[i]);
-			}
-			table += '</tr></thead><tbody></tbody></table>';
-			$(container).append(table);
-		};
-
-		var makeEditableTableBody = function makeEditableTableBody(json, container, tableName, finishEditingCallback) {
-			if (typeof json == 'string') {
-				json = JSON.parse(json);
-			}
-			if (typeof finishEditingCallback === 'undefined') {
-				finishEditingCallback = function finishEditingCallback() {
-					//do nothing;
-				};
-			}
-			var tbody = '',
-			    rowData = [];
-			for (var i = 0; i < json.length; i++) {
-				tbody += '<tr data-id="' + json[i].id + '">';
-				for (var k = 0; k < editableTableRowData.length; k++) {
-					var d = json[i].values;
-					var val = d[editableTableRowData[k].name];
-					var editClass = editableTableRowData[k].editable ? 'table-editable' : '';
-					switch (editableTableRowData[k].datatype) {
-						case 'varchar':
-							tbody += '<td class="' + tableName + '-' + editableTableRowData[k].name + ' table-varchar ' + editClass + '" data-field="' + editableTableRowData[k].name + '">' + val;
-							break;
-						case 'text':
-							tbody += '<td class="' + tableName + '-' + editableTableRowData[k].name + ' table-text ' + editClass + '" data-field="' + editableTableRowData[k].name + '">' + val;
-							break;
-					}
-					tbody += '</td>';
-				}
-				tbody += '</tr>';
-			}
-			$(container).find('tbody').empty();
-			$(container).find('tbody').append(tbody);
-			editableTableTDListener(tableName, finishEditingCallback);
-		};
-		var editableTableTDListener = function editableTableTDListener(tableName, finishEditingCallback) {
-			$('table#' + tableName + ' td.table-editable').click(function (event) {
-				$(this).off();
-				if ($(this).hasClass('table-varchar')) {
-					$(this).html('<input type="text" class="table-active-varchar table-active-data" value="' + $(this).html() + '">');
-				} else if ($(this).hasClass('table-text')) {
-					$(this).html('<textarea class="table-active-text table-active-data">' + $(this).html() + '</textarea>');
-				} else {
-					alert('an error occured while editing the row! :(');
-					return;
-				}
-				$('.table-active-data').focus();
-				$('.table-active-data').blur(function (event) {
-					var td = $(this).parents('td'),
-					    ele = td[0],
-					    v = null;
-					if ($(this).hasClass('table-active-varchar')) {
-						v = $(this).val();
-						td.html(v);
-					} else if ($(this).hasClass('table-active-text')) {
-						v = $(this).val();
-						td.html(v);
-					}
-					$('table#' + tableName + ' td.table-editable').off();
-					editableTableTDListener(tableName, finishEditingCallback);
-					finishEditingCallback(ele, td.parents('tr').data('id'), td.data('field'), v);
-				});
-			});
-		};
-		var chargeTableEditingCallback = function chargeTableEditingCallback(ele, rowID, rowField, rowVal) {
-			(0, _userfeedback.submissionStart)();
-			$.ajax({
-				url: ajaxurl,
-				type: 'POST',
-				data: { action: 'admin_update_charge_row', id: rowID, field: rowField, val: rowVal },
-				success: function success(data) {
-					(0, _serverresponse.handleServerResponse)(data);
-					(0, _userfeedback.submissionEnd)();
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-					(0, _userfeedback.submissionEnd)();
-				}
-			});
-		};
-
-		var copyToClipboard = function copyToClipboard(elem) {
-			// create hidden text element, if it doesn't already exist
-			var targetId = "_hiddenCopyText_";
-			var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
-			var origSelectionStart, origSelectionEnd;
-			if (isInput) {
-				// can just use the original source element for the selection and copy
-				target = elem;
-				origSelectionStart = elem.selectionStart;
-				origSelectionEnd = elem.selectionEnd;
-			} else {
-				// must use a temporary form element for the selection and copy
-				target = document.getElementById(targetId);
-				if (!target) {
-					var target = document.createElement("textarea");
-					target.style.position = "absolute";
-					target.style.left = "-9999px";
-					target.style.top = "0";
-					target.id = targetId;
-					document.body.appendChild(target);
-				}
-				target.textContent = elem.textContent;
-			}
-			// select the content
-			var currentFocus = document.activeElement;
-			target.focus();
-			target.setSelectionRange(0, target.value.length);
-
-			// copy the selection
-			var succeed;
-			try {
-				succeed = document.execCommand("copy");
-			} catch (e) {
-				succeed = false;
-			}
-			// restore original focus
-			if (currentFocus && typeof currentFocus.focus === "function") {
-				currentFocus.focus();
-			}
-
-			if (isInput) {
-				// restore prior selection
-				elem.setSelectionRange(origSelectionStart, origSelectionEnd);
-			} else {
-				// clear temporary content
-				target.textContent = "";
-			}
-			return succeed;
-		};
-
-		var eventToolTip = function eventToolTip(event, element) {
-			var e = $(element);
-			e.attr('title', 'Name: ' + event.fullname + '\n Email: ' + event.email + ' \n Equipment: ' + event.equipment + '\n Checked In: ' + event.in + '\n Checked Out: ' + event.out);
-		};
-
-		var makeSubmitPopup = function makeSubmitPopup(heading, body, callback, a) {
-			$('body').append('<div class="iam-popup iam-submit-popup" style="width:150px;left:30%;"><div class="iam-popup-header">' + heading + '<i style="float:right;" class="fa fa-close fa-3 iam-submit-popup-close"></i></div><div class="iam-popup-body">' + body + '<br/><input type="submit" class="iam-popup-submit iam-autheticate-submit"></div></div>');
-			initClosePopupListener();
-			$('.iam-submit-popup input[type=submit]').click(function (event) {
-				callback(a);
-				$('.iam-popup').remove();
-			});
-		};
-
-		var initClosePopupListener = function initClosePopupListener() {
-			$('.iam-submit-popup-close').click(function (event) {
-				$('.iam-popup').remove();
-			});
-		};
-
-		var unsupportedFile = function unsupportedFile(element) {
-			element.value = null;
-			alert('Unsupported file type!\n Supported file types: .pdf, .doc, .jpg, .jpeg, .png');
-		};
-
-		var tooManyFiles = function tooManyFiles(element) {
-			element.value = null;
-			alert('One file per upload field!');
-		};
-
-		var checkFile = function checkFile(element) {
-			//TODO: check file size
-			if (element.files.length > 1) {
-				tooManyFiles();
-				return false;
-			}
-			if (window.FileReader && window.Blob) {
-				var blob = element.files[0];
-				var fileReader = new FileReader();
-				fileReader.onloadend = function (e) {
-					var arr = new Uint8Array(e.target.result).subarray(0, 4);
-					var header = "";
-					for (var i = 0; i < arr.length; i++) {
-						header += arr[i].toString(16);
-					}
-					header.toLowerCase();
-					switch (header) {
-						case "ffd8ffdb":
-						case "ffd8ffe0":
-						case "ffd8ffe1":
-						case "ffd8ffe2":
-							//jpeg or jpg
-							break;
-						case "89504E47":
-						case "89504e47":
-							//png
-							break;
-						case "25504446":
-							//application/pdf
-							break;
-						case "d0cf11e0":
-						case "D0CF11E0":
-							//msoffice file
-							var ext = blob.name.trim().split('.');
-							ext = ext[ext.length - 1];
-							if (ext.toLowerCase() !== 'doc') {
-								unsupportedFile(element);
-							}
-							break;
-						default:
-							unsupportedFile(element);
-							break;
-					}
-				};
-				fileReader.readAsArrayBuffer(blob);
-			} else {
-				console.warn("FILE APIs not supported");
-			}
-		};
-
-		var updateExistingFiles = function updateExistingFiles() {
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'admin_update_existing_file_list', x: $('#x').val() },
-				success: function success(data) {
-					data = (0, _serverresponse.handleServerResponse)(data);
-					$('#iam-existing-files').empty();
-					$('#iam-existing-files').append(data);
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		var make_id = function make_id(element_id) {
-			if (element_id.substring(0, 1) != "#") element_id = "#" + element_id;
-			return element_id;
-		};
-
-		var prepare_new_form = function prepare_new_form(form_name) {
-			form_name = make_id(form_name);
-			var children = $(form_name).children();
-			for (var i = 0; i < children.length; i++) {
-				var current = children[i];
-				if (current.tagName == "INPUT") {
-					current.attr('value', '');
-				} else if (current.tagName == "TEXTAREA") {
-					current.html('');
-				}
-			}
-		};
-
-		var image_sizer = function image_sizer(img_element) {
-			if ($(img_element).attr('data-size') == 'large') {
-				$(img_element).attr('data-size', 'small');
-				$(img_element).width($(img_element).width() / 2);
-			} else {
-				$(img_element).attr('data-size', 'large');
-				$(img_element).width($(img_element).width() * 2);
-			}
-		};
-
-		var swap_visible_forms = function swap_visible_forms() {
-			if ($('#iam-update-form').length < 1) {
-				$('#iam-new-form').toggleClass('iam-ninja');
-				return;
-			}
-			if ($('#iam-new-form').hasClass('iam-ninja')) {
-				$('#iam-new-form').removeClass('iam-ninja');
-				$('#iam-update-form').addClass('iam-ninja');
-			} else {
-				$('#iam-update-form').removeClass('iam-ninja');
-				$('#iam-new-form').addClass('iam-ninja');
-			}
-		};
-
-		var make_form_visible = function make_form_visible(name) {
-			name = make_id(name);
-			if (!$(name).hasClass('iam-ninja')) return;
-			swap_visible_forms();
-		};
-
-		var loadComparableTags = function loadComparableTags() {
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				async: false,
-				data: { action: 'admin_get_tags', request: 'all' },
-				success: function success(data) {
-					availableTags = (0, _serverresponse.handleServerResponse)(data);
-					comparableTags = [];
-					for (var i = 0; i < availableTags.length; i++) {
-						comparableTags.push(availableTags[i].toLowerCase());
-					}
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		//MULTI-PAGE LISTENERS
-
-		var updateSearchOnLoad = function updateSearchOnLoad() {
-			if ($('.iam-search').val().length > 0) {
-				$('.iam-search').keyup();
-			}
-		};
-
-		var updateSearch = function updateSearch() {
-			if ($('.iam-search').next('input[type=submit]').length > 0) $('.iam-search').next('input[type=submit]').click();else $('.iam-search').keyup();
-		};
-
-		var paginationRefresh = function paginationRefresh() {
-			$('.paginationjs-page.active').click();
-		};
-
-		var initSearchWithTableDataSetListener = function initSearchWithTableDataSetListener(searchElement, dataset, fields, searchCallback) {
-			$(searchElement).next('input[type=submit]').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				var targetString = $(searchElement).val();
-				if (targetString == '') {
-					searchCallback(dataset);
-					(0, _userfeedback.submissionEnd)();
-					event.preventDefault();
-					return false;
-				}
-				var filtered = dataset.filter(function (a) {
-					return dataContainsString(targetString, a, fields);
-				});
-				searchCallback(filtered);
-				(0, _userfeedback.submissionEnd)();
-				event.preventDefault();
-				return false;
-			});
-		};
-
-		var dataContainsString = function dataContainsString(string, data, fields) {
-			var add = false;
-			for (var key in data) {
-				if (fields.indexOf(key) == -1 && fields.length > 0) continue;
-				var val = data[key];
-				if (typeof val == 'string') {
-					if (val.indexOf(string) != -1) add = true;
-				} else if (Array.isArray(val)) {
-					add = dataContainsString(string, val, fields);
-				} else if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) == 'object') {
-					//debugger;
-					add = dataContainsString(string, val, fields);
-				}
-				if (add) return true;
-			}
-			return add;
-		};
-
-		var initDeleteFormListener = function initDeleteFormListener(formtype) {
-			$('.iam-delete-form').click(function (event) {
-				if (confirm("Are you sure you want to delete " + $('#iam-update-form #name').val() + "?") === true) {
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: { action: 'admin_delete_form', x: $('#x').val(), type: formtype },
-						success: function success(data) {
-							(0, _serverresponse.handleServerResponse)(data);
-							window.location.reload();
-						},
-						error: function error(data) {
-							(0, _serverresponse.handleServerError)(data, new Error());
-						}
-					});
-				}
-			});
-		};
-
-		var initExistingFileListener = function initExistingFileListener() {
-			$('.iam-existing-upload-x').click(function (event) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_delete_supporting_file', filename: $(this).parent().text() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						updateExistingFiles();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var initImageListener = function initImageListener() {
-			$('.iam-image').click(function (event) {
-				image_sizer(this);
-			});
-		};
-
-		//MAIN MENU LISTENERS
-
-		var initRentalTypeRowListener = function initRentalTypeRowListener() {
-			$('.rental-duration').off();
-			(0, _textfieldlisteners.numbersOnlyListener)($('.rental-duration'));
-			$('.rental-duration').change(function (event) {
-				var n = $(this).closest('.rental-period-container').data('id');
-				if (n == '') {
-					return;
-				}
-				updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
-					'label': $(this).closest('.rental-period-container').find('.rental-label').val(),
-					'duration': $(this).val()
-				};
-			});
-			$('.rental-label').change(function (event) {
-				var n = $(this).closest('.rental-period-container').data('id');
-				if (typeof n == 'undefined' || n == '') {
-					return;
-				}
-				updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
-					'duration': $(this).closest('.rental-period-container').find('.rental-duration').val(),
-					'label': $(this).val()
-				};
-			});
-			$('.default-rental-type').click(function (event) {
-				var n = $(this).closest('.rental-period-container').data('id');
-				if (typeof n == 'undefined' || n == '') {
-					return;
-				}
-				updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
-					'duration': $(this).closest('.rental-period-container').find('.rental-duration').val(),
-					'label': $(this).closest('.rental-period-container').find('.rental-label').val()
-
-				};
-			});
-			initDeleteRentalTypeButtonListener();
-		};
-
-		var initAddRentalTypeButtonListener = function initAddRentalTypeButtonListener() {
-			$('.template-rental-seg').removeClass('iam-ninja');
-			var templateRentalSeg = $('.template-rental-seg').prop('outerHTML');
-			$('.template-rental-seg').remove();
-
-			$('.iam-add-rental-type').click(function (event) {
-				if ($('.no-data-found').length > 0) {
-					$('.no-data-found').remove();
-				}
-				$('.rental-type-master-container').append(templateRentalSeg);
-				initRentalTypeRowListener();
-			});
-		};
-
-		var initDeleteRentalTypeButtonListener = function initDeleteRentalTypeButtonListener() {
-			$('.iam-delete-rental-type').off();
-			$('.iam-delete-rental-type').click(function (event) {
-				var that = this;
-				if ($(this).closest('.rental-period-container').find('.default-rental-type').is(':checked')) {
-					alert('Cannot delete the default rental type. Please assign another to default then delete this one.');
-					return;
-				}
-				if ($('.rental-label').length < 2) {
-					alert('Cannot delete the last rental type.');
-					return;
-				}
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_delete_rental_type', toDelete: $(this).closest('.rental-period-container').data('id') },
-					success: function success(data) {
-						(0, _userfeedback.submissionEnd)();
-						(0, _serverresponse.handleServerResponse)(data);
-						$(that).closest('.rental-period-container').remove();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-				/*
-    var toDelete = $(this).parent().parent().find('.rental-label').val();
-    var list = '<select class="iam-select iam-delete-rental-type-select">';
-    	$('.rental-label').each(function(index, el) {
-    		if ($(this).val()!=toDelete) {
-    			list+='<option value="'+$(this).closest('tr').data('id')+'">'+$(this).val()+'</option>';
-    		}
-    	});
-    	list+='</select>';
-    	deleteRentalTypeListener.bind(this);
-    	if ($(this).parent().parent().data('id')=='') {
-    		$(this).parent().parent().remove();
-    		return;
-    	}
-    	makeSubmitPopup('Delete Rental Type','<p style="color:red;">Deleting: '+toDelete+'</p><p>Select a replacement rental type for equipment that currently have '+toDelete+'.</p>'+list,deleteRentalTypeListener,[$(this).closest('tr')]);*/
-			});
-		};
-
-		var resetDefault = function resetDefault() {
-			for (var item in updatedRentalTypes) {
-				updatedRentalTypes[item]['default'] = 0;
-			}
-		};
-
-		var initSubmitRentalTypeListener = function initSubmitRentalTypeListener() {
-			$('.iam-rental-types-submit').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				var newTypes = [];
-
-				$('.rental-period-container').each(function (index, el) {
-					if ($(this).data('id') == '' && $(this).find('.rental-label').val().length > 0 && $(this).find('.rental-duration').val().length > 0) {
-						var duration = $(this).find('.rental-duration').val();
-						var isDefault = $(this).find('.default-rental-type').is(':checked') ? 1 : 0;
-						if (isDefault) resetDefault();
-						newTypes.push({
-							'label': $(this).find('.rental-label').val(),
-							'duration': duration,
-							'default': isDefault
-						});
-					}
-				});
-
-				var checked = $('.default-rental-type:checked').closest('.rental-period-container').data('id');
-				if (checked in updatedRentalTypes) {
-					resetDefault();
-					updatedRentalTypes[checked]['default'] = 1;
-				}
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { 'action': 'admin_update_rental_type',
-						'updated_rental_types': updatedRentalTypes,
-						'new_rental_types': newTypes },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						(0, _userfeedback.submissionEnd)();
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var initAccountTypeRowListener = function initAccountTypeRowListener() {
-			$('.iam-account-discount').off();
-			(0, _textfieldlisteners.numbersOnlyListener)($('.iam-account-discount'));
-			(0, _textfieldlisteners.maxLengthListener)($('.iam-account-discount'), 3);
-			//detects changes in account and type
-			$('.iam-account-discount').change(function (event) {
-				var n = $(this).parent().parent().data('nid');
-				if (typeof n == 'undefined' || n == '') {
-					return;
-				}
-				updatedAccountTypes[$(this).parent().parent().data('nid')] = {
-					'type': $(this).parent().parent().children('td').children('.iam-account-type').val(),
-					'discount': $(this).val()
-				};
-			});
-			$('.iam-account-type').change(function (event) {
-				var n = $(this).parent().parent().data('nid');
-				if (typeof n == 'undefined' || n == '') {
-					return;
-				}
-				updatedAccountTypes[$(this).parent().parent().data('nid')] = {
-					'discount': $(this).parent().parent().children('td').children('.iam-account-discount').val(),
-					'type': $(this).val()
-				};
-			});
-			initDeleteAccountTypeButtonListener();
-		};
-
-		var initAddAccountTypeButtonListener = function initAddAccountTypeButtonListener() {
-			$('.iam-add-account-type').click(function (event) {
-				if ($('.iam-account-type-form .iam-no-data-row').length > 0) {
-					$('.iam-account-type-form .iam-no-data-row').remove();
-				}
-				$('.iam-account-type-form table tbody').append('<tr data-nid=""><td><label>Account Type</label><br /><label>Discount (0-100)</label></td>	<td><input type="text" placeholder="example: student, faculty, alumni" class="iam-account-type"><br /><input type="number" class="iam-account-discount"></td><td><i class="iam-delete-account-type fa fa-close fa-3"></i></td></tr>');
-				initAccountTypeRowListener();
-			});
-		};
-
-		var initDeleteAccountTypeButtonListener = function initDeleteAccountTypeButtonListener() {
-			$('.iam-delete-account-type').off();
-			$('.iam-delete-account-type').click(function (event) {
-				var toDeleteAccountType = $(this).parent().parent().children('td').children('.iam-account-type').val();
-				var list = '<select class="iam-select iam-delete-account-type-select">';
-				$('.iam-account-type').each(function (index, el) {
-					if ($(this).val() != toDeleteAccountType) {
-						list += '<option value="' + $(this).val() + '">' + $(this).val() + '</option>';
-					}
-				});
-				list += '</select>';
-				deleteAccountTypeListener.bind(this);
-				if ($(this).parent().parent().data('nid') == '') {
-					$(this).parent().parent().remove();
-					return;
-				}
-				makeSubmitPopup('Delete Account Type', '<p style="color:red;">Deleting: ' + toDeleteAccountType + '</p><p>Select a replacement account type for users who currently have ' + toDeleteAccountType + '.</p>' + list, deleteAccountTypeListener, [$(this).parent().parent()]);
-			});
-		};
-
-		var deleteAccountTypeListener = function deleteAccountTypeListener(a) {
-			$.ajax({
-				url: ajaxurl,
-				type: 'POST',
-				data: { action: 'admin_delete_account_type', replacement: $('.iam-delete-account-type-select').val(), nid: a[0].data('nid') },
-				success: function success(data) {
-					(0, _serverresponse.handleServerResponse)(data);
-					a[0].remove();
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-
-		var initSubmitAccountTypeListener = function initSubmitAccountTypeListener() {
-			$('.iam-account-types-submit').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				var newAccountTypes = [];
-				$('.iam-account-type-form table tbody tr').each(function (index, el) {
-					if (typeof $(this).data('id') == 'undefined' && $(this).children('td').children('.iam-account-type').val().length > 0) {
-						var discount = $(this).children('td').children('.iam-account-discount').val();
-						discount = discount > 0 ? discount : 0;
-						newAccountTypes.push({
-							'type': $(this).children('td').children('.iam-account-type').val(),
-							'discount': discount
-						});
-					}
-				});
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_update_account_type', updated_account_types: updatedAccountTypes, new_account_types: newAccountTypes },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		//EQUIPMENT LISTENERS
-
-		var initSubmitEquipmentFormListener = function initSubmitEquipmentFormListener() {
-			$('.iam-admin-submit-button').off();
-			$('.iam-admin-submit-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				var form = $('form#iam-update-form').hasClass('iam-ninja') ? $('form#iam-new-form') : $('form#iam-update-form');
-				var method = form.attr('id') == 'iam-new-form' ? 'n' : 'u';
-				var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0;
-				var slideShow = form.children('.iam-form-row').children('#slide-show').is(':checked') ? 1 : 0;
-				var tagsVal = form.children('.iam-form-row').children('.tags').val().trim();
-				if (tagsVal.substring(tagsVal.length - 1) == ',') {
-					tagsVal = tagsVal.substring(0, tagsVal.length - 1);
-				}
-				var equip_tags = tagsVal == '' ? [] : tagsVal.split(',');
-				var new_tags = [];
-				for (var i = 0; i < equip_tags.length; i++) {
-					equip_tags[i] = equip_tags[i].trim();
-					if (comparableTags.indexOf(equip_tags[i].toLowerCase()) == -1) {
-						new_tags.push(equip_tags[i]);
-					}
-				};
-				var formData = new FormData();
-				if (form.children('.iam-form-row').children('#photo').val() != '') {
-					formData.append('photo', form.children('.iam-form-row').children('#photo').prop('files')[0]);
-				}
-				formData.append('method', method);
-				formData.append('action', 'admin_equipment_action');
-				formData.append('name', form.children('.iam-form-row').children('#name').val());
-
-				formData.append('certification', form.children('.iam-form-row').children('#certification').val());
-				formData.append('description', form.children('.iam-form-row').children('#description').val());
-				formData.append('pricing-description', form.children('.iam-form-row').children('#pricing-description').val());
-				formData.append('internal-comments', form.children('.iam-form-row').children('#internal-comments').val());
-				formData.append('manufacturer-info', form.children('.iam-form-row').children('#manufacturer-info').val());
-				formData.append('serial-number', form.children('.iam-form-row').children('#serial-number').val());
-				if ($('.iam-rental-types-list').length > 0) formData.append('rental_type', form.find('.iam-rental-types-list').val());
-				formData.append('out-of-order', outOfOrder);
-				formData.append('on-slide-show', slideShow);
-				formData.append('tags', equip_tags);
-				formData.append('new_tags', new_tags);
-
-				if (method == 'u') formData.append('x', form.children('.iam-form-row').children('#x').val());
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: formData,
-					cache: false,
-					contentType: false,
-					processData: false,
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						reloadAndFind(form.children('.iam-form-row').children('#name').val());
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-						(0, _userfeedback.submissionEnd)();
-					}
-				});
-			});
-		};
-
-		var initTagAutoCompleteListener = function initTagAutoCompleteListener() {
-
-			//jquery ui code from http://jqueryui.com/autocomplete/#multiple
-			function split(val) {
-				return val.split(/,\s*/);
-			}
-			function extractLast(term) {
-				return split(term).pop();
-			}
-
-			$('.tags').bind("keydown", function (event) {
-				if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
-					event.preventDefault();
-				}
-			}).autocomplete({
-				minLength: 0,
-				source: function source(request, response) {
-					// delegate back to autocomplete, but extract the last term
-					response($.ui.autocomplete.filter(availableTags, extractLast(request.term)));
-				},
-				focus: function focus() {
-					// prevent value inserted on focus
-					return false;
-				},
-				select: function select(event, ui) {
-					var terms = split(this.value);
-					// remove the current input
-					terms.pop();
-					// add the selected item
-					terms.push(ui.item.value);
-					// add placeholder to get the comma-and-space at the end
-					terms.push("");
-					this.value = terms.join(", ");
-					return false;
-				}
-			});
-		};
-
-		var initNewEquipmentButtonListener = function initNewEquipmentButtonListener() {
-			$('#iam-new-equipment-button').click(function (event) {
-				make_form_visible('#iam-new-form');
-				prepare_new_form('#iam-new-form');
-			});
-		};
-
-		var initDuplicateEquipmentButtonListener = function initDuplicateEquipmentButtonListener() {
-			$('#iam-duplicate-equipment-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'duplicate_equipment', nid: $('#iam-update-form').children('.iam-form-row').children('#x').val() },
-					success: function success(data) {
-						reloadAndFind((0, _serverresponse.handleServerResponse)(data));
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var updateEquipmentEvents = function updateEquipmentEvents(newData) {
-			for (var i in newData) {
-				var c = newData[i];
-				$('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
-			}
-		};
-
-		var initCheckinCheckout = function initCheckinCheckout() {
-			userEmails = $('.iam-on-load-data').data('users').split(',');
-			console.log(userEmails);
-			$('.iam-er-user-emails').autocomplete({
-				source: userEmails
-			});
-
-			userBalances = $('.iam-on-load-data').data('balances');
-
-			eqLateFee = $('.iam-on-load-data').data('fee');
-
-			$('.iam-on-load-data').remove();
-		};
-
-		var makeRelevantReservation = function makeRelevantReservation(event) {
-			releventRes = event._id;
-			refreshResCal();
-		};
-
-		var updateEventsModified = function updateEventsModified(event) {
-			if (typeof event.nid != 'undefined') eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
-		};
-
-		var initRentalButton = function initRentalButton() {
-			var erInfo = $('.iam-facility-data').data('facility');
-
-			$('.iam-er-action-button').off();
-			$('.iam-er-action-button.iam-er-checkout').off();
-			$('.iam-er-action-button.iam-er-checkout').click(function (event) {
-				resetEvents();
-				if ($('.iam-er-user-emails').val() == '') {
-					alert('please enter an email.');
-					return;
-				}
-
-				try {
-					if (eqLateFee > userBalances[$('.iam-er-user-emails').val()]) {
-						alert('This user has less than the late fee amount of $' + eqLateFee + '. They will not be able to pay late fees if they keep the equipment late. User balance: $' + userBalances[$('.iam-er-user-emails').val()]);
-					}
-				} catch (error) {
-					//nothing
-				}
-
-				$('.modal-header .fc-event').removeClass('iam-ninja');
-
-				$('#myModal').modal('show');
-
-				$('#myModal .modal-footer .btn-primary').off();
-
-				$('#myModal .modal-footer .btn-primary').click(function (event) {
-					if ($('.relevant-res').length < 1) {
-						alert('No Reservation Selected.');
-						return;
-					}
-
-					var relRes = $('.relevant-res'),
-					    chosen = null;
-					if (typeof relRes.data('nid') != 'undefined') {
-
-						chosen = { nid: relRes.data('nid'),
-							equipment: equip_name.split('_').join(' ') };
-					} else {
-						var events = $('.iam-cal').fullCalendar('clientEvents');
-
-						for (var i = 0; i < events.length; i++) {
-							if (events[i]._id == releventRes) {
-								releventResEventStart = events[i].start.format('YYYY-MM-DD');
-								chosen = {
-									user: useremail,
-									equipment: equip_name.split('_').join(' '),
-									start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
-									end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
-								};
-							}
-						}
-					}
-
-					if (chosen === null || releventResEventStart === null) {
-						alert("Error selecting reservation.");
-						return;
-					}
-					console.log(releventResEventStart);
-					console.log(moment().format('YYYY-MM-DD'));
-
-					if (releventResEventStart != moment().format('YYYY-MM-DD')) {
-						alert("Please choose a rental period that begins today.");
-						return;
-					}
-
-					(0, _userfeedback.submissionStart)();
-					$('#myModal').modal('hide');
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes },
-						success: function success(data) {
-							updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
-							makeCalendarReservationsMulti();
-							(0, _userfeedback.submissionEnd)();
-						},
-						error: function error(data) {
-							(0, _serverresponse.handleServerError)(data, new Error());
-						}
-					});
-
-					$.ajax({
-						url: ajaxurl,
-						type: 'POST',
-						data: { action: 'admin_bind_rental', ev: chosen },
-						success: function success(data) {
-							(0, _serverresponse.handleServerResponse)(data);
-							resetEvents();
-							(0, _userfeedback.submissionEnd)();
-							lastequipclick.data('rented-to', useremail);
-							updateForRentalStatus(useremail);
-						},
-						error: function error(data) {
-							(0, _serverresponse.handleServerError)(data, new Error());
-						}
-					});
-				});
-
-				$('#myModal .modal-footer .btn-secondary').off();
-				$('#myModal .modal-footer .btn-secondary').click(function (event) {
-					resetEvents();
-				});
-
-				$('.iam-cal').remove();
-				$('.modal-body').append('<div class="iam-cal"></div>');
-
-				var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
-				var useremail = $('.iam-er-user-emails').val();
-				thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
-
-				$('.modal-header .fc-event').each(function () {
-
-					// store data so the calendar knows to render an event upon drop
-					$(this).data('event', {
-						title: "Drag Me", // use the element's text as the event title
-						stick: true, // maintain when user navigates (see docs on the renderEvent method)
-						editable: true,
-						className: 'iam-new-event',
-						allDay: true
-					});
-
-					// make the event draggable using jQuery UI
-					$(this).draggable({
-						zIndex: 999,
-						revert: true, // will cause the event to go back to its
-						revertDuration: 0 //  original position after the drag
-					});
-				});
-
-				$('.iam-cal').fullCalendar({
-					header: {
-						left: 'prev,next today',
-						center: 'title',
-						right: 'month,agendaWeek'
-					},
-					droppable: true,
-					eventOverlap: true,
-					weekends: true,
-					height: 600,
-					forceEventDuration: true,
-					defaultView: 'month',
-					editable: true,
-					durationEditable: true,
-					allDay: true,
-					defaultAllDayEventDuration: { days: parseInt(thisRentalDays) },
-					eventLimit: true, // allow "more" link when too many events
-					eventRender: function eventRender(event, element) {
-						$(element).data('fullname', event.fullname);
-						$(element).data('email', event.email);
-						$(element).data('equipment', event.equipment);
-
-						$(element).data('nid', event.nid);
-
-						if (typeof event.nid == 'undefined' && typeof event.isNewbie == 'undefined') {
-
-							$('.modal-header .fc-event').addClass('iam-ninja');
-							releventRes = event._id;
-							$(element).addClass('relevant-res');
-						}
-
-						if (releventRes == event._id) {
-							$(element).addClass('relevant-res');
-							releventResEventStart = moment(event.start.format('YYYY-MM-DD'), 'YYYY-MM-DD').format('YYYY-MM-DD');
-						}
-
-						if (event.editable == false) {
-							$(element).addClass('event-not-editable');
-						}
-
-						if (eventsToDelete.indexOf(event.nid) != -1) {
-							$(element).addClass('marked-for-delete');
-						}
-
-						eventToolTip(event, element);
-					},
-					eventAfterAllRender: function eventAfterAllRender(view) {
-						var events = $('.iam-cal').fullCalendar('clientEvents');
-						var toUpdate = [];
-						for (var i = 0; i < events.length; i++) {
-							var ev = events[i];
-
-							if (typeof ev.nid == 'undefined' && typeof ev.isNewbie == 'undefined') {
-								ev.isNewbie = 1;
-								toUpdate.push(ev);
-							}
-
-							if (ev.email != useremail && typeof ev.nid != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined') || ev.status != 'upcoming' && typeof ev.status != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined')) {
-
-								ev.editable = false;
-								toUpdate.push(ev);
-							}
-						}
-						if (toUpdate.length > 0) {
-							$('.iam-cal').fullCalendar('updateEvents', toUpdate);
-						}
-						initContextMenu('rental');
-					},
-					eventDrop: function eventDrop(event, d, revert) {
-						adminCalEventDrop(event, d, revert);
-					},
-					eventResize: function eventResize(event, d, revert, jsevent) {
-						adminCalEventResize(event, d, revert, jsevent);
-					},
-					eventReceive: function eventReceive(e) {
-						adminCalEventReceive(e);
-					},
-					events: ajaxurl + "?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name=" + equip_name
-				});
-			});
-
-			$('.iam-er-action-button.iam-er-checkin').off();
-			$('.iam-er-action-button.iam-er-checkin').click(function (event) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_end_rental', equipment: $('#iam-update-form #name').val() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						lastequipclick.data('rented-to', 0);
-						updateForRentalStatus(0);
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var updateForRentalStatus = function updateForRentalStatus(rentedTo) {
-			if (rentedTo == 0) {
-				$('.iam-er-action-button').addClass('iam-er-checkout');
-				$('.iam-er-action-button').removeClass('iam-er-checkin');
-				$('.iam-er-user-emails').prop('disabled', false);
-				$('.iam-er-user-emails').val('');
-			} else {
-				$('.iam-er-action-button').removeClass('iam-er-checkout');
-				$('.iam-er-action-button').addClass('iam-er-checkin');
-				$('.iam-er-user-emails').prop('disabled', true);
-				$('.iam-er-user-emails').val(rentedTo);
-			}
-			initRentalButton();
-		};
-
-		var initExistingEquipmentListItemsListener = function initExistingEquipmentListItemsListener() {
-			updateForRentalStatus($('.iam-existing-list li[selected]').data('rented-to'));
-
-			$('.iam-existing-list li').click(function (event) {
-				lastequipclick = $(this);
-				make_form_visible('#iam-update-form');
-				//if form is already present do not make a request
-				if ($(this).html() == $('#iam-update-form').children('.iam-form-row').children('#name').val()) return;
-				updateForRentalStatus($(this).data('rented-to'));
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'get_admin_forms', request: 'u_equipment', name: $(this).html(), facility: facilityType },
-					success: function success(data) {
-						$('#iam-update-form').replaceWith((0, _serverresponse.handleServerResponse)(data));
-						initTagAutoCompleteListener();
-						initSubmitEquipmentFormListener();
-						initDeleteFormListener('e');
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		//CERT LISTENERS
-
-		var initSupportingFileListeners = function initSupportingFileListeners() {
-			$('#supporting0').change(function (event) {
-				checkFile(this);
-			});
-
-			$('#new-supporting0').change(function (event) {
-				checkFile(this);
-			});
-		};
-
-		var initAddSupportingFileUploadButtonListeners = function initAddSupportingFileUploadButtonListeners() {
-			//for update form
-			$('#iam-add-supporting-upload-button').click(function (event) {
-				$('#iam-new-supporting-upload').prepend('<input type="file" id="supporting' + supportingCount + '" name="supporting' + supportingCount + '"><br />');
-				$('#supporting' + supportingCount).change(function (event) {
-					checkFile(this);
-				});
-				supportingCount++;
-			});
-			//for new submit form
-			$('#iam-new-add-supporting-upload-button').click(function (event) {
-				$('#iam-brand-new-supporting-upload').prepend('<input type="file" id="new-supporting' + newSupportingCount + '" name="new-supporting' + newSupportingCount + '"><br />');
-				$('#new-supporting' + newSupportingCount).change(function (event) {
-					checkFile(this);
-				});
-				newSupportingCount++;
-			});
-		};
-
-		var initSubmitCertificationFormListener = function initSubmitCertificationFormListener() {
-			$('.iam-admin-submit-button').off();
-			$('.iam-admin-submit-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				var form = $(this).parent();
-				var method = form.attr('id') == 'iam-new-form' ? 'n' : 'u';
-				var formData = new FormData();
-				var required = form.children('.iam-form-row').children('#required').is(':checked') ? 1 : 0;
-				formData.append('action', 'admin_certification_action');
-				formData.append('method', method);
-				formData.append('name', form.children('.iam-form-row').children('#name').val());
-				formData.append('time', form.children('.iam-form-row').children('#time').val());
-				formData.append('description', form.children('.iam-form-row').children('#description').val());
-				formData.append('required', required);
-
-				if (form.children('.iam-form-row').children('#photo').val() != '') {
-					formData.append('photo', form.children('.iam-form-row').children('#photo').prop('files')[0]);
-				}
-
-				var sCount, sID;
-
-				if (method == 'u') {
-					sCount = supportingCount;
-					sID = '#supporting';
-				} else {
-					sCount = newSupportingCount;
-					sID = '#new-supporting';
-				}
-
-				for (var i = 0; i <= sCount; i++) {
-					if ($(sID + i).length > 0) formData.append('supporting' + i, $(sID + i)[0].files[0]);
-				}
-
-				if (method == 'u') formData.append('x', form.children('.iam-form-row').children('#x').val());
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					processData: false,
-					contentType: false,
-					data: formData,
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						reloadAndFind(form.children('.iam-form-row').children('#name').val());
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var initNewCertificationButtonListener = function initNewCertificationButtonListener() {
-			$('#iam-new-certification-button').click(function (event) {
-				make_form_visible('#iam-new-form');
-				prepare_new_form('#iam-new-form');
-			});
-		};
-
-		var initExistingCertificationListItemsListener = function initExistingCertificationListItemsListener() {
-			$('.iam-existing-list li').click(function (event) {
-				make_form_visible('#iam-update-form');
-				//if form is already present do not make a request
-				if ($(this).html() == $('#iam-update-form').children('.iam-form-row').children('#name').val()) return;
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'get_admin_forms', request: 'u_certification', name: $(this).text() },
-					success: function success(data) {
-						$('#iam-update-form').replaceWith((0, _serverresponse.handleServerResponse)(data));
-						initSubmitCertificationFormListener();
-						initAddSupportingFileUploadButtonListeners();
-						initDeleteFormListener('c');
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		//BAL LISTENERS
-
-		var initBalancesButtonListener = function initBalancesButtonListener() {
-			$('.iam-balances-button').click(function (event) {
-				if ($('#amount').val().length < 1) {
-					alert('invalid number');
-					return;
-				}
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_balances_action', comment: $('#description').val(), username: $('#username').val(), amount: $('#amount').val() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						reloadAndFind($('#username').val());
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-		var initAddFundsButtonListener = function initAddFundsButtonListener() {
-			$('.iam-add-funds-button').click(function (event) {
-				$('body').append('<div class="iam-popup"><div class="iam-popup-header"><h3>Add Funds</h3><i class="fa fa-close fa-3 iam-x"></i></div><div class="iam-popup-body">' + addFundsHTML + '</div></div>');
-				if (typeof selectedBalUser != 'undefined') {
-					$('select#username option').each(function (index, el) {
-						if ($(this).text() == selectedBalUser) {
-							$(this).prop('selected', true);
-						}
-					});
-				}
-				(0, _textfieldlisteners.numbersOnlyListener)($('#amount'));
-				initBalancesButtonListener();
-				$('.iam-x').click(function (event) {
-					$('.iam-popup').remove();
-				});
-			});
-		};
-
-		//USER CERTIFICATION LISTENERS
-
-		var initSeeExistingCertificationsListener = function initSeeExistingCertificationsListener() {
-			$('.iam-see-existing-certifications').click(function (event) {
-				var that = this;
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'admin_get_user_certifications', nid: $(this).data('nid') },
-					success: function success(data) {
-						$(that).parent('td').html((0, _serverresponse.handleServerResponse)(data));
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var areValuesChecked = function areValuesChecked() {
-			if ($('input:checked').length < 1) return false;
-			return true;
-		};
-
-		var initAddRemoveCertificationsButtonListener = function initAddRemoveCertificationsButtonListener() {
-			$('#iam-add-cert-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				if ($('#iam-cert-to-apply').val() == 'Select a value') {
-					alert('Please select a certification from the drop down menu.');
-					return;
-				}
-				if (!areValuesChecked()) {
-					alert("Please select some accounts for this action");
-					return;
-				}
-				var checkedUsers = [];
-				$(':checked').each(function (index, el) {
-					checkedUsers.push($(this).data('user'));
-				});
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_add_certifications_to_users', users: checkedUsers, certification: $('#iam-cert-to-apply').val() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-			$('#iam-remove-cert-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				if ($('#iam-cert-to-apply').val() == 'Select a value') {
-					alert('Please select a certification from the drop down menu.');
-					return;
-				}
-				if (!areValuesChecked()) {
-					alert("Please select some accounts for this action");
-					return;
-				}
-				var checkedUsers = [];
-				$('input:checked').each(function (index, el) {
-					checkedUsers.push($(this).data('user'));
-				});
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_remove_certifications_to_users', users: checkedUsers, certification: $('#iam-cert-to-apply').val() },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		//Reservation wrap
-
-		var resetEvents = function resetEvents() {
-			eventsToDelete = [];
-			eventsModified = {};
-			eventsConfirmed = [];
-		};
-
-		var refreshResCal = function refreshResCal() {
-			var c = '.iam-cal';
-			if ($('.iam-res-cal').length > 0) c = '.iam-res-cal';
-			$(c).fullCalendar('removeEventSource', lastReservationResource);
-			$(c).fullCalendar('addEventSource', lastReservationResource);
-		};
-
-		var initResCalSubmitListener = function initResCalSubmitListener() {
-			$('.iam-res-cal-submit').click(function (event) {
-				if ($('.iam-res-cal-placeholder').length > 0) return;
-				if (!(0, _utils.getSize)(eventsModified) && !eventsToDelete.length) return;
-				if (!confirm("Are you sure you want to make these changes?")) return;
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes },
-					success: function success(data) {
-						updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
-						makeCalendarReservationsMulti();
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-			$('.iam-res-cal-cancel').click(function (event) {
-				if ($('.iam-res-cal-placeholder').length > 0) return;
-				refreshResCal();
-			});
-		};
-
-		var handleEventToDelete = function handleEventToDelete(event, j) {
-			if (j.hasClass('event-not-editable')) return;
-			var index = eventsToDelete.indexOf(event.nid);
-			if (index != -1) {
-				eventsToDelete.splice(index, 1);
-				refreshResCal();
-			} else {
-				eventsToDelete.push(event.nid);
-				refreshResCal();
-			}
-		};
-
-		function adminCalEventDrop(event, d, revert) {
-			if (eventFallsOnWeekend(event)) {
-				(0, _override.overridePrompt)({
-					title: 'Confirm Override',
-					body: ERinvalidTimePrompt,
-					cancel: function cancel() {
-						revert();
-					},
-					override: function override() {
-						updateEventsModified(event);
-					}
-				});
-			} else {
-				updateEventsModified(event);
-			}
-		}
-
-		function adminCalEventResize(event, d, revert, jsevent) {
-			if (eventIsLongerThan(event, parseInt(thisRentalDays))) {
-				(0, _override.overridePrompt)({
-					title: 'Confirm Override',
-					body: ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
-					cancel: function cancel() {
-						revert();
-					},
-					override: function override() {
-						updateEventsModified(event);
-					}
-				});
-			} else {
-				updateEventsModified(event);
-			}
-		}
-
-		function adminCalEventReceive(e) {
-			if (eventFallsOnWeekend(e)) {
-				$('.iam-res-cal').fullCalendar('removeEvents', e._id);
-				return false;
-			}
-		}
-
-		var handleEventCopyEmail = function handleEventCopyEmail(event) {
-			var e = $('<div>' + event.email + '</div>');
-			copyToClipboard(e[0]);
-			$('body').append('<div class="iam-copy-notification">Email Copied to Clipboard</div>');
-			$('.iam-copy-notification').fadeOut(3500, function () {
-				$('.iam-copy-notification').remove();
-			});
-		};
-
-		var initContextMenu = function initContextMenu(menuToUse) {
-			menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
-
-			var menu = [{
-				name: 'mark for deletion',
-				title: 'delete button',
-				fun: function fun(e) {
-					var t = $(e.trigger);
-					var event = { nid: t.data('nid') };
-					handleEventToDelete(event, t);
-				}
-			}, {
-				name: 'copy email',
-				title: 'copy button',
-				fun: function fun(e) {
-					var t = $(e.trigger);
-					var event = { email: t.data('email') };
-					handleEventCopyEmail(event);
-				}
-			}];
-
-			var rentalMenu = [{
-				name: 'use this reservation',
-				title: 'select reservation button',
-				fun: function fun(e) {
-					var t = $(e.trigger);
-					var event = { nid: t.data('nid') };
-					makeRelevantReservation(t.data('fcSeg').event);
-				}
-			}, {
-				name: 'mark for deletion',
-				title: 'delete button',
-				fun: function fun(e) {
-					var t = $(e.trigger);
-					var event = { nid: t.data('nid') };
-					handleEventToDelete(event, t);
-				}
-			}];
-
-			var menuDict = { 'default': menu, 'rental': rentalMenu };
-			var menuOfChoice = menuDict[menuToUse];
-
-			$('.fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
-		};
-
-		var updateResSource = function updateResSource() {
-			var selectedEquipment = $('.iam-reservations-equipment-list-item.iam-highlighted');
-			var newEventResource = [];
-			$(selectedEquipment).each(function (index, el) {
-				newEventResource = newEventResource.concat($(this).data('calevents'));
-			});
-			lastReservationResource = newEventResource;
-		};
-
-		var makeCalendarReservationsMulti = function makeCalendarReservationsMulti() {
-			(0, _userfeedback.submissionStart)();
-
-			if ($('.iam-res-cal-placeholder').length) {
-				$('.iam-res-cal-placeholder').remove();
-				updateResSource();
-				initAdminResCal();
-			} else {
-				$('.iam-res-cal').fullCalendar('removeEventSource', lastReservationResource);
-				updateResSource();
-				$('.iam-res-cal').fullCalendar('addEventSource', lastReservationResource);
-			}
-		};
-
-		var initAdminResCal = function initAdminResCal() {
-			$('.iam-res-cal').fullCalendar({
-				header: {
-					left: 'prev,next today',
-					center: 'title',
-					right: 'month,agendaWeek,agendaDay'
-				},
-				droppable: true,
-				eventOverlap: true,
-				weekends: true,
-				height: 600,
-				forceEventDuration: true,
-				defaultView: 'month',
-				editable: true,
-				eventLimit: true, // allow "more" link when too many events
-				eventRender: function eventRender(event, element) {
-					eventToolTip(event, element);
-					$(element).data('fullname', event.fullname);
-					$(element).data('email', event.email);
-					$(element).data('equipment', event.equipment);
-					$(element).data('nid', event.nid);
-					$(element).addClass('iam-status-' + event.status);
-					if (event.status == 'completed' || event.status == 'was-late') {
-						$(element).addClass('event-not-editable');
-					}
-					if (eventsToDelete.indexOf(event.nid) != -1) {
-						$(element).addClass('marked-for-delete');
-					}
-				},
-				eventAfterRender: function eventAfterRender(event, element) {
-					if (event.toDelete == 1) {
-						$(element).css({
-							'background-color': '#ef4040',
-							'border': '1px solid #ef4040'
-						});
-					}
-				},
-				eventAfterAllRender: function eventAfterAllRender() {
-					initContextMenu();
-					initStatusHideListeners();
-					(0, _userfeedback.submissionEnd)();
-				},
-				eventDrop: function eventDrop(event, d, revert) {
-					eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
-					if (resFacilityType == 'rental') adminCalEventDrop(event, d, revert);
-				},
-				eventResize: function eventResize(event, d, revert, jsevent) {
-					eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
-					thisRentalDays = event.period;
-					if (resFacilityType == 'rental') adminCalEventResize(event, d, revert, jsevent);
-				},
-				events: lastReservationResource
-			});
-		};
-
-		var initStatusHideListeners = function initStatusHideListeners() {
-			$('.res-toolbar input[name=upcoming]').off();
-			$('.res-toolbar input[name=active]').off();
-			$('.res-toolbar input[name=completed]').off();
-			$('.res-toolbar input[name=no-show]').off();
-			$('.res-toolbar input[name=no-pay]').off();
-
-			$('.res-toolbar input[name=upcoming]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-upcoming').toggleClass('iam-ninja');
-			});
-			$('.res-toolbar input[name=active]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-active').toggleClass('iam-ninja');
-			});
-			$('.res-toolbar input[name=completed]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-completed').toggleClass('iam-ninja');
-			});
-			$('.res-toolbar input[name=no-show]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-no-show').toggleClass('iam-ninja');
-			});
-			$('.res-toolbar input[name=no-pay]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-no-pay').toggleClass('iam-ninja');
-			});
-			$('.res-toolbar input[name=is-late]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-is-late').toggleClass('iam-ninja');
-			});
-			$('.res-toolbar input[name=was-late]').click(function (e) {
-				if ($('.iam-res-cal-placeholder').length > 0) {
-					e.preventDefault();
-					return false;
-				}
-				$('.iam-status-was-late').toggleClass('iam-ninja');
-			});
-		};
-
-		//charge sheet wrap functions
-		var initApproveChargeButtonListener = function initApproveChargeButtonListener() {
-			$('.iam-approve-charge-button').off();
-			$('.iam-approve-charge-button').click(function (event) {
-				var that = this;
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'approve_charge', nid: $(this).parents('tr').data('id'), status: $(this).data('status') },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						if ($(that).data('status') == 1) {
-							$(that).removeClass('iam-secondary-button');
-							$(that).addClass('iam-button');
-							$(that).data('status', 0);
-							$(that).html('approve');
-						} else {
-							$(that).removeClass('iam-button');
-							$(that).addClass('iam-secondary-button');
-							$(that).data('status', 1);
-							$(that).html('cancel');
-						}
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _userfeedback.submissionEnd)();
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		//user registration wrap functions
-		var initRegKeyButtonListener = function initRegKeyButtonListener() {
-			$('.iam-reg-key-button').click(function (event) {
-				var expDay = $('.iam-reg-key-day').val();
-				var expMonth = $('.iam-reg-key-month').val();
-				var expYear = $('.iam-reg-key-year').val();
-				var dateToSend;
-				if (expDay.length != 0 || expMonth.length != 0 || expYear.length != 0) {
-					if (expDay.length < 1 || expMonth.length < 1 || expYear.length < 4) {
-						alert('please fill out all date fields');
-						return;
-					}
-					var exp_date = moment($('.iam-reg-key-month').val() + '-' + $('.iam-reg-key-day').val() + '-' + $('.iam-reg-key-year').val(), 'M-D-YYYY');
-					if (!exp_date.isValid()) {
-						alert('Please enter a valid date.');
-						return;
-					} else {
-						dateToSend = exp_date.format('M-D-YYYY');
-					}
-				}
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_make_registration_key', key: $('.iam-reg-key').val(), expiration: dateToSend },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-		var initDeleteRegKeyButtonListener = function initDeleteRegKeyButtonListener() {
-			$('.iam-delete-key').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_delete_registration_key', nid: $(this).data('nid') },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
-			var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-			var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-			//for now it ends at midnight of the following day
-			return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-		};
-
-		var eventIsLongerThan = function eventIsLongerThan(e, days) {
-			var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-			var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-			return end.diff(start, 'days') > days;
-		};
-
-		//pricing wrap functions
-		var initNewMaterialButtonListener = function initNewMaterialButtonListener() {
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'admin_get_new_mat_row' },
-				success: function success(data) {
-					$('.iam-new-mat-button').click(function (event) {
-						$('tbody').append((0, _serverresponse.handleServerResponse)(data));
-						initAddPricingDropDownListeners();
-						initDeletePricingDropDownListener();
-						initPricingRowDeleteListener();
-					});
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-		var initDropDownContent = function initDropDownContent() {
-			$.ajax({
-				url: ajaxurl,
-				type: 'GET',
-				data: { action: 'admin_get_pricing_dropdowns' },
-				success: function success(data) {
-					data = (0, _serverresponse.handleServerResponse)(data);
-					equipDropDown = data['equip'];
-					tagsDropDown = data['tags'];
-					initAddPricingDropDownListeners();
-				},
-				error: function error(data) {
-					(0, _serverresponse.handleServerError)(data, new Error());
-				}
-			});
-		};
-		var initAddPricingDropDownListeners = function initAddPricingDropDownListeners() {
-			if (equipDropDown == null || tagsDropDown == null) {
-				initDropDownContent();
-				return;
-			}
-			$('.iam-add-pricing-tags-drop-down-button').off();
-			$('.iam-add-pricing-equipment-drop-down-button').off();
-			$('.iam-add-pricing-tags-drop-down-button').click(function (event) {
-				changedRows.push($(this).parent().parent().data('nid'));
-				$(this).parent().prepend(tagsDropDown);
-				initDeletePricingDropDownListener();
-			});
-			$('.iam-add-pricing-equipment-drop-down-button').click(function (event) {
-				changedRows.push($(this).parent().parent().data('nid'));
-				$(this).parent().prepend(equipDropDown);
-				initDeletePricingDropDownListener();
-			});
-		};
-		var initPricingChangeListeners = function initPricingChangeListeners() {
-			$('input[type=text]').off();
-			$('input[type=number]').off();
-			$('.iam-pricing-drop-down select').change(function (event) {
-				var nid = $(this).parent().parent().parent().data('nid');
-				if (changedRows.indexOf(nid) != -1) return;
-				changedRows.push(nid);
-			});
-			$('input[type=text]').change(function (event) {
-				var nid = $(this).parent().parent().data('nid');
-				if (changedRows.indexOf(nid) != -1) return;
-				changedRows.push(nid);
-			});
-			$('input[type=number]').change(function (event) {
-				var nid = $(this).parent().parent().parent().data('nid');
-				if (changedRows.indexOf(nid) != -1) return;
-				changedRows.push(nid);
-			});
-		};
-		var initPricingRowDeleteListener = function initPricingRowDeleteListener() {
-			$('.iam-pricing-row-delete-button').off();
-			$('.iam-pricing-row-delete-button').click(function (event) {
-				if (!confirm("Delete this row?")) return;
-				var row = $(this).parent().parent();
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_delete_material', nid: row.data('nid') },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						row.remove();
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-		var initDeletePricingDropDownListener = function initDeletePricingDropDownListener() {
-			$('.iam-delete-pricing-drop-down').off();
-			$('.iam-delete-pricing-drop-down').click(function (event) {
-				changedRows.push($(this).parent().parent().parent().data('nid'));
-				$(this).parent().remove();
-			});
-		};
-		var initPricingSubmitListener = function initPricingSubmitListener() {
-			$('.iam-admin-submit-button').off();
-			$('.iam-admin-submit-button').click(function (event) {
-				var toUpdate = [];
-				$('tr').each(function (index, el) {
-					//skip header
-					if (index == 0) return;
-
-					if (changedRows.indexOf($(this).data('nid')) != -1 || $(this).data('nid').length == 0) {
-						var associatedTags = [];
-						var associatedEquipment = [];
-						$($(this).children('.iam-mat-tags-data')).children('.iam-pricing-drop-down').each(function (index, el) {
-							associatedTags.push($(this).children('select').children('option:selected').val());
-						});
-						$($(this).children('.iam-mat-equip-data')).children('.iam-pricing-drop-down').each(function (index, el) {
-							associatedEquipment.push($(this).children('select').children('option:selected').val());
-						});
-						var matName = $(this).children('td').children('.iam-mat-name').val();
-						var matPricing = $(this).children('td').find('.iam-mat-pricing').val();
-						var matBasePrice = $(this).children('td').find('.iam-mat-base-price').val();
-						var unitName = $(this).children('td').children('.iam-unit-name').val();
-						if (matName.length < 1 || matPricing.length < 1 || unitName.length < 1) {
-							alert("Please fill out Material Name, Price Per Unit, and Unit Name for each entry.");
-							return;
-						}
-						toUpdate.push({ nid: $(this).data('nid'),
-							mat_name: matName,
-							mat_pricing: matPricing,
-							mat_base_price: matBasePrice,
-							unit_name: unitName,
-							tags: associatedTags,
-							equipment: associatedEquipment
-						});
-					}
-				});
-				if (toUpdate.length < 1) {
-					alert("No changes or new entries.");
-					return;
-				}
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_pricing', updates: toUpdate },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		};
-
-		//run time
-		if ($('.iam-main-menu-wrap').length > 0) {
-
-			var settingsAdmin = new _settingsadmin2.default();
-
-			initAddAccountTypeButtonListener();
-			initAccountTypeRowListener();
-			initSubmitAccountTypeListener();
-
-			initAddRentalTypeButtonListener();
-			initRentalTypeRowListener();
-			initSubmitRentalTypeListener();
-		} else if ($('.iam-reservation-wrap').length > 0) {
-			resetEvents();
-			var resFacilityType = $('.iam-reservation-wrap').data('facility-type');
-			$('.iam-load-all-reservations').click(function (event) {
-				if ($('.iam-res-cal-placeholder').length > 0) return;
-
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'GET',
-					data: { action: 'load_all_events_admin_res_cal', facility: $('.iam-reservation-wrap').data('facility') },
-					success: function success(data) {
-						var newData = (0, _serverresponse.handleServerResponse)(data);
-						for (var i in newData) {
-							var c = newData[i];
-							$('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
-						}
-						makeCalendarReservationsMulti();
-						(0, _userfeedback.submissionEnd)();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-
-			$('.iam-res-select-all').click(function (event) {
-				$(this).toggleClass('iam-highlighted');
-				if ($(this).hasClass('iam-highlighted')) {
-					$('.iam-reservation-list div:not(.iam-highlighted)').each(function (index, el) {
-						if (!$(this).hasClass('iam-ninja')) {
-							$(this).addClass('iam-highlighted');
-						}
-					});
-					makeCalendarReservationsMulti();
-				} else {
-					$('.iam-reservation-list div.iam-highlighted').each(function (index, el) {
-						$(this).removeClass('iam-highlighted');
-					});
-					makeCalendarReservationsMulti();
-				}
-			});
-
-			$('.iam-reservation-list div').click(function (event) {
-				$(this).toggleClass('iam-highlighted');
-				makeCalendarReservationsMulti();
-			});
-
-			$('label.iam-status-label input').prop('checked', true);
-			initResCalSubmitListener();
-			(0, _uifunc.initSearchListener)('.iam-search', '.iam-reservation-list div', 0);
-			$(document).tooltip();
-		} else if ($('.iam-user-certification-wrap').length > 0) {
-
-			//initSeeExistingCertificationsListener();
-			initAddRemoveCertificationsButtonListener();
-			(0, _uifunc.initSearchListener)('.iam-user-certifications-search', 'tr .iam-username', 1);
-			updateSearchOnLoad();
-		} else if ($('.iam-scheduling-wrap').length > 0) {
-
-			initScheduleTypeListeners();
-			initScheduleSubmitListeners();
-		} else if ($('.iam-charge-sheet-wrap').length > 0) {
-			(0, _uifunc.initCSVAJAXButtonListener)('admin_get_all_charges_as_csv');
-			initChargeTable();
-			$(document).tooltip();
-		} else if ($('.iam-equipment-wrap').length > 0) {
-			var facilityType = $('.iam-facility-data').data('facility-type');
-			//on load
-			loadComparableTags();
-
-			//listeners
-			initExistingEquipmentListItemsListener();
-			initImageListener();
-			initNewEquipmentButtonListener();
-			initSubmitEquipmentFormListener();
-			initDuplicateEquipmentButtonListener();
-			initTagAutoCompleteListener();
-			initDeleteFormListener('e');
-			(0, _uifunc.initSearchListener)('.iam-equipment-search', '#iam-equipment-list li', 0);
-			(0, _textfieldlisteners.itemNameListener)($('#iam-new-form #name'));
-			(0, _textfieldlisteners.itemNameListener)($('#iam-update-form #name'));
-			updateSearchOnLoad();
-			initCheckinCheckout();
-			(0, _uifunc.initCSVAJAXButtonListener)('admin_equipment_csv');
-			$(document).tooltip();
-			findItemAgain($('#iam-equipment-list'));
-		} else if ($('.iam-certification-wrap').length > 0) {
-			//vars
-			var supportingCount, newSupportingCount;
-			supportingCount = newSupportingCount = 1;
-
-			//listeners
-			initSupportingFileListeners();
-			initExistingFileListener();
-			initNewCertificationButtonListener();
-			initExistingCertificationListItemsListener();
-			initSubmitCertificationFormListener();
-			initAddSupportingFileUploadButtonListeners();
-			initDeleteFormListener('c');
-			(0, _uifunc.initSearchListener)('.iam-certification-search', '#iam-certifcation-list li', 0);
-			(0, _textfieldlisteners.itemNameListener)($('#iam-new-form #name'));
-			(0, _textfieldlisteners.itemNameListener)($('#iam-update-form #name'));
-			updateSearchOnLoad();
-			$(document).tooltip();
-			findItemAgain($('#iam-certifcation-list'));
-		} else if ($('.iam-users-wrap').length > 0) {
-			var useradmin = new _useradmin2.default();
-			(0, _uifunc.initSearchListener)('.iam-search', '.iam-users-list li', 0);
-		} else if ($('.iam-registration-wrap').length > 0) {
-			$('.iam-approve-account').click(function (event) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_approve_new_user', user: $(this).data('user') },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-			$('.iam-deny-account').click(function (event) {
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_deny_new_user', user: $(this).data('user') },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-			initRegKeyButtonListener();
-			initDeleteRegKeyButtonListener();
-			(0, _uifunc.initSearchListener)('.iam-registration-search', 'tr .iam-username', 1);
-		} else if ($('.iam-user-privileges-wrap').length > 0) {
-			var approvedUsers = [];
-			var deniedUsers = [];
-			$('input[type=checkbox]').click(function (event) {
-				var user = $(this).parent().prev('td').text();
-				for (var i = 0; i < approvedUsers.length; i++) {
-					if (approvedUsers[i] == user) {
-						approvedUsers.splice(i, 1);
-						return;
-					}
-				}
-				for (var i = 0; i < deniedUsers.length; i++) {
-					if (deniedUsers[i] == user) {
-						deniedUsers.splice(i, 1);
-						return;
-					}
-				}
-				if ($(this).is(':checked')) {
-					approvedUsers.push(user);
-				} else {
-					deniedUsers.push(user);
-				}
-			});
-			$('input[type=submit]').click(function (event) {
-				(0, _userfeedback.submissionStart)();
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					data: { action: 'admin_user_privileges', approved: approvedUsers, denied: deniedUsers },
-					success: function success(data) {
-						(0, _serverresponse.handleServerResponse)(data);
-						window.location.reload();
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-			(0, _uifunc.initSearchListener)('.iam-user-privileges-search', 'tr .iam-username', 1);
-		} else if ($('.iam-pricing-wrap').length > 0) {
-			var changedRows = [];
-			var equipDropDown, tagsDropDown;
-
-			initPricingSubmitListener();
-			initPricingChangeListeners();
-			initAddPricingDropDownListeners();
-			initNewMaterialButtonListener();
-			initDeletePricingDropDownListener();
-			initPricingRowDeleteListener();
-			(0, _uifunc.initCSVAJAXButtonListener)('admin_pricing_csv');
-		} else if ($('.equipment-csv-upload')) {
-			$('.equipment-csv-upload input[type=submit]').click(function (event) {
-				event.preventDefault();
-				var formData = new FormData();
-				formData.append('action', 'equipment_csv_upload');
-				formData.append('file', $('.equipment-csv-upload input[type=file]').prop('files')[0]);
-
-				$.ajax({
-					url: ajaxurl,
-					type: 'POST',
-					processData: false,
-					contentType: false,
-					data: formData,
-					success: function success(data) {
-						//handleServerResponse(data);
-						$('.equipment-csv-upload').append((0, _serverresponse.handleServerResponse)(data));
-					},
-					error: function error(data) {
-						(0, _serverresponse.handleServerError)(data, new Error());
-					}
-				});
-			});
-		}
-	});
-	(0, _debug.debugWarn)();
-})(jQuery);
-
-/***/ }),
-/* 149 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Autocomplete 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Autocomplete
-//>>group: Widgets
-//>>description: Lists suggested words as the user is typing.
-//>>docs: http://api.jqueryui.com/autocomplete/
-//>>demos: http://jqueryui.com/autocomplete/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/autocomplete.css
-//>>css.theme: ../../themes/base/theme.css
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(150), __webpack_require__(7), __webpack_require__(9), __webpack_require__(8), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	$.widget("ui.autocomplete", {
-		version: "1.12.1",
-		defaultElement: "<input>",
-		options: {
-			appendTo: null,
-			autoFocus: false,
-			delay: 300,
-			minLength: 1,
-			position: {
-				my: "left top",
-				at: "left bottom",
-				collision: "none"
-			},
-			source: null,
-
-			// Callbacks
-			change: null,
-			close: null,
-			focus: null,
-			open: null,
-			response: null,
-			search: null,
-			select: null
-		},
-
-		requestIndex: 0,
-		pending: 0,
-
-		_create: function _create() {
-
-			// Some browsers only repeat keydown events, not keypress events,
-			// so we use the suppressKeyPress flag to determine if we've already
-			// handled the keydown event. #7269
-			// Unfortunately the code for & in keypress is the same as the up arrow,
-			// so we use the suppressKeyPressRepeat flag to avoid handling keypress
-			// events when we know the keydown event was used to modify the
-			// search term. #7799
-			var suppressKeyPress,
-			    suppressKeyPressRepeat,
-			    suppressInput,
-			    nodeName = this.element[0].nodeName.toLowerCase(),
-			    isTextarea = nodeName === "textarea",
-			    isInput = nodeName === "input";
-
-			// Textareas are always multi-line
-			// Inputs are always single-line, even if inside a contentEditable element
-			// IE also treats inputs as contentEditable
-			// All other element types are determined by whether or not they're contentEditable
-			this.isMultiLine = isTextarea || !isInput && this._isContentEditable(this.element);
-
-			this.valueMethod = this.element[isTextarea || isInput ? "val" : "text"];
-			this.isNewMenu = true;
-
-			this._addClass("ui-autocomplete-input");
-			this.element.attr("autocomplete", "off");
-
-			this._on(this.element, {
-				keydown: function keydown(event) {
-					if (this.element.prop("readOnly")) {
-						suppressKeyPress = true;
-						suppressInput = true;
-						suppressKeyPressRepeat = true;
-						return;
-					}
-
-					suppressKeyPress = false;
-					suppressInput = false;
-					suppressKeyPressRepeat = false;
-					var keyCode = $.ui.keyCode;
-					switch (event.keyCode) {
-						case keyCode.PAGE_UP:
-							suppressKeyPress = true;
-							this._move("previousPage", event);
-							break;
-						case keyCode.PAGE_DOWN:
-							suppressKeyPress = true;
-							this._move("nextPage", event);
-							break;
-						case keyCode.UP:
-							suppressKeyPress = true;
-							this._keyEvent("previous", event);
-							break;
-						case keyCode.DOWN:
-							suppressKeyPress = true;
-							this._keyEvent("next", event);
-							break;
-						case keyCode.ENTER:
-
-							// when menu is open and has focus
-							if (this.menu.active) {
-
-								// #6055 - Opera still allows the keypress to occur
-								// which causes forms to submit
-								suppressKeyPress = true;
-								event.preventDefault();
-								this.menu.select(event);
-							}
-							break;
-						case keyCode.TAB:
-							if (this.menu.active) {
-								this.menu.select(event);
-							}
-							break;
-						case keyCode.ESCAPE:
-							if (this.menu.element.is(":visible")) {
-								if (!this.isMultiLine) {
-									this._value(this.term);
-								}
-								this.close(event);
-
-								// Different browsers have different default behavior for escape
-								// Single press can mean undo or clear
-								// Double press in IE means clear the whole form
-								event.preventDefault();
-							}
-							break;
-						default:
-							suppressKeyPressRepeat = true;
-
-							// search timeout should be triggered before the input value is changed
-							this._searchTimeout(event);
-							break;
-					}
-				},
-				keypress: function keypress(event) {
-					if (suppressKeyPress) {
-						suppressKeyPress = false;
-						if (!this.isMultiLine || this.menu.element.is(":visible")) {
-							event.preventDefault();
-						}
-						return;
-					}
-					if (suppressKeyPressRepeat) {
-						return;
-					}
-
-					// Replicate some key handlers to allow them to repeat in Firefox and Opera
-					var keyCode = $.ui.keyCode;
-					switch (event.keyCode) {
-						case keyCode.PAGE_UP:
-							this._move("previousPage", event);
-							break;
-						case keyCode.PAGE_DOWN:
-							this._move("nextPage", event);
-							break;
-						case keyCode.UP:
-							this._keyEvent("previous", event);
-							break;
-						case keyCode.DOWN:
-							this._keyEvent("next", event);
-							break;
-					}
-				},
-				input: function input(event) {
-					if (suppressInput) {
-						suppressInput = false;
-						event.preventDefault();
-						return;
-					}
-					this._searchTimeout(event);
-				},
-				focus: function focus() {
-					this.selectedItem = null;
-					this.previous = this._value();
-				},
-				blur: function blur(event) {
-					if (this.cancelBlur) {
-						delete this.cancelBlur;
-						return;
-					}
-
-					clearTimeout(this.searching);
-					this.close(event);
-					this._change(event);
-				}
-			});
-
-			this._initSource();
-			this.menu = $("<ul>").appendTo(this._appendTo()).menu({
-
-				// disable ARIA support, the live region takes care of that
-				role: null
-			}).hide().menu("instance");
-
-			this._addClass(this.menu.element, "ui-autocomplete", "ui-front");
-			this._on(this.menu.element, {
-				mousedown: function mousedown(event) {
-
-					// prevent moving focus out of the text field
-					event.preventDefault();
-
-					// IE doesn't prevent moving focus even with event.preventDefault()
-					// so we set a flag to know when we should ignore the blur event
-					this.cancelBlur = true;
-					this._delay(function () {
-						delete this.cancelBlur;
-
-						// Support: IE 8 only
-						// Right clicking a menu item or selecting text from the menu items will
-						// result in focus moving out of the input. However, we've already received
-						// and ignored the blur event because of the cancelBlur flag set above. So
-						// we restore focus to ensure that the menu closes properly based on the user's
-						// next actions.
-						if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
-							this.element.trigger("focus");
-						}
-					});
-				},
-				menufocus: function menufocus(event, ui) {
-					var label, item;
-
-					// support: Firefox
-					// Prevent accidental activation of menu items in Firefox (#7024 #9118)
-					if (this.isNewMenu) {
-						this.isNewMenu = false;
-						if (event.originalEvent && /^mouse/.test(event.originalEvent.type)) {
-							this.menu.blur();
-
-							this.document.one("mousemove", function () {
-								$(event.target).trigger(event.originalEvent);
-							});
-
-							return;
-						}
-					}
-
-					item = ui.item.data("ui-autocomplete-item");
-					if (false !== this._trigger("focus", event, { item: item })) {
-
-						// use value to match what will end up in the input, if it was a key event
-						if (event.originalEvent && /^key/.test(event.originalEvent.type)) {
-							this._value(item.value);
-						}
-					}
-
-					// Announce the value in the liveRegion
-					label = ui.item.attr("aria-label") || item.value;
-					if (label && $.trim(label).length) {
-						this.liveRegion.children().hide();
-						$("<div>").text(label).appendTo(this.liveRegion);
-					}
-				},
-				menuselect: function menuselect(event, ui) {
-					var item = ui.item.data("ui-autocomplete-item"),
-					    previous = this.previous;
-
-					// Only trigger when focus was lost (click on menu)
-					if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
-						this.element.trigger("focus");
-						this.previous = previous;
-
-						// #6109 - IE triggers two focus events and the second
-						// is asynchronous, so we need to reset the previous
-						// term synchronously and asynchronously :-(
-						this._delay(function () {
-							this.previous = previous;
-							this.selectedItem = item;
-						});
-					}
-
-					if (false !== this._trigger("select", event, { item: item })) {
-						this._value(item.value);
-					}
-
-					// reset the term after the select event
-					// this allows custom select handling to work properly
-					this.term = this._value();
-
-					this.close(event);
-					this.selectedItem = item;
-				}
-			});
-
-			this.liveRegion = $("<div>", {
-				role: "status",
-				"aria-live": "assertive",
-				"aria-relevant": "additions"
-			}).appendTo(this.document[0].body);
-
-			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
-
-			// Turning off autocomplete prevents the browser from remembering the
-			// value when navigating through history, so we re-enable autocomplete
-			// if the page is unloaded before the widget is destroyed. #7790
-			this._on(this.window, {
-				beforeunload: function beforeunload() {
-					this.element.removeAttr("autocomplete");
-				}
-			});
-		},
-
-		_destroy: function _destroy() {
-			clearTimeout(this.searching);
-			this.element.removeAttr("autocomplete");
-			this.menu.element.remove();
-			this.liveRegion.remove();
-		},
-
-		_setOption: function _setOption(key, value) {
-			this._super(key, value);
-			if (key === "source") {
-				this._initSource();
-			}
-			if (key === "appendTo") {
-				this.menu.element.appendTo(this._appendTo());
-			}
-			if (key === "disabled" && value && this.xhr) {
-				this.xhr.abort();
-			}
-		},
-
-		_isEventTargetInWidget: function _isEventTargetInWidget(event) {
-			var menuElement = this.menu.element[0];
-
-			return event.target === this.element[0] || event.target === menuElement || $.contains(menuElement, event.target);
-		},
-
-		_closeOnClickOutside: function _closeOnClickOutside(event) {
-			if (!this._isEventTargetInWidget(event)) {
-				this.close();
-			}
-		},
-
-		_appendTo: function _appendTo() {
-			var element = this.options.appendTo;
-
-			if (element) {
-				element = element.jquery || element.nodeType ? $(element) : this.document.find(element).eq(0);
-			}
-
-			if (!element || !element[0]) {
-				element = this.element.closest(".ui-front, dialog");
-			}
-
-			if (!element.length) {
-				element = this.document[0].body;
-			}
-
-			return element;
-		},
-
-		_initSource: function _initSource() {
-			var array,
-			    url,
-			    that = this;
-			if ($.isArray(this.options.source)) {
-				array = this.options.source;
-				this.source = function (request, response) {
-					response($.ui.autocomplete.filter(array, request.term));
-				};
-			} else if (typeof this.options.source === "string") {
-				url = this.options.source;
-				this.source = function (request, response) {
-					if (that.xhr) {
-						that.xhr.abort();
-					}
-					that.xhr = $.ajax({
-						url: url,
-						data: request,
-						dataType: "json",
-						success: function success(data) {
-							response(data);
-						},
-						error: function error() {
-							response([]);
-						}
-					});
-				};
-			} else {
-				this.source = this.options.source;
-			}
-		},
-
-		_searchTimeout: function _searchTimeout(event) {
-			clearTimeout(this.searching);
-			this.searching = this._delay(function () {
-
-				// Search if the value has changed, or if the user retypes the same value (see #7434)
-				var equalValues = this.term === this._value(),
-				    menuVisible = this.menu.element.is(":visible"),
-				    modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
-
-				if (!equalValues || equalValues && !menuVisible && !modifierKey) {
-					this.selectedItem = null;
-					this.search(null, event);
-				}
-			}, this.options.delay);
-		},
-
-		search: function search(value, event) {
-			value = value != null ? value : this._value();
-
-			// Always save the actual value, not the one passed as an argument
-			this.term = this._value();
-
-			if (value.length < this.options.minLength) {
-				return this.close(event);
-			}
-
-			if (this._trigger("search", event) === false) {
-				return;
-			}
-
-			return this._search(value);
-		},
-
-		_search: function _search(value) {
-			this.pending++;
-			this._addClass("ui-autocomplete-loading");
-			this.cancelSearch = false;
-
-			this.source({ term: value }, this._response());
-		},
-
-		_response: function _response() {
-			var index = ++this.requestIndex;
-
-			return $.proxy(function (content) {
-				if (index === this.requestIndex) {
-					this.__response(content);
-				}
-
-				this.pending--;
-				if (!this.pending) {
-					this._removeClass("ui-autocomplete-loading");
-				}
-			}, this);
-		},
-
-		__response: function __response(content) {
-			if (content) {
-				content = this._normalize(content);
-			}
-			this._trigger("response", null, { content: content });
-			if (!this.options.disabled && content && content.length && !this.cancelSearch) {
-				this._suggest(content);
-				this._trigger("open");
-			} else {
-
-				// use ._close() instead of .close() so we don't cancel future searches
-				this._close();
-			}
-		},
-
-		close: function close(event) {
-			this.cancelSearch = true;
-			this._close(event);
-		},
-
-		_close: function _close(event) {
-
-			// Remove the handler that closes the menu on outside clicks
-			this._off(this.document, "mousedown");
-
-			if (this.menu.element.is(":visible")) {
-				this.menu.element.hide();
-				this.menu.blur();
-				this.isNewMenu = true;
-				this._trigger("close", event);
-			}
-		},
-
-		_change: function _change(event) {
-			if (this.previous !== this._value()) {
-				this._trigger("change", event, { item: this.selectedItem });
-			}
-		},
-
-		_normalize: function _normalize(items) {
-
-			// assume all items have the right format when the first item is complete
-			if (items.length && items[0].label && items[0].value) {
-				return items;
-			}
-			return $.map(items, function (item) {
-				if (typeof item === "string") {
-					return {
-						label: item,
-						value: item
-					};
-				}
-				return $.extend({}, item, {
-					label: item.label || item.value,
-					value: item.value || item.label
-				});
-			});
-		},
-
-		_suggest: function _suggest(items) {
-			var ul = this.menu.element.empty();
-			this._renderMenu(ul, items);
-			this.isNewMenu = true;
-			this.menu.refresh();
-
-			// Size and position menu
-			ul.show();
-			this._resizeMenu();
-			ul.position($.extend({
-				of: this.element
-			}, this.options.position));
-
-			if (this.options.autoFocus) {
-				this.menu.next();
-			}
-
-			// Listen for interactions outside of the widget (#6642)
-			this._on(this.document, {
-				mousedown: "_closeOnClickOutside"
-			});
-		},
-
-		_resizeMenu: function _resizeMenu() {
-			var ul = this.menu.element;
-			ul.outerWidth(Math.max(
-
-			// Firefox wraps long text (possibly a rounding bug)
-			// so we add 1px to avoid the wrapping (#7513)
-			ul.width("").outerWidth() + 1, this.element.outerWidth()));
-		},
-
-		_renderMenu: function _renderMenu(ul, items) {
-			var that = this;
-			$.each(items, function (index, item) {
-				that._renderItemData(ul, item);
-			});
-		},
-
-		_renderItemData: function _renderItemData(ul, item) {
-			return this._renderItem(ul, item).data("ui-autocomplete-item", item);
-		},
-
-		_renderItem: function _renderItem(ul, item) {
-			return $("<li>").append($("<div>").text(item.label)).appendTo(ul);
-		},
-
-		_move: function _move(direction, event) {
-			if (!this.menu.element.is(":visible")) {
-				this.search(null, event);
-				return;
-			}
-			if (this.menu.isFirstItem() && /^previous/.test(direction) || this.menu.isLastItem() && /^next/.test(direction)) {
-
-				if (!this.isMultiLine) {
-					this._value(this.term);
-				}
-
-				this.menu.blur();
-				return;
-			}
-			this.menu[direction](event);
-		},
-
-		widget: function widget() {
-			return this.menu.element;
-		},
-
-		_value: function _value() {
-			return this.valueMethod.apply(this.element, arguments);
-		},
-
-		_keyEvent: function _keyEvent(keyEvent, event) {
-			if (!this.isMultiLine || this.menu.element.is(":visible")) {
-				this._move(keyEvent, event);
-
-				// Prevents moving cursor to beginning/end of the text field in some browsers
-				event.preventDefault();
-			}
-		},
-
-		// Support: Chrome <=50
-		// We should be able to just use this.element.prop( "isContentEditable" )
-		// but hidden elements always report false in Chrome.
-		// https://code.google.com/p/chromium/issues/detail?id=313082
-		_isContentEditable: function _isContentEditable(element) {
-			if (!element.length) {
-				return false;
-			}
-
-			var editable = element.prop("contentEditable");
-
-			if (editable === "inherit") {
-				return this._isContentEditable(element.parent());
-			}
-
-			return editable === "true";
-		}
-	});
-
-	$.extend($.ui.autocomplete, {
-		escapeRegex: function escapeRegex(value) {
-			return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
-		},
-		filter: function filter(array, term) {
-			var matcher = new RegExp($.ui.autocomplete.escapeRegex(term), "i");
-			return $.grep(array, function (value) {
-				return matcher.test(value.label || value.value || value);
-			});
-		}
-	});
-
-	// Live region extension, adding a `messages` option
-	// NOTE: This is an experimental API. We are still investigating
-	// a full solution for string manipulation and internationalization.
-	$.widget("ui.autocomplete", $.ui.autocomplete, {
-		options: {
-			messages: {
-				noResults: "No search results.",
-				results: function results(amount) {
-					return amount + (amount > 1 ? " results are" : " result is") + " available, use up and down arrow keys to navigate.";
-				}
-			}
-		},
-
-		__response: function __response(content) {
-			var message;
-			this._superApply(arguments);
-			if (this.options.disabled || this.cancelSearch) {
-				return;
-			}
-			if (content && content.length) {
-				message = this.options.messages.results(content.length);
-			} else {
-				message = this.options.messages.noResults;
-			}
-			this.liveRegion.children().hide();
-			$("<div>").text(message).appendTo(this.liveRegion);
-		}
-	});
-
-	return $.ui.autocomplete;
-});
-
-/***/ }),
-/* 150 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Menu 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Menu
-//>>group: Widgets
-//>>description: Creates nestable menus.
-//>>docs: http://api.jqueryui.com/menu/
-//>>demos: http://jqueryui.com/menu/
-//>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/menu.css
-//>>css.theme: ../../themes/base/theme.css
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(9), __webpack_require__(8), __webpack_require__(128), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.widget("ui.menu", {
-		version: "1.12.1",
-		defaultElement: "<ul>",
-		delay: 300,
-		options: {
-			icons: {
-				submenu: "ui-icon-caret-1-e"
-			},
-			items: "> *",
-			menus: "ul",
-			position: {
-				my: "left top",
-				at: "right top"
-			},
-			role: "menu",
-
-			// Callbacks
-			blur: null,
-			focus: null,
-			select: null
-		},
-
-		_create: function _create() {
-			this.activeMenu = this.element;
-
-			// Flag used to prevent firing of the click handler
-			// as the event bubbles up through nested menus
-			this.mouseHandled = false;
-			this.element.uniqueId().attr({
-				role: this.options.role,
-				tabIndex: 0
-			});
-
-			this._addClass("ui-menu", "ui-widget ui-widget-content");
-			this._on({
-
-				// Prevent focus from sticking to links inside menu after clicking
-				// them (focus should always stay on UL during navigation).
-				"mousedown .ui-menu-item": function mousedownUiMenuItem(event) {
-					event.preventDefault();
-				},
-				"click .ui-menu-item": function clickUiMenuItem(event) {
-					var target = $(event.target);
-					var active = $($.ui.safeActiveElement(this.document[0]));
-					if (!this.mouseHandled && target.not(".ui-state-disabled").length) {
-						this.select(event);
-
-						// Only set the mouseHandled flag if the event will bubble, see #9469.
-						if (!event.isPropagationStopped()) {
-							this.mouseHandled = true;
-						}
-
-						// Open submenu on click
-						if (target.has(".ui-menu").length) {
-							this.expand(event);
-						} else if (!this.element.is(":focus") && active.closest(".ui-menu").length) {
-
-							// Redirect focus to the menu
-							this.element.trigger("focus", [true]);
-
-							// If the active item is on the top level, let it stay active.
-							// Otherwise, blur the active item since it is no longer visible.
-							if (this.active && this.active.parents(".ui-menu").length === 1) {
-								clearTimeout(this.timer);
-							}
-						}
-					}
-				},
-				"mouseenter .ui-menu-item": function mouseenterUiMenuItem(event) {
-
-					// Ignore mouse events while typeahead is active, see #10458.
-					// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
-					// is over an item in the menu
-					if (this.previousFilter) {
-						return;
-					}
-
-					var actualTarget = $(event.target).closest(".ui-menu-item"),
-					    target = $(event.currentTarget);
-
-					// Ignore bubbled events on parent items, see #11641
-					if (actualTarget[0] !== target[0]) {
-						return;
-					}
-
-					// Remove ui-state-active class from siblings of the newly focused menu item
-					// to avoid a jump caused by adjacent elements both having a class with a border
-					this._removeClass(target.siblings().children(".ui-state-active"), null, "ui-state-active");
-					this.focus(event, target);
-				},
-				mouseleave: "collapseAll",
-				"mouseleave .ui-menu": "collapseAll",
-				focus: function focus(event, keepActiveItem) {
-
-					// If there's already an active item, keep it active
-					// If not, activate the first item
-					var item = this.active || this.element.find(this.options.items).eq(0);
-
-					if (!keepActiveItem) {
-						this.focus(event, item);
-					}
-				},
-				blur: function blur(event) {
-					this._delay(function () {
-						var notContained = !$.contains(this.element[0], $.ui.safeActiveElement(this.document[0]));
-						if (notContained) {
-							this.collapseAll(event);
-						}
-					});
-				},
-				keydown: "_keydown"
-			});
-
-			this.refresh();
-
-			// Clicks outside of a menu collapse any open menus
-			this._on(this.document, {
-				click: function click(event) {
-					if (this._closeOnDocumentClick(event)) {
-						this.collapseAll(event);
-					}
-
-					// Reset the mouseHandled flag
-					this.mouseHandled = false;
-				}
-			});
-		},
-
-		_destroy: function _destroy() {
-			var items = this.element.find(".ui-menu-item").removeAttr("role aria-disabled"),
-			    submenus = items.children(".ui-menu-item-wrapper").removeUniqueId().removeAttr("tabIndex role aria-haspopup");
-
-			// Destroy (sub)menus
-			this.element.removeAttr("aria-activedescendant").find(".ui-menu").addBack().removeAttr("role aria-labelledby aria-expanded aria-hidden aria-disabled " + "tabIndex").removeUniqueId().show();
-
-			submenus.children().each(function () {
-				var elem = $(this);
-				if (elem.data("ui-menu-submenu-caret")) {
-					elem.remove();
-				}
-			});
-		},
-
-		_keydown: function _keydown(event) {
-			var match,
-			    prev,
-			    character,
-			    skip,
-			    preventDefault = true;
-
-			switch (event.keyCode) {
-				case $.ui.keyCode.PAGE_UP:
-					this.previousPage(event);
-					break;
-				case $.ui.keyCode.PAGE_DOWN:
-					this.nextPage(event);
-					break;
-				case $.ui.keyCode.HOME:
-					this._move("first", "first", event);
-					break;
-				case $.ui.keyCode.END:
-					this._move("last", "last", event);
-					break;
-				case $.ui.keyCode.UP:
-					this.previous(event);
-					break;
-				case $.ui.keyCode.DOWN:
-					this.next(event);
-					break;
-				case $.ui.keyCode.LEFT:
-					this.collapse(event);
-					break;
-				case $.ui.keyCode.RIGHT:
-					if (this.active && !this.active.is(".ui-state-disabled")) {
-						this.expand(event);
-					}
-					break;
-				case $.ui.keyCode.ENTER:
-				case $.ui.keyCode.SPACE:
-					this._activate(event);
-					break;
-				case $.ui.keyCode.ESCAPE:
-					this.collapse(event);
-					break;
-				default:
-					preventDefault = false;
-					prev = this.previousFilter || "";
-					skip = false;
-
-					// Support number pad values
-					character = event.keyCode >= 96 && event.keyCode <= 105 ? (event.keyCode - 96).toString() : String.fromCharCode(event.keyCode);
-
-					clearTimeout(this.filterTimer);
-
-					if (character === prev) {
-						skip = true;
-					} else {
-						character = prev + character;
-					}
-
-					match = this._filterMenuItems(character);
-					match = skip && match.index(this.active.next()) !== -1 ? this.active.nextAll(".ui-menu-item") : match;
-
-					// If no matches on the current filter, reset to the last character pressed
-					// to move down the menu to the first item that starts with that character
-					if (!match.length) {
-						character = String.fromCharCode(event.keyCode);
-						match = this._filterMenuItems(character);
-					}
-
-					if (match.length) {
-						this.focus(event, match);
-						this.previousFilter = character;
-						this.filterTimer = this._delay(function () {
-							delete this.previousFilter;
-						}, 1000);
-					} else {
-						delete this.previousFilter;
-					}
-			}
-
-			if (preventDefault) {
-				event.preventDefault();
-			}
-		},
-
-		_activate: function _activate(event) {
-			if (this.active && !this.active.is(".ui-state-disabled")) {
-				if (this.active.children("[aria-haspopup='true']").length) {
-					this.expand(event);
-				} else {
-					this.select(event);
-				}
-			}
-		},
-
-		refresh: function refresh() {
-			var menus,
-			    items,
-			    newSubmenus,
-			    newItems,
-			    newWrappers,
-			    that = this,
-			    icon = this.options.icons.submenu,
-			    submenus = this.element.find(this.options.menus);
-
-			this._toggleClass("ui-menu-icons", null, !!this.element.find(".ui-icon").length);
-
-			// Initialize nested menus
-			newSubmenus = submenus.filter(":not(.ui-menu)").hide().attr({
-				role: this.options.role,
-				"aria-hidden": "true",
-				"aria-expanded": "false"
-			}).each(function () {
-				var menu = $(this),
-				    item = menu.prev(),
-				    submenuCaret = $("<span>").data("ui-menu-submenu-caret", true);
-
-				that._addClass(submenuCaret, "ui-menu-icon", "ui-icon " + icon);
-				item.attr("aria-haspopup", "true").prepend(submenuCaret);
-				menu.attr("aria-labelledby", item.attr("id"));
-			});
-
-			this._addClass(newSubmenus, "ui-menu", "ui-widget ui-widget-content ui-front");
-
-			menus = submenus.add(this.element);
-			items = menus.find(this.options.items);
-
-			// Initialize menu-items containing spaces and/or dashes only as dividers
-			items.not(".ui-menu-item").each(function () {
-				var item = $(this);
-				if (that._isDivider(item)) {
-					that._addClass(item, "ui-menu-divider", "ui-widget-content");
-				}
-			});
-
-			// Don't refresh list items that are already adapted
-			newItems = items.not(".ui-menu-item, .ui-menu-divider");
-			newWrappers = newItems.children().not(".ui-menu").uniqueId().attr({
-				tabIndex: -1,
-				role: this._itemRole()
-			});
-			this._addClass(newItems, "ui-menu-item")._addClass(newWrappers, "ui-menu-item-wrapper");
-
-			// Add aria-disabled attribute to any disabled menu item
-			items.filter(".ui-state-disabled").attr("aria-disabled", "true");
-
-			// If the active item has been removed, blur the menu
-			if (this.active && !$.contains(this.element[0], this.active[0])) {
-				this.blur();
-			}
-		},
-
-		_itemRole: function _itemRole() {
-			return {
-				menu: "menuitem",
-				listbox: "option"
-			}[this.options.role];
-		},
-
-		_setOption: function _setOption(key, value) {
-			if (key === "icons") {
-				var icons = this.element.find(".ui-menu-icon");
-				this._removeClass(icons, null, this.options.icons.submenu)._addClass(icons, null, value.submenu);
-			}
-			this._super(key, value);
-		},
-
-		_setOptionDisabled: function _setOptionDisabled(value) {
-			this._super(value);
-
-			this.element.attr("aria-disabled", String(value));
-			this._toggleClass(null, "ui-state-disabled", !!value);
-		},
-
-		focus: function focus(event, item) {
-			var nested, focused, activeParent;
-			this.blur(event, event && event.type === "focus");
-
-			this._scrollIntoView(item);
-
-			this.active = item.first();
-
-			focused = this.active.children(".ui-menu-item-wrapper");
-			this._addClass(focused, null, "ui-state-active");
-
-			// Only update aria-activedescendant if there's a role
-			// otherwise we assume focus is managed elsewhere
-			if (this.options.role) {
-				this.element.attr("aria-activedescendant", focused.attr("id"));
-			}
-
-			// Highlight active parent menu item, if any
-			activeParent = this.active.parent().closest(".ui-menu-item").children(".ui-menu-item-wrapper");
-			this._addClass(activeParent, null, "ui-state-active");
-
-			if (event && event.type === "keydown") {
-				this._close();
-			} else {
-				this.timer = this._delay(function () {
-					this._close();
-				}, this.delay);
-			}
-
-			nested = item.children(".ui-menu");
-			if (nested.length && event && /^mouse/.test(event.type)) {
-				this._startOpening(nested);
-			}
-			this.activeMenu = item.parent();
-
-			this._trigger("focus", event, { item: item });
-		},
-
-		_scrollIntoView: function _scrollIntoView(item) {
-			var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
-			if (this._hasScroll()) {
-				borderTop = parseFloat($.css(this.activeMenu[0], "borderTopWidth")) || 0;
-				paddingTop = parseFloat($.css(this.activeMenu[0], "paddingTop")) || 0;
-				offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
-				scroll = this.activeMenu.scrollTop();
-				elementHeight = this.activeMenu.height();
-				itemHeight = item.outerHeight();
-
-				if (offset < 0) {
-					this.activeMenu.scrollTop(scroll + offset);
-				} else if (offset + itemHeight > elementHeight) {
-					this.activeMenu.scrollTop(scroll + offset - elementHeight + itemHeight);
-				}
-			}
-		},
-
-		blur: function blur(event, fromFocus) {
-			if (!fromFocus) {
-				clearTimeout(this.timer);
-			}
-
-			if (!this.active) {
-				return;
-			}
-
-			this._removeClass(this.active.children(".ui-menu-item-wrapper"), null, "ui-state-active");
-
-			this._trigger("blur", event, { item: this.active });
-			this.active = null;
-		},
-
-		_startOpening: function _startOpening(submenu) {
-			clearTimeout(this.timer);
-
-			// Don't open if already open fixes a Firefox bug that caused a .5 pixel
-			// shift in the submenu position when mousing over the caret icon
-			if (submenu.attr("aria-hidden") !== "true") {
-				return;
-			}
-
-			this.timer = this._delay(function () {
-				this._close();
-				this._open(submenu);
-			}, this.delay);
-		},
-
-		_open: function _open(submenu) {
-			var position = $.extend({
-				of: this.active
-			}, this.options.position);
-
-			clearTimeout(this.timer);
-			this.element.find(".ui-menu").not(submenu.parents(".ui-menu")).hide().attr("aria-hidden", "true");
-
-			submenu.show().removeAttr("aria-hidden").attr("aria-expanded", "true").position(position);
-		},
-
-		collapseAll: function collapseAll(event, all) {
-			clearTimeout(this.timer);
-			this.timer = this._delay(function () {
-
-				// If we were passed an event, look for the submenu that contains the event
-				var currentMenu = all ? this.element : $(event && event.target).closest(this.element.find(".ui-menu"));
-
-				// If we found no valid submenu ancestor, use the main menu to close all
-				// sub menus anyway
-				if (!currentMenu.length) {
-					currentMenu = this.element;
-				}
-
-				this._close(currentMenu);
-
-				this.blur(event);
-
-				// Work around active item staying active after menu is blurred
-				this._removeClass(currentMenu.find(".ui-state-active"), null, "ui-state-active");
-
-				this.activeMenu = currentMenu;
-			}, this.delay);
-		},
-
-		// With no arguments, closes the currently active menu - if nothing is active
-		// it closes all menus.  If passed an argument, it will search for menus BELOW
-		_close: function _close(startMenu) {
-			if (!startMenu) {
-				startMenu = this.active ? this.active.parent() : this.element;
-			}
-
-			startMenu.find(".ui-menu").hide().attr("aria-hidden", "true").attr("aria-expanded", "false");
-		},
-
-		_closeOnDocumentClick: function _closeOnDocumentClick(event) {
-			return !$(event.target).closest(".ui-menu").length;
-		},
-
-		_isDivider: function _isDivider(item) {
-
-			// Match hyphen, em dash, en dash
-			return !/[^\-\u2014\u2013\s]/.test(item.text());
-		},
-
-		collapse: function collapse(event) {
-			var newItem = this.active && this.active.parent().closest(".ui-menu-item", this.element);
-			if (newItem && newItem.length) {
-				this._close();
-				this.focus(event, newItem);
-			}
-		},
-
-		expand: function expand(event) {
-			var newItem = this.active && this.active.children(".ui-menu ").find(this.options.items).first();
-
-			if (newItem && newItem.length) {
-				this._open(newItem.parent());
-
-				// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
-				this._delay(function () {
-					this.focus(event, newItem);
-				});
-			}
-		},
-
-		next: function next(event) {
-			this._move("next", "first", event);
-		},
-
-		previous: function previous(event) {
-			this._move("prev", "last", event);
-		},
-
-		isFirstItem: function isFirstItem() {
-			return this.active && !this.active.prevAll(".ui-menu-item").length;
-		},
-
-		isLastItem: function isLastItem() {
-			return this.active && !this.active.nextAll(".ui-menu-item").length;
-		},
-
-		_move: function _move(direction, filter, event) {
-			var next;
-			if (this.active) {
-				if (direction === "first" || direction === "last") {
-					next = this.active[direction === "first" ? "prevAll" : "nextAll"](".ui-menu-item").eq(-1);
-				} else {
-					next = this.active[direction + "All"](".ui-menu-item").eq(0);
-				}
-			}
-			if (!next || !next.length || !this.active) {
-				next = this.activeMenu.find(this.options.items)[filter]();
-			}
-
-			this.focus(event, next);
-		},
-
-		nextPage: function nextPage(event) {
-			var item, base, height;
-
-			if (!this.active) {
-				this.next(event);
-				return;
-			}
-			if (this.isLastItem()) {
-				return;
-			}
-			if (this._hasScroll()) {
-				base = this.active.offset().top;
-				height = this.element.height();
-				this.active.nextAll(".ui-menu-item").each(function () {
-					item = $(this);
-					return item.offset().top - base - height < 0;
-				});
-
-				this.focus(event, item);
-			} else {
-				this.focus(event, this.activeMenu.find(this.options.items)[!this.active ? "first" : "last"]());
-			}
-		},
-
-		previousPage: function previousPage(event) {
-			var item, base, height;
-			if (!this.active) {
-				this.next(event);
-				return;
-			}
-			if (this.isFirstItem()) {
-				return;
-			}
-			if (this._hasScroll()) {
-				base = this.active.offset().top;
-				height = this.element.height();
-				this.active.prevAll(".ui-menu-item").each(function () {
-					item = $(this);
-					return item.offset().top - base + height > 0;
-				});
-
-				this.focus(event, item);
-			} else {
-				this.focus(event, this.activeMenu.find(this.options.items).first());
-			}
-		},
-
-		_hasScroll: function _hasScroll() {
-			return this.element.outerHeight() < this.element.prop("scrollHeight");
-		},
-
-		select: function select(event) {
-
-			// TODO: It should never be possible to not have an active item at this
-			// point, but the tests don't trigger mouseenter before click.
-			this.active = this.active || $(event.target).closest(".ui-menu-item");
-			var ui = { item: this.active };
-			if (!this.active.has(".ui-menu").length) {
-				this.collapseAll(event, true);
-			}
-			this._trigger("select", event, ui);
-		},
-
-		_filterMenuItems: function _filterMenuItems(character) {
-			var escapedCharacter = character.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"),
-			    regex = new RegExp("^" + escapedCharacter, "i");
-
-			return this.activeMenu.find(this.options.items)
-
-			// Only match on items, not dividers or other content (#10571)
-			.filter(".ui-menu-item").filter(function () {
-				return regex.test($.trim($(this).children(".ui-menu-item-wrapper").text()));
-			});
-		}
-	});
-});
-
-/***/ }),
-/* 151 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.overridePrompt = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(131);
-
-__webpack_require__(152);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function overridePrompt(args) {
-  if ((0, _jquery2.default)('#dialog-override').length < 1) (0, _jquery2.default)('body').append('<div id="dialog-override" title="' + args.title + '" ><p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>' + args.body + '</p></div>');
-
-  (0, _jquery2.default)("#dialog-override").dialog({
-    resizable: false,
-    height: "auto",
-    width: 400,
-    modal: true,
-    buttons: {
-      Override: function Override() {
-        if (typeof args.override != 'undefined') args.override();
-        (0, _jquery2.default)(this).dialog("close");
-      },
-      Cancel: function Cancel() {
-        if (typeof args.cancel != 'undefined') args.cancel();
-        (0, _jquery2.default)(this).dialog("close");
-      }
-    }
-  });
-}
-
-exports.overridePrompt = overridePrompt;
-
-/***/ }),
-/* 152 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -48333,7 +43725,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(153), __webpack_require__(132), __webpack_require__(127), __webpack_require__(159), __webpack_require__(143), __webpack_require__(7), __webpack_require__(9), __webpack_require__(8), __webpack_require__(134), __webpack_require__(161), __webpack_require__(128), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(146), __webpack_require__(132), __webpack_require__(8), __webpack_require__(152), __webpack_require__(136), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(134), __webpack_require__(154), __webpack_require__(11), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -49205,7 +44597,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 153 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49239,7 +44631,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(154), __webpack_require__(155), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(147), __webpack_require__(148), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -49590,7 +44982,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 154 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49886,7 +45278,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 155 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -49915,7 +45307,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(142), __webpack_require__(156), __webpack_require__(158), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(149), __webpack_require__(151), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -50172,7 +45564,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 156 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50196,7 +45588,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(157), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(150), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -50253,7 +45645,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 157 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50283,7 +45675,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 158 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50307,7 +45699,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(142)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(135)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -50354,7 +45746,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 159 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50382,7 +45774,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(127), __webpack_require__(160), __webpack_require__(133), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(153), __webpack_require__(133), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -51526,7 +46918,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 160 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51580,7 +46972,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 161 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51604,7 +46996,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(143)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(136)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -51625,7 +47017,4260 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
+/* 155 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.initContextMenuLib = undefined;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function initContextMenuLib() {
+    /*
+     *contextMenu.js v 1.4.1
+     *Author: Sudhanshu Yadav
+     *s-yadav.github.com
+     *Copyright (c) 2013-2015 Sudhanshu Yadav.
+     *Dual licensed under the MIT and GPL licenses
+     */
+
+    "use strict";
+    //jQuery, window, document
+
+    _jquery2.default.single = function () {
+        var single = (0, _jquery2.default)({});
+        return function (elm) {
+            single[0] = elm;
+            return single;
+        };
+    }();
+
+    _jquery2.default.fn.contextMenu = function (method, selector, option) {
+
+        //parameter fix
+        if (!methods[method]) {
+            option = selector;
+            selector = method;
+            method = 'popup';
+        }
+        //need to check for array object
+        else if (selector) {
+                if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
+                    option = selector;
+                    selector = null;
+                }
+            }
+
+        if (selector instanceof Array && method != 'update') {
+            method = 'menu';
+        }
+
+        var myoptions = option;
+        if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
+            option = iMethods.optionOtimizer(method, option);
+            this.each(function () {
+                var $this = (0, _jquery2.default)(this);
+                myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
+                if (!myoptions.baseTrigger) {
+                    myoptions.baseTrigger = $this;
+                }
+                methods[method].call($this, selector, myoptions);
+            });
+        } else {
+            methods[method].call(this, selector, myoptions);
+        }
+        return this;
+    };
+    _jquery2.default.fn.contextMenu.defaults = {
+        triggerOn: 'click', //avaliable options are all event related mouse plus enter option
+        subMenuTriggerOn: 'hover click',
+        displayAround: 'cursor', // cursor or trigger
+        mouseClick: 'left',
+        verAdjust: 0,
+        horAdjust: 0,
+        top: 'auto',
+        left: 'auto',
+        closeOther: true, //to close other already opened context menu
+        containment: window,
+        winEventClose: true,
+        position: 'auto', //allowed values are top, left, bottom and right
+        closeOnClick: true, //close context menu on click/ trigger of any item in menu
+
+        //callback
+        onOpen: function onOpen(data, event) {},
+        afterOpen: function afterOpen(data, event) {},
+        onClose: function onClose(data, event) {}
+    };
+
+    var methods = {
+        menu: function menu(selector, option) {
+            selector = iMethods.createMenuList(this, selector, option);
+            iMethods.contextMenuBind.call(this, selector, option, 'menu');
+        },
+        popup: function popup(selector, option) {
+            (0, _jquery2.default)(selector).addClass('iw-contextMenu');
+            iMethods.contextMenuBind.call(this, selector, option, 'popup');
+        },
+        update: function update(selector, option) {
+            var self = this;
+            option = option || {};
+
+            this.each(function () {
+                var trgr = (0, _jquery2.default)(this),
+                    menuData = trgr.data('iw-menuData');
+                //refresh if any new element is added
+                if (!menuData) {
+                    self.contextMenu('refresh');
+                    menuData = trgr.data('iw-menuData');
+                }
+
+                var menu = menuData.menu;
+                if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
+
+                    for (var i = 0; i < selector.length; i++) {
+                        var name = selector[i].name,
+                            disable = selector[i].disable,
+                            fun = selector[i].fun,
+                            icon = selector[i].icon,
+                            img = selector[i].img,
+                            title = selector[i].title,
+                            className = selector[i].className,
+                            elm = menu.children('li').filter(function () {
+                            return (0, _jquery2.default)(this).contents().filter(function () {
+                                return this.nodeType == 3;
+                            }).text() == name;
+                        }),
+                            subMenu = selector[i].subMenu;
+
+                        //toggle disable if provided on update method
+                        disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
+
+                        //bind new function if provided
+                        fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
+
+                        //update title
+                        title != undefined && elm.attr('title', title);
+
+                        //update class name
+                        className != undefined && elm.attr('class', className);
+
+                        var imgIcon = elm.find('.iw-mIcon');
+                        if (imgIcon.length) imgIcon.remove();
+
+                        //update image or icon
+                        if (img) {
+                            elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                        } else if (icon) {
+                            elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
+                        }
+
+                        //to change submenus
+                        if (subMenu) {
+                            elm.contextMenu('update', subMenu);
+                        }
+                    }
+                }
+
+                iMethods.onOff(menu);
+
+                //bind event again if trigger option has changed.
+                var triggerOn = option.triggerOn;
+                if (triggerOn) {
+                    trgr.unbind('.contextMenu');
+
+                    //add contextMenu identifier on all events
+                    triggerOn = triggerOn.split(" ");
+                    var events = [];
+                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                        events.push(triggerOn[i] + '.contextMenu');
+                    }
+
+                    //to bind event
+                    trgr.bind(events.join(' '), iMethods.eventHandler);
+                }
+
+                //set menu data back to trigger element
+                menuData.option = _jquery2.default.extend({}, menuData.option, option);
+                trgr.data('iw-menuData', menuData);
+            });
+        },
+        refresh: function refresh() {
+            var menuData = this.filter(function () {
+                return !!(0, _jquery2.default)(this).data('iw-menuData');
+            }).data('iw-menuData'),
+                newElm = this.filter(function () {
+                return !(0, _jquery2.default)(this).data('iw-menuData');
+            });
+            //to change basetrigger on refresh
+            menuData.option.baseTrigger = this;
+            iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
+        },
+        open: function open(sel, data) {
+            data = data || {};
+            var e = data.event || _jquery2.default.Event('click');
+            if (data.top) e.clientY = data.top;
+            if (data.left) e.clientX = data.left;
+            this.each(function () {
+                iMethods.eventHandler.call(this, e);
+            });
+        },
+        //to force context menu to close
+        close: function close() {
+            var menuData = this.data('iw-menuData');
+            if (menuData) {
+                iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
+            }
+        },
+        //to get value of a key
+        value: function value(key) {
+            var menuData = this.data('iw-menuData');
+            if (menuData[key]) {
+                return menuData[key];
+            } else if (menuData.option) {
+                return menuData.option[key];
+            }
+            return null;
+        },
+        destroy: function destroy() {
+            var trgr = this,
+                menuId = trgr.data('iw-menuData').menuId,
+                menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
+                menuData = menu.data('iw-menuData');
+
+            //Handle the situation of dynamically added element.
+            if (!menuData) return;
+
+            if (menuData.noTrigger == 1) {
+                if (menu.hasClass('iw-created')) {
+                    menu.remove();
+                } else {
+                    menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
+                    //to destroy submenus
+                    menu.find('li.iw-mTrigger').contextMenu('destroy');
+                }
+            } else {
+                menuData.noTrigger--;
+                menu.data('iw-menuData', menuData);
+            }
+            trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
+        }
+    };
+    var iMethods = {
+        contextMenuBind: function contextMenuBind(selector, option, method) {
+            var trigger = this,
+                menu = (0, _jquery2.default)(selector),
+                menuData = menu.data('iw-menuData');
+
+            //fallback
+            if (menu.length == 0) {
+                menu = trigger.find(selector);
+                if (menu.length == 0) {
+                    return;
+                }
+            }
+
+            if (method == 'menu') {
+                iMethods.menuHover(menu);
+            }
+            //get base trigger
+            var baseTrigger = option.baseTrigger;
+
+            if (!menuData) {
+                var menuId;
+                if (!baseTrigger.data('iw-menuData')) {
+                    menuId = Math.ceil(Math.random() * 100000);
+                    baseTrigger.data('iw-menuData', {
+                        'menuId': menuId
+                    });
+                } else {
+                    menuId = baseTrigger.data('iw-menuData').menuId;
+                }
+                //create clone menu to calculate exact height and width.
+                var cloneMenu = menu.clone();
+                cloneMenu.appendTo('body');
+
+                menuData = {
+                    'menuId': menuId,
+                    'menuWidth': cloneMenu.outerWidth(true),
+                    'menuHeight': cloneMenu.outerHeight(true),
+                    'noTrigger': 1,
+                    'trigger': trigger
+                };
+
+                //to set data on selector
+                menu.data('iw-menuData', menuData).attr('menuId', menuId);
+                //remove clone menu
+                cloneMenu.remove();
+            } else {
+                menuData.noTrigger++;
+                menu.data('iw-menuData', menuData);
+            }
+
+            //to set data on trigger
+            trigger.addClass('iw-mTrigger').data('iw-menuData', {
+                'menuId': menuData.menuId,
+                'option': option,
+                'menu': menu,
+                'menuSelector': selector,
+                'method': method
+            });
+
+            //hover fix
+            var triggerOn = option.triggerOn;
+            if (triggerOn.indexOf('hover') != -1) {
+                triggerOn = triggerOn.replace('hover', 'mouseenter');
+                //hover out if display is of context menu is on hover
+                if (baseTrigger.index(trigger) != -1) {
+                    baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
+                        if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
+                            (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
+                        }
+                    });
+                }
+            }
+
+            trigger.delegate('input,a,.needs-click', 'click', function (e) {
+                e.stopImmediatePropagation();
+            });
+
+            //add contextMenu identifier on all events
+            triggerOn = triggerOn.split(' ');
+            var events = [];
+            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                events.push(triggerOn[i] + '.contextMenu');
+            }
+
+            //to bind event
+            trigger.bind(events.join(' '), iMethods.eventHandler);
+
+            //to stop bubbling in menu
+            menu.bind('click mouseenter', function (e) {
+                e.stopPropagation();
+            });
+
+            menu.delegate('li', 'click', function (e) {
+                if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
+            });
+        },
+        eventHandler: function eventHandler(e) {
+            e.preventDefault();
+            var trigger = (0, _jquery2.default)(this),
+                trgrData = trigger.data('iw-menuData'),
+                menu = trgrData.menu,
+                menuData = menu.data('iw-menuData'),
+                option = trgrData.option,
+                cntnmnt = option.containment,
+                clbckData = {
+                trigger: trigger,
+                menu: menu
+            },
+
+            //check conditions
+            cntWin = cntnmnt == window,
+                btChck = option.baseTrigger.index(trigger) == -1;
+
+            //to close previous open menu.
+            if (!btChck && option.closeOther) {
+                (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+            }
+
+            //to reset already selected menu item
+            menu.find('.iw-mSelected').removeClass('iw-mSelected');
+
+            //call open callback
+            option.onOpen.call(this, clbckData, e);
+
+            var cObj = (0, _jquery2.default)(cntnmnt),
+                cHeight = cObj.innerHeight(),
+                cWidth = cObj.innerWidth(),
+                cTop = 0,
+                cLeft = 0,
+                menuHeight = menuData.menuHeight,
+                menuWidth = menuData.menuWidth,
+                va,
+                ha,
+                left = 0,
+                top = 0,
+                bottomMenu,
+                rightMenu,
+                verAdjust = va = parseInt(option.verAdjust),
+                horAdjust = ha = parseInt(option.horAdjust);
+
+            if (!cntWin) {
+                cTop = cObj.offset().top;
+                cLeft = cObj.offset().left;
+
+                //to add relative position if no position is defined on containment
+                if (cObj.css('position') == 'static') {
+                    cObj.css('position', 'relative');
+                }
+            }
+
+            if (option.displayAround == 'cursor') {
+                left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
+                top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
+                bottomMenu = top + menuHeight;
+                rightMenu = left + menuWidth;
+                //max height and width of context menu
+                if (bottomMenu > cHeight) {
+                    if (top - menuHeight < 0) {
+                        if (bottomMenu - cHeight < menuHeight - top) {
+                            top = cHeight - menuHeight;
+                            va = -1 * va;
+                        } else {
+                            top = 0;
+                            va = 0;
+                        }
+                    } else {
+                        top = top - menuHeight;
+                        va = -1 * va;
+                    }
+                }
+                if (rightMenu > cWidth) {
+                    if (left - menuWidth < 0) {
+                        if (rightMenu - cWidth < menuWidth - left) {
+                            left = cWidth - menuWidth;
+                            ha = -1 * ha;
+                        } else {
+                            left = 0;
+                            ha = 0;
+                        }
+                    } else {
+                        left = left - menuWidth;
+                        ha = -1 * ha;
+                    }
+                }
+            } else if (option.displayAround == 'trigger') {
+                var triggerHeight = trigger.outerHeight(true),
+                    triggerWidth = trigger.outerWidth(true),
+                    triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
+                    triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
+                    leftShift = triggerWidth;
+
+                left = triggerLeft + triggerWidth;
+                top = triggerTop;
+
+                bottomMenu = top + menuHeight;
+                rightMenu = left + menuWidth;
+                //max height and width of context menu
+                if (bottomMenu > cHeight) {
+                    if (top - menuHeight < 0) {
+                        if (bottomMenu - cHeight < menuHeight - top) {
+                            top = cHeight - menuHeight;
+                            va = -1 * va;
+                        } else {
+                            top = 0;
+                            va = 0;
+                        }
+                    } else {
+                        top = top - menuHeight + triggerHeight;
+                        va = -1 * va;
+                    }
+                }
+                if (rightMenu > cWidth) {
+                    if (left - menuWidth < 0) {
+                        if (rightMenu - cWidth < menuWidth - left) {
+                            left = cWidth - menuWidth;
+                            ha = -1 * ha;
+                            leftShift = -triggerWidth;
+                        } else {
+                            left = 0;
+                            ha = 0;
+                            leftShift = 0;
+                        }
+                    } else {
+                        left = left - menuWidth - triggerWidth;
+                        ha = -1 * ha;
+                        leftShift = -triggerWidth;
+                    }
+                }
+                //test end
+                if (option.position == 'top') {
+                    top = triggerTop - menuHeight;
+                    va = verAdjust;
+                    left = left - leftShift;
+                } else if (option.position == 'left') {
+                    left = triggerLeft - menuWidth;
+                    ha = horAdjust;
+                } else if (option.position == 'bottom') {
+                    top = triggerTop + triggerHeight;
+                    va = verAdjust;
+                    left = left - leftShift;
+                } else if (option.position == 'right') {
+                    left = triggerLeft + triggerWidth;
+                    ha = horAdjust;
+                }
+            }
+
+            //applying css property
+            var cssObj = {
+                'position': cntWin || btChck ? 'fixed' : 'absolute',
+                'display': 'inline-block',
+                'height': '',
+                'width': ''
+            };
+
+            //to get position from offset parent
+            if (option.left != 'auto') {
+                left = iMethods.getPxSize(option.left, cWidth);
+            }
+            if (option.top != 'auto') {
+                top = iMethods.getPxSize(option.top, cHeight);
+            }
+            if (!cntWin) {
+                var oParPos = trigger.offsetParent().offset();
+                if (btChck) {
+                    left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
+                    top = top + cTop - (0, _jquery2.default)(window).scrollTop();
+                } else {
+                    left = left - (cLeft - oParPos.left);
+                    top = top - (cTop - oParPos.top);
+                }
+            }
+            cssObj.left = left + ha + 'px';
+            cssObj.top = top + va + 'px';
+
+            menu.css(cssObj);
+
+            //to call after open call back
+            option.afterOpen.call(this, clbckData, e);
+
+            //to add current menu class
+            if (trigger.closest('.iw-contextMenu').length == 0) {
+                (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                menu.addClass('iw-curMenu');
+            }
+
+            var dataParm = {
+                trigger: trigger,
+                menu: menu,
+                option: option,
+                method: trgrData.method
+            };
+            (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
+            (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
+            if (option.winEventClose) {
+                (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
+            }
+        },
+
+        scrollEvent: function scrollEvent(e) {
+            iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+        },
+
+        clickEvent: function clickEvent(e) {
+            var button = e.data.trigger.get(0);
+
+            if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
+                iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+            }
+        },
+        keyEvent: function keyEvent(e) {
+            e.preventDefault();
+            var menu = e.data.menu,
+                option = e.data.option,
+                keyCode = e.keyCode;
+            // handle cursor keys
+            if (keyCode == 27) {
+                iMethods.closeContextMenu(option, e.data.trigger, menu, e);
+            }
+            if (e.data.method == 'menu') {
+                var curMenu = (0, _jquery2.default)('.iw-curMenu'),
+                    optList = curMenu.children('li:not(.iw-mDisable)'),
+                    selected = optList.filter('.iw-mSelected'),
+                    index = optList.index(selected),
+                    focusOn = function focusOn(elm) {
+                    iMethods.selectMenu(curMenu, elm);
+                    var menuData = elm.data('iw-menuData');
+                    if (menuData) {
+                        iMethods.eventHandler.call(elm[0], e);
+                    }
+                },
+                    first = function first() {
+                    focusOn(optList.filter(':first'));
+                },
+                    last = function last() {
+                    focusOn(optList.filter(':last'));
+                },
+                    next = function next() {
+                    focusOn(optList.filter(':eq(' + (index + 1) + ')'));
+                },
+                    prev = function prev() {
+                    focusOn(optList.filter(':eq(' + (index - 1) + ')'));
+                },
+                    subMenu = function subMenu() {
+                    var menuData = selected.data('iw-menuData');
+                    if (menuData) {
+                        iMethods.eventHandler.call(selected[0], e);
+                        var selector = menuData.menu;
+                        selector.addClass('iw-curMenu');
+                        curMenu.removeClass('iw-curMenu');
+                        curMenu = selector;
+                        optList = curMenu.children('li:not(.iw-mDisable)');
+                        selected = optList.filter('.iw-mSelected');
+                        first();
+                    }
+                },
+                    parMenu = function parMenu() {
+                    var selector = curMenu.data('iw-menuData').trigger;
+                    var parMenu = selector.closest('.iw-contextMenu');
+                    if (parMenu.length != 0) {
+                        curMenu.removeClass('iw-curMenu').css('display', 'none');
+                        parMenu.addClass('iw-curMenu');
+                    }
+                };
+                switch (keyCode) {
+                    case 13:
+                        selected.click();
+                        break;
+                    case 40:
+                        index == optList.length - 1 || selected.length == 0 ? first() : next();
+                        break;
+                    case 38:
+                        index == 0 || selected.length == 0 ? last() : prev();
+                        break;
+                    case 33:
+                        first();
+                        break;
+                    case 34:
+                        last();
+                        break;
+                    case 37:
+                        parMenu();
+                        break;
+                    case 39:
+                        subMenu();
+                        break;
+                }
+            }
+        },
+        closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
+
+            //unbind all events from top DOM
+            (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
+            (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
+            (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
+            (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+            (0, _jquery2.default)(document).focus();
+
+            //call close function
+            option.onClose.call(this, {
+                trigger: trigger,
+                menu: menu
+            }, e);
+        },
+        getPxSize: function getPxSize(size, of) {
+            if (!isNaN(size)) {
+                return size;
+            }
+            if (size.indexOf('%') != -1) {
+                return parseInt(size) * of / 100;
+            } else {
+                return parseInt(size);
+            }
+        },
+        selectMenu: function selectMenu(menu, elm) {
+            //to select the list
+            var selected = menu.find('li.iw-mSelected'),
+                submenu = selected.find('.iw-contextMenu');
+            if (submenu.length != 0 && selected[0] != elm[0]) {
+                submenu.fadeOut(100);
+            }
+            selected.removeClass('iw-mSelected');
+            elm.addClass('iw-mSelected');
+        },
+        menuHover: function menuHover(menu) {
+            var lastEventTime = Date.now();
+            menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
+                //to make curmenu
+                (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                menu.addClass('iw-curMenu');
+                iMethods.selectMenu(menu, (0, _jquery2.default)(this));
+            });
+        },
+        createMenuList: function createMenuList(trgr, selector, option) {
+            var baseTrigger = option.baseTrigger,
+                randomNum = Math.floor(Math.random() * 10000);
+            if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
+                var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
+                _jquery2.default.each(selector, function (index, selObj) {
+                    var name = selObj.name,
+                        fun = selObj.fun || function () {},
+                        subMenu = selObj.subMenu,
+                        img = selObj.img || '',
+                        icon = selObj.icon || '',
+                        title = selObj.title || "",
+                        className = selObj.className || "",
+                        disable = selObj.disable,
+                        list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
+
+                    if (img) {
+                        list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                    } else if (icon) {
+                        list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
+                    }
+                    //to add disable
+                    if (disable) {
+                        list.addClass('iw-mDisable');
+                    }
+
+                    if (!subMenu) {
+                        list.bind('click.contextMenu', function (e) {
+                            fun.call(this, {
+                                trigger: baseTrigger,
+                                menu: menuList
+                            }, e);
+                        });
+                    }
+
+                    //to create sub menu
+                    menuList.append(list);
+                    if (subMenu) {
+                        list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
+                        iMethods.subMenu(list, subMenu, baseTrigger, option);
+                    }
+                });
+
+                if (baseTrigger.index(trgr[0]) == -1) {
+                    trgr.append(menuList);
+                } else {
+                    var par = option.containment == window ? 'body' : option.containment;
+                    (0, _jquery2.default)(par).append(menuList);
+                }
+
+                iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
+                return '#iw-contextMenu' + randomNum;
+            } else if ((0, _jquery2.default)(selector).length != 0) {
+                var element = (0, _jquery2.default)(selector);
+                element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
+
+                //to create subMenu
+                element.find('ul').each(function (index, element) {
+                    var subMenu = (0, _jquery2.default)(this),
+                        parent = subMenu.parent('li');
+                    parent.append('<div class="iw-cm-arrow-right" />');
+                    subMenu.addClass('iw-contextMenuCurrent');
+                    iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
+                });
+                iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
+                return '.iw-contextMenu' + randomNum;
+            }
+        },
+        subMenu: function subMenu(trigger, selector, baseTrigger, option) {
+            trigger.contextMenu('menu', selector, {
+                triggerOn: option.subMenuTriggerOn,
+                displayAround: 'trigger',
+                position: 'auto',
+                mouseClick: 'left',
+                baseTrigger: baseTrigger,
+                containment: option.containment
+            });
+        },
+        onOff: function onOff(menu) {
+
+            menu.find('.iw-mOverlay').remove();
+            menu.find('.iw-mDisable').each(function () {
+                var list = (0, _jquery2.default)(this);
+                list.append('<div class="iw-mOverlay"/>');
+                list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
+                    event.stopPropagation();
+                });
+            });
+        },
+        optionOtimizer: function optionOtimizer(method, option) {
+            if (!option) {
+                return;
+            }
+            if (method == 'menu') {
+                if (!option.mouseClick) {
+                    option.mouseClick = 'right';
+                }
+            }
+            if (option.mouseClick == 'right' && option.triggerOn == 'click') {
+                option.triggerOn = 'contextmenu';
+            }
+
+            if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
+                option.displayAround = 'trigger';
+            }
+            return option;
+        }
+    };
+}
+
+exports.initContextMenuLib = initContextMenuLib;
+
+/***/ }),
+/* 156 */,
+/* 157 */,
+/* 158 */,
+/* 159 */,
+/* 160 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(161);
+
+var _utils = __webpack_require__(5);
+
+var _debug = __webpack_require__(138);
+
+var _textfieldlisteners = __webpack_require__(14);
+
+var _serverresponse = __webpack_require__(6);
+
+var _userfeedback = __webpack_require__(4);
+
+var _override = __webpack_require__(137);
+
+var _uifunc = __webpack_require__(13);
+
+var _useradmin = __webpack_require__(163);
+
+var _useradmin2 = _interopRequireDefault(_useradmin);
+
+var _settingsadmin = __webpack_require__(164);
+
+var _settingsadmin2 = _interopRequireDefault(_settingsadmin);
+
+var _reservationadmin = __webpack_require__(165);
+
+var _reservationadmin2 = _interopRequireDefault(_reservationadmin);
+
+var _debugadmin = __webpack_require__(166);
+
+var _debugadmin2 = _interopRequireDefault(_debugadmin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+(function ($) {
+
+	$(function () {
+		//global vars
+		var selectedBalUser,
+		    eventsToDelete = [],
+		    eventsModified = {},
+		    eventsConfirmed = [],
+		    reservationSources = [],
+		    reservationSourcesMap = {},
+		    lastReservationResource = '',
+		    lastBalClick = null,
+		    userEmails = [],
+		    releventRes = null,
+		    persistentRelEvent = null,
+		    eventCount = 0,
+		    lastequipclick = $('.iam-existing-list li[selected]'),
+		    updatedAccountTypes = {},
+		    updatedRentalTypes = {},
+		    userBalances = {},
+		    eqLateFee = null,
+		    availableTags,
+		    comparableTags,
+		    didLoadAllRes = false,
+		    releventResEventStart = null,
+		    thisRentalDays;
+
+		var ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+
+		var debugadmin = new _debugadmin2.default();
+
+		//url reload functions
+
+		var getUrlArg = function getUrlArg(argname) {
+			var url = new URL(window.location.href);
+			return url.searchParams.get(argname);
+		};
+
+		var findItemAgain = function findItemAgain(list) {
+			if (window.location.href.indexOf('&finditem=') == -1) return;
+
+			var target = getUrlArg('finditem').split('_').join(' ');
+
+			$.each(list.children('li'), function (index, el) {
+				if ($(this).html().trim() == target) {
+					$(this).click();
+					return false;
+				}
+			});
+		};
+
+		var findTableItemAgain = function findTableItemAgain(table, colNum) {
+			if (window.location.href.indexOf('&finditem=') == -1) return;
+
+			var target = getUrlArg('finditem').split('_').join(' ');
+
+			$.each(table.find('tbody').find('tr'), function (index, el) {
+				if ($(this).find('td').eq(colNum).html().trim() == target) {
+					$(this).click();
+					return false;
+				}
+			});
+		};
+
+		var reloadAndFind = function reloadAndFind(target) {
+			window.location.href = window.location.href + '&finditem=' + target.trim().split(' ').join('_');
+		};
+
+		//charge table
+
+		var initChargeTableActions = function initChargeTableActions() {
+			$.each($('tr'), function (index, val) {
+				if (index != 0) {
+					if ($(this).children('.iam-charge-table-approver').html() == 'n/a') {
+						$(this).append('<td><div class="iam-button iam-approve-charge-button" data-status="0">approve</div></td>');
+					} else {
+						$(this).append('<td><div class="iam-secondary-button iam-approve-charge-button" data-status="1">cancel</div></td>');
+					}
+				}
+			});
+			initApproveChargeButtonListener();
+		};
+
+		var initChargeTable = function initChargeTable() {
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'admin_get_charge_table_json' },
+				success: function success(data) {
+					data = JSON.parse(data);
+					makeEditableTableHeaders(data, '#iam-table-container', 'iam-charge-table');
+					initSearchWithTableDataSetListener($('.iam-search'), data['data'], ['username', 'email', 'account_type', 'certifications', 'equipment_used', 'Charge_Description', 'date', 'approver', 'Comment', 'values'], function (searchResults) {
+						$('#iam-table-container').pagination({
+							position: 'top',
+							pageSize: 10,
+							dataSource: searchResults,
+							callback: function callback(pgData, pagination) {
+								makeEditableTableBody(pgData, '#iam-table-container', 'iam-charge-table', chargeTableEditingCallback);
+								initChargeTableActions();
+							}
+						});
+					});
+					updateSearch();
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		var editableTableRowData = [];
+
+		var makeEditableTableHeaders = function makeEditableTableHeaders(json, container, tableName) {
+			var table = '<table id="' + tableName + '"><thead><tr class="table-header">',
+			    rowData = [];
+			for (var i = 0; i < json.metadata.length; i++) {
+				var editMark = json.metadata[i]['editable'] ? '<b style="color:red;">*</b>' : '';
+				table += '<th>' + json.metadata[i]['label'] + editMark + '</th>';
+				editableTableRowData.push(json.metadata[i]);
+			}
+			table += '</tr></thead><tbody></tbody></table>';
+			$(container).append(table);
+		};
+
+		var makeEditableTableBody = function makeEditableTableBody(json, container, tableName, finishEditingCallback) {
+			if (typeof json == 'string') {
+				json = JSON.parse(json);
+			}
+			if (typeof finishEditingCallback === 'undefined') {
+				finishEditingCallback = function finishEditingCallback() {
+					//do nothing;
+				};
+			}
+			var tbody = '',
+			    rowData = [];
+			for (var i = 0; i < json.length; i++) {
+				tbody += '<tr data-id="' + json[i].id + '">';
+				for (var k = 0; k < editableTableRowData.length; k++) {
+					var d = json[i].values;
+					var val = d[editableTableRowData[k].name];
+					var editClass = editableTableRowData[k].editable ? 'table-editable' : '';
+					switch (editableTableRowData[k].datatype) {
+						case 'varchar':
+							tbody += '<td class="' + tableName + '-' + editableTableRowData[k].name + ' table-varchar ' + editClass + '" data-field="' + editableTableRowData[k].name + '">' + val;
+							break;
+						case 'text':
+							tbody += '<td class="' + tableName + '-' + editableTableRowData[k].name + ' table-text ' + editClass + '" data-field="' + editableTableRowData[k].name + '">' + val;
+							break;
+					}
+					tbody += '</td>';
+				}
+				tbody += '</tr>';
+			}
+			$(container).find('tbody').empty();
+			$(container).find('tbody').append(tbody);
+			editableTableTDListener(tableName, finishEditingCallback);
+		};
+		var editableTableTDListener = function editableTableTDListener(tableName, finishEditingCallback) {
+			$('table#' + tableName + ' td.table-editable').click(function (event) {
+				$(this).off();
+				if ($(this).hasClass('table-varchar')) {
+					$(this).html('<input type="text" class="table-active-varchar table-active-data" value="' + $(this).html() + '">');
+				} else if ($(this).hasClass('table-text')) {
+					$(this).html('<textarea class="table-active-text table-active-data">' + $(this).html() + '</textarea>');
+				} else {
+					alert('an error occured while editing the row! :(');
+					return;
+				}
+				$('.table-active-data').focus();
+				$('.table-active-data').blur(function (event) {
+					var td = $(this).parents('td'),
+					    ele = td[0],
+					    v = null;
+					if ($(this).hasClass('table-active-varchar')) {
+						v = $(this).val();
+						td.html(v);
+					} else if ($(this).hasClass('table-active-text')) {
+						v = $(this).val();
+						td.html(v);
+					}
+					$('table#' + tableName + ' td.table-editable').off();
+					editableTableTDListener(tableName, finishEditingCallback);
+					finishEditingCallback(ele, td.parents('tr').data('id'), td.data('field'), v);
+				});
+			});
+		};
+		var chargeTableEditingCallback = function chargeTableEditingCallback(ele, rowID, rowField, rowVal) {
+			(0, _userfeedback.submissionStart)();
+			$.ajax({
+				url: ajaxurl,
+				type: 'POST',
+				data: { action: 'admin_update_charge_row', id: rowID, field: rowField, val: rowVal },
+				success: function success(data) {
+					(0, _serverresponse.handleServerResponse)(data);
+					(0, _userfeedback.submissionEnd)();
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+					(0, _userfeedback.submissionEnd)();
+				}
+			});
+		};
+
+		var copyToClipboard = function copyToClipboard(elem) {
+			// create hidden text element, if it doesn't already exist
+			var targetId = "_hiddenCopyText_";
+			var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
+			var origSelectionStart, origSelectionEnd;
+			if (isInput) {
+				// can just use the original source element for the selection and copy
+				target = elem;
+				origSelectionStart = elem.selectionStart;
+				origSelectionEnd = elem.selectionEnd;
+			} else {
+				// must use a temporary form element for the selection and copy
+				target = document.getElementById(targetId);
+				if (!target) {
+					var target = document.createElement("textarea");
+					target.style.position = "absolute";
+					target.style.left = "-9999px";
+					target.style.top = "0";
+					target.id = targetId;
+					document.body.appendChild(target);
+				}
+				target.textContent = elem.textContent;
+			}
+			// select the content
+			var currentFocus = document.activeElement;
+			target.focus();
+			target.setSelectionRange(0, target.value.length);
+
+			// copy the selection
+			var succeed;
+			try {
+				succeed = document.execCommand("copy");
+			} catch (e) {
+				succeed = false;
+			}
+			// restore original focus
+			if (currentFocus && typeof currentFocus.focus === "function") {
+				currentFocus.focus();
+			}
+
+			if (isInput) {
+				// restore prior selection
+				elem.setSelectionRange(origSelectionStart, origSelectionEnd);
+			} else {
+				// clear temporary content
+				target.textContent = "";
+			}
+			return succeed;
+		};
+
+		var eventToolTip = function eventToolTip(event, element) {
+			var e = $(element);
+			e.attr('title', 'Name: ' + event.fullname + '\n Email: ' + event.email + ' \n Equipment: ' + event.equipment + '\n Checked In: ' + event.in + '\n Checked Out: ' + event.out);
+		};
+
+		var makeSubmitPopup = function makeSubmitPopup(heading, body, callback, a) {
+			$('body').append('<div class="iam-popup iam-submit-popup" style="width:150px;left:30%;"><div class="iam-popup-header">' + heading + '<i style="float:right;" class="fa fa-close fa-3 iam-submit-popup-close"></i></div><div class="iam-popup-body">' + body + '<br/><input type="submit" class="iam-popup-submit iam-autheticate-submit"></div></div>');
+			initClosePopupListener();
+			$('.iam-submit-popup input[type=submit]').click(function (event) {
+				callback(a);
+				$('.iam-popup').remove();
+			});
+		};
+
+		var initClosePopupListener = function initClosePopupListener() {
+			$('.iam-submit-popup-close').click(function (event) {
+				$('.iam-popup').remove();
+			});
+		};
+
+		var unsupportedFile = function unsupportedFile(element) {
+			element.value = null;
+			alert('Unsupported file type!\n Supported file types: .pdf, .doc, .jpg, .jpeg, .png');
+		};
+
+		var tooManyFiles = function tooManyFiles(element) {
+			element.value = null;
+			alert('One file per upload field!');
+		};
+
+		var checkFile = function checkFile(element) {
+			//TODO: check file size
+			if (element.files.length > 1) {
+				tooManyFiles();
+				return false;
+			}
+			if (window.FileReader && window.Blob) {
+				var blob = element.files[0];
+				var fileReader = new FileReader();
+				fileReader.onloadend = function (e) {
+					var arr = new Uint8Array(e.target.result).subarray(0, 4);
+					var header = "";
+					for (var i = 0; i < arr.length; i++) {
+						header += arr[i].toString(16);
+					}
+					header.toLowerCase();
+					switch (header) {
+						case "ffd8ffdb":
+						case "ffd8ffe0":
+						case "ffd8ffe1":
+						case "ffd8ffe2":
+							//jpeg or jpg
+							break;
+						case "89504E47":
+						case "89504e47":
+							//png
+							break;
+						case "25504446":
+							//application/pdf
+							break;
+						case "d0cf11e0":
+						case "D0CF11E0":
+							//msoffice file
+							var ext = blob.name.trim().split('.');
+							ext = ext[ext.length - 1];
+							if (ext.toLowerCase() !== 'doc') {
+								unsupportedFile(element);
+							}
+							break;
+						default:
+							unsupportedFile(element);
+							break;
+					}
+				};
+				fileReader.readAsArrayBuffer(blob);
+			} else {
+				console.warn("FILE APIs not supported");
+			}
+		};
+
+		var updateExistingFiles = function updateExistingFiles() {
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'admin_update_existing_file_list', x: $('#x').val() },
+				success: function success(data) {
+					data = (0, _serverresponse.handleServerResponse)(data);
+					$('#iam-existing-files').empty();
+					$('#iam-existing-files').append(data);
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		var make_id = function make_id(element_id) {
+			if (element_id.substring(0, 1) != "#") element_id = "#" + element_id;
+			return element_id;
+		};
+
+		var prepare_new_form = function prepare_new_form(form_name) {
+			form_name = make_id(form_name);
+			var children = $(form_name).children();
+			for (var i = 0; i < children.length; i++) {
+				var current = children[i];
+				if (current.tagName == "INPUT") {
+					current.attr('value', '');
+				} else if (current.tagName == "TEXTAREA") {
+					current.html('');
+				}
+			}
+		};
+
+		var image_sizer = function image_sizer(img_element) {
+			if ($(img_element).attr('data-size') == 'large') {
+				$(img_element).attr('data-size', 'small');
+				$(img_element).width($(img_element).width() / 2);
+			} else {
+				$(img_element).attr('data-size', 'large');
+				$(img_element).width($(img_element).width() * 2);
+			}
+		};
+
+		var swap_visible_forms = function swap_visible_forms() {
+			if ($('#iam-update-form').length < 1) {
+				$('#iam-new-form').toggleClass('iam-ninja');
+				return;
+			}
+			if ($('#iam-new-form').hasClass('iam-ninja')) {
+				$('#iam-new-form').removeClass('iam-ninja');
+				$('#iam-update-form').addClass('iam-ninja');
+			} else {
+				$('#iam-update-form').removeClass('iam-ninja');
+				$('#iam-new-form').addClass('iam-ninja');
+			}
+		};
+
+		var make_form_visible = function make_form_visible(name) {
+			name = make_id(name);
+			if (!$(name).hasClass('iam-ninja')) return;
+			swap_visible_forms();
+		};
+
+		var loadComparableTags = function loadComparableTags() {
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				async: false,
+				data: { action: 'admin_get_tags', request: 'all' },
+				success: function success(data) {
+					availableTags = (0, _serverresponse.handleServerResponse)(data);
+					comparableTags = [];
+					for (var i = 0; i < availableTags.length; i++) {
+						comparableTags.push(availableTags[i].toLowerCase());
+					}
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		//MULTI-PAGE LISTENERS
+
+		var updateSearchOnLoad = function updateSearchOnLoad() {
+			if ($('.iam-search').val().length > 0) {
+				$('.iam-search').keyup();
+			}
+		};
+
+		var updateSearch = function updateSearch() {
+			if ($('.iam-search').next('input[type=submit]').length > 0) $('.iam-search').next('input[type=submit]').click();else $('.iam-search').keyup();
+		};
+
+		var paginationRefresh = function paginationRefresh() {
+			$('.paginationjs-page.active').click();
+		};
+
+		var initSearchWithTableDataSetListener = function initSearchWithTableDataSetListener(searchElement, dataset, fields, searchCallback) {
+			$(searchElement).next('input[type=submit]').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				var targetString = $(searchElement).val();
+				if (targetString == '') {
+					searchCallback(dataset);
+					(0, _userfeedback.submissionEnd)();
+					event.preventDefault();
+					return false;
+				}
+				var filtered = dataset.filter(function (a) {
+					return dataContainsString(targetString, a, fields);
+				});
+				searchCallback(filtered);
+				(0, _userfeedback.submissionEnd)();
+				event.preventDefault();
+				return false;
+			});
+		};
+
+		var dataContainsString = function dataContainsString(string, data, fields) {
+			var add = false;
+			for (var key in data) {
+				if (fields.indexOf(key) == -1 && fields.length > 0) continue;
+				var val = data[key];
+				if (typeof val == 'string') {
+					if (val.indexOf(string) != -1) add = true;
+				} else if (Array.isArray(val)) {
+					add = dataContainsString(string, val, fields);
+				} else if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) == 'object') {
+					//debugger;
+					add = dataContainsString(string, val, fields);
+				}
+				if (add) return true;
+			}
+			return add;
+		};
+
+		var initDeleteFormListener = function initDeleteFormListener(formtype) {
+			$('.iam-delete-form').click(function (event) {
+				if (confirm("Are you sure you want to delete " + $('#iam-update-form #name').val() + "?") === true) {
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: { action: 'admin_delete_form', x: $('#x').val(), type: formtype },
+						success: function success(data) {
+							(0, _serverresponse.handleServerResponse)(data);
+							window.location.reload();
+						},
+						error: function error(data) {
+							(0, _serverresponse.handleServerError)(data, new Error());
+						}
+					});
+				}
+			});
+		};
+
+		var initExistingFileListener = function initExistingFileListener() {
+			$('.iam-existing-upload-x').click(function (event) {
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_delete_supporting_file', filename: $(this).parent().text() },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						updateExistingFiles();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var initImageListener = function initImageListener() {
+			$('.iam-image').click(function (event) {
+				image_sizer(this);
+			});
+		};
+
+		//MAIN MENU LISTENERS
+
+		var initRentalTypeRowListener = function initRentalTypeRowListener() {
+			$('.rental-duration').off();
+			(0, _textfieldlisteners.numbersOnlyListener)($('.rental-duration'));
+			$('.rental-duration').change(function (event) {
+				var n = $(this).closest('.rental-period-container').data('id');
+				if (n == '') {
+					return;
+				}
+				updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
+					'label': $(this).closest('.rental-period-container').find('.rental-label').val(),
+					'duration': $(this).val()
+				};
+			});
+			$('.rental-label').change(function (event) {
+				var n = $(this).closest('.rental-period-container').data('id');
+				if (typeof n == 'undefined' || n == '') {
+					return;
+				}
+				updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
+					'duration': $(this).closest('.rental-period-container').find('.rental-duration').val(),
+					'label': $(this).val()
+				};
+			});
+			$('.default-rental-type').click(function (event) {
+				var n = $(this).closest('.rental-period-container').data('id');
+				if (typeof n == 'undefined' || n == '') {
+					return;
+				}
+				updatedRentalTypes[$(this).closest('.rental-period-container').data('id')] = {
+					'duration': $(this).closest('.rental-period-container').find('.rental-duration').val(),
+					'label': $(this).closest('.rental-period-container').find('.rental-label').val()
+
+				};
+			});
+			initDeleteRentalTypeButtonListener();
+		};
+
+		var initAddRentalTypeButtonListener = function initAddRentalTypeButtonListener() {
+			$('.template-rental-seg').removeClass('iam-ninja');
+			var templateRentalSeg = $('.template-rental-seg').prop('outerHTML');
+			$('.template-rental-seg').remove();
+
+			$('.iam-add-rental-type').click(function (event) {
+				if ($('.no-data-found').length > 0) {
+					$('.no-data-found').remove();
+				}
+				$('.rental-type-master-container').append(templateRentalSeg);
+				initRentalTypeRowListener();
+			});
+		};
+
+		var initDeleteRentalTypeButtonListener = function initDeleteRentalTypeButtonListener() {
+			$('.iam-delete-rental-type').off();
+			$('.iam-delete-rental-type').click(function (event) {
+				var that = this;
+				if ($(this).closest('.rental-period-container').find('.default-rental-type').is(':checked')) {
+					alert('Cannot delete the default rental type. Please assign another to default then delete this one.');
+					return;
+				}
+				if ($('.rental-label').length < 2) {
+					alert('Cannot delete the last rental type.');
+					return;
+				}
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_delete_rental_type', toDelete: $(this).closest('.rental-period-container').data('id') },
+					success: function success(data) {
+						(0, _userfeedback.submissionEnd)();
+						(0, _serverresponse.handleServerResponse)(data);
+						$(that).closest('.rental-period-container').remove();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+				/*
+    var toDelete = $(this).parent().parent().find('.rental-label').val();
+    var list = '<select class="iam-select iam-delete-rental-type-select">';
+    	$('.rental-label').each(function(index, el) {
+    		if ($(this).val()!=toDelete) {
+    			list+='<option value="'+$(this).closest('tr').data('id')+'">'+$(this).val()+'</option>';
+    		}
+    	});
+    	list+='</select>';
+    	deleteRentalTypeListener.bind(this);
+    	if ($(this).parent().parent().data('id')=='') {
+    		$(this).parent().parent().remove();
+    		return;
+    	}
+    	makeSubmitPopup('Delete Rental Type','<p style="color:red;">Deleting: '+toDelete+'</p><p>Select a replacement rental type for equipment that currently have '+toDelete+'.</p>'+list,deleteRentalTypeListener,[$(this).closest('tr')]);*/
+			});
+		};
+
+		var resetDefault = function resetDefault() {
+			for (var item in updatedRentalTypes) {
+				updatedRentalTypes[item]['default'] = 0;
+			}
+		};
+
+		var initSubmitRentalTypeListener = function initSubmitRentalTypeListener() {
+			$('.iam-rental-types-submit').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				var newTypes = [];
+
+				$('.rental-period-container').each(function (index, el) {
+					if ($(this).data('id') == '' && $(this).find('.rental-label').val().length > 0 && $(this).find('.rental-duration').val().length > 0) {
+						var duration = $(this).find('.rental-duration').val();
+						var isDefault = $(this).find('.default-rental-type').is(':checked') ? 1 : 0;
+						if (isDefault) resetDefault();
+						newTypes.push({
+							'label': $(this).find('.rental-label').val(),
+							'duration': duration,
+							'default': isDefault
+						});
+					}
+				});
+
+				var checked = $('.default-rental-type:checked').closest('.rental-period-container').data('id');
+				if (checked in updatedRentalTypes) {
+					resetDefault();
+					updatedRentalTypes[checked]['default'] = 1;
+				}
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { 'action': 'admin_update_rental_type',
+						'updated_rental_types': updatedRentalTypes,
+						'new_rental_types': newTypes },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						(0, _userfeedback.submissionEnd)();
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var initAccountTypeRowListener = function initAccountTypeRowListener() {
+			$('.iam-account-discount').off();
+			(0, _textfieldlisteners.numbersOnlyListener)($('.iam-account-discount'));
+			(0, _textfieldlisteners.maxLengthListener)($('.iam-account-discount'), 3);
+			//detects changes in account and type
+			$('.iam-account-discount').change(function (event) {
+				var n = $(this).parent().parent().data('nid');
+				if (typeof n == 'undefined' || n == '') {
+					return;
+				}
+				updatedAccountTypes[$(this).parent().parent().data('nid')] = {
+					'type': $(this).parent().parent().children('td').children('.iam-account-type').val(),
+					'discount': $(this).val()
+				};
+			});
+			$('.iam-account-type').change(function (event) {
+				var n = $(this).parent().parent().data('nid');
+				if (typeof n == 'undefined' || n == '') {
+					return;
+				}
+				updatedAccountTypes[$(this).parent().parent().data('nid')] = {
+					'discount': $(this).parent().parent().children('td').children('.iam-account-discount').val(),
+					'type': $(this).val()
+				};
+			});
+			initDeleteAccountTypeButtonListener();
+		};
+
+		var initAddAccountTypeButtonListener = function initAddAccountTypeButtonListener() {
+			$('.iam-add-account-type').click(function (event) {
+				if ($('.iam-account-type-form .iam-no-data-row').length > 0) {
+					$('.iam-account-type-form .iam-no-data-row').remove();
+				}
+				$('.iam-account-type-form table tbody').append('<tr data-nid=""><td><label>Account Type</label><br /><label>Discount (0-100)</label></td>	<td><input type="text" placeholder="example: student, faculty, alumni" class="iam-account-type"><br /><input type="number" class="iam-account-discount"></td><td><i class="iam-delete-account-type fa fa-close fa-3"></i></td></tr>');
+				initAccountTypeRowListener();
+			});
+		};
+
+		var initDeleteAccountTypeButtonListener = function initDeleteAccountTypeButtonListener() {
+			$('.iam-delete-account-type').off();
+			$('.iam-delete-account-type').click(function (event) {
+				var toDeleteAccountType = $(this).parent().parent().children('td').children('.iam-account-type').val();
+				var list = '<select class="iam-select iam-delete-account-type-select">';
+				$('.iam-account-type').each(function (index, el) {
+					if ($(this).val() != toDeleteAccountType) {
+						list += '<option value="' + $(this).val() + '">' + $(this).val() + '</option>';
+					}
+				});
+				list += '</select>';
+				deleteAccountTypeListener.bind(this);
+				if ($(this).parent().parent().data('nid') == '') {
+					$(this).parent().parent().remove();
+					return;
+				}
+				makeSubmitPopup('Delete Account Type', '<p style="color:red;">Deleting: ' + toDeleteAccountType + '</p><p>Select a replacement account type for users who currently have ' + toDeleteAccountType + '.</p>' + list, deleteAccountTypeListener, [$(this).parent().parent()]);
+			});
+		};
+
+		var deleteAccountTypeListener = function deleteAccountTypeListener(a) {
+			$.ajax({
+				url: ajaxurl,
+				type: 'POST',
+				data: { action: 'admin_delete_account_type', replacement: $('.iam-delete-account-type-select').val(), nid: a[0].data('nid') },
+				success: function success(data) {
+					(0, _serverresponse.handleServerResponse)(data);
+					a[0].remove();
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+
+		var initSubmitAccountTypeListener = function initSubmitAccountTypeListener() {
+			$('.iam-account-types-submit').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				var newAccountTypes = [];
+				$('.iam-account-type-form table tbody tr').each(function (index, el) {
+					if (typeof $(this).data('id') == 'undefined' && $(this).children('td').children('.iam-account-type').val().length > 0) {
+						var discount = $(this).children('td').children('.iam-account-discount').val();
+						discount = discount > 0 ? discount : 0;
+						newAccountTypes.push({
+							'type': $(this).children('td').children('.iam-account-type').val(),
+							'discount': discount
+						});
+					}
+				});
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_update_account_type', updated_account_types: updatedAccountTypes, new_account_types: newAccountTypes },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						(0, _userfeedback.submissionEnd)();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		//EQUIPMENT LISTENERS
+
+		var initSubmitEquipmentFormListener = function initSubmitEquipmentFormListener() {
+			$('.iam-admin-submit-button').off();
+			$('.iam-admin-submit-button').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				var form = $('form#iam-update-form').hasClass('iam-ninja') ? $('form#iam-new-form') : $('form#iam-update-form');
+				var method = form.attr('id') == 'iam-new-form' ? 'n' : 'u';
+				var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0;
+				var slideShow = form.children('.iam-form-row').children('#slide-show').is(':checked') ? 1 : 0;
+				var tagsVal = form.children('.iam-form-row').children('.tags').val().trim();
+				if (tagsVal.substring(tagsVal.length - 1) == ',') {
+					tagsVal = tagsVal.substring(0, tagsVal.length - 1);
+				}
+				var equip_tags = tagsVal == '' ? [] : tagsVal.split(',');
+				var new_tags = [];
+				for (var i = 0; i < equip_tags.length; i++) {
+					equip_tags[i] = equip_tags[i].trim();
+					if (comparableTags.indexOf(equip_tags[i].toLowerCase()) == -1) {
+						new_tags.push(equip_tags[i]);
+					}
+				};
+				var formData = new FormData();
+				if (form.children('.iam-form-row').children('#photo').val() != '') {
+					formData.append('photo', form.children('.iam-form-row').children('#photo').prop('files')[0]);
+				}
+				formData.append('method', method);
+				formData.append('action', 'admin_equipment_action');
+				formData.append('name', form.children('.iam-form-row').children('#name').val());
+
+				formData.append('certification', form.children('.iam-form-row').children('#certification').val());
+				formData.append('description', form.children('.iam-form-row').children('#description').val());
+				formData.append('pricing-description', form.children('.iam-form-row').children('#pricing-description').val());
+				formData.append('internal-comments', form.children('.iam-form-row').children('#internal-comments').val());
+				formData.append('manufacturer-info', form.children('.iam-form-row').children('#manufacturer-info').val());
+				formData.append('serial-number', form.children('.iam-form-row').children('#serial-number').val());
+				if ($('.iam-rental-types-list').length > 0) formData.append('rental_type', form.find('.iam-rental-types-list').val());
+				formData.append('out-of-order', outOfOrder);
+				formData.append('on-slide-show', slideShow);
+				formData.append('tags', equip_tags);
+				formData.append('new_tags', new_tags);
+
+				if (method == 'u') formData.append('x', form.children('.iam-form-row').children('#x').val());
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: formData,
+					cache: false,
+					contentType: false,
+					processData: false,
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						reloadAndFind(form.children('.iam-form-row').children('#name').val());
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+						(0, _userfeedback.submissionEnd)();
+					}
+				});
+			});
+		};
+
+		var initTagAutoCompleteListener = function initTagAutoCompleteListener() {
+
+			//jquery ui code from http://jqueryui.com/autocomplete/#multiple
+			function split(val) {
+				return val.split(/,\s*/);
+			}
+			function extractLast(term) {
+				return split(term).pop();
+			}
+
+			$('.tags').bind("keydown", function (event) {
+				if (event.keyCode === $.ui.keyCode.TAB && $(this).autocomplete("instance").menu.active) {
+					event.preventDefault();
+				}
+			}).autocomplete({
+				minLength: 0,
+				source: function source(request, response) {
+					// delegate back to autocomplete, but extract the last term
+					response($.ui.autocomplete.filter(availableTags, extractLast(request.term)));
+				},
+				focus: function focus() {
+					// prevent value inserted on focus
+					return false;
+				},
+				select: function select(event, ui) {
+					var terms = split(this.value);
+					// remove the current input
+					terms.pop();
+					// add the selected item
+					terms.push(ui.item.value);
+					// add placeholder to get the comma-and-space at the end
+					terms.push("");
+					this.value = terms.join(", ");
+					return false;
+				}
+			});
+		};
+
+		var initNewEquipmentButtonListener = function initNewEquipmentButtonListener() {
+			$('#iam-new-equipment-button').click(function (event) {
+				make_form_visible('#iam-new-form');
+				prepare_new_form('#iam-new-form');
+			});
+		};
+
+		var initDuplicateEquipmentButtonListener = function initDuplicateEquipmentButtonListener() {
+			$('#iam-duplicate-equipment-button').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'duplicate_equipment', nid: $('#iam-update-form').children('.iam-form-row').children('#x').val() },
+					success: function success(data) {
+						reloadAndFind((0, _serverresponse.handleServerResponse)(data));
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var updateEquipmentEvents = function updateEquipmentEvents(newData) {
+			for (var i in newData) {
+				var c = newData[i];
+				$('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
+			}
+		};
+
+		var initCheckinCheckout = function initCheckinCheckout() {
+			userEmails = $('.iam-on-load-data').data('users').split(',');
+			console.log(userEmails);
+			$('.iam-er-user-emails').autocomplete({
+				source: userEmails
+			});
+
+			userBalances = $('.iam-on-load-data').data('balances');
+
+			eqLateFee = $('.iam-on-load-data').data('fee');
+
+			$('.iam-on-load-data').remove();
+		};
+
+		var makeRelevantReservation = function makeRelevantReservation(event) {
+			releventRes = event._id;
+			refreshResCal();
+		};
+
+		var updateEventsModified = function updateEventsModified(event) {
+			if (typeof event.nid != 'undefined') eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+		};
+
+		var initRentalButton = function initRentalButton() {
+			var erInfo = $('.iam-facility-data').data('facility');
+
+			$('.iam-er-action-button').off();
+			$('.iam-er-action-button.iam-er-checkout').off();
+			$('.iam-er-action-button.iam-er-checkout').click(function (event) {
+				resetEvents();
+				if ($('.iam-er-user-emails').val() == '') {
+					alert('please enter an email.');
+					return;
+				}
+
+				try {
+					if (eqLateFee > userBalances[$('.iam-er-user-emails').val()]) {
+						alert('This user has less than the late fee amount of $' + eqLateFee + '. They will not be able to pay late fees if they keep the equipment late. User balance: $' + userBalances[$('.iam-er-user-emails').val()]);
+					}
+				} catch (error) {
+					//nothing
+				}
+
+				$('.modal-header .fc-event').removeClass('iam-ninja');
+
+				$('#myModal').modal('show');
+
+				$('#myModal .modal-footer .btn-primary').off();
+
+				$('#myModal .modal-footer .btn-primary').click(function (event) {
+					if ($('.relevant-res').length < 1) {
+						alert('No Reservation Selected.');
+						return;
+					}
+
+					var relRes = $('.relevant-res'),
+					    chosen = null;
+					if (typeof relRes.data('nid') != 'undefined') {
+
+						chosen = { nid: relRes.data('nid'),
+							equipment: equip_name.split('_').join(' ') };
+					} else {
+						var events = $('.iam-cal').fullCalendar('clientEvents');
+
+						for (var i = 0; i < events.length; i++) {
+							if (events[i]._id == releventRes) {
+								releventResEventStart = events[i].start.format('YYYY-MM-DD');
+								chosen = {
+									user: useremail,
+									equipment: equip_name.split('_').join(' '),
+									start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
+									end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
+								};
+							}
+						}
+					}
+
+					if (chosen === null || releventResEventStart === null) {
+						alert("Error selecting reservation.");
+						return;
+					}
+
+					if (releventResEventStart != moment().format('YYYY-MM-DD')) {
+						alert("Please choose a rental period that begins today.");
+						return;
+					}
+
+					(0, _userfeedback.submissionStart)();
+					$('#myModal').modal('hide');
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: { action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes },
+						success: function success(data) {
+							updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
+							makeCalendarReservationsMulti();
+							(0, _userfeedback.submissionEnd)();
+						},
+						error: function error(data) {
+							(0, _serverresponse.handleServerError)(data, new Error());
+						}
+					});
+
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: { action: 'admin_bind_rental', ev: chosen },
+						success: function success(data) {
+							(0, _serverresponse.handleServerResponse)(data);
+							resetEvents();
+							(0, _userfeedback.submissionEnd)();
+							lastequipclick.data('rented-to', useremail);
+							updateForRentalStatus(useremail);
+						},
+						error: function error(data) {
+							(0, _serverresponse.handleServerError)(data, new Error());
+						}
+					});
+				});
+
+				$('#myModal .modal-footer .btn-secondary').off();
+				$('#myModal .modal-footer .btn-secondary').click(function (event) {
+					resetEvents();
+				});
+
+				$('.iam-cal').remove();
+				$('.modal-body').append('<div class="iam-cal"></div>');
+
+				var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
+				var useremail = $('.iam-er-user-emails').val();
+				thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
+
+				$('.modal-header .fc-event').each(function () {
+
+					// store data so the calendar knows to render an event upon drop
+					$(this).data('event', {
+						title: "Drag Me", // use the element's text as the event title
+						stick: true, // maintain when user navigates (see docs on the renderEvent method)
+						editable: true,
+						className: 'iam-new-event',
+						allDay: true
+					});
+
+					// make the event draggable using jQuery UI
+					$(this).draggable({
+						zIndex: 999,
+						revert: true, // will cause the event to go back to its
+						revertDuration: 0 //  original position after the drag
+					});
+				});
+
+				$('.iam-cal').fullCalendar({
+					header: {
+						left: 'prev,next today',
+						center: 'title',
+						right: 'month,agendaWeek'
+					},
+					droppable: true,
+					eventOverlap: true,
+					weekends: true,
+					height: 600,
+					forceEventDuration: true,
+					defaultView: 'month',
+					editable: true,
+					durationEditable: true,
+					allDay: true,
+					defaultAllDayEventDuration: { days: parseInt(thisRentalDays) },
+					eventLimit: true, // allow "more" link when too many events
+					eventRender: function eventRender(event, element) {
+						$(element).data('fullname', event.fullname);
+						$(element).data('email', event.email);
+						$(element).data('equipment', event.equipment);
+
+						$(element).data('nid', event.nid);
+
+						if (typeof event.nid == 'undefined' && typeof event.isNewbie == 'undefined') {
+
+							$('.modal-header .fc-event').addClass('iam-ninja');
+							releventRes = event._id;
+							$(element).addClass('relevant-res');
+						}
+
+						if (releventRes == event._id) {
+							$(element).addClass('relevant-res');
+							releventResEventStart = moment(event.start.format('YYYY-MM-DD'), 'YYYY-MM-DD').format('YYYY-MM-DD');
+						}
+
+						if (event.editable == false) {
+							$(element).addClass('event-not-editable');
+						}
+
+						if (eventsToDelete.indexOf(event.nid) != -1) {
+							$(element).addClass('marked-for-delete');
+						}
+
+						eventToolTip(event, element);
+					},
+					eventAfterAllRender: function eventAfterAllRender(view) {
+						var events = $('.iam-cal').fullCalendar('clientEvents');
+						var toUpdate = [];
+						for (var i = 0; i < events.length; i++) {
+							var ev = events[i];
+
+							if (typeof ev.nid == 'undefined' && typeof ev.isNewbie == 'undefined') {
+								ev.isNewbie = 1;
+								toUpdate.push(ev);
+							}
+
+							if (ev.email != useremail && typeof ev.nid != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined') || ev.status != 'upcoming' && typeof ev.status != 'undefined' && (ev.editable == true || typeof ev.editable == 'undefined')) {
+
+								ev.editable = false;
+								toUpdate.push(ev);
+							}
+						}
+						if (toUpdate.length > 0) {
+							$('.iam-cal').fullCalendar('updateEvents', toUpdate);
+						}
+						initContextMenu('rental');
+					},
+					eventDrop: function eventDrop(event, d, revert) {
+						adminCalEventDrop(event, d, revert);
+					},
+					eventResize: function eventResize(event, d, revert, jsevent) {
+						adminCalEventResize(event, d, revert, jsevent);
+					},
+					eventReceive: function eventReceive(e) {
+						adminCalEventReceive(e);
+					},
+					events: ajaxurl + "?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name=" + equip_name
+				});
+			});
+
+			$('.iam-er-action-button.iam-er-checkin').off();
+			$('.iam-er-action-button.iam-er-checkin').click(function (event) {
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_end_rental', equipment: $('#iam-update-form #name').val() },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						lastequipclick.data('rented-to', 0);
+						updateForRentalStatus(0);
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var updateForRentalStatus = function updateForRentalStatus(rentedTo) {
+			if (rentedTo == 0) {
+				$('.iam-er-action-button').addClass('iam-er-checkout');
+				$('.iam-er-action-button').removeClass('iam-er-checkin');
+				$('.iam-er-user-emails').prop('disabled', false);
+				$('.iam-er-user-emails').val('');
+			} else {
+				$('.iam-er-action-button').removeClass('iam-er-checkout');
+				$('.iam-er-action-button').addClass('iam-er-checkin');
+				$('.iam-er-user-emails').prop('disabled', true);
+				$('.iam-er-user-emails').val(rentedTo);
+			}
+			initRentalButton();
+		};
+
+		var initExistingEquipmentListItemsListener = function initExistingEquipmentListItemsListener() {
+			updateForRentalStatus($('.iam-existing-list li[selected]').data('rented-to'));
+
+			$('.iam-existing-list li').click(function (event) {
+				lastequipclick = $(this);
+				make_form_visible('#iam-update-form');
+				//if form is already present do not make a request
+				if ($(this).html() == $('#iam-update-form').children('.iam-form-row').children('#name').val()) return;
+				updateForRentalStatus($(this).data('rented-to'));
+				$.ajax({
+					url: ajaxurl,
+					type: 'GET',
+					data: { action: 'get_admin_forms', request: 'u_equipment', name: $(this).html(), facility: facilityType },
+					success: function success(data) {
+						$('#iam-update-form').replaceWith((0, _serverresponse.handleServerResponse)(data));
+						initTagAutoCompleteListener();
+						initSubmitEquipmentFormListener();
+						initDeleteFormListener('e');
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		//CERT LISTENERS
+
+		var initSupportingFileListeners = function initSupportingFileListeners() {
+			$('#supporting0').change(function (event) {
+				checkFile(this);
+			});
+
+			$('#new-supporting0').change(function (event) {
+				checkFile(this);
+			});
+		};
+
+		var initAddSupportingFileUploadButtonListeners = function initAddSupportingFileUploadButtonListeners() {
+			//for update form
+			$('#iam-add-supporting-upload-button').click(function (event) {
+				$('#iam-new-supporting-upload').prepend('<input type="file" id="supporting' + supportingCount + '" name="supporting' + supportingCount + '"><br />');
+				$('#supporting' + supportingCount).change(function (event) {
+					checkFile(this);
+				});
+				supportingCount++;
+			});
+			//for new submit form
+			$('#iam-new-add-supporting-upload-button').click(function (event) {
+				$('#iam-brand-new-supporting-upload').prepend('<input type="file" id="new-supporting' + newSupportingCount + '" name="new-supporting' + newSupportingCount + '"><br />');
+				$('#new-supporting' + newSupportingCount).change(function (event) {
+					checkFile(this);
+				});
+				newSupportingCount++;
+			});
+		};
+
+		var initSubmitCertificationFormListener = function initSubmitCertificationFormListener() {
+			$('.iam-admin-submit-button').off();
+			$('.iam-admin-submit-button').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				var form = $(this).parent();
+				var method = form.attr('id') == 'iam-new-form' ? 'n' : 'u';
+				var formData = new FormData();
+				var required = form.children('.iam-form-row').children('#required').is(':checked') ? 1 : 0;
+				formData.append('action', 'admin_certification_action');
+				formData.append('method', method);
+				formData.append('name', form.children('.iam-form-row').children('#name').val());
+				formData.append('time', form.children('.iam-form-row').children('#time').val());
+				formData.append('description', form.children('.iam-form-row').children('#description').val());
+				formData.append('required', required);
+
+				if (form.children('.iam-form-row').children('#photo').val() != '') {
+					formData.append('photo', form.children('.iam-form-row').children('#photo').prop('files')[0]);
+				}
+
+				var sCount, sID;
+
+				if (method == 'u') {
+					sCount = supportingCount;
+					sID = '#supporting';
+				} else {
+					sCount = newSupportingCount;
+					sID = '#new-supporting';
+				}
+
+				for (var i = 0; i <= sCount; i++) {
+					if ($(sID + i).length > 0) formData.append('supporting' + i, $(sID + i)[0].files[0]);
+				}
+
+				if (method == 'u') formData.append('x', form.children('.iam-form-row').children('#x').val());
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					processData: false,
+					contentType: false,
+					data: formData,
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						reloadAndFind(form.children('.iam-form-row').children('#name').val());
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var initNewCertificationButtonListener = function initNewCertificationButtonListener() {
+			$('#iam-new-certification-button').click(function (event) {
+				make_form_visible('#iam-new-form');
+				prepare_new_form('#iam-new-form');
+			});
+		};
+
+		var initExistingCertificationListItemsListener = function initExistingCertificationListItemsListener() {
+			$('.iam-existing-list li').click(function (event) {
+				make_form_visible('#iam-update-form');
+				//if form is already present do not make a request
+				if ($(this).html() == $('#iam-update-form').children('.iam-form-row').children('#name').val()) return;
+				$.ajax({
+					url: ajaxurl,
+					type: 'GET',
+					data: { action: 'get_admin_forms', request: 'u_certification', name: $(this).text() },
+					success: function success(data) {
+						$('#iam-update-form').replaceWith((0, _serverresponse.handleServerResponse)(data));
+						initSubmitCertificationFormListener();
+						initAddSupportingFileUploadButtonListeners();
+						initDeleteFormListener('c');
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		//BAL LISTENERS
+
+		var initBalancesButtonListener = function initBalancesButtonListener() {
+			$('.iam-balances-button').click(function (event) {
+				if ($('#amount').val().length < 1) {
+					alert('invalid number');
+					return;
+				}
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_balances_action', comment: $('#description').val(), username: $('#username').val(), amount: $('#amount').val() },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						reloadAndFind($('#username').val());
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+		var initAddFundsButtonListener = function initAddFundsButtonListener() {
+			$('.iam-add-funds-button').click(function (event) {
+				$('body').append('<div class="iam-popup"><div class="iam-popup-header"><h3>Add Funds</h3><i class="fa fa-close fa-3 iam-x"></i></div><div class="iam-popup-body">' + addFundsHTML + '</div></div>');
+				if (typeof selectedBalUser != 'undefined') {
+					$('select#username option').each(function (index, el) {
+						if ($(this).text() == selectedBalUser) {
+							$(this).prop('selected', true);
+						}
+					});
+				}
+				(0, _textfieldlisteners.numbersOnlyListener)($('#amount'));
+				initBalancesButtonListener();
+				$('.iam-x').click(function (event) {
+					$('.iam-popup').remove();
+				});
+			});
+		};
+
+		//USER CERTIFICATION LISTENERS
+
+		var initSeeExistingCertificationsListener = function initSeeExistingCertificationsListener() {
+			$('.iam-see-existing-certifications').click(function (event) {
+				var that = this;
+				$.ajax({
+					url: ajaxurl,
+					type: 'GET',
+					data: { action: 'admin_get_user_certifications', nid: $(this).data('nid') },
+					success: function success(data) {
+						$(that).parent('td').html((0, _serverresponse.handleServerResponse)(data));
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var areValuesChecked = function areValuesChecked() {
+			if ($('input:checked').length < 1) return false;
+			return true;
+		};
+
+		var initAddRemoveCertificationsButtonListener = function initAddRemoveCertificationsButtonListener() {
+			$('#iam-add-cert-button').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				if ($('#iam-cert-to-apply').val() == 'Select a value') {
+					alert('Please select a certification from the drop down menu.');
+					return;
+				}
+				if (!areValuesChecked()) {
+					alert("Please select some accounts for this action");
+					return;
+				}
+				var checkedUsers = [];
+				$(':checked').each(function (index, el) {
+					checkedUsers.push($(this).data('user'));
+				});
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_add_certifications_to_users', users: checkedUsers, certification: $('#iam-cert-to-apply').val() },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+			$('#iam-remove-cert-button').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				if ($('#iam-cert-to-apply').val() == 'Select a value') {
+					alert('Please select a certification from the drop down menu.');
+					return;
+				}
+				if (!areValuesChecked()) {
+					alert("Please select some accounts for this action");
+					return;
+				}
+				var checkedUsers = [];
+				$('input:checked').each(function (index, el) {
+					checkedUsers.push($(this).data('user'));
+				});
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_remove_certifications_to_users', users: checkedUsers, certification: $('#iam-cert-to-apply').val() },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		//Reservation wrap
+
+		var resetEvents = function resetEvents() {
+			eventsToDelete = [];
+			eventsModified = {};
+			eventsConfirmed = [];
+		};
+
+		var refreshResCal = function refreshResCal() {
+			var c = '.iam-cal';
+			if ($('.iam-res-cal').length > 0) c = '.iam-res-cal';
+			$(c).fullCalendar('removeEventSource', lastReservationResource);
+			$(c).fullCalendar('addEventSource', lastReservationResource);
+		};
+
+		var handleEventToDelete = function handleEventToDelete(event, j) {
+			if (j.hasClass('event-not-editable')) return;
+			var index = eventsToDelete.indexOf(event.nid);
+			if (index != -1) {
+				eventsToDelete.splice(index, 1);
+				refreshResCal();
+			} else {
+				eventsToDelete.push(event.nid);
+				refreshResCal();
+			}
+		};
+
+		function adminCalEventDrop(event, d, revert) {
+			if (eventFallsOnWeekend(event)) {
+				(0, _override.overridePrompt)({
+					title: 'Confirm Override',
+					body: ERinvalidTimePrompt,
+					cancel: function cancel() {
+						revert();
+					},
+					override: function override() {
+						updateEventsModified(event);
+					}
+				});
+			} else {
+				updateEventsModified(event);
+			}
+		}
+
+		function adminCalEventResize(event, d, revert, jsevent) {
+			if (eventIsLongerThan(event, parseInt(thisRentalDays))) {
+				(0, _override.overridePrompt)({
+					title: 'Confirm Override',
+					body: ERinvalidTimePrompt, //'The maximum rental time for this equipment is ' + thisRentalDays + ' days.',
+					cancel: function cancel() {
+						revert();
+					},
+					override: function override() {
+						updateEventsModified(event);
+					}
+				});
+			} else {
+				updateEventsModified(event);
+			}
+		}
+
+		function adminCalEventReceive(e) {
+			if (eventFallsOnWeekend(e)) {
+				$('.iam-res-cal').fullCalendar('removeEvents', e._id);
+				return false;
+			}
+		}
+
+		var handleEventCopyEmail = function handleEventCopyEmail(event) {
+			var e = $('<div>' + event.email + '</div>');
+			copyToClipboard(e[0]);
+			$('body').append('<div class="iam-copy-notification">Email Copied to Clipboard</div>');
+			$('.iam-copy-notification').fadeOut(3500, function () {
+				$('.iam-copy-notification').remove();
+			});
+		};
+
+		var initContextMenu = function initContextMenu(menuToUse) {
+			menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
+
+			var menu = [{
+				name: 'mark for deletion',
+				title: 'delete button',
+				fun: function fun(e) {
+					var t = $(e.trigger);
+					var event = { nid: t.data('nid') };
+					handleEventToDelete(event, t);
+				}
+			}, {
+				name: 'copy email',
+				title: 'copy button',
+				fun: function fun(e) {
+					var t = $(e.trigger);
+					var event = { email: t.data('email') };
+					handleEventCopyEmail(event);
+				}
+			}];
+
+			var rentalMenu = [{
+				name: 'use this reservation',
+				title: 'select reservation button',
+				fun: function fun(e) {
+					var t = $(e.trigger);
+					var event = { nid: t.data('nid') };
+					makeRelevantReservation(t.data('fcSeg').event);
+				}
+			}, {
+				name: 'mark for deletion',
+				title: 'delete button',
+				fun: function fun(e) {
+					var t = $(e.trigger);
+					var event = { nid: t.data('nid') };
+					handleEventToDelete(event, t);
+				}
+			}];
+
+			var menuDict = { 'default': menu, 'rental': rentalMenu };
+			var menuOfChoice = menuDict[menuToUse];
+
+			$('.fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
+		};
+
+		var updateResSource = function updateResSource() {
+			var selectedEquipment = $('.iam-reservations-equipment-list-item.iam-highlighted');
+			var newEventResource = [];
+			$(selectedEquipment).each(function (index, el) {
+				newEventResource = newEventResource.concat($(this).data('calevents'));
+			});
+			lastReservationResource = newEventResource;
+		};
+
+		var makeCalendarReservationsMulti = function makeCalendarReservationsMulti() {
+			(0, _userfeedback.submissionStart)();
+
+			if ($('.iam-res-cal-placeholder').length) {
+				$('.iam-res-cal-placeholder').remove();
+				updateResSource();
+				initAdminResCal();
+			} else {
+				$('.iam-res-cal').fullCalendar('removeEventSource', lastReservationResource);
+				updateResSource();
+				$('.iam-res-cal').fullCalendar('addEventSource', lastReservationResource);
+			}
+		};
+
+		var initAdminResCal = function initAdminResCal() {
+			$('.iam-res-cal').fullCalendar({
+				header: {
+					left: 'prev,next today',
+					center: 'title',
+					right: 'month,agendaWeek,agendaDay'
+				},
+				droppable: true,
+				eventOverlap: true,
+				weekends: true,
+				height: 600,
+				forceEventDuration: true,
+				defaultView: 'month',
+				editable: true,
+				eventLimit: true, // allow "more" link when too many events
+				eventRender: function eventRender(event, element) {
+					eventToolTip(event, element);
+					$(element).data('fullname', event.fullname);
+					$(element).data('email', event.email);
+					$(element).data('equipment', event.equipment);
+					$(element).data('nid', event.nid);
+					$(element).addClass('iam-status-' + event.status);
+					if (event.status == 'completed' || event.status == 'was-late') {
+						$(element).addClass('event-not-editable');
+					}
+					if (eventsToDelete.indexOf(event.nid) != -1) {
+						$(element).addClass('marked-for-delete');
+					}
+				},
+				eventAfterRender: function eventAfterRender(event, element) {
+					if (event.toDelete == 1) {
+						$(element).css({
+							'background-color': '#ef4040',
+							'border': '1px solid #ef4040'
+						});
+					}
+				},
+				eventAfterAllRender: function eventAfterAllRender() {
+					initContextMenu();
+					initStatusHideListeners();
+					(0, _userfeedback.submissionEnd)();
+				},
+				eventDrop: function eventDrop(event, d, revert) {
+					eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+					if (resFacilityType == 'rental') adminCalEventDrop(event, d, revert);
+				},
+				eventResize: function eventResize(event, d, revert, jsevent) {
+					eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+					thisRentalDays = event.period;
+					if (resFacilityType == 'rental') adminCalEventResize(event, d, revert, jsevent);
+				},
+				events: lastReservationResource
+			});
+		};
+
+		var initStatusHideListeners = function initStatusHideListeners() {
+			$('.res-toolbar input[name=upcoming]').off();
+			$('.res-toolbar input[name=active]').off();
+			$('.res-toolbar input[name=completed]').off();
+			$('.res-toolbar input[name=no-show]').off();
+			$('.res-toolbar input[name=no-pay]').off();
+
+			$('.res-toolbar input[name=upcoming]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-upcoming').toggleClass('iam-ninja');
+			});
+			$('.res-toolbar input[name=active]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-active').toggleClass('iam-ninja');
+			});
+			$('.res-toolbar input[name=completed]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-completed').toggleClass('iam-ninja');
+			});
+			$('.res-toolbar input[name=no-show]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-no-show').toggleClass('iam-ninja');
+			});
+			$('.res-toolbar input[name=no-pay]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-no-pay').toggleClass('iam-ninja');
+			});
+			$('.res-toolbar input[name=is-late]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-is-late').toggleClass('iam-ninja');
+			});
+			$('.res-toolbar input[name=was-late]').click(function (e) {
+				if ($('.iam-res-cal-placeholder').length > 0) {
+					e.preventDefault();
+					return false;
+				}
+				$('.iam-status-was-late').toggleClass('iam-ninja');
+			});
+		};
+
+		//charge sheet wrap functions
+		var initApproveChargeButtonListener = function initApproveChargeButtonListener() {
+			$('.iam-approve-charge-button').off();
+			$('.iam-approve-charge-button').click(function (event) {
+				var that = this;
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'approve_charge', nid: $(this).parents('tr').data('id'), status: $(this).data('status') },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						if ($(that).data('status') == 1) {
+							$(that).removeClass('iam-secondary-button');
+							$(that).addClass('iam-button');
+							$(that).data('status', 0);
+							$(that).html('approve');
+						} else {
+							$(that).removeClass('iam-button');
+							$(that).addClass('iam-secondary-button');
+							$(that).data('status', 1);
+							$(that).html('cancel');
+						}
+						(0, _userfeedback.submissionEnd)();
+					},
+					error: function error(data) {
+						(0, _userfeedback.submissionEnd)();
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		//user registration wrap functions
+		var initRegKeyButtonListener = function initRegKeyButtonListener() {
+			$('.iam-reg-key-button').click(function (event) {
+				var expDay = $('.iam-reg-key-day').val();
+				var expMonth = $('.iam-reg-key-month').val();
+				var expYear = $('.iam-reg-key-year').val();
+				var dateToSend;
+				if (expDay.length != 0 || expMonth.length != 0 || expYear.length != 0) {
+					if (expDay.length < 1 || expMonth.length < 1 || expYear.length < 4) {
+						alert('please fill out all date fields');
+						return;
+					}
+					var exp_date = moment($('.iam-reg-key-month').val() + '-' + $('.iam-reg-key-day').val() + '-' + $('.iam-reg-key-year').val(), 'M-D-YYYY');
+					if (!exp_date.isValid()) {
+						alert('Please enter a valid date.');
+						return;
+					} else {
+						dateToSend = exp_date.format('M-D-YYYY');
+					}
+				}
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_make_registration_key', key: $('.iam-reg-key').val(), expiration: dateToSend },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+		var initDeleteRegKeyButtonListener = function initDeleteRegKeyButtonListener() {
+			$('.iam-delete-key').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_delete_registration_key', nid: $(this).data('nid') },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		var eventFallsOnWeekend = function eventFallsOnWeekend(e) {
+			var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+			var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+			//for now it ends at midnight of the following day
+			return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+		};
+
+		var eventIsLongerThan = function eventIsLongerThan(e, days) {
+			var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+			var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+			return end.diff(start, 'days') > days;
+		};
+
+		//pricing wrap functions
+		var initNewMaterialButtonListener = function initNewMaterialButtonListener() {
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'admin_get_new_mat_row' },
+				success: function success(data) {
+					$('.iam-new-mat-button').click(function (event) {
+						$('tbody').append((0, _serverresponse.handleServerResponse)(data));
+						initAddPricingDropDownListeners();
+						initDeletePricingDropDownListener();
+						initPricingRowDeleteListener();
+					});
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+		var initDropDownContent = function initDropDownContent() {
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: { action: 'admin_get_pricing_dropdowns' },
+				success: function success(data) {
+					data = (0, _serverresponse.handleServerResponse)(data);
+					equipDropDown = data['equip'];
+					tagsDropDown = data['tags'];
+					initAddPricingDropDownListeners();
+				},
+				error: function error(data) {
+					(0, _serverresponse.handleServerError)(data, new Error());
+				}
+			});
+		};
+		var initAddPricingDropDownListeners = function initAddPricingDropDownListeners() {
+			if (equipDropDown == null || tagsDropDown == null) {
+				initDropDownContent();
+				return;
+			}
+			$('.iam-add-pricing-tags-drop-down-button').off();
+			$('.iam-add-pricing-equipment-drop-down-button').off();
+			$('.iam-add-pricing-tags-drop-down-button').click(function (event) {
+				changedRows.push($(this).parent().parent().data('nid'));
+				$(this).parent().prepend(tagsDropDown);
+				initDeletePricingDropDownListener();
+			});
+			$('.iam-add-pricing-equipment-drop-down-button').click(function (event) {
+				changedRows.push($(this).parent().parent().data('nid'));
+				$(this).parent().prepend(equipDropDown);
+				initDeletePricingDropDownListener();
+			});
+		};
+		var initPricingChangeListeners = function initPricingChangeListeners() {
+			$('input[type=text]').off();
+			$('input[type=number]').off();
+			$('.iam-pricing-drop-down select').change(function (event) {
+				var nid = $(this).parent().parent().parent().data('nid');
+				if (changedRows.indexOf(nid) != -1) return;
+				changedRows.push(nid);
+			});
+			$('input[type=text]').change(function (event) {
+				var nid = $(this).parent().parent().data('nid');
+				if (changedRows.indexOf(nid) != -1) return;
+				changedRows.push(nid);
+			});
+			$('input[type=number]').change(function (event) {
+				var nid = $(this).parent().parent().parent().data('nid');
+				if (changedRows.indexOf(nid) != -1) return;
+				changedRows.push(nid);
+			});
+		};
+		var initPricingRowDeleteListener = function initPricingRowDeleteListener() {
+			$('.iam-pricing-row-delete-button').off();
+			$('.iam-pricing-row-delete-button').click(function (event) {
+				if (!confirm("Delete this row?")) return;
+				var row = $(this).parent().parent();
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_delete_material', nid: row.data('nid') },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						row.remove();
+						(0, _userfeedback.submissionEnd)();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+		var initDeletePricingDropDownListener = function initDeletePricingDropDownListener() {
+			$('.iam-delete-pricing-drop-down').off();
+			$('.iam-delete-pricing-drop-down').click(function (event) {
+				changedRows.push($(this).parent().parent().parent().data('nid'));
+				$(this).parent().remove();
+			});
+		};
+		var initPricingSubmitListener = function initPricingSubmitListener() {
+			$('.iam-admin-submit-button').off();
+			$('.iam-admin-submit-button').click(function (event) {
+				var toUpdate = [];
+				$('tr').each(function (index, el) {
+					//skip header
+					if (index == 0) return;
+
+					if (changedRows.indexOf($(this).data('nid')) != -1 || $(this).data('nid').length == 0) {
+						var associatedTags = [];
+						var associatedEquipment = [];
+						$($(this).children('.iam-mat-tags-data')).children('.iam-pricing-drop-down').each(function (index, el) {
+							associatedTags.push($(this).children('select').children('option:selected').val());
+						});
+						$($(this).children('.iam-mat-equip-data')).children('.iam-pricing-drop-down').each(function (index, el) {
+							associatedEquipment.push($(this).children('select').children('option:selected').val());
+						});
+						var matName = $(this).children('td').children('.iam-mat-name').val();
+						var matPricing = $(this).children('td').find('.iam-mat-pricing').val();
+						var matBasePrice = $(this).children('td').find('.iam-mat-base-price').val();
+						var unitName = $(this).children('td').children('.iam-unit-name').val();
+						if (matName.length < 1 || matPricing.length < 1 || unitName.length < 1) {
+							alert("Please fill out Material Name, Price Per Unit, and Unit Name for each entry.");
+							return;
+						}
+						toUpdate.push({ nid: $(this).data('nid'),
+							mat_name: matName,
+							mat_pricing: matPricing,
+							mat_base_price: matBasePrice,
+							unit_name: unitName,
+							tags: associatedTags,
+							equipment: associatedEquipment
+						});
+					}
+				});
+				if (toUpdate.length < 1) {
+					alert("No changes or new entries.");
+					return;
+				}
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_pricing', updates: toUpdate },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						(0, _userfeedback.submissionEnd)();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		};
+
+		//run time
+		if ($('.iam-main-menu-wrap').length > 0) {
+
+			var settingsAdmin = new _settingsadmin2.default();
+
+			initAddAccountTypeButtonListener();
+			initAccountTypeRowListener();
+			initSubmitAccountTypeListener();
+
+			initAddRentalTypeButtonListener();
+			initRentalTypeRowListener();
+			initSubmitRentalTypeListener();
+		} else if ($('.iam-reservation-wrap').length > 0) {
+			var resAdmin = new _reservationadmin2.default();
+		} else if ($('.iam-user-certification-wrap').length > 0) {
+
+			//initSeeExistingCertificationsListener();
+			initAddRemoveCertificationsButtonListener();
+			(0, _uifunc.initSearchListener)('.iam-user-certifications-search', 'tr .iam-username', 1);
+			updateSearchOnLoad();
+		} else if ($('.iam-scheduling-wrap').length > 0) {
+
+			initScheduleTypeListeners();
+			initScheduleSubmitListeners();
+		} else if ($('.iam-charge-sheet-wrap').length > 0) {
+			(0, _uifunc.initCSVAJAXButtonListener)('admin_get_all_charges_as_csv');
+			initChargeTable();
+			$(document).tooltip();
+		} else if ($('.iam-equipment-wrap').length > 0) {
+			var facilityType = $('.iam-facility-data').data('facility-type');
+			//on load
+			loadComparableTags();
+
+			//listeners
+			initExistingEquipmentListItemsListener();
+			initImageListener();
+			initNewEquipmentButtonListener();
+			initSubmitEquipmentFormListener();
+			initDuplicateEquipmentButtonListener();
+			initTagAutoCompleteListener();
+			initDeleteFormListener('e');
+			(0, _uifunc.initSearchListener)('.iam-equipment-search', '#iam-equipment-list li', 0);
+			(0, _textfieldlisteners.itemNameListener)($('#iam-new-form #name'));
+			(0, _textfieldlisteners.itemNameListener)($('#iam-update-form #name'));
+			updateSearchOnLoad();
+			initCheckinCheckout();
+			(0, _uifunc.initCSVAJAXButtonListener)('admin_equipment_csv');
+			$(document).tooltip();
+			findItemAgain($('#iam-equipment-list'));
+		} else if ($('.iam-certification-wrap').length > 0) {
+			//vars
+			var supportingCount, newSupportingCount;
+			supportingCount = newSupportingCount = 1;
+
+			//listeners
+			initSupportingFileListeners();
+			initExistingFileListener();
+			initNewCertificationButtonListener();
+			initExistingCertificationListItemsListener();
+			initSubmitCertificationFormListener();
+			initAddSupportingFileUploadButtonListeners();
+			initDeleteFormListener('c');
+			(0, _uifunc.initSearchListener)('.iam-certification-search', '#iam-certifcation-list li', 0);
+			(0, _textfieldlisteners.itemNameListener)($('#iam-new-form #name'));
+			(0, _textfieldlisteners.itemNameListener)($('#iam-update-form #name'));
+			updateSearchOnLoad();
+			$(document).tooltip();
+			findItemAgain($('#iam-certifcation-list'));
+		} else if ($('.iam-users-wrap').length > 0) {
+			var useradmin = new _useradmin2.default();
+			(0, _uifunc.initSearchListener)('.iam-search', '.iam-users-list li', 0);
+		} else if ($('.iam-registration-wrap').length > 0) {
+			$('.iam-approve-account').click(function (event) {
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_approve_new_user', user: $(this).data('user') },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+			$('.iam-deny-account').click(function (event) {
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_deny_new_user', user: $(this).data('user') },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+			initRegKeyButtonListener();
+			initDeleteRegKeyButtonListener();
+			(0, _uifunc.initSearchListener)('.iam-registration-search', 'tr .iam-username', 1);
+		} else if ($('.iam-user-privileges-wrap').length > 0) {
+			var approvedUsers = [];
+			var deniedUsers = [];
+			$('input[type=checkbox]').click(function (event) {
+				var user = $(this).parent().prev('td').text();
+				for (var i = 0; i < approvedUsers.length; i++) {
+					if (approvedUsers[i] == user) {
+						approvedUsers.splice(i, 1);
+						return;
+					}
+				}
+				for (var i = 0; i < deniedUsers.length; i++) {
+					if (deniedUsers[i] == user) {
+						deniedUsers.splice(i, 1);
+						return;
+					}
+				}
+				if ($(this).is(':checked')) {
+					approvedUsers.push(user);
+				} else {
+					deniedUsers.push(user);
+				}
+			});
+			$('input[type=submit]').click(function (event) {
+				(0, _userfeedback.submissionStart)();
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					data: { action: 'admin_user_privileges', approved: approvedUsers, denied: deniedUsers },
+					success: function success(data) {
+						(0, _serverresponse.handleServerResponse)(data);
+						window.location.reload();
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+			(0, _uifunc.initSearchListener)('.iam-user-privileges-search', 'tr .iam-username', 1);
+		} else if ($('.iam-pricing-wrap').length > 0) {
+			var changedRows = [];
+			var equipDropDown, tagsDropDown;
+
+			initPricingSubmitListener();
+			initPricingChangeListeners();
+			initAddPricingDropDownListeners();
+			initNewMaterialButtonListener();
+			initDeletePricingDropDownListener();
+			initPricingRowDeleteListener();
+			(0, _uifunc.initCSVAJAXButtonListener)('admin_pricing_csv');
+		} else if ($('.equipment-csv-upload')) {
+			$('.equipment-csv-upload input[type=submit]').click(function (event) {
+				event.preventDefault();
+				var formData = new FormData();
+				formData.append('action', 'equipment_csv_upload');
+				formData.append('file', $('.equipment-csv-upload input[type=file]').prop('files')[0]);
+
+				$.ajax({
+					url: ajaxurl,
+					type: 'POST',
+					processData: false,
+					contentType: false,
+					data: formData,
+					success: function success(data) {
+						//handleServerResponse(data);
+						$('.equipment-csv-upload').append((0, _serverresponse.handleServerResponse)(data));
+					},
+					error: function error(data) {
+						(0, _serverresponse.handleServerError)(data, new Error());
+					}
+				});
+			});
+		}
+	});
+	(0, _debug.debugWarn)();
+})(jQuery);
+
+/***/ }),
+/* 161 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Autocomplete 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Autocomplete
+//>>group: Widgets
+//>>description: Lists suggested words as the user is typing.
+//>>docs: http://api.jqueryui.com/autocomplete/
+//>>demos: http://jqueryui.com/autocomplete/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/autocomplete.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(162), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	$.widget("ui.autocomplete", {
+		version: "1.12.1",
+		defaultElement: "<input>",
+		options: {
+			appendTo: null,
+			autoFocus: false,
+			delay: 300,
+			minLength: 1,
+			position: {
+				my: "left top",
+				at: "left bottom",
+				collision: "none"
+			},
+			source: null,
+
+			// Callbacks
+			change: null,
+			close: null,
+			focus: null,
+			open: null,
+			response: null,
+			search: null,
+			select: null
+		},
+
+		requestIndex: 0,
+		pending: 0,
+
+		_create: function _create() {
+
+			// Some browsers only repeat keydown events, not keypress events,
+			// so we use the suppressKeyPress flag to determine if we've already
+			// handled the keydown event. #7269
+			// Unfortunately the code for & in keypress is the same as the up arrow,
+			// so we use the suppressKeyPressRepeat flag to avoid handling keypress
+			// events when we know the keydown event was used to modify the
+			// search term. #7799
+			var suppressKeyPress,
+			    suppressKeyPressRepeat,
+			    suppressInput,
+			    nodeName = this.element[0].nodeName.toLowerCase(),
+			    isTextarea = nodeName === "textarea",
+			    isInput = nodeName === "input";
+
+			// Textareas are always multi-line
+			// Inputs are always single-line, even if inside a contentEditable element
+			// IE also treats inputs as contentEditable
+			// All other element types are determined by whether or not they're contentEditable
+			this.isMultiLine = isTextarea || !isInput && this._isContentEditable(this.element);
+
+			this.valueMethod = this.element[isTextarea || isInput ? "val" : "text"];
+			this.isNewMenu = true;
+
+			this._addClass("ui-autocomplete-input");
+			this.element.attr("autocomplete", "off");
+
+			this._on(this.element, {
+				keydown: function keydown(event) {
+					if (this.element.prop("readOnly")) {
+						suppressKeyPress = true;
+						suppressInput = true;
+						suppressKeyPressRepeat = true;
+						return;
+					}
+
+					suppressKeyPress = false;
+					suppressInput = false;
+					suppressKeyPressRepeat = false;
+					var keyCode = $.ui.keyCode;
+					switch (event.keyCode) {
+						case keyCode.PAGE_UP:
+							suppressKeyPress = true;
+							this._move("previousPage", event);
+							break;
+						case keyCode.PAGE_DOWN:
+							suppressKeyPress = true;
+							this._move("nextPage", event);
+							break;
+						case keyCode.UP:
+							suppressKeyPress = true;
+							this._keyEvent("previous", event);
+							break;
+						case keyCode.DOWN:
+							suppressKeyPress = true;
+							this._keyEvent("next", event);
+							break;
+						case keyCode.ENTER:
+
+							// when menu is open and has focus
+							if (this.menu.active) {
+
+								// #6055 - Opera still allows the keypress to occur
+								// which causes forms to submit
+								suppressKeyPress = true;
+								event.preventDefault();
+								this.menu.select(event);
+							}
+							break;
+						case keyCode.TAB:
+							if (this.menu.active) {
+								this.menu.select(event);
+							}
+							break;
+						case keyCode.ESCAPE:
+							if (this.menu.element.is(":visible")) {
+								if (!this.isMultiLine) {
+									this._value(this.term);
+								}
+								this.close(event);
+
+								// Different browsers have different default behavior for escape
+								// Single press can mean undo or clear
+								// Double press in IE means clear the whole form
+								event.preventDefault();
+							}
+							break;
+						default:
+							suppressKeyPressRepeat = true;
+
+							// search timeout should be triggered before the input value is changed
+							this._searchTimeout(event);
+							break;
+					}
+				},
+				keypress: function keypress(event) {
+					if (suppressKeyPress) {
+						suppressKeyPress = false;
+						if (!this.isMultiLine || this.menu.element.is(":visible")) {
+							event.preventDefault();
+						}
+						return;
+					}
+					if (suppressKeyPressRepeat) {
+						return;
+					}
+
+					// Replicate some key handlers to allow them to repeat in Firefox and Opera
+					var keyCode = $.ui.keyCode;
+					switch (event.keyCode) {
+						case keyCode.PAGE_UP:
+							this._move("previousPage", event);
+							break;
+						case keyCode.PAGE_DOWN:
+							this._move("nextPage", event);
+							break;
+						case keyCode.UP:
+							this._keyEvent("previous", event);
+							break;
+						case keyCode.DOWN:
+							this._keyEvent("next", event);
+							break;
+					}
+				},
+				input: function input(event) {
+					if (suppressInput) {
+						suppressInput = false;
+						event.preventDefault();
+						return;
+					}
+					this._searchTimeout(event);
+				},
+				focus: function focus() {
+					this.selectedItem = null;
+					this.previous = this._value();
+				},
+				blur: function blur(event) {
+					if (this.cancelBlur) {
+						delete this.cancelBlur;
+						return;
+					}
+
+					clearTimeout(this.searching);
+					this.close(event);
+					this._change(event);
+				}
+			});
+
+			this._initSource();
+			this.menu = $("<ul>").appendTo(this._appendTo()).menu({
+
+				// disable ARIA support, the live region takes care of that
+				role: null
+			}).hide().menu("instance");
+
+			this._addClass(this.menu.element, "ui-autocomplete", "ui-front");
+			this._on(this.menu.element, {
+				mousedown: function mousedown(event) {
+
+					// prevent moving focus out of the text field
+					event.preventDefault();
+
+					// IE doesn't prevent moving focus even with event.preventDefault()
+					// so we set a flag to know when we should ignore the blur event
+					this.cancelBlur = true;
+					this._delay(function () {
+						delete this.cancelBlur;
+
+						// Support: IE 8 only
+						// Right clicking a menu item or selecting text from the menu items will
+						// result in focus moving out of the input. However, we've already received
+						// and ignored the blur event because of the cancelBlur flag set above. So
+						// we restore focus to ensure that the menu closes properly based on the user's
+						// next actions.
+						if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
+							this.element.trigger("focus");
+						}
+					});
+				},
+				menufocus: function menufocus(event, ui) {
+					var label, item;
+
+					// support: Firefox
+					// Prevent accidental activation of menu items in Firefox (#7024 #9118)
+					if (this.isNewMenu) {
+						this.isNewMenu = false;
+						if (event.originalEvent && /^mouse/.test(event.originalEvent.type)) {
+							this.menu.blur();
+
+							this.document.one("mousemove", function () {
+								$(event.target).trigger(event.originalEvent);
+							});
+
+							return;
+						}
+					}
+
+					item = ui.item.data("ui-autocomplete-item");
+					if (false !== this._trigger("focus", event, { item: item })) {
+
+						// use value to match what will end up in the input, if it was a key event
+						if (event.originalEvent && /^key/.test(event.originalEvent.type)) {
+							this._value(item.value);
+						}
+					}
+
+					// Announce the value in the liveRegion
+					label = ui.item.attr("aria-label") || item.value;
+					if (label && $.trim(label).length) {
+						this.liveRegion.children().hide();
+						$("<div>").text(label).appendTo(this.liveRegion);
+					}
+				},
+				menuselect: function menuselect(event, ui) {
+					var item = ui.item.data("ui-autocomplete-item"),
+					    previous = this.previous;
+
+					// Only trigger when focus was lost (click on menu)
+					if (this.element[0] !== $.ui.safeActiveElement(this.document[0])) {
+						this.element.trigger("focus");
+						this.previous = previous;
+
+						// #6109 - IE triggers two focus events and the second
+						// is asynchronous, so we need to reset the previous
+						// term synchronously and asynchronously :-(
+						this._delay(function () {
+							this.previous = previous;
+							this.selectedItem = item;
+						});
+					}
+
+					if (false !== this._trigger("select", event, { item: item })) {
+						this._value(item.value);
+					}
+
+					// reset the term after the select event
+					// this allows custom select handling to work properly
+					this.term = this._value();
+
+					this.close(event);
+					this.selectedItem = item;
+				}
+			});
+
+			this.liveRegion = $("<div>", {
+				role: "status",
+				"aria-live": "assertive",
+				"aria-relevant": "additions"
+			}).appendTo(this.document[0].body);
+
+			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
+
+			// Turning off autocomplete prevents the browser from remembering the
+			// value when navigating through history, so we re-enable autocomplete
+			// if the page is unloaded before the widget is destroyed. #7790
+			this._on(this.window, {
+				beforeunload: function beforeunload() {
+					this.element.removeAttr("autocomplete");
+				}
+			});
+		},
+
+		_destroy: function _destroy() {
+			clearTimeout(this.searching);
+			this.element.removeAttr("autocomplete");
+			this.menu.element.remove();
+			this.liveRegion.remove();
+		},
+
+		_setOption: function _setOption(key, value) {
+			this._super(key, value);
+			if (key === "source") {
+				this._initSource();
+			}
+			if (key === "appendTo") {
+				this.menu.element.appendTo(this._appendTo());
+			}
+			if (key === "disabled" && value && this.xhr) {
+				this.xhr.abort();
+			}
+		},
+
+		_isEventTargetInWidget: function _isEventTargetInWidget(event) {
+			var menuElement = this.menu.element[0];
+
+			return event.target === this.element[0] || event.target === menuElement || $.contains(menuElement, event.target);
+		},
+
+		_closeOnClickOutside: function _closeOnClickOutside(event) {
+			if (!this._isEventTargetInWidget(event)) {
+				this.close();
+			}
+		},
+
+		_appendTo: function _appendTo() {
+			var element = this.options.appendTo;
+
+			if (element) {
+				element = element.jquery || element.nodeType ? $(element) : this.document.find(element).eq(0);
+			}
+
+			if (!element || !element[0]) {
+				element = this.element.closest(".ui-front, dialog");
+			}
+
+			if (!element.length) {
+				element = this.document[0].body;
+			}
+
+			return element;
+		},
+
+		_initSource: function _initSource() {
+			var array,
+			    url,
+			    that = this;
+			if ($.isArray(this.options.source)) {
+				array = this.options.source;
+				this.source = function (request, response) {
+					response($.ui.autocomplete.filter(array, request.term));
+				};
+			} else if (typeof this.options.source === "string") {
+				url = this.options.source;
+				this.source = function (request, response) {
+					if (that.xhr) {
+						that.xhr.abort();
+					}
+					that.xhr = $.ajax({
+						url: url,
+						data: request,
+						dataType: "json",
+						success: function success(data) {
+							response(data);
+						},
+						error: function error() {
+							response([]);
+						}
+					});
+				};
+			} else {
+				this.source = this.options.source;
+			}
+		},
+
+		_searchTimeout: function _searchTimeout(event) {
+			clearTimeout(this.searching);
+			this.searching = this._delay(function () {
+
+				// Search if the value has changed, or if the user retypes the same value (see #7434)
+				var equalValues = this.term === this._value(),
+				    menuVisible = this.menu.element.is(":visible"),
+				    modifierKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
+
+				if (!equalValues || equalValues && !menuVisible && !modifierKey) {
+					this.selectedItem = null;
+					this.search(null, event);
+				}
+			}, this.options.delay);
+		},
+
+		search: function search(value, event) {
+			value = value != null ? value : this._value();
+
+			// Always save the actual value, not the one passed as an argument
+			this.term = this._value();
+
+			if (value.length < this.options.minLength) {
+				return this.close(event);
+			}
+
+			if (this._trigger("search", event) === false) {
+				return;
+			}
+
+			return this._search(value);
+		},
+
+		_search: function _search(value) {
+			this.pending++;
+			this._addClass("ui-autocomplete-loading");
+			this.cancelSearch = false;
+
+			this.source({ term: value }, this._response());
+		},
+
+		_response: function _response() {
+			var index = ++this.requestIndex;
+
+			return $.proxy(function (content) {
+				if (index === this.requestIndex) {
+					this.__response(content);
+				}
+
+				this.pending--;
+				if (!this.pending) {
+					this._removeClass("ui-autocomplete-loading");
+				}
+			}, this);
+		},
+
+		__response: function __response(content) {
+			if (content) {
+				content = this._normalize(content);
+			}
+			this._trigger("response", null, { content: content });
+			if (!this.options.disabled && content && content.length && !this.cancelSearch) {
+				this._suggest(content);
+				this._trigger("open");
+			} else {
+
+				// use ._close() instead of .close() so we don't cancel future searches
+				this._close();
+			}
+		},
+
+		close: function close(event) {
+			this.cancelSearch = true;
+			this._close(event);
+		},
+
+		_close: function _close(event) {
+
+			// Remove the handler that closes the menu on outside clicks
+			this._off(this.document, "mousedown");
+
+			if (this.menu.element.is(":visible")) {
+				this.menu.element.hide();
+				this.menu.blur();
+				this.isNewMenu = true;
+				this._trigger("close", event);
+			}
+		},
+
+		_change: function _change(event) {
+			if (this.previous !== this._value()) {
+				this._trigger("change", event, { item: this.selectedItem });
+			}
+		},
+
+		_normalize: function _normalize(items) {
+
+			// assume all items have the right format when the first item is complete
+			if (items.length && items[0].label && items[0].value) {
+				return items;
+			}
+			return $.map(items, function (item) {
+				if (typeof item === "string") {
+					return {
+						label: item,
+						value: item
+					};
+				}
+				return $.extend({}, item, {
+					label: item.label || item.value,
+					value: item.value || item.label
+				});
+			});
+		},
+
+		_suggest: function _suggest(items) {
+			var ul = this.menu.element.empty();
+			this._renderMenu(ul, items);
+			this.isNewMenu = true;
+			this.menu.refresh();
+
+			// Size and position menu
+			ul.show();
+			this._resizeMenu();
+			ul.position($.extend({
+				of: this.element
+			}, this.options.position));
+
+			if (this.options.autoFocus) {
+				this.menu.next();
+			}
+
+			// Listen for interactions outside of the widget (#6642)
+			this._on(this.document, {
+				mousedown: "_closeOnClickOutside"
+			});
+		},
+
+		_resizeMenu: function _resizeMenu() {
+			var ul = this.menu.element;
+			ul.outerWidth(Math.max(
+
+			// Firefox wraps long text (possibly a rounding bug)
+			// so we add 1px to avoid the wrapping (#7513)
+			ul.width("").outerWidth() + 1, this.element.outerWidth()));
+		},
+
+		_renderMenu: function _renderMenu(ul, items) {
+			var that = this;
+			$.each(items, function (index, item) {
+				that._renderItemData(ul, item);
+			});
+		},
+
+		_renderItemData: function _renderItemData(ul, item) {
+			return this._renderItem(ul, item).data("ui-autocomplete-item", item);
+		},
+
+		_renderItem: function _renderItem(ul, item) {
+			return $("<li>").append($("<div>").text(item.label)).appendTo(ul);
+		},
+
+		_move: function _move(direction, event) {
+			if (!this.menu.element.is(":visible")) {
+				this.search(null, event);
+				return;
+			}
+			if (this.menu.isFirstItem() && /^previous/.test(direction) || this.menu.isLastItem() && /^next/.test(direction)) {
+
+				if (!this.isMultiLine) {
+					this._value(this.term);
+				}
+
+				this.menu.blur();
+				return;
+			}
+			this.menu[direction](event);
+		},
+
+		widget: function widget() {
+			return this.menu.element;
+		},
+
+		_value: function _value() {
+			return this.valueMethod.apply(this.element, arguments);
+		},
+
+		_keyEvent: function _keyEvent(keyEvent, event) {
+			if (!this.isMultiLine || this.menu.element.is(":visible")) {
+				this._move(keyEvent, event);
+
+				// Prevents moving cursor to beginning/end of the text field in some browsers
+				event.preventDefault();
+			}
+		},
+
+		// Support: Chrome <=50
+		// We should be able to just use this.element.prop( "isContentEditable" )
+		// but hidden elements always report false in Chrome.
+		// https://code.google.com/p/chromium/issues/detail?id=313082
+		_isContentEditable: function _isContentEditable(element) {
+			if (!element.length) {
+				return false;
+			}
+
+			var editable = element.prop("contentEditable");
+
+			if (editable === "inherit") {
+				return this._isContentEditable(element.parent());
+			}
+
+			return editable === "true";
+		}
+	});
+
+	$.extend($.ui.autocomplete, {
+		escapeRegex: function escapeRegex(value) {
+			return value.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&");
+		},
+		filter: function filter(array, term) {
+			var matcher = new RegExp($.ui.autocomplete.escapeRegex(term), "i");
+			return $.grep(array, function (value) {
+				return matcher.test(value.label || value.value || value);
+			});
+		}
+	});
+
+	// Live region extension, adding a `messages` option
+	// NOTE: This is an experimental API. We are still investigating
+	// a full solution for string manipulation and internationalization.
+	$.widget("ui.autocomplete", $.ui.autocomplete, {
+		options: {
+			messages: {
+				noResults: "No search results.",
+				results: function results(amount) {
+					return amount + (amount > 1 ? " results are" : " result is") + " available, use up and down arrow keys to navigate.";
+				}
+			}
+		},
+
+		__response: function __response(content) {
+			var message;
+			this._superApply(arguments);
+			if (this.options.disabled || this.cancelSearch) {
+				return;
+			}
+			if (content && content.length) {
+				message = this.options.messages.results(content.length);
+			} else {
+				message = this.options.messages.noResults;
+			}
+			this.liveRegion.children().hide();
+			$("<div>").text(message).appendTo(this.liveRegion);
+		}
+	});
+
+	return $.ui.autocomplete;
+});
+
+/***/ }),
 /* 162 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Menu 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Menu
+//>>group: Widgets
+//>>description: Creates nestable menus.
+//>>docs: http://api.jqueryui.com/menu/
+//>>demos: http://jqueryui.com/menu/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/menu.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(11), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.widget("ui.menu", {
+		version: "1.12.1",
+		defaultElement: "<ul>",
+		delay: 300,
+		options: {
+			icons: {
+				submenu: "ui-icon-caret-1-e"
+			},
+			items: "> *",
+			menus: "ul",
+			position: {
+				my: "left top",
+				at: "right top"
+			},
+			role: "menu",
+
+			// Callbacks
+			blur: null,
+			focus: null,
+			select: null
+		},
+
+		_create: function _create() {
+			this.activeMenu = this.element;
+
+			// Flag used to prevent firing of the click handler
+			// as the event bubbles up through nested menus
+			this.mouseHandled = false;
+			this.element.uniqueId().attr({
+				role: this.options.role,
+				tabIndex: 0
+			});
+
+			this._addClass("ui-menu", "ui-widget ui-widget-content");
+			this._on({
+
+				// Prevent focus from sticking to links inside menu after clicking
+				// them (focus should always stay on UL during navigation).
+				"mousedown .ui-menu-item": function mousedownUiMenuItem(event) {
+					event.preventDefault();
+				},
+				"click .ui-menu-item": function clickUiMenuItem(event) {
+					var target = $(event.target);
+					var active = $($.ui.safeActiveElement(this.document[0]));
+					if (!this.mouseHandled && target.not(".ui-state-disabled").length) {
+						this.select(event);
+
+						// Only set the mouseHandled flag if the event will bubble, see #9469.
+						if (!event.isPropagationStopped()) {
+							this.mouseHandled = true;
+						}
+
+						// Open submenu on click
+						if (target.has(".ui-menu").length) {
+							this.expand(event);
+						} else if (!this.element.is(":focus") && active.closest(".ui-menu").length) {
+
+							// Redirect focus to the menu
+							this.element.trigger("focus", [true]);
+
+							// If the active item is on the top level, let it stay active.
+							// Otherwise, blur the active item since it is no longer visible.
+							if (this.active && this.active.parents(".ui-menu").length === 1) {
+								clearTimeout(this.timer);
+							}
+						}
+					}
+				},
+				"mouseenter .ui-menu-item": function mouseenterUiMenuItem(event) {
+
+					// Ignore mouse events while typeahead is active, see #10458.
+					// Prevents focusing the wrong item when typeahead causes a scroll while the mouse
+					// is over an item in the menu
+					if (this.previousFilter) {
+						return;
+					}
+
+					var actualTarget = $(event.target).closest(".ui-menu-item"),
+					    target = $(event.currentTarget);
+
+					// Ignore bubbled events on parent items, see #11641
+					if (actualTarget[0] !== target[0]) {
+						return;
+					}
+
+					// Remove ui-state-active class from siblings of the newly focused menu item
+					// to avoid a jump caused by adjacent elements both having a class with a border
+					this._removeClass(target.siblings().children(".ui-state-active"), null, "ui-state-active");
+					this.focus(event, target);
+				},
+				mouseleave: "collapseAll",
+				"mouseleave .ui-menu": "collapseAll",
+				focus: function focus(event, keepActiveItem) {
+
+					// If there's already an active item, keep it active
+					// If not, activate the first item
+					var item = this.active || this.element.find(this.options.items).eq(0);
+
+					if (!keepActiveItem) {
+						this.focus(event, item);
+					}
+				},
+				blur: function blur(event) {
+					this._delay(function () {
+						var notContained = !$.contains(this.element[0], $.ui.safeActiveElement(this.document[0]));
+						if (notContained) {
+							this.collapseAll(event);
+						}
+					});
+				},
+				keydown: "_keydown"
+			});
+
+			this.refresh();
+
+			// Clicks outside of a menu collapse any open menus
+			this._on(this.document, {
+				click: function click(event) {
+					if (this._closeOnDocumentClick(event)) {
+						this.collapseAll(event);
+					}
+
+					// Reset the mouseHandled flag
+					this.mouseHandled = false;
+				}
+			});
+		},
+
+		_destroy: function _destroy() {
+			var items = this.element.find(".ui-menu-item").removeAttr("role aria-disabled"),
+			    submenus = items.children(".ui-menu-item-wrapper").removeUniqueId().removeAttr("tabIndex role aria-haspopup");
+
+			// Destroy (sub)menus
+			this.element.removeAttr("aria-activedescendant").find(".ui-menu").addBack().removeAttr("role aria-labelledby aria-expanded aria-hidden aria-disabled " + "tabIndex").removeUniqueId().show();
+
+			submenus.children().each(function () {
+				var elem = $(this);
+				if (elem.data("ui-menu-submenu-caret")) {
+					elem.remove();
+				}
+			});
+		},
+
+		_keydown: function _keydown(event) {
+			var match,
+			    prev,
+			    character,
+			    skip,
+			    preventDefault = true;
+
+			switch (event.keyCode) {
+				case $.ui.keyCode.PAGE_UP:
+					this.previousPage(event);
+					break;
+				case $.ui.keyCode.PAGE_DOWN:
+					this.nextPage(event);
+					break;
+				case $.ui.keyCode.HOME:
+					this._move("first", "first", event);
+					break;
+				case $.ui.keyCode.END:
+					this._move("last", "last", event);
+					break;
+				case $.ui.keyCode.UP:
+					this.previous(event);
+					break;
+				case $.ui.keyCode.DOWN:
+					this.next(event);
+					break;
+				case $.ui.keyCode.LEFT:
+					this.collapse(event);
+					break;
+				case $.ui.keyCode.RIGHT:
+					if (this.active && !this.active.is(".ui-state-disabled")) {
+						this.expand(event);
+					}
+					break;
+				case $.ui.keyCode.ENTER:
+				case $.ui.keyCode.SPACE:
+					this._activate(event);
+					break;
+				case $.ui.keyCode.ESCAPE:
+					this.collapse(event);
+					break;
+				default:
+					preventDefault = false;
+					prev = this.previousFilter || "";
+					skip = false;
+
+					// Support number pad values
+					character = event.keyCode >= 96 && event.keyCode <= 105 ? (event.keyCode - 96).toString() : String.fromCharCode(event.keyCode);
+
+					clearTimeout(this.filterTimer);
+
+					if (character === prev) {
+						skip = true;
+					} else {
+						character = prev + character;
+					}
+
+					match = this._filterMenuItems(character);
+					match = skip && match.index(this.active.next()) !== -1 ? this.active.nextAll(".ui-menu-item") : match;
+
+					// If no matches on the current filter, reset to the last character pressed
+					// to move down the menu to the first item that starts with that character
+					if (!match.length) {
+						character = String.fromCharCode(event.keyCode);
+						match = this._filterMenuItems(character);
+					}
+
+					if (match.length) {
+						this.focus(event, match);
+						this.previousFilter = character;
+						this.filterTimer = this._delay(function () {
+							delete this.previousFilter;
+						}, 1000);
+					} else {
+						delete this.previousFilter;
+					}
+			}
+
+			if (preventDefault) {
+				event.preventDefault();
+			}
+		},
+
+		_activate: function _activate(event) {
+			if (this.active && !this.active.is(".ui-state-disabled")) {
+				if (this.active.children("[aria-haspopup='true']").length) {
+					this.expand(event);
+				} else {
+					this.select(event);
+				}
+			}
+		},
+
+		refresh: function refresh() {
+			var menus,
+			    items,
+			    newSubmenus,
+			    newItems,
+			    newWrappers,
+			    that = this,
+			    icon = this.options.icons.submenu,
+			    submenus = this.element.find(this.options.menus);
+
+			this._toggleClass("ui-menu-icons", null, !!this.element.find(".ui-icon").length);
+
+			// Initialize nested menus
+			newSubmenus = submenus.filter(":not(.ui-menu)").hide().attr({
+				role: this.options.role,
+				"aria-hidden": "true",
+				"aria-expanded": "false"
+			}).each(function () {
+				var menu = $(this),
+				    item = menu.prev(),
+				    submenuCaret = $("<span>").data("ui-menu-submenu-caret", true);
+
+				that._addClass(submenuCaret, "ui-menu-icon", "ui-icon " + icon);
+				item.attr("aria-haspopup", "true").prepend(submenuCaret);
+				menu.attr("aria-labelledby", item.attr("id"));
+			});
+
+			this._addClass(newSubmenus, "ui-menu", "ui-widget ui-widget-content ui-front");
+
+			menus = submenus.add(this.element);
+			items = menus.find(this.options.items);
+
+			// Initialize menu-items containing spaces and/or dashes only as dividers
+			items.not(".ui-menu-item").each(function () {
+				var item = $(this);
+				if (that._isDivider(item)) {
+					that._addClass(item, "ui-menu-divider", "ui-widget-content");
+				}
+			});
+
+			// Don't refresh list items that are already adapted
+			newItems = items.not(".ui-menu-item, .ui-menu-divider");
+			newWrappers = newItems.children().not(".ui-menu").uniqueId().attr({
+				tabIndex: -1,
+				role: this._itemRole()
+			});
+			this._addClass(newItems, "ui-menu-item")._addClass(newWrappers, "ui-menu-item-wrapper");
+
+			// Add aria-disabled attribute to any disabled menu item
+			items.filter(".ui-state-disabled").attr("aria-disabled", "true");
+
+			// If the active item has been removed, blur the menu
+			if (this.active && !$.contains(this.element[0], this.active[0])) {
+				this.blur();
+			}
+		},
+
+		_itemRole: function _itemRole() {
+			return {
+				menu: "menuitem",
+				listbox: "option"
+			}[this.options.role];
+		},
+
+		_setOption: function _setOption(key, value) {
+			if (key === "icons") {
+				var icons = this.element.find(".ui-menu-icon");
+				this._removeClass(icons, null, this.options.icons.submenu)._addClass(icons, null, value.submenu);
+			}
+			this._super(key, value);
+		},
+
+		_setOptionDisabled: function _setOptionDisabled(value) {
+			this._super(value);
+
+			this.element.attr("aria-disabled", String(value));
+			this._toggleClass(null, "ui-state-disabled", !!value);
+		},
+
+		focus: function focus(event, item) {
+			var nested, focused, activeParent;
+			this.blur(event, event && event.type === "focus");
+
+			this._scrollIntoView(item);
+
+			this.active = item.first();
+
+			focused = this.active.children(".ui-menu-item-wrapper");
+			this._addClass(focused, null, "ui-state-active");
+
+			// Only update aria-activedescendant if there's a role
+			// otherwise we assume focus is managed elsewhere
+			if (this.options.role) {
+				this.element.attr("aria-activedescendant", focused.attr("id"));
+			}
+
+			// Highlight active parent menu item, if any
+			activeParent = this.active.parent().closest(".ui-menu-item").children(".ui-menu-item-wrapper");
+			this._addClass(activeParent, null, "ui-state-active");
+
+			if (event && event.type === "keydown") {
+				this._close();
+			} else {
+				this.timer = this._delay(function () {
+					this._close();
+				}, this.delay);
+			}
+
+			nested = item.children(".ui-menu");
+			if (nested.length && event && /^mouse/.test(event.type)) {
+				this._startOpening(nested);
+			}
+			this.activeMenu = item.parent();
+
+			this._trigger("focus", event, { item: item });
+		},
+
+		_scrollIntoView: function _scrollIntoView(item) {
+			var borderTop, paddingTop, offset, scroll, elementHeight, itemHeight;
+			if (this._hasScroll()) {
+				borderTop = parseFloat($.css(this.activeMenu[0], "borderTopWidth")) || 0;
+				paddingTop = parseFloat($.css(this.activeMenu[0], "paddingTop")) || 0;
+				offset = item.offset().top - this.activeMenu.offset().top - borderTop - paddingTop;
+				scroll = this.activeMenu.scrollTop();
+				elementHeight = this.activeMenu.height();
+				itemHeight = item.outerHeight();
+
+				if (offset < 0) {
+					this.activeMenu.scrollTop(scroll + offset);
+				} else if (offset + itemHeight > elementHeight) {
+					this.activeMenu.scrollTop(scroll + offset - elementHeight + itemHeight);
+				}
+			}
+		},
+
+		blur: function blur(event, fromFocus) {
+			if (!fromFocus) {
+				clearTimeout(this.timer);
+			}
+
+			if (!this.active) {
+				return;
+			}
+
+			this._removeClass(this.active.children(".ui-menu-item-wrapper"), null, "ui-state-active");
+
+			this._trigger("blur", event, { item: this.active });
+			this.active = null;
+		},
+
+		_startOpening: function _startOpening(submenu) {
+			clearTimeout(this.timer);
+
+			// Don't open if already open fixes a Firefox bug that caused a .5 pixel
+			// shift in the submenu position when mousing over the caret icon
+			if (submenu.attr("aria-hidden") !== "true") {
+				return;
+			}
+
+			this.timer = this._delay(function () {
+				this._close();
+				this._open(submenu);
+			}, this.delay);
+		},
+
+		_open: function _open(submenu) {
+			var position = $.extend({
+				of: this.active
+			}, this.options.position);
+
+			clearTimeout(this.timer);
+			this.element.find(".ui-menu").not(submenu.parents(".ui-menu")).hide().attr("aria-hidden", "true");
+
+			submenu.show().removeAttr("aria-hidden").attr("aria-expanded", "true").position(position);
+		},
+
+		collapseAll: function collapseAll(event, all) {
+			clearTimeout(this.timer);
+			this.timer = this._delay(function () {
+
+				// If we were passed an event, look for the submenu that contains the event
+				var currentMenu = all ? this.element : $(event && event.target).closest(this.element.find(".ui-menu"));
+
+				// If we found no valid submenu ancestor, use the main menu to close all
+				// sub menus anyway
+				if (!currentMenu.length) {
+					currentMenu = this.element;
+				}
+
+				this._close(currentMenu);
+
+				this.blur(event);
+
+				// Work around active item staying active after menu is blurred
+				this._removeClass(currentMenu.find(".ui-state-active"), null, "ui-state-active");
+
+				this.activeMenu = currentMenu;
+			}, this.delay);
+		},
+
+		// With no arguments, closes the currently active menu - if nothing is active
+		// it closes all menus.  If passed an argument, it will search for menus BELOW
+		_close: function _close(startMenu) {
+			if (!startMenu) {
+				startMenu = this.active ? this.active.parent() : this.element;
+			}
+
+			startMenu.find(".ui-menu").hide().attr("aria-hidden", "true").attr("aria-expanded", "false");
+		},
+
+		_closeOnDocumentClick: function _closeOnDocumentClick(event) {
+			return !$(event.target).closest(".ui-menu").length;
+		},
+
+		_isDivider: function _isDivider(item) {
+
+			// Match hyphen, em dash, en dash
+			return !/[^\-\u2014\u2013\s]/.test(item.text());
+		},
+
+		collapse: function collapse(event) {
+			var newItem = this.active && this.active.parent().closest(".ui-menu-item", this.element);
+			if (newItem && newItem.length) {
+				this._close();
+				this.focus(event, newItem);
+			}
+		},
+
+		expand: function expand(event) {
+			var newItem = this.active && this.active.children(".ui-menu ").find(this.options.items).first();
+
+			if (newItem && newItem.length) {
+				this._open(newItem.parent());
+
+				// Delay so Firefox will not hide activedescendant change in expanding submenu from AT
+				this._delay(function () {
+					this.focus(event, newItem);
+				});
+			}
+		},
+
+		next: function next(event) {
+			this._move("next", "first", event);
+		},
+
+		previous: function previous(event) {
+			this._move("prev", "last", event);
+		},
+
+		isFirstItem: function isFirstItem() {
+			return this.active && !this.active.prevAll(".ui-menu-item").length;
+		},
+
+		isLastItem: function isLastItem() {
+			return this.active && !this.active.nextAll(".ui-menu-item").length;
+		},
+
+		_move: function _move(direction, filter, event) {
+			var next;
+			if (this.active) {
+				if (direction === "first" || direction === "last") {
+					next = this.active[direction === "first" ? "prevAll" : "nextAll"](".ui-menu-item").eq(-1);
+				} else {
+					next = this.active[direction + "All"](".ui-menu-item").eq(0);
+				}
+			}
+			if (!next || !next.length || !this.active) {
+				next = this.activeMenu.find(this.options.items)[filter]();
+			}
+
+			this.focus(event, next);
+		},
+
+		nextPage: function nextPage(event) {
+			var item, base, height;
+
+			if (!this.active) {
+				this.next(event);
+				return;
+			}
+			if (this.isLastItem()) {
+				return;
+			}
+			if (this._hasScroll()) {
+				base = this.active.offset().top;
+				height = this.element.height();
+				this.active.nextAll(".ui-menu-item").each(function () {
+					item = $(this);
+					return item.offset().top - base - height < 0;
+				});
+
+				this.focus(event, item);
+			} else {
+				this.focus(event, this.activeMenu.find(this.options.items)[!this.active ? "first" : "last"]());
+			}
+		},
+
+		previousPage: function previousPage(event) {
+			var item, base, height;
+			if (!this.active) {
+				this.next(event);
+				return;
+			}
+			if (this.isFirstItem()) {
+				return;
+			}
+			if (this._hasScroll()) {
+				base = this.active.offset().top;
+				height = this.element.height();
+				this.active.prevAll(".ui-menu-item").each(function () {
+					item = $(this);
+					return item.offset().top - base + height > 0;
+				});
+
+				this.focus(event, item);
+			} else {
+				this.focus(event, this.activeMenu.find(this.options.items).first());
+			}
+		},
+
+		_hasScroll: function _hasScroll() {
+			return this.element.outerHeight() < this.element.prop("scrollHeight");
+		},
+
+		select: function select(event) {
+
+			// TODO: It should never be possible to not have an active item at this
+			// point, but the tests don't trigger mouseenter before click.
+			this.active = this.active || $(event.target).closest(".ui-menu-item");
+			var ui = { item: this.active };
+			if (!this.active.has(".ui-menu").length) {
+				this.collapseAll(event, true);
+			}
+			this._trigger("select", event, ui);
+		},
+
+		_filterMenuItems: function _filterMenuItems(character) {
+			var escapedCharacter = character.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, "\\$&"),
+			    regex = new RegExp("^" + escapedCharacter, "i");
+
+			return this.activeMenu.find(this.options.items)
+
+			// Only match on items, not dividers or other content (#10571)
+			.filter(".ui-menu-item").filter(function () {
+				return regex.test($.trim($(this).children(".ui-menu-item-wrapper").text()));
+			});
+		}
+	});
+});
+
+/***/ }),
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51647,7 +51292,7 @@ var _userfeedback = __webpack_require__(4);
 
 var _utils = __webpack_require__(5);
 
-var _uifunc = __webpack_require__(11);
+var _uifunc = __webpack_require__(13);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -51805,7 +51450,7 @@ var UserAdmin = function () {
 exports.default = UserAdmin;
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51823,13 +51468,13 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(5);
 
-var _textfieldlisteners = __webpack_require__(129);
+var _textfieldlisteners = __webpack_require__(14);
 
 var _serverresponse = __webpack_require__(6);
 
 var _userfeedback = __webpack_require__(4);
 
-var _cal = __webpack_require__(130);
+var _cal = __webpack_require__(15);
 
 var _cal2 = _interopRequireDefault(_cal);
 
@@ -52130,7 +51775,171 @@ var SettingsAdmin = function () {
 exports.default = SettingsAdmin;
 
 /***/ }),
-/* 164 */
+/* 165 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(5);
+
+var _textfieldlisteners = __webpack_require__(14);
+
+var _serverresponse = __webpack_require__(6);
+
+var _userfeedback = __webpack_require__(4);
+
+var _uifunc = __webpack_require__(13);
+
+var _cal = __webpack_require__(15);
+
+var _cal2 = _interopRequireDefault(_cal);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ReservationAdmin = function () {
+  function ReservationAdmin() {
+    _classCallCheck(this, ReservationAdmin);
+
+    this.facility = (0, _jquery2.default)('.iam-reservation-wrap').data('facility');
+    console.log(this.facility);
+
+    this.initListItems();
+    this.initSelectAll();
+    this.initLoadAllReservationsBtn();
+    (0, _jquery2.default)('label.iam-status-label input').prop('checked', true);
+    this.initResCalSubmitListener();
+    (0, _uifunc.initSearchListener)('.iam-search', '.iam-reservation-list div', 0);
+  }
+
+  _createClass(ReservationAdmin, [{
+    key: 'calRender',
+    value: function calRender() {
+      (0, _userfeedback.submissionStart)();
+      if (typeof this.cal == 'undefined') {
+        this.cal = 'adminRes';
+        this.calendar = new _cal2.default(this, 'admin');
+      } else {
+        this.calendar.update();
+      }
+      (0, _userfeedback.submissionEnd)();
+    }
+  }, {
+    key: 'initResCalSubmitListener',
+    value: function initResCalSubmitListener() {
+      var that = this;
+      (0, _jquery2.default)('.iam-res-cal-submit').click(function (event) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) return;
+        if (!(0, _utils.getSize)(that.calendar.eventsModified) && !that.calendar.eventsToDelete.length) return;
+        if (!confirm("Are you sure you want to make these changes?")) return;
+        (0, _userfeedback.submissionStart)();
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'POST',
+          data: { action: 'admin_update_reservations', to_delete: that.calendar.eventsToDelete, modified: that.calendar.eventsModified, sendEmails: false, reason: '', facility: that.facility.Name, load_all: that.didLoadAll },
+          success: function success(data) {
+            that.updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
+            that.calRender();
+            (0, _userfeedback.submissionEnd)();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+      (0, _jquery2.default)('.iam-res-cal-cancel').click(function (event) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) return;
+        refreshResCal();
+      });
+    }
+  }, {
+    key: 'initListItems',
+    value: function initListItems() {
+      var that = this;
+      (0, _jquery2.default)('.iam-reservation-list div').click(function (event) {
+        (0, _jquery2.default)(this).toggleClass('iam-highlighted');
+        that.calRender();
+      });
+    }
+  }, {
+    key: 'initSelectAll',
+    value: function initSelectAll() {
+      var that = this;
+      (0, _jquery2.default)('.iam-res-select-all').click(function (event) {
+        (0, _jquery2.default)(this).toggleClass('iam-highlighted');
+        if ((0, _jquery2.default)(this).hasClass('iam-highlighted')) {
+          (0, _jquery2.default)('.iam-reservation-list div:not(.iam-highlighted)').each(function (index, el) {
+            if (!(0, _jquery2.default)(this).hasClass('iam-ninja')) {
+              (0, _jquery2.default)(this).addClass('iam-highlighted');
+            }
+          });
+          that.calRender();
+        } else {
+          (0, _jquery2.default)('.iam-reservation-list div.iam-highlighted').each(function (index, el) {
+            (0, _jquery2.default)(this).removeClass('iam-highlighted');
+          });
+          that.calRender();
+        }
+      });
+    }
+  }, {
+    key: 'initLoadAllReservationsBtn',
+    value: function initLoadAllReservationsBtn() {
+      var that = this;
+      (0, _jquery2.default)('.iam-load-all-reservations').click(function (event) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) return;
+
+        (0, _userfeedback.submissionStart)();
+
+        console.log(that.facility, that.facility.Name);
+        _jquery2.default.ajax({
+          url: ajaxurl,
+          type: 'GET',
+          data: { action: 'load_all_events_admin_res_cal', facility: that.facility.Name },
+          success: function success(data) {
+            var newData = (0, _serverresponse.handleServerResponse)(data);
+            for (var i in newData) {
+              var c = newData[i];
+              (0, _jquery2.default)('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
+            }
+            that.didLoadAll = true;
+            that.calRender();
+          },
+          error: function error(data) {
+            (0, _serverresponse.handleServerError)(data, new Error());
+          }
+        });
+      });
+    }
+  }, {
+    key: 'updateEquipmentEvents',
+    value: function updateEquipmentEvents(newData) {
+      for (var i in newData) {
+        var c = newData[i];
+        (0, _jquery2.default)('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
+      }
+    }
+  }]);
+
+  return ReservationAdmin;
+}();
+
+exports.default = ReservationAdmin;
+
+/***/ }),
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 144);
+/******/ 	return __webpack_require__(__webpack_require__.s = 156);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -1893,7 +1893,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
         if (!locales[name] && typeof module !== 'undefined' && module && module.exports) {
             try {
                 oldLocale = globalLocale._abbr;
-                __webpack_require__(137)("./" + name);
+                __webpack_require__(140)("./" + name);
                 // because defineLocale currently also sets the global locale, we
                 // want to undo that for lazy loaded locales
                 getSetGlobalLocale(oldLocale);
@@ -4425,7 +4425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     return hooks;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
 /***/ }),
 /* 1 */
@@ -14261,7 +14261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
 
 /***/ }),
 /* 2 */
@@ -15255,6 +15255,224 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 "use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
+/*!
+ * jQuery UI Mouse 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Mouse
+//>>group: Widgets
+//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
+//>>docs: http://api.jqueryui.com/mouse/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(141), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	var mouseHandled = false;
+	$(document).on("mouseup", function () {
+		mouseHandled = false;
+	});
+
+	return $.widget("ui.mouse", {
+		version: "1.12.1",
+		options: {
+			cancel: "input, textarea, button, select, option",
+			distance: 1,
+			delay: 0
+		},
+		_mouseInit: function _mouseInit() {
+			var that = this;
+
+			this.element.on("mousedown." + this.widgetName, function (event) {
+				return that._mouseDown(event);
+			}).on("click." + this.widgetName, function (event) {
+				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
+					$.removeData(event.target, that.widgetName + ".preventClickEvent");
+					event.stopImmediatePropagation();
+					return false;
+				}
+			});
+
+			this.started = false;
+		},
+
+		// TODO: make sure destroying one instance of mouse doesn't mess with
+		// other instances of mouse
+		_mouseDestroy: function _mouseDestroy() {
+			this.element.off("." + this.widgetName);
+			if (this._mouseMoveDelegate) {
+				this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
+			}
+		},
+
+		_mouseDown: function _mouseDown(event) {
+
+			// don't let more than one widget handle mouseStart
+			if (mouseHandled) {
+				return;
+			}
+
+			this._mouseMoved = false;
+
+			// We may have missed mouseup (out of window)
+			this._mouseStarted && this._mouseUp(event);
+
+			this._mouseDownEvent = event;
+
+			var that = this,
+			    btnIsLeft = event.which === 1,
+
+
+			// event.target.nodeName works around a bug in IE 8 with
+			// disabled inputs (#7620)
+			elIsCancel = typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false;
+			if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
+				return true;
+			}
+
+			this.mouseDelayMet = !this.options.delay;
+			if (!this.mouseDelayMet) {
+				this._mouseDelayTimer = setTimeout(function () {
+					that.mouseDelayMet = true;
+				}, this.options.delay);
+			}
+
+			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+				this._mouseStarted = this._mouseStart(event) !== false;
+				if (!this._mouseStarted) {
+					event.preventDefault();
+					return true;
+				}
+			}
+
+			// Click event may never have fired (Gecko & Opera)
+			if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
+				$.removeData(event.target, this.widgetName + ".preventClickEvent");
+			}
+
+			// These delegates are required to keep context
+			this._mouseMoveDelegate = function (event) {
+				return that._mouseMove(event);
+			};
+			this._mouseUpDelegate = function (event) {
+				return that._mouseUp(event);
+			};
+
+			this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate);
+
+			event.preventDefault();
+
+			mouseHandled = true;
+			return true;
+		},
+
+		_mouseMove: function _mouseMove(event) {
+
+			// Only check for mouseups outside the document if you've moved inside the document
+			// at least once. This prevents the firing of mouseup in the case of IE<9, which will
+			// fire a mousemove event if content is placed under the cursor. See #7778
+			// Support: IE <9
+			if (this._mouseMoved) {
+
+				// IE mouseup check - mouseup happened when mouse was out of window
+				if ($.ui.ie && (!document.documentMode || document.documentMode < 9) && !event.button) {
+					return this._mouseUp(event);
+
+					// Iframe mouseup check - mouseup occurred in another document
+				} else if (!event.which) {
+
+					// Support: Safari <=8 - 9
+					// Safari sets which to 0 if you press any of the following keys
+					// during a drag (#14461)
+					if (event.originalEvent.altKey || event.originalEvent.ctrlKey || event.originalEvent.metaKey || event.originalEvent.shiftKey) {
+						this.ignoreMissingWhich = true;
+					} else if (!this.ignoreMissingWhich) {
+						return this._mouseUp(event);
+					}
+				}
+			}
+
+			if (event.which || event.button) {
+				this._mouseMoved = true;
+			}
+
+			if (this._mouseStarted) {
+				this._mouseDrag(event);
+				return event.preventDefault();
+			}
+
+			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
+				this._mouseStarted = this._mouseStart(this._mouseDownEvent, event) !== false;
+				this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event);
+			}
+
+			return !this._mouseStarted;
+		},
+
+		_mouseUp: function _mouseUp(event) {
+			this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
+
+			if (this._mouseStarted) {
+				this._mouseStarted = false;
+
+				if (event.target === this._mouseDownEvent.target) {
+					$.data(event.target, this.widgetName + ".preventClickEvent", true);
+				}
+
+				this._mouseStop(event);
+			}
+
+			if (this._mouseDelayTimer) {
+				clearTimeout(this._mouseDelayTimer);
+				delete this._mouseDelayTimer;
+			}
+
+			this.ignoreMissingWhich = false;
+			mouseHandled = false;
+			event.preventDefault();
+		},
+
+		_mouseDistanceMet: function _mouseDistanceMet(event) {
+			return Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance;
+		},
+
+		_mouseDelayMet: function _mouseDelayMet() /* event */{
+			return this.mouseDelayMet;
+		},
+
+		// These are placeholder methods, to be overriden by extending plugin
+		_mouseStart: function _mouseStart() /* event */{},
+		_mouseDrag: function _mouseDrag() /* event */{},
+		_mouseStop: function _mouseStop() /* event */{},
+		_mouseCapture: function _mouseCapture() /* event */{
+			return true;
+		}
+	});
+});
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
 (function (factory) {
 	if (true) {
 
@@ -15299,7 +15517,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15770,7 +15988,66 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 10 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Unique ID 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: uniqueId
+//>>group: Core
+//>>description: Functions to generate and remove uniqueId's
+//>>docs: http://api.jqueryui.com/uniqueId/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.extend({
+		uniqueId: function () {
+			var uuid = 0;
+
+			return function () {
+				return this.each(function () {
+					if (!this.id) {
+						this.id = "ui-id-" + ++uuid;
+					}
+				});
+			};
+		}(),
+
+		removeUniqueId: function removeUniqueId() {
+			return this.each(function () {
+				if (/^ui-id-\d+$/.test(this.id)) {
+					$(this).removeAttr("id");
+				}
+			});
+		}
+	});
+});
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15800,7 +16077,7 @@ module.exports = function (module) {
 };
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15904,7 +16181,672 @@ exports.initSearchListener = initSearchListener;
 exports.initPopupXListener = initPopupXListener;
 
 /***/ }),
-/* 12 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _utils = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
+			return false;
+		}
+	});
+};
+
+var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z.]*$/)) {
+			return false;
+		}
+	});
+};
+
+var emailOnlyListener = function emailOnlyListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
+			return false;
+		}
+	});
+};
+
+var itemNameListener = function itemNameListener(jqueryObject) {
+	jqueryObject.keydown(function (event) {
+		if (event.key.match(/^[;'_]*$/)) {
+			return false;
+		}
+	});
+};
+
+var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
+			return false;
+		}
+	});
+};
+
+var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
+	if ((0, _utils.detectIE)() === false) return false;
+	jqueryObject.keydown(function (event) {
+		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
+			if (!event.key.match(/^[0-9.]*$/)) {
+				return false;
+			}
+		}
+	});
+};
+
+exports.alphaNumericOnlyListener = alphaNumericOnlyListener;
+exports.alphaOnlyListener = alphaOnlyListener;
+exports.emailOnlyListener = emailOnlyListener;
+exports.itemNameListener = itemNameListener;
+exports.maxLengthListener = maxLengthListener;
+exports.numbersOnlyListener = numbersOnlyListener;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(139);
+
+__webpack_require__(131);
+
+__webpack_require__(132);
+
+var _userfeedback = __webpack_require__(4);
+
+var _override = __webpack_require__(137);
+
+var _contextmenu = __webpack_require__(155);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Cal = function () {
+  function Cal(page, facing) {
+    _classCallCheck(this, Cal);
+
+    this.page = page;
+    this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+    this.setCalArgs();
+    this.initCalFor(facing);
+  }
+
+  _createClass(Cal, [{
+    key: 'adminCalEventDrop',
+    value: function adminCalEventDrop(event, d, revert) {
+      if (eventFallsOnWeekend(event)) {
+        (0, _override.overridePrompt)({
+          title: 'Confirm Override',
+          body: this.ERinvalidTimePrompt,
+          cancel: function cancel() {
+            revert();
+          },
+          override: function override() {
+            updateEventsModified(event);
+          }
+        });
+      } else {
+        updateEventsModified(event);
+      }
+    }
+  }, {
+    key: 'adminCalEventResize',
+    value: function adminCalEventResize(event, d, revert, jsevent) {
+      if (eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
+        (0, _override.overridePrompt)({
+          title: 'Confirm Override',
+          body: this.ERinvalidTimePrompt,
+          cancel: function cancel() {
+            revert();
+          },
+          override: function override() {
+            updateEventsModified(event);
+          }
+        });
+      } else {
+        updateEventsModified(event);
+      }
+    }
+  }, {
+    key: 'adminCalEventReceive',
+    value: function adminCalEventReceive(e) {
+      if (eventFallsOnWeekend(e)) {
+        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+        return false;
+      }
+    }
+  }, {
+    key: 'convertBusinessHours',
+    value: function convertBusinessHours(jsonString) {
+      var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+      var converted = [];
+      var counter = 1;
+      for (var key in json) {
+        var day = _jquery2.default.extend({}, json[key]);
+        if (day.start != '') {
+          day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
+          day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
+          converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
+        } else {
+          converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
+        }
+        counter++;
+      }
+      return converted;
+    }
+  }, {
+    key: 'eventFallsOnWeekend',
+    value: function eventFallsOnWeekend(e) {
+      var dayOfWeekStart = e.start.format('ddd').toLowerCase();
+      var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
+
+      //for now it ends at midnight of the following day
+      return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
+    }
+  }, {
+    key: 'eventIsLongerThan',
+    value: function eventIsLongerThan(e, days) {
+      var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      return end.diff(start, 'days') > days;
+    }
+  }, {
+    key: 'getCalID',
+    value: function getCalID() {
+      if ((0, _jquery2.default)('.iam-cal').length > 0) return '.iam-cal';
+      if ((0, _jquery2.default)('.iam-res-cal').length > 0) return '.iam-res-cal';
+    }
+  }, {
+    key: 'handleEventToDelete',
+    value: function handleEventToDelete(event, j) {
+
+      if (j.hasClass('event-not-editable')) return;
+      if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
+
+      var index = this.eventsToDelete.indexOf(event.nid);
+      if (index != -1) {
+        this.eventsToDelete.splice(index, 1);
+      } else {
+        this.eventsToDelete.push(event.nid);
+      }
+      (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
+    }
+  }, {
+    key: 'initCalFor',
+    value: function initCalFor(facing) {
+      if (facing == 'public') {
+        this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+        this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
+        this.initDraggable();
+        this.initPubResCal(this.page.getFacilityInfo('type'));
+      } else if (facing == 'admin') {
+        this.initDraggable();
+        this.initAdminCal(this.page.cal);
+      }
+    }
+  }, {
+    key: 'initStatusHideListeners',
+    value: function initStatusHideListeners() {
+      (0, _jquery2.default)('.res-toolbar input[name=upcoming]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=active]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=completed]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=no-show]').off();
+      (0, _jquery2.default)('.res-toolbar input[name=no-pay]').off();
+
+      (0, _jquery2.default)('.res-toolbar input[name=upcoming]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-upcoming').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=active]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-active').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=completed]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-completed').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=no-show]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-no-show').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=no-pay]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-no-pay').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=is-late]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-is-late').toggleClass('iam-ninja');
+      });
+      (0, _jquery2.default)('.res-toolbar input[name=was-late]').click(function (e) {
+        if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
+          e.preventDefault();
+          return false;
+        }
+        (0, _jquery2.default)('.iam-status-was-late').toggleClass('iam-ninja');
+      });
+    }
+  }, {
+    key: 'initDraggable',
+    value: function initDraggable() {
+
+      (0, _jquery2.default)('.iam-events .fc-event').each(function () {
+
+        // store data so the calendar knows to render an event upon drop
+        (0, _jquery2.default)(this).data('event', {
+          title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
+          editable: true,
+          eventDurationEditable: true,
+          color: '#4cad57',
+          className: 'iam-new-event'
+        });
+
+        // make the event draggable using jQuery UI
+        (0, _jquery2.default)(this).draggable({
+          zIndex: 999,
+          revert: true, // will cause the event to go back to its
+          revertDuration: 0 //  original position after the drag
+        });
+      });
+    }
+  }, {
+    key: 'initAdminCal',
+    value: function initAdminCal(cal) {
+      var _this = this;
+
+      this.resetEvents();
+      this.removePlaceholder();
+
+      if (this.page.cal == 'ResAdmin') this.updateResListSource();
+
+      var neutralArgs = {
+        editable: false, //new events will be made editable else where
+        eventLimit: true, // allow "more" link when too many events
+        allDay: false,
+        height: 500,
+        forceEventDuration: true,
+        droppable: true,
+        eventOverlap: false,
+        allDaySlot: false
+      };
+
+      var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
+      this.calID = this.getCalID();
+      (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
+      (0, _userfeedback.submissionStart)();
+      setTimeout(function () {
+        _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
+      }, 1000);
+    }
+  }, {
+    key: 'initPubResCal',
+    value: function initPubResCal(facilitType) {
+      var facilityNeutralArgs = {
+        editable: false, //new events will be made editable else where
+        eventLimit: true, // allow "more" link when too many events
+        allDay: false,
+        height: 500,
+        forceEventDuration: true,
+        businessHours: this.businessHoursConverted,
+        droppable: true,
+        eventOverlap: false,
+        allDaySlot: false,
+        eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
+          color: '#f13d39' }]
+      };
+
+      var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
+
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
+    }
+  }, {
+    key: 'initContextMenu',
+    value: function initContextMenu(menuToUse) {
+      var that = this;
+      (0, _contextmenu.initContextMenuLib)();
+      menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
+
+      var menu = [{
+        name: 'mark for deletion',
+        title: 'delete button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          that.handleEventToDelete(event, t);
+        }
+      }, {
+        name: 'copy email',
+        title: 'copy button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { email: t.data('email') };
+          that.handleEventCopyEmail(event);
+        }
+      }];
+
+      var rentalMenu = [{
+        name: 'use this reservation',
+        title: 'select reservation button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          makeRelevantReservation(t.data('fcSeg').event);
+        }
+      }, {
+        name: 'mark for deletion',
+        title: 'delete button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          that.handleEventToDelete(event, t);
+        }
+      }];
+
+      var irregularMenu = [{
+        name: 'mark for deletion',
+        title: 'delete button',
+        fun: function fun(e) {
+          var t = (0, _jquery2.default)(e.trigger);
+          var event = { nid: t.data('nid') };
+          that.handleEventToDelete(t.data('fcSeg').event, t);
+          (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
+        }
+      }];
+
+      var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
+      var menuOfChoice = menuDict[menuToUse];
+
+      (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
+    }
+  }, {
+    key: 'preventPastReservation',
+    value: function preventPastReservation(e) {
+
+      var targetTimeStart = null;
+
+      if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+
+      if (targetTimeStart.isBefore(moment())) {
+        alert('You cannot make reservations in the past.');
+        return false;
+      }
+      return true;
+    }
+  }, {
+    key: 'resetEvents',
+    value: function resetEvents() {
+      this.eventsToDelete = [];
+      this.eventsModified = {};
+      this.eventsConfirmed = [];
+    }
+  }, {
+    key: 'removePlaceholder',
+    value: function removePlaceholder() {
+      (0, _jquery2.default)('.iam-res-cal-placeholder').remove();
+      (0, _jquery2.default)('.iam-cal-placeholder').remove();
+    }
+  }, {
+    key: 'setCalArgs',
+    value: function setCalArgs() {
+      var that = this;
+      this.calArgs = {};
+
+      this.calArgs['adminRes'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        droppable: true,
+        eventOverlap: true,
+        weekends: true,
+        height: 600,
+        forceEventDuration: true,
+        defaultView: 'month',
+        editable: true,
+        eventLimit: true, // allow "more" link when too many events
+        eventRender: function eventRender(event, element) {
+          //that.toolTipsForEvents(event,element);
+          (0, _jquery2.default)(element).data('fullname', event.fullname);
+          (0, _jquery2.default)(element).data('email', event.email);
+          (0, _jquery2.default)(element).data('equipment', event.equipment);
+          (0, _jquery2.default)(element).data('nid', event.nid);
+          (0, _jquery2.default)(element).addClass('iam-status-' + event.status);
+          if (event.status == 'completed' || event.status == 'was-late') {
+            (0, _jquery2.default)(element).addClass('event-not-editable');
+          }
+          if (that.eventsToDelete.indexOf(event.nid) != -1) {
+            (0, _jquery2.default)(element).addClass('marked-for-delete');
+          }
+        },
+        eventAfterRender: function eventAfterRender(event, element) {
+          if (event.toDelete == 1) {
+            (0, _jquery2.default)(element).css({
+              'background-color': '#ef4040',
+              'border': '1px solid #ef4040'
+            });
+          }
+        },
+        eventAfterAllRender: function eventAfterAllRender() {
+          that.initContextMenu();
+          that.initStatusHideListeners();
+          (0, _userfeedback.submissionEnd)();
+        },
+        eventDrop: function eventDrop(event, d, revert) {
+          that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+          if (that.page.facility.Schedule.type == 'rental') that.adminCalEventDrop(event, d, revert);
+        },
+        eventResize: function eventResize(event, d, revert, jsevent) {
+          that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+          that.currenRentalPeriod = event.period;
+          if (that.page.facility.Schedule.type == 'rental') that.adminCalEventResize(event, d, revert, jsevent);
+        },
+        eventMouseover: function eventMouseover(calEvent, jsEvent) {
+          var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: ' + calEvent.fullname + '<br /> Email: ' + calEvent.email + ' <br /> Equipment: ' + calEvent.equipment + '<br /> Checked In: ' + calEvent.in + '<br /> Checked Out: ' + calEvent.out + '</div>';
+
+          var $tooltip = (0, _jquery2.default)(tooltip).appendTo('body');
+
+          (0, _jquery2.default)(this).mouseover(function (e) {
+            (0, _jquery2.default)(this).css('z-index', 10000);
+            $tooltip.fadeIn('500');
+            $tooltip.fadeTo('10', 1.9);
+          }).mousemove(function (e) {
+            $tooltip.css('top', e.pageY + 10);
+            $tooltip.css('left', e.pageX + 20);
+          });
+        },
+        eventMouseout: function eventMouseout(calEvent, jsEvent) {
+          (0, _jquery2.default)(this).css('z-index', 8);
+          (0, _jquery2.default)('.tooltipevent').remove();
+        },
+        events: that.lastReservationResource
+      };
+
+      this.calArgs['irregular'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay'
+        },
+        defaultView: 'agendaWeek',
+        title: 'closed',
+        eventReceive: function eventReceive(e, d, revert) {
+          e.title = 'closed';
+        },
+        eventRender: function eventRender(event, element) {
+          if (that.eventsToDelete.indexOf(event.nid) != -1) {
+            (0, _jquery2.default)(element).addClass('marked-for-delete');
+          }
+          that.toolTipsForEvents(event, element);
+        },
+        eventAfterAllRender: function eventAfterAllRender() {
+          that.initContextMenu(that.page.cal);
+        },
+        events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
+      };
+
+      this.calArgs['appointment'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'agendaWeek,agendaDay'
+        },
+        defaultTimedEventDuration: '00:30:00',
+        weekends: true,
+        defaultView: 'agendaWeek',
+        eventReceive: function eventReceive(e, d, revert) {
+          if (!that.preventPastReservation(e)) {
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
+          that.warnIfOutOfBounds(e);
+        },
+        eventDrop: function eventDrop(e, d, revert) {
+          if (!that.preventPastReservation(e)) {
+            revert();
+            return;
+          }
+          that.warnIfOutOfBounds(e);
+        },
+        eventResize: function eventResize(e, d, revert) {
+          if (!that.preventPastReservation(e)) {
+            revert();
+            return;
+          }
+          that.warnIfOutOfBounds(e);
+        }
+      };
+
+      this.calArgs['rental'] = {
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month'
+        },
+        weekends: true,
+        defaultView: 'month',
+        eventReceive: function eventReceive(e) {
+          if (that.eventFallsOnWeekend(e)) {
+            alert(that.ERinvalidTimePrompt);
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
+        },
+        eventDrop: function eventDrop(e, d, revert) {
+          if (that.eventFallsOnWeekend(e)) {
+            alert(that.ERinvalidTimePrompt);
+            revert();
+          }
+        },
+        eventResize: function eventResize(e, d, revert) {
+          if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
+            alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
+            revert();
+          }
+        },
+        eventRender: function eventRender(event, element) {
+          that.toolTipsForEvents(event, element);
+        },
+        defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) }
+      };
+    }
+  }, {
+    key: 'toolTipsForEvents',
+    value: function toolTipsForEvents(event, element) {
+      return;
+      var e = (0, _jquery2.default)(element);
+      e.attr('title', event.title);
+      e.data('toggle', 'tooltip');
+    }
+  }, {
+    key: 'update',
+    value: function update() {
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEventSource', this.lastReservationResource);
+      this.updateResListSource();
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar('addEventSource', this.lastReservationResource);
+    }
+  }, {
+    key: 'updateResListSource',
+    value: function updateResListSource() {
+      var selectedEquipment = (0, _jquery2.default)('.iam-reservations-equipment-list-item.iam-highlighted');
+      var newEventResource = [];
+      (0, _jquery2.default)(selectedEquipment).each(function (index, el) {
+        newEventResource = newEventResource.concat((0, _jquery2.default)(this).data('calevents'));
+      });
+      this.lastReservationResource = newEventResource;
+    }
+  }, {
+    key: 'warnIfOutOfBounds',
+    value: function warnIfOutOfBounds(e) {
+      var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+
+      var thisStart = moment(thisDay.start, 'HH:mm');
+      var thisEnd = moment(thisDay.end, 'HH:mm');
+
+      var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
+      var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
+
+      if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
+        alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
+      }
+    }
+  }]);
+
+  return Cal;
+}();
+
+exports.default = Cal;
+
+/***/ }),
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15987,7 +16929,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 13 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16125,7 +17067,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16193,7 +17135,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16261,7 +17203,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16383,7 +17325,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 17 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16452,7 +17394,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 18 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16566,7 +17508,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 19 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16634,7 +17576,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 20 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16750,7 +17692,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 21 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16892,7 +17834,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 22 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16991,7 +17933,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 23 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17117,7 +18059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 24 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17243,7 +18185,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 25 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17360,7 +18302,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 26 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17512,7 +18454,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 27 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17606,7 +18548,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 28 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17801,7 +18743,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17873,7 +18815,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17962,7 +18904,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 31 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18031,7 +18973,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 32 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18118,7 +19060,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 33 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18206,7 +19148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 34 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18293,7 +19235,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 35 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18381,7 +19323,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18491,7 +19433,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 37 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18564,7 +19506,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 38 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18633,7 +19575,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 39 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18706,7 +19648,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 40 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18779,7 +19721,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 41 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18852,7 +19794,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 42 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18934,7 +19876,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 43 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19026,7 +19968,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 44 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19117,7 +20059,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 45 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19206,7 +20148,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 46 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19281,7 +20223,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 47 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19398,7 +20340,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 48 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19511,7 +20453,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 49 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19580,7 +20522,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 50 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19672,7 +20614,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 51 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19755,7 +20697,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 52 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19842,7 +20784,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 53 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19926,7 +20868,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20009,7 +20951,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 55 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20095,7 +21037,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 56 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20226,7 +21168,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 57 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20335,7 +21277,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 58 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20468,7 +21410,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 59 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20622,7 +21564,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 60 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20740,7 +21682,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 61 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20845,7 +21787,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 62 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20937,7 +21879,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 63 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21073,7 +22015,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 64 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21152,7 +22094,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 65 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21241,7 +22183,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 66 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21333,7 +22275,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 67 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21430,7 +22372,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 68 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21526,7 +22468,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 69 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21593,7 +22535,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 70 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21728,7 +22670,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 71 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21806,7 +22748,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 72 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21902,7 +22844,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 73 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22049,7 +22991,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 74 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22128,7 +23070,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 75 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22254,7 +23196,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 76 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22360,7 +23302,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 77 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22472,7 +23414,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 78 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22545,7 +23487,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 79 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22644,7 +23586,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 80 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22732,7 +23674,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 81 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22920,7 +23862,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 82 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23011,7 +23953,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 83 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23103,7 +24045,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 84 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23208,7 +24150,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 85 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23280,7 +24222,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 86 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23412,7 +24354,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 87 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23509,7 +24451,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 88 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23606,7 +24548,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 89 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23675,7 +24617,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 90 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23808,7 +24750,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 91 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23924,7 +24866,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 92 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23997,7 +24939,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 93 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24066,7 +25008,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 94 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24150,7 +25092,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 95 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24342,7 +25284,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 96 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24428,7 +25370,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 97 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24497,7 +25439,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 98 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24578,7 +25520,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 99 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24748,7 +25690,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 100 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24919,7 +25861,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 101 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24998,7 +25940,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 102 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25109,7 +26051,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 103 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25220,7 +26162,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 104 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25317,7 +26259,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 105 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25392,7 +26334,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 106 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25460,7 +26402,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 107 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25599,7 +26541,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 108 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25697,7 +26639,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 109 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25771,7 +26713,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 110 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25847,7 +26789,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 111 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25918,7 +26860,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 112 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26035,7 +26977,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 113 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26135,7 +27077,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 114 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26236,7 +27178,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 115 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26303,7 +27245,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 116 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26370,7 +27312,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 117 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26525,7 +27467,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 118 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26612,7 +27554,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 119 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26679,7 +27621,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 120 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26746,7 +27688,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 121 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26835,7 +27777,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 122 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26909,7 +27851,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 123 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26978,7 +27920,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 124 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27097,7 +28039,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 125 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27211,7 +28153,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 126 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27324,1509 +28266,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 127 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Mouse 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Mouse
-//>>group: Widgets
-//>>description: Abstracts mouse-based interactions to assist in creating certain widgets.
-//>>docs: http://api.jqueryui.com/mouse/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(138), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	var mouseHandled = false;
-	$(document).on("mouseup", function () {
-		mouseHandled = false;
-	});
-
-	return $.widget("ui.mouse", {
-		version: "1.12.1",
-		options: {
-			cancel: "input, textarea, button, select, option",
-			distance: 1,
-			delay: 0
-		},
-		_mouseInit: function _mouseInit() {
-			var that = this;
-
-			this.element.on("mousedown." + this.widgetName, function (event) {
-				return that._mouseDown(event);
-			}).on("click." + this.widgetName, function (event) {
-				if (true === $.data(event.target, that.widgetName + ".preventClickEvent")) {
-					$.removeData(event.target, that.widgetName + ".preventClickEvent");
-					event.stopImmediatePropagation();
-					return false;
-				}
-			});
-
-			this.started = false;
-		},
-
-		// TODO: make sure destroying one instance of mouse doesn't mess with
-		// other instances of mouse
-		_mouseDestroy: function _mouseDestroy() {
-			this.element.off("." + this.widgetName);
-			if (this._mouseMoveDelegate) {
-				this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
-			}
-		},
-
-		_mouseDown: function _mouseDown(event) {
-
-			// don't let more than one widget handle mouseStart
-			if (mouseHandled) {
-				return;
-			}
-
-			this._mouseMoved = false;
-
-			// We may have missed mouseup (out of window)
-			this._mouseStarted && this._mouseUp(event);
-
-			this._mouseDownEvent = event;
-
-			var that = this,
-			    btnIsLeft = event.which === 1,
-
-
-			// event.target.nodeName works around a bug in IE 8 with
-			// disabled inputs (#7620)
-			elIsCancel = typeof this.options.cancel === "string" && event.target.nodeName ? $(event.target).closest(this.options.cancel).length : false;
-			if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
-				return true;
-			}
-
-			this.mouseDelayMet = !this.options.delay;
-			if (!this.mouseDelayMet) {
-				this._mouseDelayTimer = setTimeout(function () {
-					that.mouseDelayMet = true;
-				}, this.options.delay);
-			}
-
-			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
-				this._mouseStarted = this._mouseStart(event) !== false;
-				if (!this._mouseStarted) {
-					event.preventDefault();
-					return true;
-				}
-			}
-
-			// Click event may never have fired (Gecko & Opera)
-			if (true === $.data(event.target, this.widgetName + ".preventClickEvent")) {
-				$.removeData(event.target, this.widgetName + ".preventClickEvent");
-			}
-
-			// These delegates are required to keep context
-			this._mouseMoveDelegate = function (event) {
-				return that._mouseMove(event);
-			};
-			this._mouseUpDelegate = function (event) {
-				return that._mouseUp(event);
-			};
-
-			this.document.on("mousemove." + this.widgetName, this._mouseMoveDelegate).on("mouseup." + this.widgetName, this._mouseUpDelegate);
-
-			event.preventDefault();
-
-			mouseHandled = true;
-			return true;
-		},
-
-		_mouseMove: function _mouseMove(event) {
-
-			// Only check for mouseups outside the document if you've moved inside the document
-			// at least once. This prevents the firing of mouseup in the case of IE<9, which will
-			// fire a mousemove event if content is placed under the cursor. See #7778
-			// Support: IE <9
-			if (this._mouseMoved) {
-
-				// IE mouseup check - mouseup happened when mouse was out of window
-				if ($.ui.ie && (!document.documentMode || document.documentMode < 9) && !event.button) {
-					return this._mouseUp(event);
-
-					// Iframe mouseup check - mouseup occurred in another document
-				} else if (!event.which) {
-
-					// Support: Safari <=8 - 9
-					// Safari sets which to 0 if you press any of the following keys
-					// during a drag (#14461)
-					if (event.originalEvent.altKey || event.originalEvent.ctrlKey || event.originalEvent.metaKey || event.originalEvent.shiftKey) {
-						this.ignoreMissingWhich = true;
-					} else if (!this.ignoreMissingWhich) {
-						return this._mouseUp(event);
-					}
-				}
-			}
-
-			if (event.which || event.button) {
-				this._mouseMoved = true;
-			}
-
-			if (this._mouseStarted) {
-				this._mouseDrag(event);
-				return event.preventDefault();
-			}
-
-			if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
-				this._mouseStarted = this._mouseStart(this._mouseDownEvent, event) !== false;
-				this._mouseStarted ? this._mouseDrag(event) : this._mouseUp(event);
-			}
-
-			return !this._mouseStarted;
-		},
-
-		_mouseUp: function _mouseUp(event) {
-			this.document.off("mousemove." + this.widgetName, this._mouseMoveDelegate).off("mouseup." + this.widgetName, this._mouseUpDelegate);
-
-			if (this._mouseStarted) {
-				this._mouseStarted = false;
-
-				if (event.target === this._mouseDownEvent.target) {
-					$.data(event.target, this.widgetName + ".preventClickEvent", true);
-				}
-
-				this._mouseStop(event);
-			}
-
-			if (this._mouseDelayTimer) {
-				clearTimeout(this._mouseDelayTimer);
-				delete this._mouseDelayTimer;
-			}
-
-			this.ignoreMissingWhich = false;
-			mouseHandled = false;
-			event.preventDefault();
-		},
-
-		_mouseDistanceMet: function _mouseDistanceMet(event) {
-			return Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance;
-		},
-
-		_mouseDelayMet: function _mouseDelayMet() /* event */{
-			return this.mouseDelayMet;
-		},
-
-		// These are placeholder methods, to be overriden by extending plugin
-		_mouseStart: function _mouseStart() /* event */{},
-		_mouseDrag: function _mouseDrag() /* event */{},
-		_mouseStop: function _mouseStop() /* event */{},
-		_mouseCapture: function _mouseCapture() /* event */{
-			return true;
-		}
-	});
-});
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Unique ID 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: uniqueId
-//>>group: Core
-//>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.fn.extend({
-		uniqueId: function () {
-			var uuid = 0;
-
-			return function () {
-				return this.each(function () {
-					if (!this.id) {
-						this.id = "ui-id-" + ++uuid;
-					}
-				});
-			};
-		}(),
-
-		removeUniqueId: function removeUniqueId() {
-			return this.each(function () {
-				if (/^ui-id-\d+$/.test(this.id)) {
-					$(this).removeAttr("id");
-				}
-			});
-		}
-	});
-});
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-exports.numbersOnlyListener = exports.maxLengthListener = exports.itemNameListener = exports.emailOnlyListener = exports.alphaOnlyListener = exports.alphaNumericOnlyListener = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _utils = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var alphaNumericOnlyListener = function alphaNumericOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.]*$/)) {
-			return false;
-		}
-	});
-};
-
-var alphaOnlyListener = function alphaOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z.]*$/)) {
-			return false;
-		}
-	});
-};
-
-var emailOnlyListener = function emailOnlyListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (!event.key.match(/^[a-zA-Z0-9.@]*$/)) {
-			return false;
-		}
-	});
-};
-
-var itemNameListener = function itemNameListener(jqueryObject) {
-	jqueryObject.keydown(function (event) {
-		if (event.key.match(/^[;'_]*$/)) {
-			return false;
-		}
-	});
-};
-
-var maxLengthListener = function maxLengthListener(jqueryObject, maxLength) {
-	if ((0, _utils.detectIE)() === false) return false;
-	jqueryObject.keydown(function (event) {
-		if (jqueryObject.val().length >= maxLength && event.keyCode != 8) {
-			return false;
-		}
-	});
-};
-
-var numbersOnlyListener = function numbersOnlyListener(jqueryObject) {
-	if ((0, _utils.detectIE)() === false) return false;
-	jqueryObject.keydown(function (event) {
-		if (event.key != 'Backspace' && event.key != 'ArrowLeft' && event.key != 'ArrowRight') {
-			if (!event.key.match(/^[0-9.]*$/)) {
-				return false;
-			}
-		}
-	});
-};
-
-exports.alphaNumericOnlyListener = alphaNumericOnlyListener;
-exports.alphaOnlyListener = alphaOnlyListener;
-exports.emailOnlyListener = emailOnlyListener;
-exports.itemNameListener = itemNameListener;
-exports.maxLengthListener = maxLengthListener;
-exports.numbersOnlyListener = numbersOnlyListener;
-
-/***/ }),
-/* 130 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-__webpack_require__(136);
-
-__webpack_require__(131);
-
-__webpack_require__(132);
-
-__webpack_require__(141);
-
-var _userfeedback = __webpack_require__(4);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Cal = function () {
-    function Cal(page, facing) {
-        _classCallCheck(this, Cal);
-
-        this.page = page;
-        this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
-        this.setCalArgs();
-        this.initCalFor(facing);
-    }
-
-    _createClass(Cal, [{
-        key: 'initCalFor',
-        value: function initCalFor(facing) {
-            if (facing == 'public') {
-                this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
-                this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
-                this.initDraggable();
-                this.initPubResCal(this.page.getFacilityInfo('type'));
-            } else if (facing == 'admin') {
-                this.initDraggable();
-                this.initAdminCal(this.page.cal);
-            }
-        }
-    }, {
-        key: 'eventFallsOnWeekend',
-        value: function eventFallsOnWeekend(e) {
-            var dayOfWeekStart = e.start.format('ddd').toLowerCase();
-            var dayOfWeekEnd = e.end.format('ddd').toLowerCase();
-
-            //for now it ends at midnight of the following day
-            return dayOfWeekStart == 'sat' || dayOfWeekStart == 'sun' || dayOfWeekEnd == 'sun' || dayOfWeekEnd == 'mon';
-        }
-    }, {
-        key: 'eventIsLongerThan',
-        value: function eventIsLongerThan(e, days) {
-            var start = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            var end = moment(e.end.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-            return end.diff(start, 'days') > days;
-        }
-    }, {
-        key: 'convertBusinessHours',
-        value: function convertBusinessHours(jsonString) {
-            var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
-            var converted = [];
-            var counter = 1;
-            for (var key in json) {
-                var day = _jquery2.default.extend({}, json[key]);
-                if (day.start != '') {
-                    day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
-                    day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
-                    converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
-                } else {
-                    converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
-                }
-                counter++;
-            }
-            return converted;
-        }
-    }, {
-        key: 'preventPastReservation',
-        value: function preventPastReservation(e) {
-
-            var targetTimeStart = null;
-
-            if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
-
-            if (targetTimeStart.isBefore(moment())) {
-                alert('You cannot make reservations in the past.');
-                return false;
-            }
-            return true;
-        }
-    }, {
-        key: 'warnIfOutOfBounds',
-        value: function warnIfOutOfBounds(e) {
-            var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
-
-            var thisStart = moment(thisDay.start, 'HH:mm');
-            var thisEnd = moment(thisDay.end, 'HH:mm');
-
-            var targetTimeStart = moment(e.start.format('HH:mm'), 'HH:mm');
-            var targetTimeEnd = moment(e.end.format('HH:mm'), 'HH:mm');
-
-            if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
-                alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
-            }
-        }
-    }, {
-        key: 'initDraggable',
-        value: function initDraggable() {
-
-            (0, _jquery2.default)('.iam-events .fc-event').each(function () {
-
-                // store data so the calendar knows to render an event upon drop
-                (0, _jquery2.default)(this).data('event', {
-                    title: _jquery2.default.trim((0, _jquery2.default)(this).text()), // use the element's text as the event title
-                    editable: true,
-                    eventDurationEditable: true,
-                    color: '#4cad57',
-                    className: 'iam-new-event'
-                });
-
-                // make the event draggable using jQuery UI
-                (0, _jquery2.default)(this).draggable({
-                    zIndex: 999,
-                    revert: true, // will cause the event to go back to its
-                    revertDuration: 0 //  original position after the drag
-                });
-            });
-        }
-    }, {
-        key: 'initAdminCal',
-        value: function initAdminCal(cal) {
-            var _this = this;
-
-            this.eventsToDelete = [];
-
-            var neutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false
-            };
-
-            var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
-            this.calID = '.iam-cal';
-            (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
-            (0, _userfeedback.submissionStart)();
-            setTimeout(function () {
-                _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
-            }, 1000);
-        }
-    }, {
-        key: 'initPubResCal',
-        value: function initPubResCal(facilitType) {
-            var facilityNeutralArgs = {
-                editable: false, //new events will be made editable else where
-                eventLimit: true, // allow "more" link when too many events
-                allDay: false,
-                height: 500,
-                forceEventDuration: true,
-                businessHours: this.businessHoursConverted,
-                droppable: true,
-                eventOverlap: false,
-                allDaySlot: false,
-                eventSources: [{ url: ajaxurl + "?action=get_equipment_calendar&name=" + this.page.activeEquipName }, { url: ajaxurl + "?action=get_irregular_hours_calendar&facility=" + this.page.currentRootTag,
-                    color: '#f13d39' }]
-            };
-
-            var finalArgs = _jquery2.default.extend(facilityNeutralArgs, this.calArgs[facilitType]);
-
-            (0, _jquery2.default)('.iam-res-cal').fullCalendar(finalArgs);
-        }
-    }, {
-        key: 'handleEventToDelete',
-        value: function handleEventToDelete(event, j) {
-
-            if (j.hasClass('event-not-editable')) return;
-            if (typeof this.eventsToDelete == 'undefined') this.eventsToDelete = [];
-
-            var index = this.eventsToDelete.indexOf(event.nid);
-            if (index != -1) {
-                this.eventsToDelete.splice(index, 1);
-            } else {
-                this.eventsToDelete.push(event.nid);
-            }
-            (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
-        }
-    }, {
-        key: 'initContextMenu',
-        value: function initContextMenu(menuToUse) {
-            var that = this;
-            this.cmlib();
-            menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
-
-            var menu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }, {
-                name: 'copy email',
-                title: 'copy button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { email: t.data('email') };
-                    that.handleEventCopyEmail(event);
-                }
-            }];
-
-            var rentalMenu = [{
-                name: 'use this reservation',
-                title: 'select reservation button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    makeRelevantReservation(t.data('fcSeg').event);
-                }
-            }, {
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(event, t);
-                }
-            }];
-
-            var irregularMenu = [{
-                name: 'mark for deletion',
-                title: 'delete button',
-                fun: function fun(e) {
-                    var t = (0, _jquery2.default)(e.trigger);
-                    var event = { nid: t.data('nid') };
-                    that.handleEventToDelete(t.data('fcSeg').event, t);
-                    (0, _jquery2.default)(that.calID).fullCalendar('rerenderEvents');
-                }
-            }];
-
-            var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
-            var menuOfChoice = menuDict[menuToUse];
-
-            (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
-        }
-    }, {
-        key: 'toolTipsForEvents',
-        value: function toolTipsForEvents(event, element) {
-            var e = (0, _jquery2.default)(element);
-            e.attr('title', event.title);
-            e.data('toggle', 'tooltip');
-        }
-    }, {
-        key: 'setCalArgs',
-        value: function setCalArgs() {
-
-            var that = this;
-            this.calArgs = {};
-
-            this.calArgs['irregular'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month,agendaWeek,agendaDay'
-                },
-                defaultView: 'agendaWeek',
-                title: 'closed',
-                eventReceive: function eventReceive(e, d, revert) {
-                    e.title = 'closed';
-                },
-                eventRender: function eventRender(event, element) {
-                    if (that.eventsToDelete.indexOf(event.nid) != -1) {
-                        (0, _jquery2.default)(element).addClass('marked-for-delete');
-                    }
-                    that.toolTipsForEvents(event, element);
-                },
-                eventAfterAllRender: function eventAfterAllRender() {
-                    that.initContextMenu(that.page.cal);
-                },
-                events: ajaxurl + "?action=admin_get_irregular_hours&facility=" + this.page.facilityName
-            };
-
-            this.calArgs['appointment'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'agendaWeek,agendaDay'
-                },
-                defaultTimedEventDuration: '00:30:00',
-                weekends: true,
-                defaultView: 'agendaWeek',
-                eventReceive: function eventReceive(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (!that.preventPastReservation(e)) {
-                        revert();
-                        return;
-                    }
-                    that.warnIfOutOfBounds(e);
-                }
-            };
-
-            this.calArgs['rental'] = {
-                header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'month'
-                },
-                weekends: true,
-                defaultView: 'month',
-                eventReceive: function eventReceive(e) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
-                        return false;
-                    }
-                },
-                eventDrop: function eventDrop(e, d, revert) {
-                    if (that.eventFallsOnWeekend(e)) {
-                        alert(that.ERinvalidTimePrompt);
-                        revert();
-                    }
-                },
-                eventResize: function eventResize(e, d, revert) {
-                    if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
-                        alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
-                        revert();
-                    }
-                },
-                eventRender: function eventRender(event, element) {
-                    that.toolTipsForEvents(event, element);
-                },
-                defaultAllDayEventDuration: { days: parseInt(that.page.rentalPeriod) }
-            };
-        }
-    }, {
-        key: 'cmlib',
-        value: function cmlib() {
-            /*
-             *contextMenu.js v 1.4.1
-             *Author: Sudhanshu Yadav
-             *s-yadav.github.com
-             *Copyright (c) 2013-2015 Sudhanshu Yadav.
-             *Dual licensed under the MIT and GPL licenses
-             */
-
-            "use strict";
-            //jQuery, window, document
-
-            _jquery2.default.single = function () {
-                var single = (0, _jquery2.default)({});
-                return function (elm) {
-                    single[0] = elm;
-                    return single;
-                };
-            }();
-
-            _jquery2.default.fn.contextMenu = function (method, selector, option) {
-
-                //parameter fix
-                if (!methods[method]) {
-                    option = selector;
-                    selector = method;
-                    method = 'popup';
-                }
-                //need to check for array object
-                else if (selector) {
-                        if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
-                            option = selector;
-                            selector = null;
-                        }
-                    }
-
-                if (selector instanceof Array && method != 'update') {
-                    method = 'menu';
-                }
-
-                var myoptions = option;
-                if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
-                    option = iMethods.optionOtimizer(method, option);
-                    this.each(function () {
-                        var $this = (0, _jquery2.default)(this);
-                        myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
-                        if (!myoptions.baseTrigger) {
-                            myoptions.baseTrigger = $this;
-                        }
-                        methods[method].call($this, selector, myoptions);
-                    });
-                } else {
-                    methods[method].call(this, selector, myoptions);
-                }
-                return this;
-            };
-            _jquery2.default.fn.contextMenu.defaults = {
-                triggerOn: 'click', //avaliable options are all event related mouse plus enter option
-                subMenuTriggerOn: 'hover click',
-                displayAround: 'cursor', // cursor or trigger
-                mouseClick: 'left',
-                verAdjust: 0,
-                horAdjust: 0,
-                top: 'auto',
-                left: 'auto',
-                closeOther: true, //to close other already opened context menu
-                containment: window,
-                winEventClose: true,
-                position: 'auto', //allowed values are top, left, bottom and right
-                closeOnClick: true, //close context menu on click/ trigger of any item in menu
-
-                //callback
-                onOpen: function onOpen(data, event) {},
-                afterOpen: function afterOpen(data, event) {},
-                onClose: function onClose(data, event) {}
-            };
-
-            var methods = {
-                menu: function menu(selector, option) {
-                    selector = iMethods.createMenuList(this, selector, option);
-                    iMethods.contextMenuBind.call(this, selector, option, 'menu');
-                },
-                popup: function popup(selector, option) {
-                    (0, _jquery2.default)(selector).addClass('iw-contextMenu');
-                    iMethods.contextMenuBind.call(this, selector, option, 'popup');
-                },
-                update: function update(selector, option) {
-                    var self = this;
-                    option = option || {};
-
-                    this.each(function () {
-                        var trgr = (0, _jquery2.default)(this),
-                            menuData = trgr.data('iw-menuData');
-                        //refresh if any new element is added
-                        if (!menuData) {
-                            self.contextMenu('refresh');
-                            menuData = trgr.data('iw-menuData');
-                        }
-
-                        var menu = menuData.menu;
-                        if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
-
-                            for (var i = 0; i < selector.length; i++) {
-                                var name = selector[i].name,
-                                    disable = selector[i].disable,
-                                    fun = selector[i].fun,
-                                    icon = selector[i].icon,
-                                    img = selector[i].img,
-                                    title = selector[i].title,
-                                    className = selector[i].className,
-                                    elm = menu.children('li').filter(function () {
-                                    return (0, _jquery2.default)(this).contents().filter(function () {
-                                        return this.nodeType == 3;
-                                    }).text() == name;
-                                }),
-                                    subMenu = selector[i].subMenu;
-
-                                //toggle disable if provided on update method
-                                disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
-
-                                //bind new function if provided
-                                fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
-
-                                //update title
-                                title != undefined && elm.attr('title', title);
-
-                                //update class name
-                                className != undefined && elm.attr('class', className);
-
-                                var imgIcon = elm.find('.iw-mIcon');
-                                if (imgIcon.length) imgIcon.remove();
-
-                                //update image or icon
-                                if (img) {
-                                    elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                                } else if (icon) {
-                                    elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
-                                }
-
-                                //to change submenus
-                                if (subMenu) {
-                                    elm.contextMenu('update', subMenu);
-                                }
-                            }
-                        }
-
-                        iMethods.onOff(menu);
-
-                        //bind event again if trigger option has changed.
-                        var triggerOn = option.triggerOn;
-                        if (triggerOn) {
-                            trgr.unbind('.contextMenu');
-
-                            //add contextMenu identifier on all events
-                            triggerOn = triggerOn.split(" ");
-                            var events = [];
-                            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                                events.push(triggerOn[i] + '.contextMenu');
-                            }
-
-                            //to bind event
-                            trgr.bind(events.join(' '), iMethods.eventHandler);
-                        }
-
-                        //set menu data back to trigger element
-                        menuData.option = _jquery2.default.extend({}, menuData.option, option);
-                        trgr.data('iw-menuData', menuData);
-                    });
-                },
-                refresh: function refresh() {
-                    var menuData = this.filter(function () {
-                        return !!(0, _jquery2.default)(this).data('iw-menuData');
-                    }).data('iw-menuData'),
-                        newElm = this.filter(function () {
-                        return !(0, _jquery2.default)(this).data('iw-menuData');
-                    });
-                    //to change basetrigger on refresh
-                    menuData.option.baseTrigger = this;
-                    iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
-                },
-                open: function open(sel, data) {
-                    data = data || {};
-                    var e = data.event || _jquery2.default.Event('click');
-                    if (data.top) e.clientY = data.top;
-                    if (data.left) e.clientX = data.left;
-                    this.each(function () {
-                        iMethods.eventHandler.call(this, e);
-                    });
-                },
-                //to force context menu to close
-                close: function close() {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData) {
-                        iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
-                    }
-                },
-                //to get value of a key
-                value: function value(key) {
-                    var menuData = this.data('iw-menuData');
-                    if (menuData[key]) {
-                        return menuData[key];
-                    } else if (menuData.option) {
-                        return menuData.option[key];
-                    }
-                    return null;
-                },
-                destroy: function destroy() {
-                    var trgr = this,
-                        menuId = trgr.data('iw-menuData').menuId,
-                        menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
-                        menuData = menu.data('iw-menuData');
-
-                    //Handle the situation of dynamically added element.
-                    if (!menuData) return;
-
-                    if (menuData.noTrigger == 1) {
-                        if (menu.hasClass('iw-created')) {
-                            menu.remove();
-                        } else {
-                            menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
-                            //to destroy submenus
-                            menu.find('li.iw-mTrigger').contextMenu('destroy');
-                        }
-                    } else {
-                        menuData.noTrigger--;
-                        menu.data('iw-menuData', menuData);
-                    }
-                    trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
-                }
-            };
-            var iMethods = {
-                contextMenuBind: function contextMenuBind(selector, option, method) {
-                    var trigger = this,
-                        menu = (0, _jquery2.default)(selector),
-                        menuData = menu.data('iw-menuData');
-
-                    //fallback
-                    if (menu.length == 0) {
-                        menu = trigger.find(selector);
-                        if (menu.length == 0) {
-                            return;
-                        }
-                    }
-
-                    if (method == 'menu') {
-                        iMethods.menuHover(menu);
-                    }
-                    //get base trigger
-                    var baseTrigger = option.baseTrigger;
-
-                    if (!menuData) {
-                        var menuId;
-                        if (!baseTrigger.data('iw-menuData')) {
-                            menuId = Math.ceil(Math.random() * 100000);
-                            baseTrigger.data('iw-menuData', {
-                                'menuId': menuId
-                            });
-                        } else {
-                            menuId = baseTrigger.data('iw-menuData').menuId;
-                        }
-                        //create clone menu to calculate exact height and width.
-                        var cloneMenu = menu.clone();
-                        cloneMenu.appendTo('body');
-
-                        menuData = {
-                            'menuId': menuId,
-                            'menuWidth': cloneMenu.outerWidth(true),
-                            'menuHeight': cloneMenu.outerHeight(true),
-                            'noTrigger': 1,
-                            'trigger': trigger
-                        };
-
-                        //to set data on selector
-                        menu.data('iw-menuData', menuData).attr('menuId', menuId);
-                        //remove clone menu
-                        cloneMenu.remove();
-                    } else {
-                        menuData.noTrigger++;
-                        menu.data('iw-menuData', menuData);
-                    }
-
-                    //to set data on trigger
-                    trigger.addClass('iw-mTrigger').data('iw-menuData', {
-                        'menuId': menuData.menuId,
-                        'option': option,
-                        'menu': menu,
-                        'menuSelector': selector,
-                        'method': method
-                    });
-
-                    //hover fix
-                    var triggerOn = option.triggerOn;
-                    if (triggerOn.indexOf('hover') != -1) {
-                        triggerOn = triggerOn.replace('hover', 'mouseenter');
-                        //hover out if display is of context menu is on hover
-                        if (baseTrigger.index(trigger) != -1) {
-                            baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
-                                if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
-                                    (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
-                                }
-                            });
-                        }
-                    }
-
-                    trigger.delegate('input,a,.needs-click', 'click', function (e) {
-                        e.stopImmediatePropagation();
-                    });
-
-                    //add contextMenu identifier on all events
-                    triggerOn = triggerOn.split(' ');
-                    var events = [];
-                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
-                        events.push(triggerOn[i] + '.contextMenu');
-                    }
-
-                    //to bind event
-                    trigger.bind(events.join(' '), iMethods.eventHandler);
-
-                    //to stop bubbling in menu
-                    menu.bind('click mouseenter', function (e) {
-                        e.stopPropagation();
-                    });
-
-                    menu.delegate('li', 'click', function (e) {
-                        if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
-                    });
-                },
-                eventHandler: function eventHandler(e) {
-                    e.preventDefault();
-                    var trigger = (0, _jquery2.default)(this),
-                        trgrData = trigger.data('iw-menuData'),
-                        menu = trgrData.menu,
-                        menuData = menu.data('iw-menuData'),
-                        option = trgrData.option,
-                        cntnmnt = option.containment,
-                        clbckData = {
-                        trigger: trigger,
-                        menu: menu
-                    },
-
-                    //check conditions
-                    cntWin = cntnmnt == window,
-                        btChck = option.baseTrigger.index(trigger) == -1;
-
-                    //to close previous open menu.
-                    if (!btChck && option.closeOther) {
-                        (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    }
-
-                    //to reset already selected menu item
-                    menu.find('.iw-mSelected').removeClass('iw-mSelected');
-
-                    //call open callback
-                    option.onOpen.call(this, clbckData, e);
-
-                    var cObj = (0, _jquery2.default)(cntnmnt),
-                        cHeight = cObj.innerHeight(),
-                        cWidth = cObj.innerWidth(),
-                        cTop = 0,
-                        cLeft = 0,
-                        menuHeight = menuData.menuHeight,
-                        menuWidth = menuData.menuWidth,
-                        va,
-                        ha,
-                        left = 0,
-                        top = 0,
-                        bottomMenu,
-                        rightMenu,
-                        verAdjust = va = parseInt(option.verAdjust),
-                        horAdjust = ha = parseInt(option.horAdjust);
-
-                    if (!cntWin) {
-                        cTop = cObj.offset().top;
-                        cLeft = cObj.offset().left;
-
-                        //to add relative position if no position is defined on containment
-                        if (cObj.css('position') == 'static') {
-                            cObj.css('position', 'relative');
-                        }
-                    }
-
-                    if (option.displayAround == 'cursor') {
-                        left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
-                        top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                }
-                            } else {
-                                left = left - menuWidth;
-                                ha = -1 * ha;
-                            }
-                        }
-                    } else if (option.displayAround == 'trigger') {
-                        var triggerHeight = trigger.outerHeight(true),
-                            triggerWidth = trigger.outerWidth(true),
-                            triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
-                            triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
-                            leftShift = triggerWidth;
-
-                        left = triggerLeft + triggerWidth;
-                        top = triggerTop;
-
-                        bottomMenu = top + menuHeight;
-                        rightMenu = left + menuWidth;
-                        //max height and width of context menu
-                        if (bottomMenu > cHeight) {
-                            if (top - menuHeight < 0) {
-                                if (bottomMenu - cHeight < menuHeight - top) {
-                                    top = cHeight - menuHeight;
-                                    va = -1 * va;
-                                } else {
-                                    top = 0;
-                                    va = 0;
-                                }
-                            } else {
-                                top = top - menuHeight + triggerHeight;
-                                va = -1 * va;
-                            }
-                        }
-                        if (rightMenu > cWidth) {
-                            if (left - menuWidth < 0) {
-                                if (rightMenu - cWidth < menuWidth - left) {
-                                    left = cWidth - menuWidth;
-                                    ha = -1 * ha;
-                                    leftShift = -triggerWidth;
-                                } else {
-                                    left = 0;
-                                    ha = 0;
-                                    leftShift = 0;
-                                }
-                            } else {
-                                left = left - menuWidth - triggerWidth;
-                                ha = -1 * ha;
-                                leftShift = -triggerWidth;
-                            }
-                        }
-                        //test end
-                        if (option.position == 'top') {
-                            top = triggerTop - menuHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'left') {
-                            left = triggerLeft - menuWidth;
-                            ha = horAdjust;
-                        } else if (option.position == 'bottom') {
-                            top = triggerTop + triggerHeight;
-                            va = verAdjust;
-                            left = left - leftShift;
-                        } else if (option.position == 'right') {
-                            left = triggerLeft + triggerWidth;
-                            ha = horAdjust;
-                        }
-                    }
-
-                    //applying css property
-                    var cssObj = {
-                        'position': cntWin || btChck ? 'fixed' : 'absolute',
-                        'display': 'inline-block',
-                        'height': '',
-                        'width': ''
-                    };
-
-                    //to get position from offset parent
-                    if (option.left != 'auto') {
-                        left = iMethods.getPxSize(option.left, cWidth);
-                    }
-                    if (option.top != 'auto') {
-                        top = iMethods.getPxSize(option.top, cHeight);
-                    }
-                    if (!cntWin) {
-                        var oParPos = trigger.offsetParent().offset();
-                        if (btChck) {
-                            left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
-                            top = top + cTop - (0, _jquery2.default)(window).scrollTop();
-                        } else {
-                            left = left - (cLeft - oParPos.left);
-                            top = top - (cTop - oParPos.top);
-                        }
-                    }
-                    cssObj.left = left + ha + 'px';
-                    cssObj.top = top + va + 'px';
-
-                    menu.css(cssObj);
-
-                    //to call after open call back
-                    option.afterOpen.call(this, clbckData, e);
-
-                    //to add current menu class
-                    if (trigger.closest('.iw-contextMenu').length == 0) {
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                    }
-
-                    var dataParm = {
-                        trigger: trigger,
-                        menu: menu,
-                        option: option,
-                        method: trgrData.method
-                    };
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
-                    if (option.winEventClose) {
-                        (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
-                    }
-                },
-
-                scrollEvent: function scrollEvent(e) {
-                    iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                },
-
-                clickEvent: function clickEvent(e) {
-                    var button = e.data.trigger.get(0);
-
-                    if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
-                        iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
-                    }
-                },
-                keyEvent: function keyEvent(e) {
-                    e.preventDefault();
-                    var menu = e.data.menu,
-                        option = e.data.option,
-                        keyCode = e.keyCode;
-                    // handle cursor keys
-                    if (keyCode == 27) {
-                        iMethods.closeContextMenu(option, e.data.trigger, menu, e);
-                    }
-                    if (e.data.method == 'menu') {
-                        var curMenu = (0, _jquery2.default)('.iw-curMenu'),
-                            optList = curMenu.children('li:not(.iw-mDisable)'),
-                            selected = optList.filter('.iw-mSelected'),
-                            index = optList.index(selected),
-                            focusOn = function focusOn(elm) {
-                            iMethods.selectMenu(curMenu, elm);
-                            var menuData = elm.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(elm[0], e);
-                            }
-                        },
-                            first = function first() {
-                            focusOn(optList.filter(':first'));
-                        },
-                            last = function last() {
-                            focusOn(optList.filter(':last'));
-                        },
-                            next = function next() {
-                            focusOn(optList.filter(':eq(' + (index + 1) + ')'));
-                        },
-                            prev = function prev() {
-                            focusOn(optList.filter(':eq(' + (index - 1) + ')'));
-                        },
-                            subMenu = function subMenu() {
-                            var menuData = selected.data('iw-menuData');
-                            if (menuData) {
-                                iMethods.eventHandler.call(selected[0], e);
-                                var selector = menuData.menu;
-                                selector.addClass('iw-curMenu');
-                                curMenu.removeClass('iw-curMenu');
-                                curMenu = selector;
-                                optList = curMenu.children('li:not(.iw-mDisable)');
-                                selected = optList.filter('.iw-mSelected');
-                                first();
-                            }
-                        },
-                            parMenu = function parMenu() {
-                            var selector = curMenu.data('iw-menuData').trigger;
-                            var parMenu = selector.closest('.iw-contextMenu');
-                            if (parMenu.length != 0) {
-                                curMenu.removeClass('iw-curMenu').css('display', 'none');
-                                parMenu.addClass('iw-curMenu');
-                            }
-                        };
-                        switch (keyCode) {
-                            case 13:
-                                selected.click();
-                                break;
-                            case 40:
-                                index == optList.length - 1 || selected.length == 0 ? first() : next();
-                                break;
-                            case 38:
-                                index == 0 || selected.length == 0 ? last() : prev();
-                                break;
-                            case 33:
-                                first();
-                                break;
-                            case 34:
-                                last();
-                                break;
-                            case 37:
-                                parMenu();
-                                break;
-                            case 39:
-                                subMenu();
-                                break;
-                        }
-                    }
-                },
-                closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
-
-                    //unbind all events from top DOM
-                    (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
-                    (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
-                    (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
-                    (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
-                    (0, _jquery2.default)(document).focus();
-
-                    //call close function
-                    option.onClose.call(this, {
-                        trigger: trigger,
-                        menu: menu
-                    }, e);
-                },
-                getPxSize: function getPxSize(size, of) {
-                    if (!isNaN(size)) {
-                        return size;
-                    }
-                    if (size.indexOf('%') != -1) {
-                        return parseInt(size) * of / 100;
-                    } else {
-                        return parseInt(size);
-                    }
-                },
-                selectMenu: function selectMenu(menu, elm) {
-                    //to select the list
-                    var selected = menu.find('li.iw-mSelected'),
-                        submenu = selected.find('.iw-contextMenu');
-                    if (submenu.length != 0 && selected[0] != elm[0]) {
-                        submenu.fadeOut(100);
-                    }
-                    selected.removeClass('iw-mSelected');
-                    elm.addClass('iw-mSelected');
-                },
-                menuHover: function menuHover(menu) {
-                    var lastEventTime = Date.now();
-                    menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
-                        //to make curmenu
-                        (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
-                        menu.addClass('iw-curMenu');
-                        iMethods.selectMenu(menu, (0, _jquery2.default)(this));
-                    });
-                },
-                createMenuList: function createMenuList(trgr, selector, option) {
-                    var baseTrigger = option.baseTrigger,
-                        randomNum = Math.floor(Math.random() * 10000);
-                    if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
-                        var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
-                        _jquery2.default.each(selector, function (index, selObj) {
-                            var name = selObj.name,
-                                fun = selObj.fun || function () {},
-                                subMenu = selObj.subMenu,
-                                img = selObj.img || '',
-                                icon = selObj.icon || '',
-                                title = selObj.title || "",
-                                className = selObj.className || "",
-                                disable = selObj.disable,
-                                list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
-
-                            if (img) {
-                                list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
-                            } else if (icon) {
-                                list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
-                            }
-                            //to add disable
-                            if (disable) {
-                                list.addClass('iw-mDisable');
-                            }
-
-                            if (!subMenu) {
-                                list.bind('click.contextMenu', function (e) {
-                                    fun.call(this, {
-                                        trigger: baseTrigger,
-                                        menu: menuList
-                                    }, e);
-                                });
-                            }
-
-                            //to create sub menu
-                            menuList.append(list);
-                            if (subMenu) {
-                                list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
-                                iMethods.subMenu(list, subMenu, baseTrigger, option);
-                            }
-                        });
-
-                        if (baseTrigger.index(trgr[0]) == -1) {
-                            trgr.append(menuList);
-                        } else {
-                            var par = option.containment == window ? 'body' : option.containment;
-                            (0, _jquery2.default)(par).append(menuList);
-                        }
-
-                        iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
-                        return '#iw-contextMenu' + randomNum;
-                    } else if ((0, _jquery2.default)(selector).length != 0) {
-                        var element = (0, _jquery2.default)(selector);
-                        element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
-
-                        //to create subMenu
-                        element.find('ul').each(function (index, element) {
-                            var subMenu = (0, _jquery2.default)(this),
-                                parent = subMenu.parent('li');
-                            parent.append('<div class="iw-cm-arrow-right" />');
-                            subMenu.addClass('iw-contextMenuCurrent');
-                            iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
-                        });
-                        iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
-                        return '.iw-contextMenu' + randomNum;
-                    }
-                },
-                subMenu: function subMenu(trigger, selector, baseTrigger, option) {
-                    trigger.contextMenu('menu', selector, {
-                        triggerOn: option.subMenuTriggerOn,
-                        displayAround: 'trigger',
-                        position: 'auto',
-                        mouseClick: 'left',
-                        baseTrigger: baseTrigger,
-                        containment: option.containment
-                    });
-                },
-                onOff: function onOff(menu) {
-
-                    menu.find('.iw-mOverlay').remove();
-                    menu.find('.iw-mDisable').each(function () {
-                        var list = (0, _jquery2.default)(this);
-                        list.append('<div class="iw-mOverlay"/>');
-                        list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
-                            event.stopPropagation();
-                        });
-                    });
-                },
-                optionOtimizer: function optionOtimizer(method, option) {
-                    if (!option) {
-                        return;
-                    }
-                    if (method == 'menu') {
-                        if (!option.mouseClick) {
-                            option.mouseClick = 'right';
-                        }
-                    }
-                    if (option.mouseClick == 'right' && option.triggerOn == 'click') {
-                        option.triggerOn = 'contextmenu';
-                    }
-
-                    if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
-                        option.displayAround = 'trigger';
-                    }
-                    return option;
-                }
-            };
-        }
-    }]);
-
-    return Cal;
-}();
-
-exports.default = Cal;
-
-/***/ }),
 /* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -28869,7 +28308,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(127), __webpack_require__(139), __webpack_require__(133), __webpack_require__(8), __webpack_require__(134), __webpack_require__(140), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(142), __webpack_require__(133), __webpack_require__(9), __webpack_require__(134), __webpack_require__(143), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -30069,6 +29508,180 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	// Internal use only
+	return $.ui.escapeSelector = function () {
+		var selectorEscape = /([!"#$%&'()*+,./:;<=>?@[\]^`{|}~])/g;
+		return function (selector) {
+			return selector.replace(selectorEscape, "\\$1");
+		};
+	}();
+});
+
+/***/ }),
+/* 136 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Focusable 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: :focusable Selector
+//>>group: Core
+//>>description: Selects elements which can be focused.
+//>>docs: http://api.jqueryui.com/focusable-selector/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	// Selectors
+	$.ui.focusable = function (element, hasTabindex) {
+		var map,
+		    mapName,
+		    img,
+		    focusableIfVisible,
+		    fieldset,
+		    nodeName = element.nodeName.toLowerCase();
+
+		if ("area" === nodeName) {
+			map = element.parentNode;
+			mapName = map.name;
+			if (!element.href || !mapName || map.nodeName.toLowerCase() !== "map") {
+				return false;
+			}
+			img = $("img[usemap='#" + mapName + "']");
+			return img.length > 0 && img.is(":visible");
+		}
+
+		if (/^(input|select|textarea|button|object)$/.test(nodeName)) {
+			focusableIfVisible = !element.disabled;
+
+			if (focusableIfVisible) {
+
+				// Form controls within a disabled fieldset are disabled.
+				// However, controls within the fieldset's legend do not get disabled.
+				// Since controls generally aren't placed inside legends, we skip
+				// this portion of the check.
+				fieldset = $(element).closest("fieldset")[0];
+				if (fieldset) {
+					focusableIfVisible = !fieldset.disabled;
+				}
+			}
+		} else if ("a" === nodeName) {
+			focusableIfVisible = element.href || hasTabindex;
+		} else {
+			focusableIfVisible = hasTabindex;
+		}
+
+		return focusableIfVisible && $(element).is(":visible") && visible($(element));
+	};
+
+	// Support: IE 8 only
+	// IE 8 doesn't resolve inherit to visible/hidden for computed values
+	function visible(element) {
+		var visibility = element.css("visibility");
+		while (visibility === "inherit") {
+			element = element.parent();
+			visibility = element.css("visibility");
+		}
+		return visibility !== "hidden";
+	}
+
+	$.extend($.expr[":"], {
+		focusable: function focusable(element) {
+			return $.ui.focusable(element, $.attr(element, "tabindex") != null);
+		}
+	});
+
+	return $.ui.focusable;
+});
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.overridePrompt = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+__webpack_require__(131);
+
+__webpack_require__(145);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function overridePrompt(args) {
+  if ((0, _jquery2.default)('#dialog-override').length < 1) (0, _jquery2.default)('body').append('<div id="dialog-override" title="' + args.title + '" ><p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>' + args.body + '</p></div>');
+
+  (0, _jquery2.default)("#dialog-override").dialog({
+    resizable: false,
+    height: "auto",
+    width: 400,
+    modal: true,
+    buttons: {
+      Override: function Override() {
+        if (typeof args.override != 'undefined') args.override();
+        (0, _jquery2.default)(this).dialog("close");
+      },
+      Cancel: function Cancel() {
+        if (typeof args.cancel != 'undefined') args.cancel();
+        (0, _jquery2.default)(this).dialog("close");
+      }
+    }
+  });
+}
+
+exports.overridePrompt = overridePrompt;
+
+/***/ }),
+/* 138 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -30122,7 +29735,7 @@ exports.publicDebug = publicDebug;
 exports.debugWarn = debugWarn;
 
 /***/ }),
-/* 136 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43704,240 +43317,240 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 137 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 12,
-	"./af.js": 12,
-	"./ar": 13,
-	"./ar-dz": 14,
-	"./ar-dz.js": 14,
-	"./ar-kw": 15,
-	"./ar-kw.js": 15,
-	"./ar-ly": 16,
-	"./ar-ly.js": 16,
-	"./ar-ma": 17,
-	"./ar-ma.js": 17,
-	"./ar-sa": 18,
-	"./ar-sa.js": 18,
-	"./ar-tn": 19,
-	"./ar-tn.js": 19,
-	"./ar.js": 13,
-	"./az": 20,
-	"./az.js": 20,
-	"./be": 21,
-	"./be.js": 21,
-	"./bg": 22,
-	"./bg.js": 22,
-	"./bn": 23,
-	"./bn.js": 23,
-	"./bo": 24,
-	"./bo.js": 24,
-	"./br": 25,
-	"./br.js": 25,
-	"./bs": 26,
-	"./bs.js": 26,
-	"./ca": 27,
-	"./ca.js": 27,
-	"./cs": 28,
-	"./cs.js": 28,
-	"./cv": 29,
-	"./cv.js": 29,
-	"./cy": 30,
-	"./cy.js": 30,
-	"./da": 31,
-	"./da.js": 31,
-	"./de": 32,
-	"./de-at": 33,
-	"./de-at.js": 33,
-	"./de-ch": 34,
-	"./de-ch.js": 34,
-	"./de.js": 32,
-	"./dv": 35,
-	"./dv.js": 35,
-	"./el": 36,
-	"./el.js": 36,
-	"./en-au": 37,
-	"./en-au.js": 37,
-	"./en-ca": 38,
-	"./en-ca.js": 38,
-	"./en-gb": 39,
-	"./en-gb.js": 39,
-	"./en-ie": 40,
-	"./en-ie.js": 40,
-	"./en-nz": 41,
-	"./en-nz.js": 41,
-	"./eo": 42,
-	"./eo.js": 42,
-	"./es": 43,
-	"./es-do": 44,
-	"./es-do.js": 44,
-	"./es.js": 43,
-	"./et": 45,
-	"./et.js": 45,
-	"./eu": 46,
-	"./eu.js": 46,
-	"./fa": 47,
-	"./fa.js": 47,
-	"./fi": 48,
-	"./fi.js": 48,
-	"./fo": 49,
-	"./fo.js": 49,
-	"./fr": 50,
-	"./fr-ca": 51,
-	"./fr-ca.js": 51,
-	"./fr-ch": 52,
-	"./fr-ch.js": 52,
-	"./fr.js": 50,
-	"./fy": 53,
-	"./fy.js": 53,
-	"./gd": 54,
-	"./gd.js": 54,
-	"./gl": 55,
-	"./gl.js": 55,
-	"./gom-latn": 56,
-	"./gom-latn.js": 56,
-	"./he": 57,
-	"./he.js": 57,
-	"./hi": 58,
-	"./hi.js": 58,
-	"./hr": 59,
-	"./hr.js": 59,
-	"./hu": 60,
-	"./hu.js": 60,
-	"./hy-am": 61,
-	"./hy-am.js": 61,
-	"./id": 62,
-	"./id.js": 62,
-	"./is": 63,
-	"./is.js": 63,
-	"./it": 64,
-	"./it.js": 64,
-	"./ja": 65,
-	"./ja.js": 65,
-	"./jv": 66,
-	"./jv.js": 66,
-	"./ka": 67,
-	"./ka.js": 67,
-	"./kk": 68,
-	"./kk.js": 68,
-	"./km": 69,
-	"./km.js": 69,
-	"./kn": 70,
-	"./kn.js": 70,
-	"./ko": 71,
-	"./ko.js": 71,
-	"./ky": 72,
-	"./ky.js": 72,
-	"./lb": 73,
-	"./lb.js": 73,
-	"./lo": 74,
-	"./lo.js": 74,
-	"./lt": 75,
-	"./lt.js": 75,
-	"./lv": 76,
-	"./lv.js": 76,
-	"./me": 77,
-	"./me.js": 77,
-	"./mi": 78,
-	"./mi.js": 78,
-	"./mk": 79,
-	"./mk.js": 79,
-	"./ml": 80,
-	"./ml.js": 80,
-	"./mr": 81,
-	"./mr.js": 81,
-	"./ms": 82,
-	"./ms-my": 83,
-	"./ms-my.js": 83,
-	"./ms.js": 82,
-	"./my": 84,
-	"./my.js": 84,
-	"./nb": 85,
-	"./nb.js": 85,
-	"./ne": 86,
-	"./ne.js": 86,
-	"./nl": 87,
-	"./nl-be": 88,
-	"./nl-be.js": 88,
-	"./nl.js": 87,
-	"./nn": 89,
-	"./nn.js": 89,
-	"./pa-in": 90,
-	"./pa-in.js": 90,
-	"./pl": 91,
-	"./pl.js": 91,
-	"./pt": 92,
-	"./pt-br": 93,
-	"./pt-br.js": 93,
-	"./pt.js": 92,
-	"./ro": 94,
-	"./ro.js": 94,
-	"./ru": 95,
-	"./ru.js": 95,
-	"./sd": 96,
-	"./sd.js": 96,
-	"./se": 97,
-	"./se.js": 97,
-	"./si": 98,
-	"./si.js": 98,
-	"./sk": 99,
-	"./sk.js": 99,
-	"./sl": 100,
-	"./sl.js": 100,
-	"./sq": 101,
-	"./sq.js": 101,
-	"./sr": 102,
-	"./sr-cyrl": 103,
-	"./sr-cyrl.js": 103,
-	"./sr.js": 102,
-	"./ss": 104,
-	"./ss.js": 104,
-	"./sv": 105,
-	"./sv.js": 105,
-	"./sw": 106,
-	"./sw.js": 106,
-	"./ta": 107,
-	"./ta.js": 107,
-	"./te": 108,
-	"./te.js": 108,
-	"./tet": 109,
-	"./tet.js": 109,
-	"./th": 110,
-	"./th.js": 110,
-	"./tl-ph": 111,
-	"./tl-ph.js": 111,
-	"./tlh": 112,
-	"./tlh.js": 112,
-	"./tr": 113,
-	"./tr.js": 113,
-	"./tzl": 114,
-	"./tzl.js": 114,
-	"./tzm": 115,
-	"./tzm-latn": 116,
-	"./tzm-latn.js": 116,
-	"./tzm.js": 115,
-	"./uk": 117,
-	"./uk.js": 117,
-	"./ur": 118,
-	"./ur.js": 118,
-	"./uz": 119,
-	"./uz-latn": 120,
-	"./uz-latn.js": 120,
-	"./uz.js": 119,
-	"./vi": 121,
-	"./vi.js": 121,
-	"./x-pseudo": 122,
-	"./x-pseudo.js": 122,
-	"./yo": 123,
-	"./yo.js": 123,
-	"./zh-cn": 124,
-	"./zh-cn.js": 124,
-	"./zh-hk": 125,
-	"./zh-hk.js": 125,
-	"./zh-tw": 126,
-	"./zh-tw.js": 126
+	"./af": 16,
+	"./af.js": 16,
+	"./ar": 17,
+	"./ar-dz": 18,
+	"./ar-dz.js": 18,
+	"./ar-kw": 19,
+	"./ar-kw.js": 19,
+	"./ar-ly": 20,
+	"./ar-ly.js": 20,
+	"./ar-ma": 21,
+	"./ar-ma.js": 21,
+	"./ar-sa": 22,
+	"./ar-sa.js": 22,
+	"./ar-tn": 23,
+	"./ar-tn.js": 23,
+	"./ar.js": 17,
+	"./az": 24,
+	"./az.js": 24,
+	"./be": 25,
+	"./be.js": 25,
+	"./bg": 26,
+	"./bg.js": 26,
+	"./bn": 27,
+	"./bn.js": 27,
+	"./bo": 28,
+	"./bo.js": 28,
+	"./br": 29,
+	"./br.js": 29,
+	"./bs": 30,
+	"./bs.js": 30,
+	"./ca": 31,
+	"./ca.js": 31,
+	"./cs": 32,
+	"./cs.js": 32,
+	"./cv": 33,
+	"./cv.js": 33,
+	"./cy": 34,
+	"./cy.js": 34,
+	"./da": 35,
+	"./da.js": 35,
+	"./de": 36,
+	"./de-at": 37,
+	"./de-at.js": 37,
+	"./de-ch": 38,
+	"./de-ch.js": 38,
+	"./de.js": 36,
+	"./dv": 39,
+	"./dv.js": 39,
+	"./el": 40,
+	"./el.js": 40,
+	"./en-au": 41,
+	"./en-au.js": 41,
+	"./en-ca": 42,
+	"./en-ca.js": 42,
+	"./en-gb": 43,
+	"./en-gb.js": 43,
+	"./en-ie": 44,
+	"./en-ie.js": 44,
+	"./en-nz": 45,
+	"./en-nz.js": 45,
+	"./eo": 46,
+	"./eo.js": 46,
+	"./es": 47,
+	"./es-do": 48,
+	"./es-do.js": 48,
+	"./es.js": 47,
+	"./et": 49,
+	"./et.js": 49,
+	"./eu": 50,
+	"./eu.js": 50,
+	"./fa": 51,
+	"./fa.js": 51,
+	"./fi": 52,
+	"./fi.js": 52,
+	"./fo": 53,
+	"./fo.js": 53,
+	"./fr": 54,
+	"./fr-ca": 55,
+	"./fr-ca.js": 55,
+	"./fr-ch": 56,
+	"./fr-ch.js": 56,
+	"./fr.js": 54,
+	"./fy": 57,
+	"./fy.js": 57,
+	"./gd": 58,
+	"./gd.js": 58,
+	"./gl": 59,
+	"./gl.js": 59,
+	"./gom-latn": 60,
+	"./gom-latn.js": 60,
+	"./he": 61,
+	"./he.js": 61,
+	"./hi": 62,
+	"./hi.js": 62,
+	"./hr": 63,
+	"./hr.js": 63,
+	"./hu": 64,
+	"./hu.js": 64,
+	"./hy-am": 65,
+	"./hy-am.js": 65,
+	"./id": 66,
+	"./id.js": 66,
+	"./is": 67,
+	"./is.js": 67,
+	"./it": 68,
+	"./it.js": 68,
+	"./ja": 69,
+	"./ja.js": 69,
+	"./jv": 70,
+	"./jv.js": 70,
+	"./ka": 71,
+	"./ka.js": 71,
+	"./kk": 72,
+	"./kk.js": 72,
+	"./km": 73,
+	"./km.js": 73,
+	"./kn": 74,
+	"./kn.js": 74,
+	"./ko": 75,
+	"./ko.js": 75,
+	"./ky": 76,
+	"./ky.js": 76,
+	"./lb": 77,
+	"./lb.js": 77,
+	"./lo": 78,
+	"./lo.js": 78,
+	"./lt": 79,
+	"./lt.js": 79,
+	"./lv": 80,
+	"./lv.js": 80,
+	"./me": 81,
+	"./me.js": 81,
+	"./mi": 82,
+	"./mi.js": 82,
+	"./mk": 83,
+	"./mk.js": 83,
+	"./ml": 84,
+	"./ml.js": 84,
+	"./mr": 85,
+	"./mr.js": 85,
+	"./ms": 86,
+	"./ms-my": 87,
+	"./ms-my.js": 87,
+	"./ms.js": 86,
+	"./my": 88,
+	"./my.js": 88,
+	"./nb": 89,
+	"./nb.js": 89,
+	"./ne": 90,
+	"./ne.js": 90,
+	"./nl": 91,
+	"./nl-be": 92,
+	"./nl-be.js": 92,
+	"./nl.js": 91,
+	"./nn": 93,
+	"./nn.js": 93,
+	"./pa-in": 94,
+	"./pa-in.js": 94,
+	"./pl": 95,
+	"./pl.js": 95,
+	"./pt": 96,
+	"./pt-br": 97,
+	"./pt-br.js": 97,
+	"./pt.js": 96,
+	"./ro": 98,
+	"./ro.js": 98,
+	"./ru": 99,
+	"./ru.js": 99,
+	"./sd": 100,
+	"./sd.js": 100,
+	"./se": 101,
+	"./se.js": 101,
+	"./si": 102,
+	"./si.js": 102,
+	"./sk": 103,
+	"./sk.js": 103,
+	"./sl": 104,
+	"./sl.js": 104,
+	"./sq": 105,
+	"./sq.js": 105,
+	"./sr": 106,
+	"./sr-cyrl": 107,
+	"./sr-cyrl.js": 107,
+	"./sr.js": 106,
+	"./ss": 108,
+	"./ss.js": 108,
+	"./sv": 109,
+	"./sv.js": 109,
+	"./sw": 110,
+	"./sw.js": 110,
+	"./ta": 111,
+	"./ta.js": 111,
+	"./te": 112,
+	"./te.js": 112,
+	"./tet": 113,
+	"./tet.js": 113,
+	"./th": 114,
+	"./th.js": 114,
+	"./tl-ph": 115,
+	"./tl-ph.js": 115,
+	"./tlh": 116,
+	"./tlh.js": 116,
+	"./tr": 117,
+	"./tr.js": 117,
+	"./tzl": 118,
+	"./tzl.js": 118,
+	"./tzm": 119,
+	"./tzm-latn": 120,
+	"./tzm-latn.js": 120,
+	"./tzm.js": 119,
+	"./uk": 121,
+	"./uk.js": 121,
+	"./ur": 122,
+	"./ur.js": 122,
+	"./uz": 123,
+	"./uz-latn": 124,
+	"./uz-latn.js": 124,
+	"./uz.js": 123,
+	"./vi": 125,
+	"./vi.js": 125,
+	"./x-pseudo": 126,
+	"./x-pseudo.js": 126,
+	"./yo": 127,
+	"./yo.js": 127,
+	"./zh-cn": 128,
+	"./zh-cn.js": 128,
+	"./zh-hk": 129,
+	"./zh-hk.js": 129,
+	"./zh-tw": 130,
+	"./zh-tw.js": 130
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -43953,10 +43566,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 137;
+webpackContext.id = 140;
 
 /***/ }),
-/* 138 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43982,7 +43595,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 139 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44031,7 +43644,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 140 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44083,14 +43696,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 141 */
+/* 144 */,
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 /*!
- * jQuery UI Tooltip 1.12.1
+ * jQuery UI Dialog 1.12.1
  * http://jqueryui.com
  *
  * Copyright jQuery Foundation and other contributors
@@ -44098,20 +43712,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
  * http://jquery.org/license
  */
 
-//>>label: Tooltip
+//>>label: Dialog
 //>>group: Widgets
-//>>description: Shows additional information for any element on hover or focus.
-//>>docs: http://api.jqueryui.com/tooltip/
-//>>demos: http://jqueryui.com/tooltip/
+//>>description: Displays customizable dialog windows.
+//>>docs: http://api.jqueryui.com/dialog/
+//>>demos: http://jqueryui.com/dialog/
 //>>css.structure: ../../themes/base/core.css
-//>>css.structure: ../../themes/base/tooltip.css
+//>>css.structure: ../../themes/base/dialog.css
 //>>css.theme: ../../themes/base/theme.css
 
 (function (factory) {
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(9), __webpack_require__(128), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(146), __webpack_require__(132), __webpack_require__(8), __webpack_require__(152), __webpack_require__(136), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(134), __webpack_require__(154), __webpack_require__(11), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -44122,486 +43736,4083 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	}
 })(function ($) {
 
-	$.widget("ui.tooltip", {
+	$.widget("ui.dialog", {
 		version: "1.12.1",
 		options: {
+			appendTo: "body",
+			autoOpen: true,
+			buttons: [],
 			classes: {
-				"ui-tooltip": "ui-corner-all ui-widget-shadow"
+				"ui-dialog": "ui-corner-all",
+				"ui-dialog-titlebar": "ui-corner-all"
 			},
-			content: function content() {
-
-				// support: IE<9, Opera in jQuery <1.7
-				// .text() can't accept undefined, so coerce to a string
-				var title = $(this).attr("title") || "";
-
-				// Escape title, since we're going from an attribute to raw HTML
-				return $("<a>").text(title).html();
-			},
-			hide: true,
-
-			// Disabled elements have inconsistent behavior across browsers (#8661)
-			items: "[title]:not([disabled])",
+			closeOnEscape: true,
+			closeText: "Close",
+			draggable: true,
+			hide: null,
+			height: "auto",
+			maxHeight: null,
+			maxWidth: null,
+			minHeight: 150,
+			minWidth: 150,
+			modal: false,
 			position: {
-				my: "left top+15",
-				at: "left bottom",
-				collision: "flipfit flip"
+				my: "center",
+				at: "center",
+				of: window,
+				collision: "fit",
+
+				// Ensure the titlebar is always visible
+				using: function using(pos) {
+					var topOffset = $(this).css(pos).offset().top;
+					if (topOffset < 0) {
+						$(this).css("top", pos.top - topOffset);
+					}
+				}
 			},
-			show: true,
-			track: false,
+			resizable: true,
+			show: null,
+			title: null,
+			width: 300,
 
 			// Callbacks
+			beforeClose: null,
 			close: null,
-			open: null
+			drag: null,
+			dragStart: null,
+			dragStop: null,
+			focus: null,
+			open: null,
+			resize: null,
+			resizeStart: null,
+			resizeStop: null
 		},
 
-		_addDescribedBy: function _addDescribedBy(elem, id) {
-			var describedby = (elem.attr("aria-describedby") || "").split(/\s+/);
-			describedby.push(id);
-			elem.data("ui-tooltip-id", id).attr("aria-describedby", $.trim(describedby.join(" ")));
+		sizeRelatedOptions: {
+			buttons: true,
+			height: true,
+			maxHeight: true,
+			maxWidth: true,
+			minHeight: true,
+			minWidth: true,
+			width: true
 		},
 
-		_removeDescribedBy: function _removeDescribedBy(elem) {
-			var id = elem.data("ui-tooltip-id"),
-			    describedby = (elem.attr("aria-describedby") || "").split(/\s+/),
-			    index = $.inArray(id, describedby);
-
-			if (index !== -1) {
-				describedby.splice(index, 1);
-			}
-
-			elem.removeData("ui-tooltip-id");
-			describedby = $.trim(describedby.join(" "));
-			if (describedby) {
-				elem.attr("aria-describedby", describedby);
-			} else {
-				elem.removeAttr("aria-describedby");
-			}
+		resizableRelatedOptions: {
+			maxHeight: true,
+			maxWidth: true,
+			minHeight: true,
+			minWidth: true
 		},
 
 		_create: function _create() {
-			this._on({
-				mouseover: "open",
-				focusin: "open"
-			});
-
-			// IDs of generated tooltips, needed for destroy
-			this.tooltips = {};
-
-			// IDs of parent tooltips where we removed the title attribute
-			this.parents = {};
-
-			// Append the aria-live region so tooltips announce correctly
-			this.liveRegion = $("<div>").attr({
-				role: "log",
-				"aria-live": "assertive",
-				"aria-relevant": "additions"
-			}).appendTo(this.document[0].body);
-			this._addClass(this.liveRegion, null, "ui-helper-hidden-accessible");
-
-			this.disabledTitles = $([]);
-		},
-
-		_setOption: function _setOption(key, value) {
-			var that = this;
-
-			this._super(key, value);
-
-			if (key === "content") {
-				$.each(this.tooltips, function (id, tooltipData) {
-					that._updateContent(tooltipData.element);
-				});
-			}
-		},
-
-		_setOptionDisabled: function _setOptionDisabled(value) {
-			this[value ? "_disable" : "_enable"]();
-		},
-
-		_disable: function _disable() {
-			var that = this;
-
-			// Close open tooltips
-			$.each(this.tooltips, function (id, tooltipData) {
-				var event = $.Event("blur");
-				event.target = event.currentTarget = tooltipData.element[0];
-				that.close(event, true);
-			});
-
-			// Remove title attributes to prevent native tooltips
-			this.disabledTitles = this.disabledTitles.add(this.element.find(this.options.items).addBack().filter(function () {
-				var element = $(this);
-				if (element.is("[title]")) {
-					return element.data("ui-tooltip-title", element.attr("title")).removeAttr("title");
-				}
-			}));
-		},
-
-		_enable: function _enable() {
-
-			// restore title attributes
-			this.disabledTitles.each(function () {
-				var element = $(this);
-				if (element.data("ui-tooltip-title")) {
-					element.attr("title", element.data("ui-tooltip-title"));
-				}
-			});
-			this.disabledTitles = $([]);
-		},
-
-		open: function open(event) {
-			var that = this,
-			    target = $(event ? event.target : this.element)
-
-			// we need closest here due to mouseover bubbling,
-			// but always pointing at the same event target
-			.closest(this.options.items);
-
-			// No element to show a tooltip for or the tooltip is already open
-			if (!target.length || target.data("ui-tooltip-id")) {
-				return;
-			}
-
-			if (target.attr("title")) {
-				target.data("ui-tooltip-title", target.attr("title"));
-			}
-
-			target.data("ui-tooltip-open", true);
-
-			// Kill parent tooltips, custom or native, for hover
-			if (event && event.type === "mouseover") {
-				target.parents().each(function () {
-					var parent = $(this),
-					    blurEvent;
-					if (parent.data("ui-tooltip-open")) {
-						blurEvent = $.Event("blur");
-						blurEvent.target = blurEvent.currentTarget = this;
-						that.close(blurEvent, true);
-					}
-					if (parent.attr("title")) {
-						parent.uniqueId();
-						that.parents[this.id] = {
-							element: this,
-							title: parent.attr("title")
-						};
-						parent.attr("title", "");
-					}
-				});
-			}
-
-			this._registerCloseHandlers(event, target);
-			this._updateContent(target, event);
-		},
-
-		_updateContent: function _updateContent(target, event) {
-			var content,
-			    contentOption = this.options.content,
-			    that = this,
-			    eventType = event ? event.type : null;
-
-			if (typeof contentOption === "string" || contentOption.nodeType || contentOption.jquery) {
-				return this._open(event, target, contentOption);
-			}
-
-			content = contentOption.call(target[0], function (response) {
-
-				// IE may instantly serve a cached response for ajax requests
-				// delay this call to _open so the other call to _open runs first
-				that._delay(function () {
-
-					// Ignore async response if tooltip was closed already
-					if (!target.data("ui-tooltip-open")) {
-						return;
-					}
-
-					// JQuery creates a special event for focusin when it doesn't
-					// exist natively. To improve performance, the native event
-					// object is reused and the type is changed. Therefore, we can't
-					// rely on the type being correct after the event finished
-					// bubbling, so we set it back to the previous value. (#8740)
-					if (event) {
-						event.type = eventType;
-					}
-					this._open(event, target, response);
-				});
-			});
-			if (content) {
-				this._open(event, target, content);
-			}
-		},
-
-		_open: function _open(event, target, content) {
-			var tooltipData,
-			    tooltip,
-			    delayedShow,
-			    a11yContent,
-			    positionOption = $.extend({}, this.options.position);
-
-			if (!content) {
-				return;
-			}
-
-			// Content can be updated multiple times. If the tooltip already
-			// exists, then just update the content and bail.
-			tooltipData = this._find(target);
-			if (tooltipData) {
-				tooltipData.tooltip.find(".ui-tooltip-content").html(content);
-				return;
-			}
-
-			// If we have a title, clear it to prevent the native tooltip
-			// we have to check first to avoid defining a title if none exists
-			// (we don't want to cause an element to start matching [title])
-			//
-			// We use removeAttr only for key events, to allow IE to export the correct
-			// accessible attributes. For mouse events, set to empty string to avoid
-			// native tooltip showing up (happens only when removing inside mouseover).
-			if (target.is("[title]")) {
-				if (event && event.type === "mouseover") {
-					target.attr("title", "");
-				} else {
-					target.removeAttr("title");
-				}
-			}
-
-			tooltipData = this._tooltip(target);
-			tooltip = tooltipData.tooltip;
-			this._addDescribedBy(target, tooltip.attr("id"));
-			tooltip.find(".ui-tooltip-content").html(content);
-
-			// Support: Voiceover on OS X, JAWS on IE <= 9
-			// JAWS announces deletions even when aria-relevant="additions"
-			// Voiceover will sometimes re-read the entire log region's contents from the beginning
-			this.liveRegion.children().hide();
-			a11yContent = $("<div>").html(tooltip.find(".ui-tooltip-content").html());
-			a11yContent.removeAttr("name").find("[name]").removeAttr("name");
-			a11yContent.removeAttr("id").find("[id]").removeAttr("id");
-			a11yContent.appendTo(this.liveRegion);
-
-			function position(event) {
-				positionOption.of = event;
-				if (tooltip.is(":hidden")) {
-					return;
-				}
-				tooltip.position(positionOption);
-			}
-			if (this.options.track && event && /^mouse/.test(event.type)) {
-				this._on(this.document, {
-					mousemove: position
-				});
-
-				// trigger once to override element-relative positioning
-				position(event);
-			} else {
-				tooltip.position($.extend({
-					of: target
-				}, this.options.position));
-			}
-
-			tooltip.hide();
-
-			this._show(tooltip, this.options.show);
-
-			// Handle tracking tooltips that are shown with a delay (#8644). As soon
-			// as the tooltip is visible, position the tooltip using the most recent
-			// event.
-			// Adds the check to add the timers only when both delay and track options are set (#14682)
-			if (this.options.track && this.options.show && this.options.show.delay) {
-				delayedShow = this.delayedShow = setInterval(function () {
-					if (tooltip.is(":visible")) {
-						position(positionOption.of);
-						clearInterval(delayedShow);
-					}
-				}, $.fx.interval);
-			}
-
-			this._trigger("open", event, { tooltip: tooltip });
-		},
-
-		_registerCloseHandlers: function _registerCloseHandlers(event, target) {
-			var events = {
-				keyup: function keyup(event) {
-					if (event.keyCode === $.ui.keyCode.ESCAPE) {
-						var fakeEvent = $.Event(event);
-						fakeEvent.currentTarget = target[0];
-						this.close(fakeEvent, true);
-					}
-				}
+			this.originalCss = {
+				display: this.element[0].style.display,
+				width: this.element[0].style.width,
+				minHeight: this.element[0].style.minHeight,
+				maxHeight: this.element[0].style.maxHeight,
+				height: this.element[0].style.height
 			};
-
-			// Only bind remove handler for delegated targets. Non-delegated
-			// tooltips will handle this in destroy.
-			if (target[0] !== this.element[0]) {
-				events.remove = function () {
-					this._removeTooltip(this._find(target).tooltip);
-				};
-			}
-
-			if (!event || event.type === "mouseover") {
-				events.mouseleave = "close";
-			}
-			if (!event || event.type === "focusin") {
-				events.focusout = "close";
-			}
-			this._on(true, target, events);
-		},
-
-		close: function close(event) {
-			var tooltip,
-			    that = this,
-			    target = $(event ? event.currentTarget : this.element),
-			    tooltipData = this._find(target);
-
-			// The tooltip may already be closed
-			if (!tooltipData) {
-
-				// We set ui-tooltip-open immediately upon open (in open()), but only set the
-				// additional data once there's actually content to show (in _open()). So even if the
-				// tooltip doesn't have full data, we always remove ui-tooltip-open in case we're in
-				// the period between open() and _open().
-				target.removeData("ui-tooltip-open");
-				return;
-			}
-
-			tooltip = tooltipData.tooltip;
-
-			// Disabling closes the tooltip, so we need to track when we're closing
-			// to avoid an infinite loop in case the tooltip becomes disabled on close
-			if (tooltipData.closing) {
-				return;
-			}
-
-			// Clear the interval for delayed tracking tooltips
-			clearInterval(this.delayedShow);
-
-			// Only set title if we had one before (see comment in _open())
-			// If the title attribute has changed since open(), don't restore
-			if (target.data("ui-tooltip-title") && !target.attr("title")) {
-				target.attr("title", target.data("ui-tooltip-title"));
-			}
-
-			this._removeDescribedBy(target);
-
-			tooltipData.hiding = true;
-			tooltip.stop(true);
-			this._hide(tooltip, this.options.hide, function () {
-				that._removeTooltip($(this));
-			});
-
-			target.removeData("ui-tooltip-open");
-			this._off(target, "mouseleave focusout keyup");
-
-			// Remove 'remove' binding only on delegated targets
-			if (target[0] !== this.element[0]) {
-				this._off(target, "remove");
-			}
-			this._off(this.document, "mousemove");
-
-			if (event && event.type === "mouseleave") {
-				$.each(this.parents, function (id, parent) {
-					$(parent.element).attr("title", parent.title);
-					delete that.parents[id];
-				});
-			}
-
-			tooltipData.closing = true;
-			this._trigger("close", event, { tooltip: tooltip });
-			if (!tooltipData.hiding) {
-				tooltipData.closing = false;
-			}
-		},
-
-		_tooltip: function _tooltip(element) {
-			var tooltip = $("<div>").attr("role", "tooltip"),
-			    content = $("<div>").appendTo(tooltip),
-			    id = tooltip.uniqueId().attr("id");
-
-			this._addClass(content, "ui-tooltip-content");
-			this._addClass(tooltip, "ui-tooltip", "ui-widget ui-widget-content");
-
-			tooltip.appendTo(this._appendTo(element));
-
-			return this.tooltips[id] = {
-				element: element,
-				tooltip: tooltip
+			this.originalPosition = {
+				parent: this.element.parent(),
+				index: this.element.parent().children().index(this.element)
 			};
-		},
-
-		_find: function _find(target) {
-			var id = target.data("ui-tooltip-id");
-			return id ? this.tooltips[id] : null;
-		},
-
-		_removeTooltip: function _removeTooltip(tooltip) {
-			tooltip.remove();
-			delete this.tooltips[tooltip.attr("id")];
-		},
-
-		_appendTo: function _appendTo(target) {
-			var element = target.closest(".ui-front, dialog");
-
-			if (!element.length) {
-				element = this.document[0].body;
+			this.originalTitle = this.element.attr("title");
+			if (this.options.title == null && this.originalTitle != null) {
+				this.options.title = this.originalTitle;
 			}
 
-			return element;
+			// Dialogs can't be disabled
+			if (this.options.disabled) {
+				this.options.disabled = false;
+			}
+
+			this._createWrapper();
+
+			this.element.show().removeAttr("title").appendTo(this.uiDialog);
+
+			this._addClass("ui-dialog-content", "ui-widget-content");
+
+			this._createTitlebar();
+			this._createButtonPane();
+
+			if (this.options.draggable && $.fn.draggable) {
+				this._makeDraggable();
+			}
+			if (this.options.resizable && $.fn.resizable) {
+				this._makeResizable();
+			}
+
+			this._isOpen = false;
+
+			this._trackFocus();
+		},
+
+		_init: function _init() {
+			if (this.options.autoOpen) {
+				this.open();
+			}
+		},
+
+		_appendTo: function _appendTo() {
+			var element = this.options.appendTo;
+			if (element && (element.jquery || element.nodeType)) {
+				return $(element);
+			}
+			return this.document.find(element || "body").eq(0);
 		},
 
 		_destroy: function _destroy() {
+			var next,
+			    originalPosition = this.originalPosition;
+
+			this._untrackInstance();
+			this._destroyOverlay();
+
+			this.element.removeUniqueId().css(this.originalCss)
+
+			// Without detaching first, the following becomes really slow
+			.detach();
+
+			this.uiDialog.remove();
+
+			if (this.originalTitle) {
+				this.element.attr("title", this.originalTitle);
+			}
+
+			next = originalPosition.parent.children().eq(originalPosition.index);
+
+			// Don't try to place the dialog next to itself (#8613)
+			if (next.length && next[0] !== this.element[0]) {
+				next.before(this.element);
+			} else {
+				originalPosition.parent.append(this.element);
+			}
+		},
+
+		widget: function widget() {
+			return this.uiDialog;
+		},
+
+		disable: $.noop,
+		enable: $.noop,
+
+		close: function close(event) {
 			var that = this;
 
-			// Close open tooltips
-			$.each(this.tooltips, function (id, tooltipData) {
+			if (!this._isOpen || this._trigger("beforeClose", event) === false) {
+				return;
+			}
 
-				// Delegate to close method to handle common cleanup
-				var event = $.Event("blur"),
-				    element = tooltipData.element;
-				event.target = event.currentTarget = element[0];
-				that.close(event, true);
+			this._isOpen = false;
+			this._focusedElement = null;
+			this._destroyOverlay();
+			this._untrackInstance();
 
-				// Remove immediately; destroying an open tooltip doesn't use the
-				// hide animation
-				$("#" + id).remove();
+			if (!this.opener.filter(":focusable").trigger("focus").length) {
 
-				// Restore the title
-				if (element.data("ui-tooltip-title")) {
+				// Hiding a focused element doesn't trigger blur in WebKit
+				// so in case we have nothing to focus on, explicitly blur the active element
+				// https://bugs.webkit.org/show_bug.cgi?id=47182
+				$.ui.safeBlur($.ui.safeActiveElement(this.document[0]));
+			}
 
-					// If the title attribute has changed since open(), don't restore
-					if (!element.attr("title")) {
-						element.attr("title", element.data("ui-tooltip-title"));
+			this._hide(this.uiDialog, this.options.hide, function () {
+				that._trigger("close", event);
+			});
+		},
+
+		isOpen: function isOpen() {
+			return this._isOpen;
+		},
+
+		moveToTop: function moveToTop() {
+			this._moveToTop();
+		},
+
+		_moveToTop: function _moveToTop(event, silent) {
+			var moved = false,
+			    zIndices = this.uiDialog.siblings(".ui-front:visible").map(function () {
+				return +$(this).css("z-index");
+			}).get(),
+			    zIndexMax = Math.max.apply(null, zIndices);
+
+			if (zIndexMax >= +this.uiDialog.css("z-index")) {
+				this.uiDialog.css("z-index", zIndexMax + 1);
+				moved = true;
+			}
+
+			if (moved && !silent) {
+				this._trigger("focus", event);
+			}
+			return moved;
+		},
+
+		open: function open() {
+			var that = this;
+			if (this._isOpen) {
+				if (this._moveToTop()) {
+					this._focusTabbable();
+				}
+				return;
+			}
+
+			this._isOpen = true;
+			this.opener = $($.ui.safeActiveElement(this.document[0]));
+
+			this._size();
+			this._position();
+			this._createOverlay();
+			this._moveToTop(null, true);
+
+			// Ensure the overlay is moved to the top with the dialog, but only when
+			// opening. The overlay shouldn't move after the dialog is open so that
+			// modeless dialogs opened after the modal dialog stack properly.
+			if (this.overlay) {
+				this.overlay.css("z-index", this.uiDialog.css("z-index") - 1);
+			}
+
+			this._show(this.uiDialog, this.options.show, function () {
+				that._focusTabbable();
+				that._trigger("focus");
+			});
+
+			// Track the dialog immediately upon openening in case a focus event
+			// somehow occurs outside of the dialog before an element inside the
+			// dialog is focused (#10152)
+			this._makeFocusTarget();
+
+			this._trigger("open");
+		},
+
+		_focusTabbable: function _focusTabbable() {
+
+			// Set focus to the first match:
+			// 1. An element that was focused previously
+			// 2. First element inside the dialog matching [autofocus]
+			// 3. Tabbable element inside the content element
+			// 4. Tabbable element inside the buttonpane
+			// 5. The close button
+			// 6. The dialog itself
+			var hasFocus = this._focusedElement;
+			if (!hasFocus) {
+				hasFocus = this.element.find("[autofocus]");
+			}
+			if (!hasFocus.length) {
+				hasFocus = this.element.find(":tabbable");
+			}
+			if (!hasFocus.length) {
+				hasFocus = this.uiDialogButtonPane.find(":tabbable");
+			}
+			if (!hasFocus.length) {
+				hasFocus = this.uiDialogTitlebarClose.filter(":tabbable");
+			}
+			if (!hasFocus.length) {
+				hasFocus = this.uiDialog;
+			}
+			hasFocus.eq(0).trigger("focus");
+		},
+
+		_keepFocus: function _keepFocus(event) {
+			function checkFocus() {
+				var activeElement = $.ui.safeActiveElement(this.document[0]),
+				    isActive = this.uiDialog[0] === activeElement || $.contains(this.uiDialog[0], activeElement);
+				if (!isActive) {
+					this._focusTabbable();
+				}
+			}
+			event.preventDefault();
+			checkFocus.call(this);
+
+			// support: IE
+			// IE <= 8 doesn't prevent moving focus even with event.preventDefault()
+			// so we check again later
+			this._delay(checkFocus);
+		},
+
+		_createWrapper: function _createWrapper() {
+			this.uiDialog = $("<div>").hide().attr({
+
+				// Setting tabIndex makes the div focusable
+				tabIndex: -1,
+				role: "dialog"
+			}).appendTo(this._appendTo());
+
+			this._addClass(this.uiDialog, "ui-dialog", "ui-widget ui-widget-content ui-front");
+			this._on(this.uiDialog, {
+				keydown: function keydown(event) {
+					if (this.options.closeOnEscape && !event.isDefaultPrevented() && event.keyCode && event.keyCode === $.ui.keyCode.ESCAPE) {
+						event.preventDefault();
+						this.close(event);
+						return;
 					}
-					element.removeData("ui-tooltip-title");
+
+					// Prevent tabbing out of dialogs
+					if (event.keyCode !== $.ui.keyCode.TAB || event.isDefaultPrevented()) {
+						return;
+					}
+					var tabbables = this.uiDialog.find(":tabbable"),
+					    first = tabbables.filter(":first"),
+					    last = tabbables.filter(":last");
+
+					if ((event.target === last[0] || event.target === this.uiDialog[0]) && !event.shiftKey) {
+						this._delay(function () {
+							first.trigger("focus");
+						});
+						event.preventDefault();
+					} else if ((event.target === first[0] || event.target === this.uiDialog[0]) && event.shiftKey) {
+						this._delay(function () {
+							last.trigger("focus");
+						});
+						event.preventDefault();
+					}
+				},
+				mousedown: function mousedown(event) {
+					if (this._moveToTop(event)) {
+						this._focusTabbable();
+					}
 				}
 			});
-			this.liveRegion.remove();
+
+			// We assume that any existing aria-describedby attribute means
+			// that the dialog content is marked up properly
+			// otherwise we brute force the content as the description
+			if (!this.element.find("[aria-describedby]").length) {
+				this.uiDialog.attr({
+					"aria-describedby": this.element.uniqueId().attr("id")
+				});
+			}
+		},
+
+		_createTitlebar: function _createTitlebar() {
+			var uiDialogTitle;
+
+			this.uiDialogTitlebar = $("<div>");
+			this._addClass(this.uiDialogTitlebar, "ui-dialog-titlebar", "ui-widget-header ui-helper-clearfix");
+			this._on(this.uiDialogTitlebar, {
+				mousedown: function mousedown(event) {
+
+					// Don't prevent click on close button (#8838)
+					// Focusing a dialog that is partially scrolled out of view
+					// causes the browser to scroll it into view, preventing the click event
+					if (!$(event.target).closest(".ui-dialog-titlebar-close")) {
+
+						// Dialog isn't getting focus when dragging (#8063)
+						this.uiDialog.trigger("focus");
+					}
+				}
+			});
+
+			// Support: IE
+			// Use type="button" to prevent enter keypresses in textboxes from closing the
+			// dialog in IE (#9312)
+			this.uiDialogTitlebarClose = $("<button type='button'></button>").button({
+				label: $("<a>").text(this.options.closeText).html(),
+				icon: "ui-icon-closethick",
+				showLabel: false
+			}).appendTo(this.uiDialogTitlebar);
+
+			this._addClass(this.uiDialogTitlebarClose, "ui-dialog-titlebar-close");
+			this._on(this.uiDialogTitlebarClose, {
+				click: function click(event) {
+					event.preventDefault();
+					this.close(event);
+				}
+			});
+
+			uiDialogTitle = $("<span>").uniqueId().prependTo(this.uiDialogTitlebar);
+			this._addClass(uiDialogTitle, "ui-dialog-title");
+			this._title(uiDialogTitle);
+
+			this.uiDialogTitlebar.prependTo(this.uiDialog);
+
+			this.uiDialog.attr({
+				"aria-labelledby": uiDialogTitle.attr("id")
+			});
+		},
+
+		_title: function _title(title) {
+			if (this.options.title) {
+				title.text(this.options.title);
+			} else {
+				title.html("&#160;");
+			}
+		},
+
+		_createButtonPane: function _createButtonPane() {
+			this.uiDialogButtonPane = $("<div>");
+			this._addClass(this.uiDialogButtonPane, "ui-dialog-buttonpane", "ui-widget-content ui-helper-clearfix");
+
+			this.uiButtonSet = $("<div>").appendTo(this.uiDialogButtonPane);
+			this._addClass(this.uiButtonSet, "ui-dialog-buttonset");
+
+			this._createButtons();
+		},
+
+		_createButtons: function _createButtons() {
+			var that = this,
+			    buttons = this.options.buttons;
+
+			// If we already have a button pane, remove it
+			this.uiDialogButtonPane.remove();
+			this.uiButtonSet.empty();
+
+			if ($.isEmptyObject(buttons) || $.isArray(buttons) && !buttons.length) {
+				this._removeClass(this.uiDialog, "ui-dialog-buttons");
+				return;
+			}
+
+			$.each(buttons, function (name, props) {
+				var click, buttonOptions;
+				props = $.isFunction(props) ? { click: props, text: name } : props;
+
+				// Default to a non-submitting button
+				props = $.extend({ type: "button" }, props);
+
+				// Change the context for the click callback to be the main element
+				click = props.click;
+				buttonOptions = {
+					icon: props.icon,
+					iconPosition: props.iconPosition,
+					showLabel: props.showLabel,
+
+					// Deprecated options
+					icons: props.icons,
+					text: props.text
+				};
+
+				delete props.click;
+				delete props.icon;
+				delete props.iconPosition;
+				delete props.showLabel;
+
+				// Deprecated options
+				delete props.icons;
+				if (typeof props.text === "boolean") {
+					delete props.text;
+				}
+
+				$("<button></button>", props).button(buttonOptions).appendTo(that.uiButtonSet).on("click", function () {
+					click.apply(that.element[0], arguments);
+				});
+			});
+			this._addClass(this.uiDialog, "ui-dialog-buttons");
+			this.uiDialogButtonPane.appendTo(this.uiDialog);
+		},
+
+		_makeDraggable: function _makeDraggable() {
+			var that = this,
+			    options = this.options;
+
+			function filteredUi(ui) {
+				return {
+					position: ui.position,
+					offset: ui.offset
+				};
+			}
+
+			this.uiDialog.draggable({
+				cancel: ".ui-dialog-content, .ui-dialog-titlebar-close",
+				handle: ".ui-dialog-titlebar",
+				containment: "document",
+				start: function start(event, ui) {
+					that._addClass($(this), "ui-dialog-dragging");
+					that._blockFrames();
+					that._trigger("dragStart", event, filteredUi(ui));
+				},
+				drag: function drag(event, ui) {
+					that._trigger("drag", event, filteredUi(ui));
+				},
+				stop: function stop(event, ui) {
+					var left = ui.offset.left - that.document.scrollLeft(),
+					    top = ui.offset.top - that.document.scrollTop();
+
+					options.position = {
+						my: "left top",
+						at: "left" + (left >= 0 ? "+" : "") + left + " " + "top" + (top >= 0 ? "+" : "") + top,
+						of: that.window
+					};
+					that._removeClass($(this), "ui-dialog-dragging");
+					that._unblockFrames();
+					that._trigger("dragStop", event, filteredUi(ui));
+				}
+			});
+		},
+
+		_makeResizable: function _makeResizable() {
+			var that = this,
+			    options = this.options,
+			    handles = options.resizable,
+
+
+			// .ui-resizable has position: relative defined in the stylesheet
+			// but dialogs have to use absolute or fixed positioning
+			position = this.uiDialog.css("position"),
+			    resizeHandles = typeof handles === "string" ? handles : "n,e,s,w,se,sw,ne,nw";
+
+			function filteredUi(ui) {
+				return {
+					originalPosition: ui.originalPosition,
+					originalSize: ui.originalSize,
+					position: ui.position,
+					size: ui.size
+				};
+			}
+
+			this.uiDialog.resizable({
+				cancel: ".ui-dialog-content",
+				containment: "document",
+				alsoResize: this.element,
+				maxWidth: options.maxWidth,
+				maxHeight: options.maxHeight,
+				minWidth: options.minWidth,
+				minHeight: this._minHeight(),
+				handles: resizeHandles,
+				start: function start(event, ui) {
+					that._addClass($(this), "ui-dialog-resizing");
+					that._blockFrames();
+					that._trigger("resizeStart", event, filteredUi(ui));
+				},
+				resize: function resize(event, ui) {
+					that._trigger("resize", event, filteredUi(ui));
+				},
+				stop: function stop(event, ui) {
+					var offset = that.uiDialog.offset(),
+					    left = offset.left - that.document.scrollLeft(),
+					    top = offset.top - that.document.scrollTop();
+
+					options.height = that.uiDialog.height();
+					options.width = that.uiDialog.width();
+					options.position = {
+						my: "left top",
+						at: "left" + (left >= 0 ? "+" : "") + left + " " + "top" + (top >= 0 ? "+" : "") + top,
+						of: that.window
+					};
+					that._removeClass($(this), "ui-dialog-resizing");
+					that._unblockFrames();
+					that._trigger("resizeStop", event, filteredUi(ui));
+				}
+			}).css("position", position);
+		},
+
+		_trackFocus: function _trackFocus() {
+			this._on(this.widget(), {
+				focusin: function focusin(event) {
+					this._makeFocusTarget();
+					this._focusedElement = $(event.target);
+				}
+			});
+		},
+
+		_makeFocusTarget: function _makeFocusTarget() {
+			this._untrackInstance();
+			this._trackingInstances().unshift(this);
+		},
+
+		_untrackInstance: function _untrackInstance() {
+			var instances = this._trackingInstances(),
+			    exists = $.inArray(this, instances);
+			if (exists !== -1) {
+				instances.splice(exists, 1);
+			}
+		},
+
+		_trackingInstances: function _trackingInstances() {
+			var instances = this.document.data("ui-dialog-instances");
+			if (!instances) {
+				instances = [];
+				this.document.data("ui-dialog-instances", instances);
+			}
+			return instances;
+		},
+
+		_minHeight: function _minHeight() {
+			var options = this.options;
+
+			return options.height === "auto" ? options.minHeight : Math.min(options.minHeight, options.height);
+		},
+
+		_position: function _position() {
+
+			// Need to show the dialog to get the actual offset in the position plugin
+			var isVisible = this.uiDialog.is(":visible");
+			if (!isVisible) {
+				this.uiDialog.show();
+			}
+			this.uiDialog.position(this.options.position);
+			if (!isVisible) {
+				this.uiDialog.hide();
+			}
+		},
+
+		_setOptions: function _setOptions(options) {
+			var that = this,
+			    resize = false,
+			    resizableOptions = {};
+
+			$.each(options, function (key, value) {
+				that._setOption(key, value);
+
+				if (key in that.sizeRelatedOptions) {
+					resize = true;
+				}
+				if (key in that.resizableRelatedOptions) {
+					resizableOptions[key] = value;
+				}
+			});
+
+			if (resize) {
+				this._size();
+				this._position();
+			}
+			if (this.uiDialog.is(":data(ui-resizable)")) {
+				this.uiDialog.resizable("option", resizableOptions);
+			}
+		},
+
+		_setOption: function _setOption(key, value) {
+			var isDraggable,
+			    isResizable,
+			    uiDialog = this.uiDialog;
+
+			if (key === "disabled") {
+				return;
+			}
+
+			this._super(key, value);
+
+			if (key === "appendTo") {
+				this.uiDialog.appendTo(this._appendTo());
+			}
+
+			if (key === "buttons") {
+				this._createButtons();
+			}
+
+			if (key === "closeText") {
+				this.uiDialogTitlebarClose.button({
+
+					// Ensure that we always pass a string
+					label: $("<a>").text("" + this.options.closeText).html()
+				});
+			}
+
+			if (key === "draggable") {
+				isDraggable = uiDialog.is(":data(ui-draggable)");
+				if (isDraggable && !value) {
+					uiDialog.draggable("destroy");
+				}
+
+				if (!isDraggable && value) {
+					this._makeDraggable();
+				}
+			}
+
+			if (key === "position") {
+				this._position();
+			}
+
+			if (key === "resizable") {
+
+				// currently resizable, becoming non-resizable
+				isResizable = uiDialog.is(":data(ui-resizable)");
+				if (isResizable && !value) {
+					uiDialog.resizable("destroy");
+				}
+
+				// Currently resizable, changing handles
+				if (isResizable && typeof value === "string") {
+					uiDialog.resizable("option", "handles", value);
+				}
+
+				// Currently non-resizable, becoming resizable
+				if (!isResizable && value !== false) {
+					this._makeResizable();
+				}
+			}
+
+			if (key === "title") {
+				this._title(this.uiDialogTitlebar.find(".ui-dialog-title"));
+			}
+		},
+
+		_size: function _size() {
+
+			// If the user has resized the dialog, the .ui-dialog and .ui-dialog-content
+			// divs will both have width and height set, so we need to reset them
+			var nonContentHeight,
+			    minContentHeight,
+			    maxContentHeight,
+			    options = this.options;
+
+			// Reset content sizing
+			this.element.show().css({
+				width: "auto",
+				minHeight: 0,
+				maxHeight: "none",
+				height: 0
+			});
+
+			if (options.minWidth > options.width) {
+				options.width = options.minWidth;
+			}
+
+			// Reset wrapper sizing
+			// determine the height of all the non-content elements
+			nonContentHeight = this.uiDialog.css({
+				height: "auto",
+				width: options.width
+			}).outerHeight();
+			minContentHeight = Math.max(0, options.minHeight - nonContentHeight);
+			maxContentHeight = typeof options.maxHeight === "number" ? Math.max(0, options.maxHeight - nonContentHeight) : "none";
+
+			if (options.height === "auto") {
+				this.element.css({
+					minHeight: minContentHeight,
+					maxHeight: maxContentHeight,
+					height: "auto"
+				});
+			} else {
+				this.element.height(Math.max(0, options.height - nonContentHeight));
+			}
+
+			if (this.uiDialog.is(":data(ui-resizable)")) {
+				this.uiDialog.resizable("option", "minHeight", this._minHeight());
+			}
+		},
+
+		_blockFrames: function _blockFrames() {
+			this.iframeBlocks = this.document.find("iframe").map(function () {
+				var iframe = $(this);
+
+				return $("<div>").css({
+					position: "absolute",
+					width: iframe.outerWidth(),
+					height: iframe.outerHeight()
+				}).appendTo(iframe.parent()).offset(iframe.offset())[0];
+			});
+		},
+
+		_unblockFrames: function _unblockFrames() {
+			if (this.iframeBlocks) {
+				this.iframeBlocks.remove();
+				delete this.iframeBlocks;
+			}
+		},
+
+		_allowInteraction: function _allowInteraction(event) {
+			if ($(event.target).closest(".ui-dialog").length) {
+				return true;
+			}
+
+			// TODO: Remove hack when datepicker implements
+			// the .ui-front logic (#8989)
+			return !!$(event.target).closest(".ui-datepicker").length;
+		},
+
+		_createOverlay: function _createOverlay() {
+			if (!this.options.modal) {
+				return;
+			}
+
+			// We use a delay in case the overlay is created from an
+			// event that we're going to be cancelling (#2804)
+			var isOpening = true;
+			this._delay(function () {
+				isOpening = false;
+			});
+
+			if (!this.document.data("ui-dialog-overlays")) {
+
+				// Prevent use of anchors and inputs
+				// Using _on() for an event handler shared across many instances is
+				// safe because the dialogs stack and must be closed in reverse order
+				this._on(this.document, {
+					focusin: function focusin(event) {
+						if (isOpening) {
+							return;
+						}
+
+						if (!this._allowInteraction(event)) {
+							event.preventDefault();
+							this._trackingInstances()[0]._focusTabbable();
+						}
+					}
+				});
+			}
+
+			this.overlay = $("<div>").appendTo(this._appendTo());
+
+			this._addClass(this.overlay, null, "ui-widget-overlay ui-front");
+			this._on(this.overlay, {
+				mousedown: "_keepFocus"
+			});
+			this.document.data("ui-dialog-overlays", (this.document.data("ui-dialog-overlays") || 0) + 1);
+		},
+
+		_destroyOverlay: function _destroyOverlay() {
+			if (!this.options.modal) {
+				return;
+			}
+
+			if (this.overlay) {
+				var overlays = this.document.data("ui-dialog-overlays") - 1;
+
+				if (!overlays) {
+					this._off(this.document, "focusin");
+					this.document.removeData("ui-dialog-overlays");
+				} else {
+					this.document.data("ui-dialog-overlays", overlays);
+				}
+
+				this.overlay.remove();
+				this.overlay = null;
+			}
 		}
 	});
 
 	// DEPRECATED
-	// TODO: Switch return back to widget declaration at top of file when this is removed
+	// TODO: switch return back to widget declaration at top of file when this is removed
 	if ($.uiBackCompat !== false) {
 
-		// Backcompat for tooltipClass option
-		$.widget("ui.tooltip", $.ui.tooltip, {
+		// Backcompat for dialogClass option
+		$.widget("ui.dialog", $.ui.dialog, {
 			options: {
-				tooltipClass: null
+				dialogClass: ""
 			},
-			_tooltip: function _tooltip() {
-				var tooltipData = this._superApply(arguments);
-				if (this.options.tooltipClass) {
-					tooltipData.tooltip.addClass(this.options.tooltipClass);
+			_createWrapper: function _createWrapper() {
+				this._super();
+				this.uiDialog.addClass(this.options.dialogClass);
+			},
+			_setOption: function _setOption(key, value) {
+				if (key === "dialogClass") {
+					this.uiDialog.removeClass(this.options.dialogClass).addClass(value);
 				}
-				return tooltipData;
+				this._superApply(arguments);
 			}
 		});
 	}
 
-	return $.ui.tooltip;
+	return $.ui.dialog;
 });
 
 /***/ }),
-/* 142 */,
-/* 143 */,
-/* 144 */
+/* 146 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+/*!
+ * jQuery UI Button 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Button
+//>>group: Widgets
+//>>description: Enhances a form with themeable buttons.
+//>>docs: http://api.jqueryui.com/button/
+//>>demos: http://jqueryui.com/button/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/button.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1),
+
+		// These are only for backcompat
+		// TODO: Remove after 1.12
+		__webpack_require__(147), __webpack_require__(148), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	$.widget("ui.button", {
+		version: "1.12.1",
+		defaultElement: "<button>",
+		options: {
+			classes: {
+				"ui-button": "ui-corner-all"
+			},
+			disabled: null,
+			icon: null,
+			iconPosition: "beginning",
+			label: null,
+			showLabel: true
+		},
+
+		_getCreateOptions: function _getCreateOptions() {
+			var disabled,
+
+
+			// This is to support cases like in jQuery Mobile where the base widget does have
+			// an implementation of _getCreateOptions
+			options = this._super() || {};
+
+			this.isInput = this.element.is("input");
+
+			disabled = this.element[0].disabled;
+			if (disabled != null) {
+				options.disabled = disabled;
+			}
+
+			this.originalLabel = this.isInput ? this.element.val() : this.element.html();
+			if (this.originalLabel) {
+				options.label = this.originalLabel;
+			}
+
+			return options;
+		},
+
+		_create: function _create() {
+			if (!this.option.showLabel & !this.options.icon) {
+				this.options.showLabel = true;
+			}
+
+			// We have to check the option again here even though we did in _getCreateOptions,
+			// because null may have been passed on init which would override what was set in
+			// _getCreateOptions
+			if (this.options.disabled == null) {
+				this.options.disabled = this.element[0].disabled || false;
+			}
+
+			this.hasTitle = !!this.element.attr("title");
+
+			// Check to see if the label needs to be set or if its already correct
+			if (this.options.label && this.options.label !== this.originalLabel) {
+				if (this.isInput) {
+					this.element.val(this.options.label);
+				} else {
+					this.element.html(this.options.label);
+				}
+			}
+			this._addClass("ui-button", "ui-widget");
+			this._setOption("disabled", this.options.disabled);
+			this._enhance();
+
+			if (this.element.is("a")) {
+				this._on({
+					"keyup": function keyup(event) {
+						if (event.keyCode === $.ui.keyCode.SPACE) {
+							event.preventDefault();
+
+							// Support: PhantomJS <= 1.9, IE 8 Only
+							// If a native click is available use it so we actually cause navigation
+							// otherwise just trigger a click event
+							if (this.element[0].click) {
+								this.element[0].click();
+							} else {
+								this.element.trigger("click");
+							}
+						}
+					}
+				});
+			}
+		},
+
+		_enhance: function _enhance() {
+			if (!this.element.is("button")) {
+				this.element.attr("role", "button");
+			}
+
+			if (this.options.icon) {
+				this._updateIcon("icon", this.options.icon);
+				this._updateTooltip();
+			}
+		},
+
+		_updateTooltip: function _updateTooltip() {
+			this.title = this.element.attr("title");
+
+			if (!this.options.showLabel && !this.title) {
+				this.element.attr("title", this.options.label);
+			}
+		},
+
+		_updateIcon: function _updateIcon(option, value) {
+			var icon = option !== "iconPosition",
+			    position = icon ? this.options.iconPosition : value,
+			    displayBlock = position === "top" || position === "bottom";
+
+			// Create icon
+			if (!this.icon) {
+				this.icon = $("<span>");
+
+				this._addClass(this.icon, "ui-button-icon", "ui-icon");
+
+				if (!this.options.showLabel) {
+					this._addClass("ui-button-icon-only");
+				}
+			} else if (icon) {
+
+				// If we are updating the icon remove the old icon class
+				this._removeClass(this.icon, null, this.options.icon);
+			}
+
+			// If we are updating the icon add the new icon class
+			if (icon) {
+				this._addClass(this.icon, null, value);
+			}
+
+			this._attachIcon(position);
+
+			// If the icon is on top or bottom we need to add the ui-widget-icon-block class and remove
+			// the iconSpace if there is one.
+			if (displayBlock) {
+				this._addClass(this.icon, null, "ui-widget-icon-block");
+				if (this.iconSpace) {
+					this.iconSpace.remove();
+				}
+			} else {
+
+				// Position is beginning or end so remove the ui-widget-icon-block class and add the
+				// space if it does not exist
+				if (!this.iconSpace) {
+					this.iconSpace = $("<span> </span>");
+					this._addClass(this.iconSpace, "ui-button-icon-space");
+				}
+				this._removeClass(this.icon, null, "ui-wiget-icon-block");
+				this._attachIconSpace(position);
+			}
+		},
+
+		_destroy: function _destroy() {
+			this.element.removeAttr("role");
+
+			if (this.icon) {
+				this.icon.remove();
+			}
+			if (this.iconSpace) {
+				this.iconSpace.remove();
+			}
+			if (!this.hasTitle) {
+				this.element.removeAttr("title");
+			}
+		},
+
+		_attachIconSpace: function _attachIconSpace(iconPosition) {
+			this.icon[/^(?:end|bottom)/.test(iconPosition) ? "before" : "after"](this.iconSpace);
+		},
+
+		_attachIcon: function _attachIcon(iconPosition) {
+			this.element[/^(?:end|bottom)/.test(iconPosition) ? "append" : "prepend"](this.icon);
+		},
+
+		_setOptions: function _setOptions(options) {
+			var newShowLabel = options.showLabel === undefined ? this.options.showLabel : options.showLabel,
+			    newIcon = options.icon === undefined ? this.options.icon : options.icon;
+
+			if (!newShowLabel && !newIcon) {
+				options.showLabel = true;
+			}
+			this._super(options);
+		},
+
+		_setOption: function _setOption(key, value) {
+			if (key === "icon") {
+				if (value) {
+					this._updateIcon(key, value);
+				} else if (this.icon) {
+					this.icon.remove();
+					if (this.iconSpace) {
+						this.iconSpace.remove();
+					}
+				}
+			}
+
+			if (key === "iconPosition") {
+				this._updateIcon(key, value);
+			}
+
+			// Make sure we can't end up with a button that has neither text nor icon
+			if (key === "showLabel") {
+				this._toggleClass("ui-button-icon-only", null, !value);
+				this._updateTooltip();
+			}
+
+			if (key === "label") {
+				if (this.isInput) {
+					this.element.val(value);
+				} else {
+
+					// If there is an icon, append it, else nothing then append the value
+					// this avoids removal of the icon when setting label text
+					this.element.html(value);
+					if (this.icon) {
+						this._attachIcon(this.options.iconPosition);
+						this._attachIconSpace(this.options.iconPosition);
+					}
+				}
+			}
+
+			this._super(key, value);
+
+			if (key === "disabled") {
+				this._toggleClass(null, "ui-state-disabled", value);
+				this.element[0].disabled = value;
+				if (value) {
+					this.element.blur();
+				}
+			}
+		},
+
+		refresh: function refresh() {
+
+			// Make sure to only check disabled if its an element that supports this otherwise
+			// check for the disabled class to determine state
+			var isDisabled = this.element.is("input, button") ? this.element[0].disabled : this.element.hasClass("ui-button-disabled");
+
+			if (isDisabled !== this.options.disabled) {
+				this._setOptions({ disabled: isDisabled });
+			}
+
+			this._updateTooltip();
+		}
+	});
+
+	// DEPRECATED
+	if ($.uiBackCompat !== false) {
+
+		// Text and Icons options
+		$.widget("ui.button", $.ui.button, {
+			options: {
+				text: true,
+				icons: {
+					primary: null,
+					secondary: null
+				}
+			},
+
+			_create: function _create() {
+				if (this.options.showLabel && !this.options.text) {
+					this.options.showLabel = this.options.text;
+				}
+				if (!this.options.showLabel && this.options.text) {
+					this.options.text = this.options.showLabel;
+				}
+				if (!this.options.icon && (this.options.icons.primary || this.options.icons.secondary)) {
+					if (this.options.icons.primary) {
+						this.options.icon = this.options.icons.primary;
+					} else {
+						this.options.icon = this.options.icons.secondary;
+						this.options.iconPosition = "end";
+					}
+				} else if (this.options.icon) {
+					this.options.icons.primary = this.options.icon;
+				}
+				this._super();
+			},
+
+			_setOption: function _setOption(key, value) {
+				if (key === "text") {
+					this._super("showLabel", value);
+					return;
+				}
+				if (key === "showLabel") {
+					this.options.text = value;
+				}
+				if (key === "icon") {
+					this.options.icons.primary = value;
+				}
+				if (key === "icons") {
+					if (value.primary) {
+						this._super("icon", value.primary);
+						this._super("iconPosition", "beginning");
+					} else if (value.secondary) {
+						this._super("icon", value.secondary);
+						this._super("iconPosition", "end");
+					}
+				}
+				this._superApply(arguments);
+			}
+		});
+
+		$.fn.button = function (orig) {
+			return function () {
+				if (!this.length || this.length && this[0].tagName !== "INPUT" || this.length && this[0].tagName === "INPUT" && this.attr("type") !== "checkbox" && this.attr("type") !== "radio") {
+					return orig.apply(this, arguments);
+				}
+				if (!$.ui.checkboxradio) {
+					$.error("Checkboxradio widget missing");
+				}
+				if (arguments.length === 0) {
+					return this.checkboxradio({
+						"icon": false
+					});
+				}
+				return this.checkboxradio.apply(this, arguments);
+			};
+		}($.fn.button);
+
+		$.fn.buttonset = function () {
+			if (!$.ui.controlgroup) {
+				$.error("Controlgroup widget missing");
+			}
+			if (arguments[0] === "option" && arguments[1] === "items" && arguments[2]) {
+				return this.controlgroup.apply(this, [arguments[0], "items.button", arguments[2]]);
+			}
+			if (arguments[0] === "option" && arguments[1] === "items") {
+				return this.controlgroup.apply(this, [arguments[0], "items.button"]);
+			}
+			if (_typeof(arguments[0]) === "object" && arguments[0].items) {
+				arguments[0].items = {
+					button: arguments[0].items
+				};
+			}
+			return this.controlgroup.apply(this, arguments);
+		};
+	}
+
+	return $.ui.button;
+});
+
+/***/ }),
+/* 147 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Controlgroup 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Controlgroup
+//>>group: Widgets
+//>>description: Visually groups form control widgets
+//>>docs: http://api.jqueryui.com/controlgroup/
+//>>demos: http://jqueryui.com/controlgroup/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/controlgroup.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	var controlgroupCornerRegex = /ui-corner-([a-z]){2,6}/g;
+
+	return $.widget("ui.controlgroup", {
+		version: "1.12.1",
+		defaultElement: "<div>",
+		options: {
+			direction: "horizontal",
+			disabled: null,
+			onlyVisible: true,
+			items: {
+				"button": "input[type=button], input[type=submit], input[type=reset], button, a",
+				"controlgroupLabel": ".ui-controlgroup-label",
+				"checkboxradio": "input[type='checkbox'], input[type='radio']",
+				"selectmenu": "select",
+				"spinner": ".ui-spinner-input"
+			}
+		},
+
+		_create: function _create() {
+			this._enhance();
+		},
+
+		// To support the enhanced option in jQuery Mobile, we isolate DOM manipulation
+		_enhance: function _enhance() {
+			this.element.attr("role", "toolbar");
+			this.refresh();
+		},
+
+		_destroy: function _destroy() {
+			this._callChildMethod("destroy");
+			this.childWidgets.removeData("ui-controlgroup-data");
+			this.element.removeAttr("role");
+			if (this.options.items.controlgroupLabel) {
+				this.element.find(this.options.items.controlgroupLabel).find(".ui-controlgroup-label-contents").contents().unwrap();
+			}
+		},
+
+		_initWidgets: function _initWidgets() {
+			var that = this,
+			    childWidgets = [];
+
+			// First we iterate over each of the items options
+			$.each(this.options.items, function (widget, selector) {
+				var labels;
+				var options = {};
+
+				// Make sure the widget has a selector set
+				if (!selector) {
+					return;
+				}
+
+				if (widget === "controlgroupLabel") {
+					labels = that.element.find(selector);
+					labels.each(function () {
+						var element = $(this);
+
+						if (element.children(".ui-controlgroup-label-contents").length) {
+							return;
+						}
+						element.contents().wrapAll("<span class='ui-controlgroup-label-contents'></span>");
+					});
+					that._addClass(labels, null, "ui-widget ui-widget-content ui-state-default");
+					childWidgets = childWidgets.concat(labels.get());
+					return;
+				}
+
+				// Make sure the widget actually exists
+				if (!$.fn[widget]) {
+					return;
+				}
+
+				// We assume everything is in the middle to start because we can't determine
+				// first / last elements until all enhancments are done.
+				if (that["_" + widget + "Options"]) {
+					options = that["_" + widget + "Options"]("middle");
+				} else {
+					options = { classes: {} };
+				}
+
+				// Find instances of this widget inside controlgroup and init them
+				that.element.find(selector).each(function () {
+					var element = $(this);
+					var instance = element[widget]("instance");
+
+					// We need to clone the default options for this type of widget to avoid
+					// polluting the variable options which has a wider scope than a single widget.
+					var instanceOptions = $.widget.extend({}, options);
+
+					// If the button is the child of a spinner ignore it
+					// TODO: Find a more generic solution
+					if (widget === "button" && element.parent(".ui-spinner").length) {
+						return;
+					}
+
+					// Create the widget if it doesn't exist
+					if (!instance) {
+						instance = element[widget]()[widget]("instance");
+					}
+					if (instance) {
+						instanceOptions.classes = that._resolveClassesValues(instanceOptions.classes, instance);
+					}
+					element[widget](instanceOptions);
+
+					// Store an instance of the controlgroup to be able to reference
+					// from the outermost element for changing options and refresh
+					var widgetElement = element[widget]("widget");
+					$.data(widgetElement[0], "ui-controlgroup-data", instance ? instance : element[widget]("instance"));
+
+					childWidgets.push(widgetElement[0]);
+				});
+			});
+
+			this.childWidgets = $($.unique(childWidgets));
+			this._addClass(this.childWidgets, "ui-controlgroup-item");
+		},
+
+		_callChildMethod: function _callChildMethod(method) {
+			this.childWidgets.each(function () {
+				var element = $(this),
+				    data = element.data("ui-controlgroup-data");
+				if (data && data[method]) {
+					data[method]();
+				}
+			});
+		},
+
+		_updateCornerClass: function _updateCornerClass(element, position) {
+			var remove = "ui-corner-top ui-corner-bottom ui-corner-left ui-corner-right ui-corner-all";
+			var add = this._buildSimpleOptions(position, "label").classes.label;
+
+			this._removeClass(element, null, remove);
+			this._addClass(element, null, add);
+		},
+
+		_buildSimpleOptions: function _buildSimpleOptions(position, key) {
+			var direction = this.options.direction === "vertical";
+			var result = {
+				classes: {}
+			};
+			result.classes[key] = {
+				"middle": "",
+				"first": "ui-corner-" + (direction ? "top" : "left"),
+				"last": "ui-corner-" + (direction ? "bottom" : "right"),
+				"only": "ui-corner-all"
+			}[position];
+
+			return result;
+		},
+
+		_spinnerOptions: function _spinnerOptions(position) {
+			var options = this._buildSimpleOptions(position, "ui-spinner");
+
+			options.classes["ui-spinner-up"] = "";
+			options.classes["ui-spinner-down"] = "";
+
+			return options;
+		},
+
+		_buttonOptions: function _buttonOptions(position) {
+			return this._buildSimpleOptions(position, "ui-button");
+		},
+
+		_checkboxradioOptions: function _checkboxradioOptions(position) {
+			return this._buildSimpleOptions(position, "ui-checkboxradio-label");
+		},
+
+		_selectmenuOptions: function _selectmenuOptions(position) {
+			var direction = this.options.direction === "vertical";
+			return {
+				width: direction ? "auto" : false,
+				classes: {
+					middle: {
+						"ui-selectmenu-button-open": "",
+						"ui-selectmenu-button-closed": ""
+					},
+					first: {
+						"ui-selectmenu-button-open": "ui-corner-" + (direction ? "top" : "tl"),
+						"ui-selectmenu-button-closed": "ui-corner-" + (direction ? "top" : "left")
+					},
+					last: {
+						"ui-selectmenu-button-open": direction ? "" : "ui-corner-tr",
+						"ui-selectmenu-button-closed": "ui-corner-" + (direction ? "bottom" : "right")
+					},
+					only: {
+						"ui-selectmenu-button-open": "ui-corner-top",
+						"ui-selectmenu-button-closed": "ui-corner-all"
+					}
+
+				}[position]
+			};
+		},
+
+		_resolveClassesValues: function _resolveClassesValues(classes, instance) {
+			var result = {};
+			$.each(classes, function (key) {
+				var current = instance.options.classes[key] || "";
+				current = $.trim(current.replace(controlgroupCornerRegex, ""));
+				result[key] = (current + " " + classes[key]).replace(/\s+/g, " ");
+			});
+			return result;
+		},
+
+		_setOption: function _setOption(key, value) {
+			if (key === "direction") {
+				this._removeClass("ui-controlgroup-" + this.options.direction);
+			}
+
+			this._super(key, value);
+			if (key === "disabled") {
+				this._callChildMethod(value ? "disable" : "enable");
+				return;
+			}
+
+			this.refresh();
+		},
+
+		refresh: function refresh() {
+			var children,
+			    that = this;
+
+			this._addClass("ui-controlgroup ui-controlgroup-" + this.options.direction);
+
+			if (this.options.direction === "horizontal") {
+				this._addClass(null, "ui-helper-clearfix");
+			}
+			this._initWidgets();
+
+			children = this.childWidgets;
+
+			// We filter here because we need to track all childWidgets not just the visible ones
+			if (this.options.onlyVisible) {
+				children = children.filter(":visible");
+			}
+
+			if (children.length) {
+
+				// We do this last because we need to make sure all enhancment is done
+				// before determining first and last
+				$.each(["first", "last"], function (index, value) {
+					var instance = children[value]().data("ui-controlgroup-data");
+
+					if (instance && that["_" + instance.widgetName + "Options"]) {
+						var options = that["_" + instance.widgetName + "Options"](children.length === 1 ? "only" : value);
+						options.classes = that._resolveClassesValues(options.classes, instance);
+						instance.element[instance.widgetName](options);
+					} else {
+						that._updateCornerClass(children[value](), value);
+					}
+				});
+
+				// Finally call the refresh method on each of the child widgets.
+				this._callChildMethod("refresh");
+			}
+		}
+	});
+});
+
+/***/ }),
+/* 148 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Checkboxradio 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Checkboxradio
+//>>group: Widgets
+//>>description: Enhances a form with multiple themeable checkboxes or radio buttons.
+//>>docs: http://api.jqueryui.com/checkboxradio/
+//>>demos: http://jqueryui.com/checkboxradio/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/button.css
+//>>css.structure: ../../themes/base/checkboxradio.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(149), __webpack_require__(151), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	$.widget("ui.checkboxradio", [$.ui.formResetMixin, {
+		version: "1.12.1",
+		options: {
+			disabled: null,
+			label: null,
+			icon: true,
+			classes: {
+				"ui-checkboxradio-label": "ui-corner-all",
+				"ui-checkboxradio-icon": "ui-corner-all"
+			}
+		},
+
+		_getCreateOptions: function _getCreateOptions() {
+			var disabled, labels;
+			var that = this;
+			var options = this._super() || {};
+
+			// We read the type here, because it makes more sense to throw a element type error first,
+			// rather then the error for lack of a label. Often if its the wrong type, it
+			// won't have a label (e.g. calling on a div, btn, etc)
+			this._readType();
+
+			labels = this.element.labels();
+
+			// If there are multiple labels, use the last one
+			this.label = $(labels[labels.length - 1]);
+			if (!this.label.length) {
+				$.error("No label found for checkboxradio widget");
+			}
+
+			this.originalLabel = "";
+
+			// We need to get the label text but this may also need to make sure it does not contain the
+			// input itself.
+			this.label.contents().not(this.element[0]).each(function () {
+
+				// The label contents could be text, html, or a mix. We concat each element to get a
+				// string representation of the label, without the input as part of it.
+				that.originalLabel += this.nodeType === 3 ? $(this).text() : this.outerHTML;
+			});
+
+			// Set the label option if we found label text
+			if (this.originalLabel) {
+				options.label = this.originalLabel;
+			}
+
+			disabled = this.element[0].disabled;
+			if (disabled != null) {
+				options.disabled = disabled;
+			}
+			return options;
+		},
+
+		_create: function _create() {
+			var checked = this.element[0].checked;
+
+			this._bindFormResetHandler();
+
+			if (this.options.disabled == null) {
+				this.options.disabled = this.element[0].disabled;
+			}
+
+			this._setOption("disabled", this.options.disabled);
+			this._addClass("ui-checkboxradio", "ui-helper-hidden-accessible");
+			this._addClass(this.label, "ui-checkboxradio-label", "ui-button ui-widget");
+
+			if (this.type === "radio") {
+				this._addClass(this.label, "ui-checkboxradio-radio-label");
+			}
+
+			if (this.options.label && this.options.label !== this.originalLabel) {
+				this._updateLabel();
+			} else if (this.originalLabel) {
+				this.options.label = this.originalLabel;
+			}
+
+			this._enhance();
+
+			if (checked) {
+				this._addClass(this.label, "ui-checkboxradio-checked", "ui-state-active");
+				if (this.icon) {
+					this._addClass(this.icon, null, "ui-state-hover");
+				}
+			}
+
+			this._on({
+				change: "_toggleClasses",
+				focus: function focus() {
+					this._addClass(this.label, null, "ui-state-focus ui-visual-focus");
+				},
+				blur: function blur() {
+					this._removeClass(this.label, null, "ui-state-focus ui-visual-focus");
+				}
+			});
+		},
+
+		_readType: function _readType() {
+			var nodeName = this.element[0].nodeName.toLowerCase();
+			this.type = this.element[0].type;
+			if (nodeName !== "input" || !/radio|checkbox/.test(this.type)) {
+				$.error("Can't create checkboxradio on element.nodeName=" + nodeName + " and element.type=" + this.type);
+			}
+		},
+
+		// Support jQuery Mobile enhanced option
+		_enhance: function _enhance() {
+			this._updateIcon(this.element[0].checked);
+		},
+
+		widget: function widget() {
+			return this.label;
+		},
+
+		_getRadioGroup: function _getRadioGroup() {
+			var group;
+			var name = this.element[0].name;
+			var nameSelector = "input[name='" + $.ui.escapeSelector(name) + "']";
+
+			if (!name) {
+				return $([]);
+			}
+
+			if (this.form.length) {
+				group = $(this.form[0].elements).filter(nameSelector);
+			} else {
+
+				// Not inside a form, check all inputs that also are not inside a form
+				group = $(nameSelector).filter(function () {
+					return $(this).form().length === 0;
+				});
+			}
+
+			return group.not(this.element);
+		},
+
+		_toggleClasses: function _toggleClasses() {
+			var checked = this.element[0].checked;
+			this._toggleClass(this.label, "ui-checkboxradio-checked", "ui-state-active", checked);
+
+			if (this.options.icon && this.type === "checkbox") {
+				this._toggleClass(this.icon, null, "ui-icon-check ui-state-checked", checked)._toggleClass(this.icon, null, "ui-icon-blank", !checked);
+			}
+
+			if (this.type === "radio") {
+				this._getRadioGroup().each(function () {
+					var instance = $(this).checkboxradio("instance");
+
+					if (instance) {
+						instance._removeClass(instance.label, "ui-checkboxradio-checked", "ui-state-active");
+					}
+				});
+			}
+		},
+
+		_destroy: function _destroy() {
+			this._unbindFormResetHandler();
+
+			if (this.icon) {
+				this.icon.remove();
+				this.iconSpace.remove();
+			}
+		},
+
+		_setOption: function _setOption(key, value) {
+
+			// We don't allow the value to be set to nothing
+			if (key === "label" && !value) {
+				return;
+			}
+
+			this._super(key, value);
+
+			if (key === "disabled") {
+				this._toggleClass(this.label, null, "ui-state-disabled", value);
+				this.element[0].disabled = value;
+
+				// Don't refresh when setting disabled
+				return;
+			}
+			this.refresh();
+		},
+
+		_updateIcon: function _updateIcon(checked) {
+			var toAdd = "ui-icon ui-icon-background ";
+
+			if (this.options.icon) {
+				if (!this.icon) {
+					this.icon = $("<span>");
+					this.iconSpace = $("<span> </span>");
+					this._addClass(this.iconSpace, "ui-checkboxradio-icon-space");
+				}
+
+				if (this.type === "checkbox") {
+					toAdd += checked ? "ui-icon-check ui-state-checked" : "ui-icon-blank";
+					this._removeClass(this.icon, null, checked ? "ui-icon-blank" : "ui-icon-check");
+				} else {
+					toAdd += "ui-icon-blank";
+				}
+				this._addClass(this.icon, "ui-checkboxradio-icon", toAdd);
+				if (!checked) {
+					this._removeClass(this.icon, null, "ui-icon-check ui-state-checked");
+				}
+				this.icon.prependTo(this.label).after(this.iconSpace);
+			} else if (this.icon !== undefined) {
+				this.icon.remove();
+				this.iconSpace.remove();
+				delete this.icon;
+			}
+		},
+
+		_updateLabel: function _updateLabel() {
+
+			// Remove the contents of the label ( minus the icon, icon space, and input )
+			var contents = this.label.contents().not(this.element[0]);
+			if (this.icon) {
+				contents = contents.not(this.icon[0]);
+			}
+			if (this.iconSpace) {
+				contents = contents.not(this.iconSpace[0]);
+			}
+			contents.remove();
+
+			this.label.append(this.options.label);
+		},
+
+		refresh: function refresh() {
+			var checked = this.element[0].checked,
+			    isDisabled = this.element[0].disabled;
+
+			this._updateIcon(checked);
+			this._toggleClass(this.label, "ui-checkboxradio-checked", "ui-state-active", checked);
+			if (this.options.label !== null) {
+				this._updateLabel();
+			}
+
+			if (isDisabled !== this.options.disabled) {
+				this._setOptions({ "disabled": isDisabled });
+			}
+		}
+
+	}]);
+
+	return $.ui.checkboxradio;
+});
+
+/***/ }),
+/* 149 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Form Reset Mixin 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Form Reset Mixin
+//>>group: Core
+//>>description: Refresh input widgets when their form is reset
+//>>docs: http://api.jqueryui.com/form-reset-mixin/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(150), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.ui.formResetMixin = {
+		_formResetHandler: function _formResetHandler() {
+			var form = $(this);
+
+			// Wait for the form reset to actually happen before refreshing
+			setTimeout(function () {
+				var instances = form.data("ui-form-reset-instances");
+				$.each(instances, function () {
+					this.refresh();
+				});
+			});
+		},
+
+		_bindFormResetHandler: function _bindFormResetHandler() {
+			this.form = this.element.form();
+			if (!this.form.length) {
+				return;
+			}
+
+			var instances = this.form.data("ui-form-reset-instances") || [];
+			if (!instances.length) {
+
+				// We don't use _on() here because we use a single event handler per form
+				this.form.on("reset.ui-form-reset", this._formResetHandler);
+			}
+			instances.push(this);
+			this.form.data("ui-form-reset-instances", instances);
+		},
+
+		_unbindFormResetHandler: function _unbindFormResetHandler() {
+			if (!this.form.length) {
+				return;
+			}
+
+			var instances = this.form.data("ui-form-reset-instances");
+			instances.splice($.inArray(this, instances), 1);
+			if (instances.length) {
+				this.form.data("ui-form-reset-instances", instances);
+			} else {
+				this.form.removeData("ui-form-reset-instances").off("reset.ui-form-reset");
+			}
+		}
+	};
+});
+
+/***/ }),
+/* 150 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	// Support: IE8 Only
+	// IE8 does not support the form attribute and when it is supplied. It overwrites the form prop
+	// with a string, so we need to find the proper form.
+	return $.fn.form = function () {
+		return typeof this[0].form === "string" ? this.closest("form") : $(this[0].form);
+	};
+});
+
+/***/ }),
+/* 151 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Labels 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: labels
+//>>group: Core
+//>>description: Find all the labels associated with a given input
+//>>docs: http://api.jqueryui.com/labels/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(135)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.labels = function () {
+		var ancestor, selector, id, labels, ancestors;
+
+		// Check control.labels first
+		if (this[0].labels && this[0].labels.length) {
+			return this.pushStack(this[0].labels);
+		}
+
+		// Support: IE <= 11, FF <= 37, Android <= 2.3 only
+		// Above browsers do not support control.labels. Everything below is to support them
+		// as well as document fragments. control.labels does not work on document fragments
+		labels = this.eq(0).parents("label");
+
+		// Look for the label based on the id
+		id = this.attr("id");
+		if (id) {
+
+			// We don't search against the document in case the element
+			// is disconnected from the DOM
+			ancestor = this.eq(0).parents().last();
+
+			// Get a full set of top level ancestors
+			ancestors = ancestor.add(ancestor.length ? ancestor.siblings() : this.siblings());
+
+			// Create a selector for the label based on the id
+			selector = "label[for='" + $.ui.escapeSelector(id) + "']";
+
+			labels = labels.add(ancestors.find(selector).addBack(selector));
+		}
+
+		// Return whatever we have found for labels
+		return this.pushStack(labels);
+	};
+});
+
+/***/ }),
+/* 152 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Resizable 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Resizable
+//>>group: Interactions
+//>>description: Enables resize functionality for any element.
+//>>docs: http://api.jqueryui.com/resizable/
+//>>demos: http://jqueryui.com/resizable/
+//>>css.structure: ../../themes/base/core.css
+//>>css.structure: ../../themes/base/resizable.css
+//>>css.theme: ../../themes/base/theme.css
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(153), __webpack_require__(133), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	$.widget("ui.resizable", $.ui.mouse, {
+		version: "1.12.1",
+		widgetEventPrefix: "resize",
+		options: {
+			alsoResize: false,
+			animate: false,
+			animateDuration: "slow",
+			animateEasing: "swing",
+			aspectRatio: false,
+			autoHide: false,
+			classes: {
+				"ui-resizable-se": "ui-icon ui-icon-gripsmall-diagonal-se"
+			},
+			containment: false,
+			ghost: false,
+			grid: false,
+			handles: "e,s,se",
+			helper: false,
+			maxHeight: null,
+			maxWidth: null,
+			minHeight: 10,
+			minWidth: 10,
+
+			// See #7960
+			zIndex: 90,
+
+			// Callbacks
+			resize: null,
+			start: null,
+			stop: null
+		},
+
+		_num: function _num(value) {
+			return parseFloat(value) || 0;
+		},
+
+		_isNumber: function _isNumber(value) {
+			return !isNaN(parseFloat(value));
+		},
+
+		_hasScroll: function _hasScroll(el, a) {
+
+			if ($(el).css("overflow") === "hidden") {
+				return false;
+			}
+
+			var scroll = a && a === "left" ? "scrollLeft" : "scrollTop",
+			    has = false;
+
+			if (el[scroll] > 0) {
+				return true;
+			}
+
+			// TODO: determine which cases actually cause this to happen
+			// if the element doesn't have the scroll set, see if it's possible to
+			// set the scroll
+			el[scroll] = 1;
+			has = el[scroll] > 0;
+			el[scroll] = 0;
+			return has;
+		},
+
+		_create: function _create() {
+
+			var margins,
+			    o = this.options,
+			    that = this;
+			this._addClass("ui-resizable");
+
+			$.extend(this, {
+				_aspectRatio: !!o.aspectRatio,
+				aspectRatio: o.aspectRatio,
+				originalElement: this.element,
+				_proportionallyResizeElements: [],
+				_helper: o.helper || o.ghost || o.animate ? o.helper || "ui-resizable-helper" : null
+			});
+
+			// Wrap the element if it cannot hold child nodes
+			if (this.element[0].nodeName.match(/^(canvas|textarea|input|select|button|img)$/i)) {
+
+				this.element.wrap($("<div class='ui-wrapper' style='overflow: hidden;'></div>").css({
+					position: this.element.css("position"),
+					width: this.element.outerWidth(),
+					height: this.element.outerHeight(),
+					top: this.element.css("top"),
+					left: this.element.css("left")
+				}));
+
+				this.element = this.element.parent().data("ui-resizable", this.element.resizable("instance"));
+
+				this.elementIsWrapper = true;
+
+				margins = {
+					marginTop: this.originalElement.css("marginTop"),
+					marginRight: this.originalElement.css("marginRight"),
+					marginBottom: this.originalElement.css("marginBottom"),
+					marginLeft: this.originalElement.css("marginLeft")
+				};
+
+				this.element.css(margins);
+				this.originalElement.css("margin", 0);
+
+				// support: Safari
+				// Prevent Safari textarea resize
+				this.originalResizeStyle = this.originalElement.css("resize");
+				this.originalElement.css("resize", "none");
+
+				this._proportionallyResizeElements.push(this.originalElement.css({
+					position: "static",
+					zoom: 1,
+					display: "block"
+				}));
+
+				// Support: IE9
+				// avoid IE jump (hard set the margin)
+				this.originalElement.css(margins);
+
+				this._proportionallyResize();
+			}
+
+			this._setupHandles();
+
+			if (o.autoHide) {
+				$(this.element).on("mouseenter", function () {
+					if (o.disabled) {
+						return;
+					}
+					that._removeClass("ui-resizable-autohide");
+					that._handles.show();
+				}).on("mouseleave", function () {
+					if (o.disabled) {
+						return;
+					}
+					if (!that.resizing) {
+						that._addClass("ui-resizable-autohide");
+						that._handles.hide();
+					}
+				});
+			}
+
+			this._mouseInit();
+		},
+
+		_destroy: function _destroy() {
+
+			this._mouseDestroy();
+
+			var wrapper,
+			    _destroy = function _destroy(exp) {
+				$(exp).removeData("resizable").removeData("ui-resizable").off(".resizable").find(".ui-resizable-handle").remove();
+			};
+
+			// TODO: Unwrap at same DOM position
+			if (this.elementIsWrapper) {
+				_destroy(this.element);
+				wrapper = this.element;
+				this.originalElement.css({
+					position: wrapper.css("position"),
+					width: wrapper.outerWidth(),
+					height: wrapper.outerHeight(),
+					top: wrapper.css("top"),
+					left: wrapper.css("left")
+				}).insertAfter(wrapper);
+				wrapper.remove();
+			}
+
+			this.originalElement.css("resize", this.originalResizeStyle);
+			_destroy(this.originalElement);
+
+			return this;
+		},
+
+		_setOption: function _setOption(key, value) {
+			this._super(key, value);
+
+			switch (key) {
+				case "handles":
+					this._removeHandles();
+					this._setupHandles();
+					break;
+				default:
+					break;
+			}
+		},
+
+		_setupHandles: function _setupHandles() {
+			var o = this.options,
+			    handle,
+			    i,
+			    n,
+			    hname,
+			    axis,
+			    that = this;
+			this.handles = o.handles || (!$(".ui-resizable-handle", this.element).length ? "e,s,se" : {
+				n: ".ui-resizable-n",
+				e: ".ui-resizable-e",
+				s: ".ui-resizable-s",
+				w: ".ui-resizable-w",
+				se: ".ui-resizable-se",
+				sw: ".ui-resizable-sw",
+				ne: ".ui-resizable-ne",
+				nw: ".ui-resizable-nw"
+			});
+
+			this._handles = $();
+			if (this.handles.constructor === String) {
+
+				if (this.handles === "all") {
+					this.handles = "n,e,s,w,se,sw,ne,nw";
+				}
+
+				n = this.handles.split(",");
+				this.handles = {};
+
+				for (i = 0; i < n.length; i++) {
+
+					handle = $.trim(n[i]);
+					hname = "ui-resizable-" + handle;
+					axis = $("<div>");
+					this._addClass(axis, "ui-resizable-handle " + hname);
+
+					axis.css({ zIndex: o.zIndex });
+
+					this.handles[handle] = ".ui-resizable-" + handle;
+					this.element.append(axis);
+				}
+			}
+
+			this._renderAxis = function (target) {
+
+				var i, axis, padPos, padWrapper;
+
+				target = target || this.element;
+
+				for (i in this.handles) {
+
+					if (this.handles[i].constructor === String) {
+						this.handles[i] = this.element.children(this.handles[i]).first().show();
+					} else if (this.handles[i].jquery || this.handles[i].nodeType) {
+						this.handles[i] = $(this.handles[i]);
+						this._on(this.handles[i], { "mousedown": that._mouseDown });
+					}
+
+					if (this.elementIsWrapper && this.originalElement[0].nodeName.match(/^(textarea|input|select|button)$/i)) {
+						axis = $(this.handles[i], this.element);
+
+						padWrapper = /sw|ne|nw|se|n|s/.test(i) ? axis.outerHeight() : axis.outerWidth();
+
+						padPos = ["padding", /ne|nw|n/.test(i) ? "Top" : /se|sw|s/.test(i) ? "Bottom" : /^e$/.test(i) ? "Right" : "Left"].join("");
+
+						target.css(padPos, padWrapper);
+
+						this._proportionallyResize();
+					}
+
+					this._handles = this._handles.add(this.handles[i]);
+				}
+			};
+
+			// TODO: make renderAxis a prototype function
+			this._renderAxis(this.element);
+
+			this._handles = this._handles.add(this.element.find(".ui-resizable-handle"));
+			this._handles.disableSelection();
+
+			this._handles.on("mouseover", function () {
+				if (!that.resizing) {
+					if (this.className) {
+						axis = this.className.match(/ui-resizable-(se|sw|ne|nw|n|e|s|w)/i);
+					}
+					that.axis = axis && axis[1] ? axis[1] : "se";
+				}
+			});
+
+			if (o.autoHide) {
+				this._handles.hide();
+				this._addClass("ui-resizable-autohide");
+			}
+		},
+
+		_removeHandles: function _removeHandles() {
+			this._handles.remove();
+		},
+
+		_mouseCapture: function _mouseCapture(event) {
+			var i,
+			    handle,
+			    capture = false;
+
+			for (i in this.handles) {
+				handle = $(this.handles[i])[0];
+				if (handle === event.target || $.contains(handle, event.target)) {
+					capture = true;
+				}
+			}
+
+			return !this.options.disabled && capture;
+		},
+
+		_mouseStart: function _mouseStart(event) {
+
+			var curleft,
+			    curtop,
+			    cursor,
+			    o = this.options,
+			    el = this.element;
+
+			this.resizing = true;
+
+			this._renderProxy();
+
+			curleft = this._num(this.helper.css("left"));
+			curtop = this._num(this.helper.css("top"));
+
+			if (o.containment) {
+				curleft += $(o.containment).scrollLeft() || 0;
+				curtop += $(o.containment).scrollTop() || 0;
+			}
+
+			this.offset = this.helper.offset();
+			this.position = { left: curleft, top: curtop };
+
+			this.size = this._helper ? {
+				width: this.helper.width(),
+				height: this.helper.height()
+			} : {
+				width: el.width(),
+				height: el.height()
+			};
+
+			this.originalSize = this._helper ? {
+				width: el.outerWidth(),
+				height: el.outerHeight()
+			} : {
+				width: el.width(),
+				height: el.height()
+			};
+
+			this.sizeDiff = {
+				width: el.outerWidth() - el.width(),
+				height: el.outerHeight() - el.height()
+			};
+
+			this.originalPosition = { left: curleft, top: curtop };
+			this.originalMousePosition = { left: event.pageX, top: event.pageY };
+
+			this.aspectRatio = typeof o.aspectRatio === "number" ? o.aspectRatio : this.originalSize.width / this.originalSize.height || 1;
+
+			cursor = $(".ui-resizable-" + this.axis).css("cursor");
+			$("body").css("cursor", cursor === "auto" ? this.axis + "-resize" : cursor);
+
+			this._addClass("ui-resizable-resizing");
+			this._propagate("start", event);
+			return true;
+		},
+
+		_mouseDrag: function _mouseDrag(event) {
+
+			var data,
+			    props,
+			    smp = this.originalMousePosition,
+			    a = this.axis,
+			    dx = event.pageX - smp.left || 0,
+			    dy = event.pageY - smp.top || 0,
+			    trigger = this._change[a];
+
+			this._updatePrevProperties();
+
+			if (!trigger) {
+				return false;
+			}
+
+			data = trigger.apply(this, [event, dx, dy]);
+
+			this._updateVirtualBoundaries(event.shiftKey);
+			if (this._aspectRatio || event.shiftKey) {
+				data = this._updateRatio(data, event);
+			}
+
+			data = this._respectSize(data, event);
+
+			this._updateCache(data);
+
+			this._propagate("resize", event);
+
+			props = this._applyChanges();
+
+			if (!this._helper && this._proportionallyResizeElements.length) {
+				this._proportionallyResize();
+			}
+
+			if (!$.isEmptyObject(props)) {
+				this._updatePrevProperties();
+				this._trigger("resize", event, this.ui());
+				this._applyChanges();
+			}
+
+			return false;
+		},
+
+		_mouseStop: function _mouseStop(event) {
+
+			this.resizing = false;
+			var pr,
+			    ista,
+			    soffseth,
+			    soffsetw,
+			    s,
+			    left,
+			    top,
+			    o = this.options,
+			    that = this;
+
+			if (this._helper) {
+
+				pr = this._proportionallyResizeElements;
+				ista = pr.length && /textarea/i.test(pr[0].nodeName);
+				soffseth = ista && this._hasScroll(pr[0], "left") ? 0 : that.sizeDiff.height;
+				soffsetw = ista ? 0 : that.sizeDiff.width;
+
+				s = {
+					width: that.helper.width() - soffsetw,
+					height: that.helper.height() - soffseth
+				};
+				left = parseFloat(that.element.css("left")) + (that.position.left - that.originalPosition.left) || null;
+				top = parseFloat(that.element.css("top")) + (that.position.top - that.originalPosition.top) || null;
+
+				if (!o.animate) {
+					this.element.css($.extend(s, { top: top, left: left }));
+				}
+
+				that.helper.height(that.size.height);
+				that.helper.width(that.size.width);
+
+				if (this._helper && !o.animate) {
+					this._proportionallyResize();
+				}
+			}
+
+			$("body").css("cursor", "auto");
+
+			this._removeClass("ui-resizable-resizing");
+
+			this._propagate("stop", event);
+
+			if (this._helper) {
+				this.helper.remove();
+			}
+
+			return false;
+		},
+
+		_updatePrevProperties: function _updatePrevProperties() {
+			this.prevPosition = {
+				top: this.position.top,
+				left: this.position.left
+			};
+			this.prevSize = {
+				width: this.size.width,
+				height: this.size.height
+			};
+		},
+
+		_applyChanges: function _applyChanges() {
+			var props = {};
+
+			if (this.position.top !== this.prevPosition.top) {
+				props.top = this.position.top + "px";
+			}
+			if (this.position.left !== this.prevPosition.left) {
+				props.left = this.position.left + "px";
+			}
+			if (this.size.width !== this.prevSize.width) {
+				props.width = this.size.width + "px";
+			}
+			if (this.size.height !== this.prevSize.height) {
+				props.height = this.size.height + "px";
+			}
+
+			this.helper.css(props);
+
+			return props;
+		},
+
+		_updateVirtualBoundaries: function _updateVirtualBoundaries(forceAspectRatio) {
+			var pMinWidth,
+			    pMaxWidth,
+			    pMinHeight,
+			    pMaxHeight,
+			    b,
+			    o = this.options;
+
+			b = {
+				minWidth: this._isNumber(o.minWidth) ? o.minWidth : 0,
+				maxWidth: this._isNumber(o.maxWidth) ? o.maxWidth : Infinity,
+				minHeight: this._isNumber(o.minHeight) ? o.minHeight : 0,
+				maxHeight: this._isNumber(o.maxHeight) ? o.maxHeight : Infinity
+			};
+
+			if (this._aspectRatio || forceAspectRatio) {
+				pMinWidth = b.minHeight * this.aspectRatio;
+				pMinHeight = b.minWidth / this.aspectRatio;
+				pMaxWidth = b.maxHeight * this.aspectRatio;
+				pMaxHeight = b.maxWidth / this.aspectRatio;
+
+				if (pMinWidth > b.minWidth) {
+					b.minWidth = pMinWidth;
+				}
+				if (pMinHeight > b.minHeight) {
+					b.minHeight = pMinHeight;
+				}
+				if (pMaxWidth < b.maxWidth) {
+					b.maxWidth = pMaxWidth;
+				}
+				if (pMaxHeight < b.maxHeight) {
+					b.maxHeight = pMaxHeight;
+				}
+			}
+			this._vBoundaries = b;
+		},
+
+		_updateCache: function _updateCache(data) {
+			this.offset = this.helper.offset();
+			if (this._isNumber(data.left)) {
+				this.position.left = data.left;
+			}
+			if (this._isNumber(data.top)) {
+				this.position.top = data.top;
+			}
+			if (this._isNumber(data.height)) {
+				this.size.height = data.height;
+			}
+			if (this._isNumber(data.width)) {
+				this.size.width = data.width;
+			}
+		},
+
+		_updateRatio: function _updateRatio(data) {
+
+			var cpos = this.position,
+			    csize = this.size,
+			    a = this.axis;
+
+			if (this._isNumber(data.height)) {
+				data.width = data.height * this.aspectRatio;
+			} else if (this._isNumber(data.width)) {
+				data.height = data.width / this.aspectRatio;
+			}
+
+			if (a === "sw") {
+				data.left = cpos.left + (csize.width - data.width);
+				data.top = null;
+			}
+			if (a === "nw") {
+				data.top = cpos.top + (csize.height - data.height);
+				data.left = cpos.left + (csize.width - data.width);
+			}
+
+			return data;
+		},
+
+		_respectSize: function _respectSize(data) {
+
+			var o = this._vBoundaries,
+			    a = this.axis,
+			    ismaxw = this._isNumber(data.width) && o.maxWidth && o.maxWidth < data.width,
+			    ismaxh = this._isNumber(data.height) && o.maxHeight && o.maxHeight < data.height,
+			    isminw = this._isNumber(data.width) && o.minWidth && o.minWidth > data.width,
+			    isminh = this._isNumber(data.height) && o.minHeight && o.minHeight > data.height,
+			    dw = this.originalPosition.left + this.originalSize.width,
+			    dh = this.originalPosition.top + this.originalSize.height,
+			    cw = /sw|nw|w/.test(a),
+			    ch = /nw|ne|n/.test(a);
+			if (isminw) {
+				data.width = o.minWidth;
+			}
+			if (isminh) {
+				data.height = o.minHeight;
+			}
+			if (ismaxw) {
+				data.width = o.maxWidth;
+			}
+			if (ismaxh) {
+				data.height = o.maxHeight;
+			}
+
+			if (isminw && cw) {
+				data.left = dw - o.minWidth;
+			}
+			if (ismaxw && cw) {
+				data.left = dw - o.maxWidth;
+			}
+			if (isminh && ch) {
+				data.top = dh - o.minHeight;
+			}
+			if (ismaxh && ch) {
+				data.top = dh - o.maxHeight;
+			}
+
+			// Fixing jump error on top/left - bug #2330
+			if (!data.width && !data.height && !data.left && data.top) {
+				data.top = null;
+			} else if (!data.width && !data.height && !data.top && data.left) {
+				data.left = null;
+			}
+
+			return data;
+		},
+
+		_getPaddingPlusBorderDimensions: function _getPaddingPlusBorderDimensions(element) {
+			var i = 0,
+			    widths = [],
+			    borders = [element.css("borderTopWidth"), element.css("borderRightWidth"), element.css("borderBottomWidth"), element.css("borderLeftWidth")],
+			    paddings = [element.css("paddingTop"), element.css("paddingRight"), element.css("paddingBottom"), element.css("paddingLeft")];
+
+			for (; i < 4; i++) {
+				widths[i] = parseFloat(borders[i]) || 0;
+				widths[i] += parseFloat(paddings[i]) || 0;
+			}
+
+			return {
+				height: widths[0] + widths[2],
+				width: widths[1] + widths[3]
+			};
+		},
+
+		_proportionallyResize: function _proportionallyResize() {
+
+			if (!this._proportionallyResizeElements.length) {
+				return;
+			}
+
+			var prel,
+			    i = 0,
+			    element = this.helper || this.element;
+
+			for (; i < this._proportionallyResizeElements.length; i++) {
+
+				prel = this._proportionallyResizeElements[i];
+
+				// TODO: Seems like a bug to cache this.outerDimensions
+				// considering that we are in a loop.
+				if (!this.outerDimensions) {
+					this.outerDimensions = this._getPaddingPlusBorderDimensions(prel);
+				}
+
+				prel.css({
+					height: element.height() - this.outerDimensions.height || 0,
+					width: element.width() - this.outerDimensions.width || 0
+				});
+			}
+		},
+
+		_renderProxy: function _renderProxy() {
+
+			var el = this.element,
+			    o = this.options;
+			this.elementOffset = el.offset();
+
+			if (this._helper) {
+
+				this.helper = this.helper || $("<div style='overflow:hidden;'></div>");
+
+				this._addClass(this.helper, this._helper);
+				this.helper.css({
+					width: this.element.outerWidth(),
+					height: this.element.outerHeight(),
+					position: "absolute",
+					left: this.elementOffset.left + "px",
+					top: this.elementOffset.top + "px",
+					zIndex: ++o.zIndex //TODO: Don't modify option
+				});
+
+				this.helper.appendTo("body").disableSelection();
+			} else {
+				this.helper = this.element;
+			}
+		},
+
+		_change: {
+			e: function e(event, dx) {
+				return { width: this.originalSize.width + dx };
+			},
+			w: function w(event, dx) {
+				var cs = this.originalSize,
+				    sp = this.originalPosition;
+				return { left: sp.left + dx, width: cs.width - dx };
+			},
+			n: function n(event, dx, dy) {
+				var cs = this.originalSize,
+				    sp = this.originalPosition;
+				return { top: sp.top + dy, height: cs.height - dy };
+			},
+			s: function s(event, dx, dy) {
+				return { height: this.originalSize.height + dy };
+			},
+			se: function se(event, dx, dy) {
+				return $.extend(this._change.s.apply(this, arguments), this._change.e.apply(this, [event, dx, dy]));
+			},
+			sw: function sw(event, dx, dy) {
+				return $.extend(this._change.s.apply(this, arguments), this._change.w.apply(this, [event, dx, dy]));
+			},
+			ne: function ne(event, dx, dy) {
+				return $.extend(this._change.n.apply(this, arguments), this._change.e.apply(this, [event, dx, dy]));
+			},
+			nw: function nw(event, dx, dy) {
+				return $.extend(this._change.n.apply(this, arguments), this._change.w.apply(this, [event, dx, dy]));
+			}
+		},
+
+		_propagate: function _propagate(n, event) {
+			$.ui.plugin.call(this, n, [event, this.ui()]);
+			n !== "resize" && this._trigger(n, event, this.ui());
+		},
+
+		plugins: {},
+
+		ui: function ui() {
+			return {
+				originalElement: this.originalElement,
+				element: this.element,
+				helper: this.helper,
+				position: this.position,
+				size: this.size,
+				originalSize: this.originalSize,
+				originalPosition: this.originalPosition
+			};
+		}
+
+	});
+
+	/*
+  * Resizable Extensions
+  */
+
+	$.ui.plugin.add("resizable", "animate", {
+
+		stop: function stop(event) {
+			var that = $(this).resizable("instance"),
+			    o = that.options,
+			    pr = that._proportionallyResizeElements,
+			    ista = pr.length && /textarea/i.test(pr[0].nodeName),
+			    soffseth = ista && that._hasScroll(pr[0], "left") ? 0 : that.sizeDiff.height,
+			    soffsetw = ista ? 0 : that.sizeDiff.width,
+			    style = {
+				width: that.size.width - soffsetw,
+				height: that.size.height - soffseth
+			},
+			    left = parseFloat(that.element.css("left")) + (that.position.left - that.originalPosition.left) || null,
+			    top = parseFloat(that.element.css("top")) + (that.position.top - that.originalPosition.top) || null;
+
+			that.element.animate($.extend(style, top && left ? { top: top, left: left } : {}), {
+				duration: o.animateDuration,
+				easing: o.animateEasing,
+				step: function step() {
+
+					var data = {
+						width: parseFloat(that.element.css("width")),
+						height: parseFloat(that.element.css("height")),
+						top: parseFloat(that.element.css("top")),
+						left: parseFloat(that.element.css("left"))
+					};
+
+					if (pr && pr.length) {
+						$(pr[0]).css({ width: data.width, height: data.height });
+					}
+
+					// Propagating resize, and updating values for each animation step
+					that._updateCache(data);
+					that._propagate("resize", event);
+				}
+			});
+		}
+
+	});
+
+	$.ui.plugin.add("resizable", "containment", {
+
+		start: function start() {
+			var element,
+			    p,
+			    co,
+			    ch,
+			    cw,
+			    width,
+			    height,
+			    that = $(this).resizable("instance"),
+			    o = that.options,
+			    el = that.element,
+			    oc = o.containment,
+			    ce = oc instanceof $ ? oc.get(0) : /parent/.test(oc) ? el.parent().get(0) : oc;
+
+			if (!ce) {
+				return;
+			}
+
+			that.containerElement = $(ce);
+
+			if (/document/.test(oc) || oc === document) {
+				that.containerOffset = {
+					left: 0,
+					top: 0
+				};
+				that.containerPosition = {
+					left: 0,
+					top: 0
+				};
+
+				that.parentData = {
+					element: $(document),
+					left: 0,
+					top: 0,
+					width: $(document).width(),
+					height: $(document).height() || document.body.parentNode.scrollHeight
+				};
+			} else {
+				element = $(ce);
+				p = [];
+				$(["Top", "Right", "Left", "Bottom"]).each(function (i, name) {
+					p[i] = that._num(element.css("padding" + name));
+				});
+
+				that.containerOffset = element.offset();
+				that.containerPosition = element.position();
+				that.containerSize = {
+					height: element.innerHeight() - p[3],
+					width: element.innerWidth() - p[1]
+				};
+
+				co = that.containerOffset;
+				ch = that.containerSize.height;
+				cw = that.containerSize.width;
+				width = that._hasScroll(ce, "left") ? ce.scrollWidth : cw;
+				height = that._hasScroll(ce) ? ce.scrollHeight : ch;
+
+				that.parentData = {
+					element: ce,
+					left: co.left,
+					top: co.top,
+					width: width,
+					height: height
+				};
+			}
+		},
+
+		resize: function resize(event) {
+			var woset,
+			    hoset,
+			    isParent,
+			    isOffsetRelative,
+			    that = $(this).resizable("instance"),
+			    o = that.options,
+			    co = that.containerOffset,
+			    cp = that.position,
+			    pRatio = that._aspectRatio || event.shiftKey,
+			    cop = {
+				top: 0,
+				left: 0
+			},
+			    ce = that.containerElement,
+			    continueResize = true;
+
+			if (ce[0] !== document && /static/.test(ce.css("position"))) {
+				cop = co;
+			}
+
+			if (cp.left < (that._helper ? co.left : 0)) {
+				that.size.width = that.size.width + (that._helper ? that.position.left - co.left : that.position.left - cop.left);
+
+				if (pRatio) {
+					that.size.height = that.size.width / that.aspectRatio;
+					continueResize = false;
+				}
+				that.position.left = o.helper ? co.left : 0;
+			}
+
+			if (cp.top < (that._helper ? co.top : 0)) {
+				that.size.height = that.size.height + (that._helper ? that.position.top - co.top : that.position.top);
+
+				if (pRatio) {
+					that.size.width = that.size.height * that.aspectRatio;
+					continueResize = false;
+				}
+				that.position.top = that._helper ? co.top : 0;
+			}
+
+			isParent = that.containerElement.get(0) === that.element.parent().get(0);
+			isOffsetRelative = /relative|absolute/.test(that.containerElement.css("position"));
+
+			if (isParent && isOffsetRelative) {
+				that.offset.left = that.parentData.left + that.position.left;
+				that.offset.top = that.parentData.top + that.position.top;
+			} else {
+				that.offset.left = that.element.offset().left;
+				that.offset.top = that.element.offset().top;
+			}
+
+			woset = Math.abs(that.sizeDiff.width + (that._helper ? that.offset.left - cop.left : that.offset.left - co.left));
+
+			hoset = Math.abs(that.sizeDiff.height + (that._helper ? that.offset.top - cop.top : that.offset.top - co.top));
+
+			if (woset + that.size.width >= that.parentData.width) {
+				that.size.width = that.parentData.width - woset;
+				if (pRatio) {
+					that.size.height = that.size.width / that.aspectRatio;
+					continueResize = false;
+				}
+			}
+
+			if (hoset + that.size.height >= that.parentData.height) {
+				that.size.height = that.parentData.height - hoset;
+				if (pRatio) {
+					that.size.width = that.size.height * that.aspectRatio;
+					continueResize = false;
+				}
+			}
+
+			if (!continueResize) {
+				that.position.left = that.prevPosition.left;
+				that.position.top = that.prevPosition.top;
+				that.size.width = that.prevSize.width;
+				that.size.height = that.prevSize.height;
+			}
+		},
+
+		stop: function stop() {
+			var that = $(this).resizable("instance"),
+			    o = that.options,
+			    co = that.containerOffset,
+			    cop = that.containerPosition,
+			    ce = that.containerElement,
+			    helper = $(that.helper),
+			    ho = helper.offset(),
+			    w = helper.outerWidth() - that.sizeDiff.width,
+			    h = helper.outerHeight() - that.sizeDiff.height;
+
+			if (that._helper && !o.animate && /relative/.test(ce.css("position"))) {
+				$(this).css({
+					left: ho.left - cop.left - co.left,
+					width: w,
+					height: h
+				});
+			}
+
+			if (that._helper && !o.animate && /static/.test(ce.css("position"))) {
+				$(this).css({
+					left: ho.left - cop.left - co.left,
+					width: w,
+					height: h
+				});
+			}
+		}
+	});
+
+	$.ui.plugin.add("resizable", "alsoResize", {
+
+		start: function start() {
+			var that = $(this).resizable("instance"),
+			    o = that.options;
+
+			$(o.alsoResize).each(function () {
+				var el = $(this);
+				el.data("ui-resizable-alsoresize", {
+					width: parseFloat(el.width()), height: parseFloat(el.height()),
+					left: parseFloat(el.css("left")), top: parseFloat(el.css("top"))
+				});
+			});
+		},
+
+		resize: function resize(event, ui) {
+			var that = $(this).resizable("instance"),
+			    o = that.options,
+			    os = that.originalSize,
+			    op = that.originalPosition,
+			    delta = {
+				height: that.size.height - os.height || 0,
+				width: that.size.width - os.width || 0,
+				top: that.position.top - op.top || 0,
+				left: that.position.left - op.left || 0
+			};
+
+			$(o.alsoResize).each(function () {
+				var el = $(this),
+				    start = $(this).data("ui-resizable-alsoresize"),
+				    style = {},
+				    css = el.parents(ui.originalElement[0]).length ? ["width", "height"] : ["width", "height", "top", "left"];
+
+				$.each(css, function (i, prop) {
+					var sum = (start[prop] || 0) + (delta[prop] || 0);
+					if (sum && sum >= 0) {
+						style[prop] = sum || null;
+					}
+				});
+
+				el.css(style);
+			});
+		},
+
+		stop: function stop() {
+			$(this).removeData("ui-resizable-alsoresize");
+		}
+	});
+
+	$.ui.plugin.add("resizable", "ghost", {
+
+		start: function start() {
+
+			var that = $(this).resizable("instance"),
+			    cs = that.size;
+
+			that.ghost = that.originalElement.clone();
+			that.ghost.css({
+				opacity: 0.25,
+				display: "block",
+				position: "relative",
+				height: cs.height,
+				width: cs.width,
+				margin: 0,
+				left: 0,
+				top: 0
+			});
+
+			that._addClass(that.ghost, "ui-resizable-ghost");
+
+			// DEPRECATED
+			// TODO: remove after 1.12
+			if ($.uiBackCompat !== false && typeof that.options.ghost === "string") {
+
+				// Ghost option
+				that.ghost.addClass(this.options.ghost);
+			}
+
+			that.ghost.appendTo(that.helper);
+		},
+
+		resize: function resize() {
+			var that = $(this).resizable("instance");
+			if (that.ghost) {
+				that.ghost.css({
+					position: "relative",
+					height: that.size.height,
+					width: that.size.width
+				});
+			}
+		},
+
+		stop: function stop() {
+			var that = $(this).resizable("instance");
+			if (that.ghost && that.helper) {
+				that.helper.get(0).removeChild(that.ghost.get(0));
+			}
+		}
+
+	});
+
+	$.ui.plugin.add("resizable", "grid", {
+
+		resize: function resize() {
+			var outerDimensions,
+			    that = $(this).resizable("instance"),
+			    o = that.options,
+			    cs = that.size,
+			    os = that.originalSize,
+			    op = that.originalPosition,
+			    a = that.axis,
+			    grid = typeof o.grid === "number" ? [o.grid, o.grid] : o.grid,
+			    gridX = grid[0] || 1,
+			    gridY = grid[1] || 1,
+			    ox = Math.round((cs.width - os.width) / gridX) * gridX,
+			    oy = Math.round((cs.height - os.height) / gridY) * gridY,
+			    newWidth = os.width + ox,
+			    newHeight = os.height + oy,
+			    isMaxWidth = o.maxWidth && o.maxWidth < newWidth,
+			    isMaxHeight = o.maxHeight && o.maxHeight < newHeight,
+			    isMinWidth = o.minWidth && o.minWidth > newWidth,
+			    isMinHeight = o.minHeight && o.minHeight > newHeight;
+
+			o.grid = grid;
+
+			if (isMinWidth) {
+				newWidth += gridX;
+			}
+			if (isMinHeight) {
+				newHeight += gridY;
+			}
+			if (isMaxWidth) {
+				newWidth -= gridX;
+			}
+			if (isMaxHeight) {
+				newHeight -= gridY;
+			}
+
+			if (/^(se|s|e)$/.test(a)) {
+				that.size.width = newWidth;
+				that.size.height = newHeight;
+			} else if (/^(ne)$/.test(a)) {
+				that.size.width = newWidth;
+				that.size.height = newHeight;
+				that.position.top = op.top - oy;
+			} else if (/^(sw)$/.test(a)) {
+				that.size.width = newWidth;
+				that.size.height = newHeight;
+				that.position.left = op.left - ox;
+			} else {
+				if (newHeight - gridY <= 0 || newWidth - gridX <= 0) {
+					outerDimensions = that._getPaddingPlusBorderDimensions(this);
+				}
+
+				if (newHeight - gridY > 0) {
+					that.size.height = newHeight;
+					that.position.top = op.top - oy;
+				} else {
+					newHeight = gridY - outerDimensions.height;
+					that.size.height = newHeight;
+					that.position.top = op.top + os.height - newHeight;
+				}
+				if (newWidth - gridX > 0) {
+					that.size.width = newWidth;
+					that.position.left = op.left - ox;
+				} else {
+					newWidth = gridX - outerDimensions.width;
+					that.size.width = newWidth;
+					that.position.left = op.left + os.width - newWidth;
+				}
+			}
+		}
+
+	});
+
+	return $.ui.resizable;
+});
+
+/***/ }),
+/* 153 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Disable Selection 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: disableSelection
+//>>group: Core
+//>>description: Disable selection of text content within the set of matched elements.
+//>>docs: http://api.jqueryui.com/disableSelection/
+
+// This file is deprecated
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.extend({
+		disableSelection: function () {
+			var eventType = "onselectstart" in document.createElement("div") ? "selectstart" : "mousedown";
+
+			return function () {
+				return this.on(eventType + ".ui-disableSelection", function (event) {
+					event.preventDefault();
+				});
+			};
+		}(),
+
+		enableSelection: function enableSelection() {
+			return this.off(".ui-disableSelection");
+		}
+	});
+});
+
+/***/ }),
+/* 154 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Tabbable 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: :tabbable Selector
+//>>group: Core
+//>>description: Selects elements which can be tabbed to.
+//>>docs: http://api.jqueryui.com/tabbable-selector/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(136)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.extend($.expr[":"], {
+		tabbable: function tabbable(element) {
+			var tabIndex = $.attr(element, "tabindex"),
+			    hasTabindex = tabIndex != null;
+			return (!hasTabindex || tabIndex >= 0) && $.ui.focusable(element, hasTabindex);
+		}
+	});
+});
+
+/***/ }),
+/* 155 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.initContextMenuLib = undefined;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function initContextMenuLib() {
+    /*
+     *contextMenu.js v 1.4.1
+     *Author: Sudhanshu Yadav
+     *s-yadav.github.com
+     *Copyright (c) 2013-2015 Sudhanshu Yadav.
+     *Dual licensed under the MIT and GPL licenses
+     */
+
+    "use strict";
+    //jQuery, window, document
+
+    _jquery2.default.single = function () {
+        var single = (0, _jquery2.default)({});
+        return function (elm) {
+            single[0] = elm;
+            return single;
+        };
+    }();
+
+    _jquery2.default.fn.contextMenu = function (method, selector, option) {
+
+        //parameter fix
+        if (!methods[method]) {
+            option = selector;
+            selector = method;
+            method = 'popup';
+        }
+        //need to check for array object
+        else if (selector) {
+                if (!(selector instanceof Array || typeof selector === 'string' || selector.nodeType || selector.jquery)) {
+                    option = selector;
+                    selector = null;
+                }
+            }
+
+        if (selector instanceof Array && method != 'update') {
+            method = 'menu';
+        }
+
+        var myoptions = option;
+        if (_jquery2.default.inArray(method, ['menu', 'popup', 'close', 'destroy']) > -1) {
+            option = iMethods.optionOtimizer(method, option);
+            this.each(function () {
+                var $this = (0, _jquery2.default)(this);
+                myoptions = _jquery2.default.extend({}, _jquery2.default.fn.contextMenu.defaults, option);
+                if (!myoptions.baseTrigger) {
+                    myoptions.baseTrigger = $this;
+                }
+                methods[method].call($this, selector, myoptions);
+            });
+        } else {
+            methods[method].call(this, selector, myoptions);
+        }
+        return this;
+    };
+    _jquery2.default.fn.contextMenu.defaults = {
+        triggerOn: 'click', //avaliable options are all event related mouse plus enter option
+        subMenuTriggerOn: 'hover click',
+        displayAround: 'cursor', // cursor or trigger
+        mouseClick: 'left',
+        verAdjust: 0,
+        horAdjust: 0,
+        top: 'auto',
+        left: 'auto',
+        closeOther: true, //to close other already opened context menu
+        containment: window,
+        winEventClose: true,
+        position: 'auto', //allowed values are top, left, bottom and right
+        closeOnClick: true, //close context menu on click/ trigger of any item in menu
+
+        //callback
+        onOpen: function onOpen(data, event) {},
+        afterOpen: function afterOpen(data, event) {},
+        onClose: function onClose(data, event) {}
+    };
+
+    var methods = {
+        menu: function menu(selector, option) {
+            selector = iMethods.createMenuList(this, selector, option);
+            iMethods.contextMenuBind.call(this, selector, option, 'menu');
+        },
+        popup: function popup(selector, option) {
+            (0, _jquery2.default)(selector).addClass('iw-contextMenu');
+            iMethods.contextMenuBind.call(this, selector, option, 'popup');
+        },
+        update: function update(selector, option) {
+            var self = this;
+            option = option || {};
+
+            this.each(function () {
+                var trgr = (0, _jquery2.default)(this),
+                    menuData = trgr.data('iw-menuData');
+                //refresh if any new element is added
+                if (!menuData) {
+                    self.contextMenu('refresh');
+                    menuData = trgr.data('iw-menuData');
+                }
+
+                var menu = menuData.menu;
+                if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) === 'object') {
+
+                    for (var i = 0; i < selector.length; i++) {
+                        var name = selector[i].name,
+                            disable = selector[i].disable,
+                            fun = selector[i].fun,
+                            icon = selector[i].icon,
+                            img = selector[i].img,
+                            title = selector[i].title,
+                            className = selector[i].className,
+                            elm = menu.children('li').filter(function () {
+                            return (0, _jquery2.default)(this).contents().filter(function () {
+                                return this.nodeType == 3;
+                            }).text() == name;
+                        }),
+                            subMenu = selector[i].subMenu;
+
+                        //toggle disable if provided on update method
+                        disable != undefined && (disable ? elm.addClass('iw-mDisable') : elm.removeClass('iw-mDisable'));
+
+                        //bind new function if provided
+                        fun && elm.unbind('click.contextMenu').bind('click.contextMenu', fun);
+
+                        //update title
+                        title != undefined && elm.attr('title', title);
+
+                        //update class name
+                        className != undefined && elm.attr('class', className);
+
+                        var imgIcon = elm.find('.iw-mIcon');
+                        if (imgIcon.length) imgIcon.remove();
+
+                        //update image or icon
+                        if (img) {
+                            elm.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                        } else if (icon) {
+                            elm.prepend('<span align="absmiddle" class="iw-mIcon ' + icon + '" />');
+                        }
+
+                        //to change submenus
+                        if (subMenu) {
+                            elm.contextMenu('update', subMenu);
+                        }
+                    }
+                }
+
+                iMethods.onOff(menu);
+
+                //bind event again if trigger option has changed.
+                var triggerOn = option.triggerOn;
+                if (triggerOn) {
+                    trgr.unbind('.contextMenu');
+
+                    //add contextMenu identifier on all events
+                    triggerOn = triggerOn.split(" ");
+                    var events = [];
+                    for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                        events.push(triggerOn[i] + '.contextMenu');
+                    }
+
+                    //to bind event
+                    trgr.bind(events.join(' '), iMethods.eventHandler);
+                }
+
+                //set menu data back to trigger element
+                menuData.option = _jquery2.default.extend({}, menuData.option, option);
+                trgr.data('iw-menuData', menuData);
+            });
+        },
+        refresh: function refresh() {
+            var menuData = this.filter(function () {
+                return !!(0, _jquery2.default)(this).data('iw-menuData');
+            }).data('iw-menuData'),
+                newElm = this.filter(function () {
+                return !(0, _jquery2.default)(this).data('iw-menuData');
+            });
+            //to change basetrigger on refresh
+            menuData.option.baseTrigger = this;
+            iMethods.contextMenuBind.call(newElm, menuData.menuSelector, menuData.option);
+        },
+        open: function open(sel, data) {
+            data = data || {};
+            var e = data.event || _jquery2.default.Event('click');
+            if (data.top) e.clientY = data.top;
+            if (data.left) e.clientX = data.left;
+            this.each(function () {
+                iMethods.eventHandler.call(this, e);
+            });
+        },
+        //to force context menu to close
+        close: function close() {
+            var menuData = this.data('iw-menuData');
+            if (menuData) {
+                iMethods.closeContextMenu(menuData.option, this, menuData.menu, null);
+            }
+        },
+        //to get value of a key
+        value: function value(key) {
+            var menuData = this.data('iw-menuData');
+            if (menuData[key]) {
+                return menuData[key];
+            } else if (menuData.option) {
+                return menuData.option[key];
+            }
+            return null;
+        },
+        destroy: function destroy() {
+            var trgr = this,
+                menuId = trgr.data('iw-menuData').menuId,
+                menu = (0, _jquery2.default)('.iw-contextMenu[menuId=' + menuId + ']'),
+                menuData = menu.data('iw-menuData');
+
+            //Handle the situation of dynamically added element.
+            if (!menuData) return;
+
+            if (menuData.noTrigger == 1) {
+                if (menu.hasClass('iw-created')) {
+                    menu.remove();
+                } else {
+                    menu.removeClass('iw-contextMenu ' + menuId).removeAttr('menuId').removeData('iw-menuData');
+                    //to destroy submenus
+                    menu.find('li.iw-mTrigger').contextMenu('destroy');
+                }
+            } else {
+                menuData.noTrigger--;
+                menu.data('iw-menuData', menuData);
+            }
+            trgr.unbind('.contextMenu').removeClass('iw-mTrigger').removeData('iw-menuData');
+        }
+    };
+    var iMethods = {
+        contextMenuBind: function contextMenuBind(selector, option, method) {
+            var trigger = this,
+                menu = (0, _jquery2.default)(selector),
+                menuData = menu.data('iw-menuData');
+
+            //fallback
+            if (menu.length == 0) {
+                menu = trigger.find(selector);
+                if (menu.length == 0) {
+                    return;
+                }
+            }
+
+            if (method == 'menu') {
+                iMethods.menuHover(menu);
+            }
+            //get base trigger
+            var baseTrigger = option.baseTrigger;
+
+            if (!menuData) {
+                var menuId;
+                if (!baseTrigger.data('iw-menuData')) {
+                    menuId = Math.ceil(Math.random() * 100000);
+                    baseTrigger.data('iw-menuData', {
+                        'menuId': menuId
+                    });
+                } else {
+                    menuId = baseTrigger.data('iw-menuData').menuId;
+                }
+                //create clone menu to calculate exact height and width.
+                var cloneMenu = menu.clone();
+                cloneMenu.appendTo('body');
+
+                menuData = {
+                    'menuId': menuId,
+                    'menuWidth': cloneMenu.outerWidth(true),
+                    'menuHeight': cloneMenu.outerHeight(true),
+                    'noTrigger': 1,
+                    'trigger': trigger
+                };
+
+                //to set data on selector
+                menu.data('iw-menuData', menuData).attr('menuId', menuId);
+                //remove clone menu
+                cloneMenu.remove();
+            } else {
+                menuData.noTrigger++;
+                menu.data('iw-menuData', menuData);
+            }
+
+            //to set data on trigger
+            trigger.addClass('iw-mTrigger').data('iw-menuData', {
+                'menuId': menuData.menuId,
+                'option': option,
+                'menu': menu,
+                'menuSelector': selector,
+                'method': method
+            });
+
+            //hover fix
+            var triggerOn = option.triggerOn;
+            if (triggerOn.indexOf('hover') != -1) {
+                triggerOn = triggerOn.replace('hover', 'mouseenter');
+                //hover out if display is of context menu is on hover
+                if (baseTrigger.index(trigger) != -1) {
+                    baseTrigger.add(menu).bind('mouseleave.contextMenu', function (e) {
+                        if ((0, _jquery2.default)(e.relatedTarget).closest('.iw-contextMenu').length == 0) {
+                            (0, _jquery2.default)('.iw-contextMenu[menuId="' + menuData.menuId + '"]').fadeOut(100);
+                        }
+                    });
+                }
+            }
+
+            trigger.delegate('input,a,.needs-click', 'click', function (e) {
+                e.stopImmediatePropagation();
+            });
+
+            //add contextMenu identifier on all events
+            triggerOn = triggerOn.split(' ');
+            var events = [];
+            for (var i = 0, ln = triggerOn.length; i < ln; i++) {
+                events.push(triggerOn[i] + '.contextMenu');
+            }
+
+            //to bind event
+            trigger.bind(events.join(' '), iMethods.eventHandler);
+
+            //to stop bubbling in menu
+            menu.bind('click mouseenter', function (e) {
+                e.stopPropagation();
+            });
+
+            menu.delegate('li', 'click', function (e) {
+                if (option.closeOnClick && !_jquery2.default.single(this).hasClass('iw-has-submenu')) iMethods.closeContextMenu(option, trigger, menu, e);
+            });
+        },
+        eventHandler: function eventHandler(e) {
+            e.preventDefault();
+            var trigger = (0, _jquery2.default)(this),
+                trgrData = trigger.data('iw-menuData'),
+                menu = trgrData.menu,
+                menuData = menu.data('iw-menuData'),
+                option = trgrData.option,
+                cntnmnt = option.containment,
+                clbckData = {
+                trigger: trigger,
+                menu: menu
+            },
+
+            //check conditions
+            cntWin = cntnmnt == window,
+                btChck = option.baseTrigger.index(trigger) == -1;
+
+            //to close previous open menu.
+            if (!btChck && option.closeOther) {
+                (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+            }
+
+            //to reset already selected menu item
+            menu.find('.iw-mSelected').removeClass('iw-mSelected');
+
+            //call open callback
+            option.onOpen.call(this, clbckData, e);
+
+            var cObj = (0, _jquery2.default)(cntnmnt),
+                cHeight = cObj.innerHeight(),
+                cWidth = cObj.innerWidth(),
+                cTop = 0,
+                cLeft = 0,
+                menuHeight = menuData.menuHeight,
+                menuWidth = menuData.menuWidth,
+                va,
+                ha,
+                left = 0,
+                top = 0,
+                bottomMenu,
+                rightMenu,
+                verAdjust = va = parseInt(option.verAdjust),
+                horAdjust = ha = parseInt(option.horAdjust);
+
+            if (!cntWin) {
+                cTop = cObj.offset().top;
+                cLeft = cObj.offset().left;
+
+                //to add relative position if no position is defined on containment
+                if (cObj.css('position') == 'static') {
+                    cObj.css('position', 'relative');
+                }
+            }
+
+            if (option.displayAround == 'cursor') {
+                left = cntWin ? e.clientX : e.clientX + (0, _jquery2.default)(window).scrollLeft() - cLeft;
+                top = cntWin ? e.clientY : e.clientY + (0, _jquery2.default)(window).scrollTop() - cTop;
+                bottomMenu = top + menuHeight;
+                rightMenu = left + menuWidth;
+                //max height and width of context menu
+                if (bottomMenu > cHeight) {
+                    if (top - menuHeight < 0) {
+                        if (bottomMenu - cHeight < menuHeight - top) {
+                            top = cHeight - menuHeight;
+                            va = -1 * va;
+                        } else {
+                            top = 0;
+                            va = 0;
+                        }
+                    } else {
+                        top = top - menuHeight;
+                        va = -1 * va;
+                    }
+                }
+                if (rightMenu > cWidth) {
+                    if (left - menuWidth < 0) {
+                        if (rightMenu - cWidth < menuWidth - left) {
+                            left = cWidth - menuWidth;
+                            ha = -1 * ha;
+                        } else {
+                            left = 0;
+                            ha = 0;
+                        }
+                    } else {
+                        left = left - menuWidth;
+                        ha = -1 * ha;
+                    }
+                }
+            } else if (option.displayAround == 'trigger') {
+                var triggerHeight = trigger.outerHeight(true),
+                    triggerWidth = trigger.outerWidth(true),
+                    triggerLeft = cntWin ? trigger.offset().left - cObj.scrollLeft() : trigger.offset().left - cLeft,
+                    triggerTop = cntWin ? trigger.offset().top - cObj.scrollTop() : trigger.offset().top - cTop,
+                    leftShift = triggerWidth;
+
+                left = triggerLeft + triggerWidth;
+                top = triggerTop;
+
+                bottomMenu = top + menuHeight;
+                rightMenu = left + menuWidth;
+                //max height and width of context menu
+                if (bottomMenu > cHeight) {
+                    if (top - menuHeight < 0) {
+                        if (bottomMenu - cHeight < menuHeight - top) {
+                            top = cHeight - menuHeight;
+                            va = -1 * va;
+                        } else {
+                            top = 0;
+                            va = 0;
+                        }
+                    } else {
+                        top = top - menuHeight + triggerHeight;
+                        va = -1 * va;
+                    }
+                }
+                if (rightMenu > cWidth) {
+                    if (left - menuWidth < 0) {
+                        if (rightMenu - cWidth < menuWidth - left) {
+                            left = cWidth - menuWidth;
+                            ha = -1 * ha;
+                            leftShift = -triggerWidth;
+                        } else {
+                            left = 0;
+                            ha = 0;
+                            leftShift = 0;
+                        }
+                    } else {
+                        left = left - menuWidth - triggerWidth;
+                        ha = -1 * ha;
+                        leftShift = -triggerWidth;
+                    }
+                }
+                //test end
+                if (option.position == 'top') {
+                    top = triggerTop - menuHeight;
+                    va = verAdjust;
+                    left = left - leftShift;
+                } else if (option.position == 'left') {
+                    left = triggerLeft - menuWidth;
+                    ha = horAdjust;
+                } else if (option.position == 'bottom') {
+                    top = triggerTop + triggerHeight;
+                    va = verAdjust;
+                    left = left - leftShift;
+                } else if (option.position == 'right') {
+                    left = triggerLeft + triggerWidth;
+                    ha = horAdjust;
+                }
+            }
+
+            //applying css property
+            var cssObj = {
+                'position': cntWin || btChck ? 'fixed' : 'absolute',
+                'display': 'inline-block',
+                'height': '',
+                'width': ''
+            };
+
+            //to get position from offset parent
+            if (option.left != 'auto') {
+                left = iMethods.getPxSize(option.left, cWidth);
+            }
+            if (option.top != 'auto') {
+                top = iMethods.getPxSize(option.top, cHeight);
+            }
+            if (!cntWin) {
+                var oParPos = trigger.offsetParent().offset();
+                if (btChck) {
+                    left = left + cLeft - (0, _jquery2.default)(window).scrollLeft();
+                    top = top + cTop - (0, _jquery2.default)(window).scrollTop();
+                } else {
+                    left = left - (cLeft - oParPos.left);
+                    top = top - (cTop - oParPos.top);
+                }
+            }
+            cssObj.left = left + ha + 'px';
+            cssObj.top = top + va + 'px';
+
+            menu.css(cssObj);
+
+            //to call after open call back
+            option.afterOpen.call(this, clbckData, e);
+
+            //to add current menu class
+            if (trigger.closest('.iw-contextMenu').length == 0) {
+                (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                menu.addClass('iw-curMenu');
+            }
+
+            var dataParm = {
+                trigger: trigger,
+                menu: menu,
+                option: option,
+                method: trgrData.method
+            };
+            (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent).click(dataParm, iMethods.clickEvent);
+            (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent).keydown(dataParm, iMethods.keyEvent);
+            if (option.winEventClose) {
+                (0, _jquery2.default)(window).bind('scroll resize', dataParm, iMethods.scrollEvent);
+            }
+        },
+
+        scrollEvent: function scrollEvent(e) {
+            iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+        },
+
+        clickEvent: function clickEvent(e) {
+            var button = e.data.trigger.get(0);
+
+            if (button !== e.target && (0, _jquery2.default)(e.target).closest('.iw-contextMenu').length == 0) {
+                iMethods.closeContextMenu(e.data.option, e.data.trigger, e.data.menu, e);
+            }
+        },
+        keyEvent: function keyEvent(e) {
+            e.preventDefault();
+            var menu = e.data.menu,
+                option = e.data.option,
+                keyCode = e.keyCode;
+            // handle cursor keys
+            if (keyCode == 27) {
+                iMethods.closeContextMenu(option, e.data.trigger, menu, e);
+            }
+            if (e.data.method == 'menu') {
+                var curMenu = (0, _jquery2.default)('.iw-curMenu'),
+                    optList = curMenu.children('li:not(.iw-mDisable)'),
+                    selected = optList.filter('.iw-mSelected'),
+                    index = optList.index(selected),
+                    focusOn = function focusOn(elm) {
+                    iMethods.selectMenu(curMenu, elm);
+                    var menuData = elm.data('iw-menuData');
+                    if (menuData) {
+                        iMethods.eventHandler.call(elm[0], e);
+                    }
+                },
+                    first = function first() {
+                    focusOn(optList.filter(':first'));
+                },
+                    last = function last() {
+                    focusOn(optList.filter(':last'));
+                },
+                    next = function next() {
+                    focusOn(optList.filter(':eq(' + (index + 1) + ')'));
+                },
+                    prev = function prev() {
+                    focusOn(optList.filter(':eq(' + (index - 1) + ')'));
+                },
+                    subMenu = function subMenu() {
+                    var menuData = selected.data('iw-menuData');
+                    if (menuData) {
+                        iMethods.eventHandler.call(selected[0], e);
+                        var selector = menuData.menu;
+                        selector.addClass('iw-curMenu');
+                        curMenu.removeClass('iw-curMenu');
+                        curMenu = selector;
+                        optList = curMenu.children('li:not(.iw-mDisable)');
+                        selected = optList.filter('.iw-mSelected');
+                        first();
+                    }
+                },
+                    parMenu = function parMenu() {
+                    var selector = curMenu.data('iw-menuData').trigger;
+                    var parMenu = selector.closest('.iw-contextMenu');
+                    if (parMenu.length != 0) {
+                        curMenu.removeClass('iw-curMenu').css('display', 'none');
+                        parMenu.addClass('iw-curMenu');
+                    }
+                };
+                switch (keyCode) {
+                    case 13:
+                        selected.click();
+                        break;
+                    case 40:
+                        index == optList.length - 1 || selected.length == 0 ? first() : next();
+                        break;
+                    case 38:
+                        index == 0 || selected.length == 0 ? last() : prev();
+                        break;
+                    case 33:
+                        first();
+                        break;
+                    case 34:
+                        last();
+                        break;
+                    case 37:
+                        parMenu();
+                        break;
+                    case 39:
+                        subMenu();
+                        break;
+                }
+            }
+        },
+        closeContextMenu: function closeContextMenu(option, trigger, menu, e) {
+
+            //unbind all events from top DOM
+            (0, _jquery2.default)(document).unbind('keydown', iMethods.keyEvent);
+            (0, _jquery2.default)('html').unbind('click', iMethods.clickEvent);
+            (0, _jquery2.default)(window).unbind('scroll resize', iMethods.scrollEvent);
+            (0, _jquery2.default)('.iw-contextMenu').css('display', 'none');
+            (0, _jquery2.default)(document).focus();
+
+            //call close function
+            option.onClose.call(this, {
+                trigger: trigger,
+                menu: menu
+            }, e);
+        },
+        getPxSize: function getPxSize(size, of) {
+            if (!isNaN(size)) {
+                return size;
+            }
+            if (size.indexOf('%') != -1) {
+                return parseInt(size) * of / 100;
+            } else {
+                return parseInt(size);
+            }
+        },
+        selectMenu: function selectMenu(menu, elm) {
+            //to select the list
+            var selected = menu.find('li.iw-mSelected'),
+                submenu = selected.find('.iw-contextMenu');
+            if (submenu.length != 0 && selected[0] != elm[0]) {
+                submenu.fadeOut(100);
+            }
+            selected.removeClass('iw-mSelected');
+            elm.addClass('iw-mSelected');
+        },
+        menuHover: function menuHover(menu) {
+            var lastEventTime = Date.now();
+            menu.children('li').bind('mouseenter.contextMenu click.contextMenu', function (e) {
+                //to make curmenu
+                (0, _jquery2.default)('.iw-curMenu').removeClass('iw-curMenu');
+                menu.addClass('iw-curMenu');
+                iMethods.selectMenu(menu, (0, _jquery2.default)(this));
+            });
+        },
+        createMenuList: function createMenuList(trgr, selector, option) {
+            var baseTrigger = option.baseTrigger,
+                randomNum = Math.floor(Math.random() * 10000);
+            if ((typeof selector === 'undefined' ? 'undefined' : _typeof(selector)) == 'object' && !selector.nodeType && !selector.jquery) {
+                var menuList = (0, _jquery2.default)('<ul class="iw-contextMenu iw-created iw-cm-menu" id="iw-contextMenu' + randomNum + '"></ul>');
+                _jquery2.default.each(selector, function (index, selObj) {
+                    var name = selObj.name,
+                        fun = selObj.fun || function () {},
+                        subMenu = selObj.subMenu,
+                        img = selObj.img || '',
+                        icon = selObj.icon || '',
+                        title = selObj.title || "",
+                        className = selObj.className || "",
+                        disable = selObj.disable,
+                        list = (0, _jquery2.default)('<li title="' + title + '" class="' + className + '">' + name + '</li>');
+
+                    if (img) {
+                        list.prepend('<img src="' + img + '" align="absmiddle" class="iw-mIcon" />');
+                    } else if (icon) {
+                        list.prepend('<span align="absmiddle" class="' + "iw-mIcon " + icon + '" />');
+                    }
+                    //to add disable
+                    if (disable) {
+                        list.addClass('iw-mDisable');
+                    }
+
+                    if (!subMenu) {
+                        list.bind('click.contextMenu', function (e) {
+                            fun.call(this, {
+                                trigger: baseTrigger,
+                                menu: menuList
+                            }, e);
+                        });
+                    }
+
+                    //to create sub menu
+                    menuList.append(list);
+                    if (subMenu) {
+                        list.addClass('iw-has-submenu').append('<div class="iw-cm-arrow-right" />');
+                        iMethods.subMenu(list, subMenu, baseTrigger, option);
+                    }
+                });
+
+                if (baseTrigger.index(trgr[0]) == -1) {
+                    trgr.append(menuList);
+                } else {
+                    var par = option.containment == window ? 'body' : option.containment;
+                    (0, _jquery2.default)(par).append(menuList);
+                }
+
+                iMethods.onOff((0, _jquery2.default)('#iw-contextMenu' + randomNum));
+                return '#iw-contextMenu' + randomNum;
+            } else if ((0, _jquery2.default)(selector).length != 0) {
+                var element = (0, _jquery2.default)(selector);
+                element.removeClass('iw-contextMenuCurrent').addClass('iw-contextMenu iw-cm-menu iw-contextMenu' + randomNum).attr('menuId', 'iw-contextMenu' + randomNum).css('display', 'none');
+
+                //to create subMenu
+                element.find('ul').each(function (index, element) {
+                    var subMenu = (0, _jquery2.default)(this),
+                        parent = subMenu.parent('li');
+                    parent.append('<div class="iw-cm-arrow-right" />');
+                    subMenu.addClass('iw-contextMenuCurrent');
+                    iMethods.subMenu(parent, '.iw-contextMenuCurrent', baseTrigger, option);
+                });
+                iMethods.onOff((0, _jquery2.default)('.iw-contextMenu' + randomNum));
+                return '.iw-contextMenu' + randomNum;
+            }
+        },
+        subMenu: function subMenu(trigger, selector, baseTrigger, option) {
+            trigger.contextMenu('menu', selector, {
+                triggerOn: option.subMenuTriggerOn,
+                displayAround: 'trigger',
+                position: 'auto',
+                mouseClick: 'left',
+                baseTrigger: baseTrigger,
+                containment: option.containment
+            });
+        },
+        onOff: function onOff(menu) {
+
+            menu.find('.iw-mOverlay').remove();
+            menu.find('.iw-mDisable').each(function () {
+                var list = (0, _jquery2.default)(this);
+                list.append('<div class="iw-mOverlay"/>');
+                list.find('.iw-mOverlay').bind('click mouseenter', function (event) {
+                    event.stopPropagation();
+                });
+            });
+        },
+        optionOtimizer: function optionOtimizer(method, option) {
+            if (!option) {
+                return;
+            }
+            if (method == 'menu') {
+                if (!option.mouseClick) {
+                    option.mouseClick = 'right';
+                }
+            }
+            if (option.mouseClick == 'right' && option.triggerOn == 'click') {
+                option.triggerOn = 'contextmenu';
+            }
+
+            if (_jquery2.default.inArray(option.triggerOn, ['hover', 'mouseenter', 'mouseover', 'mouseleave', 'mouseout', 'focusin', 'focusout']) != -1) {
+                option.displayAround = 'trigger';
+            }
+            return option;
+        }
+    };
+}
+
+exports.initContextMenuLib = initContextMenuLib;
+
+/***/ }),
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44613,21 +47824,21 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(5);
 
-var _debug = __webpack_require__(135);
+var _debug = __webpack_require__(138);
 
-var _uifunc = __webpack_require__(11);
+var _uifunc = __webpack_require__(13);
 
-var _textfieldlisteners = __webpack_require__(129);
+var _textfieldlisteners = __webpack_require__(14);
 
-var _cookie = __webpack_require__(145);
+var _cookie = __webpack_require__(157);
 
 var _serverresponse = __webpack_require__(6);
 
-var _cal = __webpack_require__(130);
+var _cal = __webpack_require__(15);
 
 var _userfeedback = __webpack_require__(4);
 
-var _reservationpublic = __webpack_require__(146);
+var _reservationpublic = __webpack_require__(158);
 
 var _reservationpublic2 = _interopRequireDefault(_reservationpublic);
 
@@ -45528,7 +48739,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 145 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45572,7 +48783,7 @@ exports.readCookie = readCookie;
 exports.eraseCookie = eraseCookie;
 
 /***/ }),
-/* 146 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45590,17 +48801,17 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(5);
 
-var _uifunc = __webpack_require__(11);
+var _uifunc = __webpack_require__(13);
 
 var _serverresponse = __webpack_require__(6);
 
 var _userfeedback = __webpack_require__(4);
 
-var _cal = __webpack_require__(130);
+var _cal = __webpack_require__(15);
 
 var _cal2 = _interopRequireDefault(_cal);
 
-var _breadcrumb = __webpack_require__(147);
+var _breadcrumb = __webpack_require__(159);
 
 var _breadcrumb2 = _interopRequireDefault(_breadcrumb);
 
@@ -45788,7 +48999,7 @@ var ReservationPublic = function () {
 exports.default = ReservationPublic;
 
 /***/ }),
-/* 147 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

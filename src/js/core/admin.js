@@ -12,6 +12,7 @@ import { initCSVButtonListener, initCSVAJAXButtonListener, initSearchListener } 
 
 import UserAdmin from '../page/useradmin';
 import SettingsAdmin from '../page/settingsadmin';
+import ReservationAdmin from '../page/reservationadmin';
 import DebugAdmin from '../page/debugadmin';
 
 (function( $ ) {
@@ -986,8 +987,6 @@ import DebugAdmin from '../page/debugadmin';
 								alert("Error selecting reservation.");
 								return;
 							}
-							console.log(releventResEventStart)
-							console.log(moment().format('YYYY-MM-DD'))
 
 							if (releventResEventStart!=moment().format('YYYY-MM-DD')) {
 								alert("Please choose a rental period that begins today.");
@@ -1463,36 +1462,6 @@ import DebugAdmin from '../page/debugadmin';
 					c = '.iam-res-cal';
 				$(c).fullCalendar( 'removeEventSource', lastReservationResource);
 				$(c).fullCalendar( 'addEventSource', lastReservationResource);
-			}
-
-			var initResCalSubmitListener = function () {
-				$('.iam-res-cal-submit').click(function(event) {
-					if ($('.iam-res-cal-placeholder').length>0)
-						return;
-					if (!getSize(eventsModified) && !eventsToDelete.length)
-						return;
-					if (!confirm("Are you sure you want to make these changes?"))
-						return;
-					submissionStart();
-					$.ajax({
-					  url: ajaxurl,
-					  type: 'POST',
-					  data: {action: 'admin_update_reservations', to_delete: eventsToDelete, modified: eventsModified, sendEmails: false, reason: '', facility: $('.iam-reservation-wrap').data('facility'), load_all: didLoadAllRes},
-					  success: function (data) {
-					    updateEquipmentEvents( handleServerResponse(data) );
-					    makeCalendarReservationsMulti();
-					    submissionEnd();
-					  },
-					  error: function (data) {
-					    handleServerError(data, new Error());
-					  }
-					});
-				});
-				$('.iam-res-cal-cancel').click(function(event) {
-					if ($('.iam-res-cal-placeholder').length>0)
-						return;
-					refreshResCal();
-				});
 			}
 
 			var handleEventToDelete = function(event,j) {
@@ -2013,58 +1982,7 @@ import DebugAdmin from '../page/debugadmin';
 		    initSubmitRentalTypeListener();
 
 			} else if ( $('.iam-reservation-wrap').length>0 ) {
-				resetEvents();
-				var resFacilityType = $('.iam-reservation-wrap').data('facility-type');
-				$('.iam-load-all-reservations').click(function(event) {
-					if ($('.iam-res-cal-placeholder').length>0)
-						return;
-
-					submissionStart();
-					$.ajax({
-							url: ajaxurl,
-							type: 'GET',
-							data: {action: 'load_all_events_admin_res_cal', facility: $('.iam-reservation-wrap').data('facility')},
-							success: function (data) {
-								var newData = handleServerResponse(data);
-								for (var i in newData) {
-									var c = newData[i];
-									$('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
-								}
-								makeCalendarReservationsMulti();
-								submissionEnd();
-							},
-							error: function (data) {
-								handleServerError(data, new Error());
-							}
-						});
-				});
-
-        $('.iam-res-select-all').click(function(event) {
-            $(this).toggleClass('iam-highlighted');
-            if ($(this).hasClass('iam-highlighted')) {
-                $('.iam-reservation-list div:not(.iam-highlighted)').each(function(index, el) {
-                    if (!$(this).hasClass('iam-ninja')) {
-                        $(this).addClass('iam-highlighted');
-                    }
-                });
-                makeCalendarReservationsMulti();
-            } else {
-                $('.iam-reservation-list div.iam-highlighted').each(function(index, el) {
-                    $(this).removeClass('iam-highlighted');
-                });
-                makeCalendarReservationsMulti();
-            }
-        });
-
-				$('.iam-reservation-list div').click(function(event) {
-					$(this).toggleClass('iam-highlighted');
-					makeCalendarReservationsMulti();
-				});
-
-				$('label.iam-status-label input').prop('checked', true);
-				initResCalSubmitListener();
-				initSearchListener('.iam-search','.iam-reservation-list div',0);
-				$(document).tooltip();
+				var resAdmin = new ReservationAdmin();
 			} else if ( $('.iam-user-certification-wrap').length>0 ) {
 
 				//initSeeExistingCertificationsListener();
