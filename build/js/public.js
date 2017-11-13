@@ -15997,6 +15997,13 @@ var Cal = function () {
         allDaySlot: false
       };
 
+      if (cal == 'adminRes') {
+        if (this.page.facility.Schedule.type == 'appointment') {
+          if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
+          this.calArgs.adminRes['businessHours'] = this.businessHoursConverted;
+        }
+      }
+
       var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
       this.calID = this.getCalID();
       (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
@@ -16190,11 +16197,6 @@ var Cal = function () {
         },
         events: that.lastReservationResource
       };
-
-      if (that.page.facility.Schedule.type == 'appointment') {
-        if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
-        that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
-      }
 
       this.calArgs['irregular'] = {
         header: {
@@ -48232,6 +48234,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 		var initCheckoutSubmitListener = function initCheckoutSubmitListener() {
 			$('.iam-checkout-submit').click(function (event) {
+				if ($('#no-mats').length > 0) {
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: { 'action': 'checkout_submit', 'nid': checkoutNid, 'no_mats': true },
+						success: function success(data) {
+							(0, _serverresponse.handleServerResponse)(data);
+							$('body').removeClass('iam-no-select');
+							$('.iam-popup').remove();
+							$(checkoutRow).remove();
+							window.location.reload();
+						},
+						error: function error(data) {
+							(0, _serverresponse.handleServerError)(data, new Error());
+						}
+					});
+					return;
+				}
 				if ($('.iam-checkout-amount').val().length < 1) {
 					alert("Please enter an amount.");
 					return;

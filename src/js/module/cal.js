@@ -225,6 +225,14 @@ export default class Cal {
       allDaySlot: false
     };
 
+    if (cal=='adminRes') {
+      if (this.page.facility.Schedule.type=='appointment') {
+        if (typeof this.businessHoursConverted=='undefined')
+          this.initBusinessHours();
+        this.calArgs.adminRes['businessHours'] = this.businessHoursConverted;
+      }
+    }
+
     let finalArgs = $.extend(neutralArgs, this.calArgs[cal]);
     this.calID = this.getCalID();
     $(this.calID).fullCalendar(finalArgs);
@@ -422,12 +430,6 @@ export default class Cal {
             $('.tooltipevent').remove();
         },
       events: that.lastReservationResource
-    }
-
-    if (that.page.facility.Schedule.type=='appointment') {
-      if (typeof this.businessHoursConverted=='undefined')
-        this.initBusinessHours();
-      that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
     }
 
     this.calArgs['irregular'] = {

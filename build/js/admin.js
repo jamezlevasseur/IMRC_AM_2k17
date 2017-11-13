@@ -15997,6 +15997,13 @@ var Cal = function () {
         allDaySlot: false
       };
 
+      if (cal == 'adminRes') {
+        if (this.page.facility.Schedule.type == 'appointment') {
+          if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
+          this.calArgs.adminRes['businessHours'] = this.businessHoursConverted;
+        }
+      }
+
       var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
       this.calID = this.getCalID();
       (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
@@ -16190,11 +16197,6 @@ var Cal = function () {
         },
         events: that.lastReservationResource
       };
-
-      if (that.page.facility.Schedule.type == 'appointment') {
-        if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
-        that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
-      }
 
       this.calArgs['irregular'] = {
         header: {
