@@ -49238,7 +49238,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		var initAddRemoveCertificationsButtonListener = function initAddRemoveCertificationsButtonListener() {
 			$('#iam-add-cert-button').click(function (event) {
-				(0, _userfeedback.submissionStart)();
 				if ($('#iam-cert-to-apply').val() == 'Select a value') {
 					alert('Please select a certification from the drop down menu.');
 					return;
@@ -49247,6 +49246,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					alert("Please select some accounts for this action");
 					return;
 				}
+				(0, _userfeedback.submissionStart)();
 				var checkedUsers = [];
 				$(':checked').each(function (index, el) {
 					checkedUsers.push($(this).data('user'));

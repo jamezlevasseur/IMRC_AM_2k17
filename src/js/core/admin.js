@@ -1393,7 +1393,6 @@ import DebugAdmin from '../page/debugadmin';
 
 			var initAddRemoveCertificationsButtonListener = function () {
 				$('#iam-add-cert-button').click(function(event) {
-					submissionStart();
 					if ($('#iam-cert-to-apply').val()=='Select a value') {
 						alert('Please select a certification from the drop down menu.');
 						return;
@@ -1402,6 +1401,7 @@ import DebugAdmin from '../page/debugadmin';
 						alert("Please select some accounts for this action");
 						return;
 					}
+					submissionStart();
 					var checkedUsers = [];
 					$(':checked').each(function(index, el) {
 						checkedUsers.push($(this).data('user'));
