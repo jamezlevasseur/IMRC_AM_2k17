@@ -14,7 +14,6 @@ export default class ReservationAdmin {
   constructor () {
     this.facility = $('.iam-reservation-wrap').data('facility');
     this.facility.Schedule = JSON.parse(this.facility.Schedule);
-    console.log(this.facility)
 
     this.initListItems();
     this.initSelectAll();
@@ -105,8 +104,6 @@ export default class ReservationAdmin {
         return;
 
       submissionStart();
-
-      console.log(that.facility, that.facility.Name)
       $.ajax({
           url: ajaxurl,
           type: 'GET',

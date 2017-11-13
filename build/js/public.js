@@ -16195,7 +16195,6 @@ var Cal = function () {
         if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
         that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
       }
-      console.log(that.calArgs.adminRes);
 
       this.calArgs['irregular'] = {
         header: {

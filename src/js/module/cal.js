@@ -429,7 +429,6 @@ export default class Cal {
         this.initBusinessHours();
       that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
     }
-    console.log(that.calArgs.adminRes)
 
     this.calArgs['irregular'] = {
       header: {

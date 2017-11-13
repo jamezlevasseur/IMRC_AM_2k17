@@ -16195,7 +16195,6 @@ var Cal = function () {
         if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
         that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
       }
-      console.log(that.calArgs.adminRes);
 
       this.calArgs['irregular'] = {
         header: {
@@ -51831,7 +51830,6 @@ var ReservationAdmin = function () {
 
     this.facility = (0, _jquery2.default)('.iam-reservation-wrap').data('facility');
     this.facility.Schedule = JSON.parse(this.facility.Schedule);
-    console.log(this.facility);
 
     this.initListItems();
     this.initSelectAll();
@@ -51924,8 +51922,6 @@ var ReservationAdmin = function () {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) return;
 
         (0, _userfeedback.submissionStart)();
-
-        console.log(that.facility, that.facility.Name);
         _jquery2.default.ajax({
           url: ajaxurl,
           type: 'GET',
