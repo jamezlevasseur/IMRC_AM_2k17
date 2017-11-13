@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 160);
+/******/ 	return __webpack_require__(__webpack_require__.s = 159);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -4425,7 +4425,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
     return hooks;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module)))
 
 /***/ }),
 /* 1 */
@@ -14261,7 +14261,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 	return jQuery;
 });
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12)(module)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module)))
 
 /***/ }),
 /* 2 */
@@ -15201,61 +15201,6 @@ exports.handleServerError = handleServerError;
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 /*!
- * jQuery UI Keycode 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: Keycode
-//>>group: Core
-//>>description: Provide keycodes as keynames
-//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	return $.ui.keyCode = {
-		BACKSPACE: 8,
-		COMMA: 188,
-		DELETE: 46,
-		DOWN: 40,
-		END: 35,
-		ENTER: 13,
-		ESCAPE: 27,
-		HOME: 36,
-		LEFT: 37,
-		PAGE_DOWN: 34,
-		PAGE_UP: 33,
-		PERIOD: 190,
-		RIGHT: 39,
-		SPACE: 32,
-		TAB: 9,
-		UP: 38
-	};
-});
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
  * jQuery UI Mouse 1.12.1
  * http://jqueryui.com
  *
@@ -15467,7 +15412,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15517,567 +15462,62 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Keycode 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Keycode
+//>>group: Core
+//>>description: Provide keycodes as keynames
+//>>docs: http://api.jqueryui.com/jQuery.ui.keyCode/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	return $.ui.keyCode = {
+		BACKSPACE: 8,
+		COMMA: 188,
+		DELETE: 46,
+		DOWN: 40,
+		END: 35,
+		ENTER: 13,
+		ESCAPE: 27,
+		HOME: 36,
+		LEFT: 37,
+		PAGE_DOWN: 34,
+		PAGE_UP: 33,
+		PERIOD: 190,
+		RIGHT: 39,
+		SPACE: 32,
+		TAB: 9,
+		UP: 38
+	};
+});
+
+/***/ }),
 /* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Position 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- *
- * http://api.jqueryui.com/position/
- */
-
-//>>label: Position
-//>>group: Core
-//>>description: Positions elements relative to other elements.
-//>>docs: http://api.jqueryui.com/position/
-//>>demos: http://jqueryui.com/position/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-	(function () {
-		var cachedScrollbarWidth,
-		    max = Math.max,
-		    abs = Math.abs,
-		    rhorizontal = /left|center|right/,
-		    rvertical = /top|center|bottom/,
-		    roffset = /[\+\-]\d+(\.[\d]+)?%?/,
-		    rposition = /^\w+/,
-		    rpercent = /%$/,
-		    _position = $.fn.position;
-
-		function getOffsets(offsets, width, height) {
-			return [parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1), parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)];
-		}
-
-		function parseCss(element, property) {
-			return parseInt($.css(element, property), 10) || 0;
-		}
-
-		function getDimensions(elem) {
-			var raw = elem[0];
-			if (raw.nodeType === 9) {
-				return {
-					width: elem.width(),
-					height: elem.height(),
-					offset: { top: 0, left: 0 }
-				};
-			}
-			if ($.isWindow(raw)) {
-				return {
-					width: elem.width(),
-					height: elem.height(),
-					offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
-				};
-			}
-			if (raw.preventDefault) {
-				return {
-					width: 0,
-					height: 0,
-					offset: { top: raw.pageY, left: raw.pageX }
-				};
-			}
-			return {
-				width: elem.outerWidth(),
-				height: elem.outerHeight(),
-				offset: elem.offset()
-			};
-		}
-
-		$.position = {
-			scrollbarWidth: function scrollbarWidth() {
-				if (cachedScrollbarWidth !== undefined) {
-					return cachedScrollbarWidth;
-				}
-				var w1,
-				    w2,
-				    div = $("<div " + "style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" + "<div style='height:100px;width:auto;'></div></div>"),
-				    innerDiv = div.children()[0];
-
-				$("body").append(div);
-				w1 = innerDiv.offsetWidth;
-				div.css("overflow", "scroll");
-
-				w2 = innerDiv.offsetWidth;
-
-				if (w1 === w2) {
-					w2 = div[0].clientWidth;
-				}
-
-				div.remove();
-
-				return cachedScrollbarWidth = w1 - w2;
-			},
-			getScrollInfo: function getScrollInfo(within) {
-				var overflowX = within.isWindow || within.isDocument ? "" : within.element.css("overflow-x"),
-				    overflowY = within.isWindow || within.isDocument ? "" : within.element.css("overflow-y"),
-				    hasOverflowX = overflowX === "scroll" || overflowX === "auto" && within.width < within.element[0].scrollWidth,
-				    hasOverflowY = overflowY === "scroll" || overflowY === "auto" && within.height < within.element[0].scrollHeight;
-				return {
-					width: hasOverflowY ? $.position.scrollbarWidth() : 0,
-					height: hasOverflowX ? $.position.scrollbarWidth() : 0
-				};
-			},
-			getWithinInfo: function getWithinInfo(element) {
-				var withinElement = $(element || window),
-				    isWindow = $.isWindow(withinElement[0]),
-				    isDocument = !!withinElement[0] && withinElement[0].nodeType === 9,
-				    hasOffset = !isWindow && !isDocument;
-				return {
-					element: withinElement,
-					isWindow: isWindow,
-					isDocument: isDocument,
-					offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
-					scrollLeft: withinElement.scrollLeft(),
-					scrollTop: withinElement.scrollTop(),
-					width: withinElement.outerWidth(),
-					height: withinElement.outerHeight()
-				};
-			}
-		};
-
-		$.fn.position = function (options) {
-			if (!options || !options.of) {
-				return _position.apply(this, arguments);
-			}
-
-			// Make a copy, we don't want to modify arguments
-			options = $.extend({}, options);
-
-			var atOffset,
-			    targetWidth,
-			    targetHeight,
-			    targetOffset,
-			    basePosition,
-			    dimensions,
-			    target = $(options.of),
-			    within = $.position.getWithinInfo(options.within),
-			    scrollInfo = $.position.getScrollInfo(within),
-			    collision = (options.collision || "flip").split(" "),
-			    offsets = {};
-
-			dimensions = getDimensions(target);
-			if (target[0].preventDefault) {
-
-				// Force left top to allow flipping
-				options.at = "left top";
-			}
-			targetWidth = dimensions.width;
-			targetHeight = dimensions.height;
-			targetOffset = dimensions.offset;
-
-			// Clone to reuse original targetOffset later
-			basePosition = $.extend({}, targetOffset);
-
-			// Force my and at to have valid horizontal and vertical positions
-			// if a value is missing or invalid, it will be converted to center
-			$.each(["my", "at"], function () {
-				var pos = (options[this] || "").split(" "),
-				    horizontalOffset,
-				    verticalOffset;
-
-				if (pos.length === 1) {
-					pos = rhorizontal.test(pos[0]) ? pos.concat(["center"]) : rvertical.test(pos[0]) ? ["center"].concat(pos) : ["center", "center"];
-				}
-				pos[0] = rhorizontal.test(pos[0]) ? pos[0] : "center";
-				pos[1] = rvertical.test(pos[1]) ? pos[1] : "center";
-
-				// Calculate offsets
-				horizontalOffset = roffset.exec(pos[0]);
-				verticalOffset = roffset.exec(pos[1]);
-				offsets[this] = [horizontalOffset ? horizontalOffset[0] : 0, verticalOffset ? verticalOffset[0] : 0];
-
-				// Reduce to just the positions without the offsets
-				options[this] = [rposition.exec(pos[0])[0], rposition.exec(pos[1])[0]];
-			});
-
-			// Normalize collision option
-			if (collision.length === 1) {
-				collision[1] = collision[0];
-			}
-
-			if (options.at[0] === "right") {
-				basePosition.left += targetWidth;
-			} else if (options.at[0] === "center") {
-				basePosition.left += targetWidth / 2;
-			}
-
-			if (options.at[1] === "bottom") {
-				basePosition.top += targetHeight;
-			} else if (options.at[1] === "center") {
-				basePosition.top += targetHeight / 2;
-			}
-
-			atOffset = getOffsets(offsets.at, targetWidth, targetHeight);
-			basePosition.left += atOffset[0];
-			basePosition.top += atOffset[1];
-
-			return this.each(function () {
-				var collisionPosition,
-				    using,
-				    elem = $(this),
-				    elemWidth = elem.outerWidth(),
-				    elemHeight = elem.outerHeight(),
-				    marginLeft = parseCss(this, "marginLeft"),
-				    marginTop = parseCss(this, "marginTop"),
-				    collisionWidth = elemWidth + marginLeft + parseCss(this, "marginRight") + scrollInfo.width,
-				    collisionHeight = elemHeight + marginTop + parseCss(this, "marginBottom") + scrollInfo.height,
-				    position = $.extend({}, basePosition),
-				    myOffset = getOffsets(offsets.my, elem.outerWidth(), elem.outerHeight());
-
-				if (options.my[0] === "right") {
-					position.left -= elemWidth;
-				} else if (options.my[0] === "center") {
-					position.left -= elemWidth / 2;
-				}
-
-				if (options.my[1] === "bottom") {
-					position.top -= elemHeight;
-				} else if (options.my[1] === "center") {
-					position.top -= elemHeight / 2;
-				}
-
-				position.left += myOffset[0];
-				position.top += myOffset[1];
-
-				collisionPosition = {
-					marginLeft: marginLeft,
-					marginTop: marginTop
-				};
-
-				$.each(["left", "top"], function (i, dir) {
-					if ($.ui.position[collision[i]]) {
-						$.ui.position[collision[i]][dir](position, {
-							targetWidth: targetWidth,
-							targetHeight: targetHeight,
-							elemWidth: elemWidth,
-							elemHeight: elemHeight,
-							collisionPosition: collisionPosition,
-							collisionWidth: collisionWidth,
-							collisionHeight: collisionHeight,
-							offset: [atOffset[0] + myOffset[0], atOffset[1] + myOffset[1]],
-							my: options.my,
-							at: options.at,
-							within: within,
-							elem: elem
-						});
-					}
-				});
-
-				if (options.using) {
-
-					// Adds feedback as second argument to using callback, if present
-					using = function using(props) {
-						var left = targetOffset.left - position.left,
-						    right = left + targetWidth - elemWidth,
-						    top = targetOffset.top - position.top,
-						    bottom = top + targetHeight - elemHeight,
-						    feedback = {
-							target: {
-								element: target,
-								left: targetOffset.left,
-								top: targetOffset.top,
-								width: targetWidth,
-								height: targetHeight
-							},
-							element: {
-								element: elem,
-								left: position.left,
-								top: position.top,
-								width: elemWidth,
-								height: elemHeight
-							},
-							horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
-							vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
-						};
-						if (targetWidth < elemWidth && abs(left + right) < targetWidth) {
-							feedback.horizontal = "center";
-						}
-						if (targetHeight < elemHeight && abs(top + bottom) < targetHeight) {
-							feedback.vertical = "middle";
-						}
-						if (max(abs(left), abs(right)) > max(abs(top), abs(bottom))) {
-							feedback.important = "horizontal";
-						} else {
-							feedback.important = "vertical";
-						}
-						options.using.call(this, props, feedback);
-					};
-				}
-
-				elem.offset($.extend(position, { using: using }));
-			});
-		};
-
-		$.ui.position = {
-			fit: {
-				left: function left(position, data) {
-					var within = data.within,
-					    withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
-					    outerWidth = within.width,
-					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-					    overLeft = withinOffset - collisionPosLeft,
-					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
-					    newOverRight;
-
-					// Element is wider than within
-					if (data.collisionWidth > outerWidth) {
-
-						// Element is initially over the left side of within
-						if (overLeft > 0 && overRight <= 0) {
-							newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
-							position.left += overLeft - newOverRight;
-
-							// Element is initially over right side of within
-						} else if (overRight > 0 && overLeft <= 0) {
-							position.left = withinOffset;
-
-							// Element is initially over both left and right sides of within
-						} else {
-							if (overLeft > overRight) {
-								position.left = withinOffset + outerWidth - data.collisionWidth;
-							} else {
-								position.left = withinOffset;
-							}
-						}
-
-						// Too far left -> align with left edge
-					} else if (overLeft > 0) {
-						position.left += overLeft;
-
-						// Too far right -> align with right edge
-					} else if (overRight > 0) {
-						position.left -= overRight;
-
-						// Adjust based on position and margin
-					} else {
-						position.left = max(position.left - collisionPosLeft, position.left);
-					}
-				},
-				top: function top(position, data) {
-					var within = data.within,
-					    withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
-					    outerHeight = data.within.height,
-					    collisionPosTop = position.top - data.collisionPosition.marginTop,
-					    overTop = withinOffset - collisionPosTop,
-					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
-					    newOverBottom;
-
-					// Element is taller than within
-					if (data.collisionHeight > outerHeight) {
-
-						// Element is initially over the top of within
-						if (overTop > 0 && overBottom <= 0) {
-							newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
-							position.top += overTop - newOverBottom;
-
-							// Element is initially over bottom of within
-						} else if (overBottom > 0 && overTop <= 0) {
-							position.top = withinOffset;
-
-							// Element is initially over both top and bottom of within
-						} else {
-							if (overTop > overBottom) {
-								position.top = withinOffset + outerHeight - data.collisionHeight;
-							} else {
-								position.top = withinOffset;
-							}
-						}
-
-						// Too far up -> align with top
-					} else if (overTop > 0) {
-						position.top += overTop;
-
-						// Too far down -> align with bottom edge
-					} else if (overBottom > 0) {
-						position.top -= overBottom;
-
-						// Adjust based on position and margin
-					} else {
-						position.top = max(position.top - collisionPosTop, position.top);
-					}
-				}
-			},
-			flip: {
-				left: function left(position, data) {
-					var within = data.within,
-					    withinOffset = within.offset.left + within.scrollLeft,
-					    outerWidth = within.width,
-					    offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
-					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
-					    overLeft = collisionPosLeft - offsetLeft,
-					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
-					    myOffset = data.my[0] === "left" ? -data.elemWidth : data.my[0] === "right" ? data.elemWidth : 0,
-					    atOffset = data.at[0] === "left" ? data.targetWidth : data.at[0] === "right" ? -data.targetWidth : 0,
-					    offset = -2 * data.offset[0],
-					    newOverRight,
-					    newOverLeft;
-
-					if (overLeft < 0) {
-						newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
-						if (newOverRight < 0 || newOverRight < abs(overLeft)) {
-							position.left += myOffset + atOffset + offset;
-						}
-					} else if (overRight > 0) {
-						newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
-						if (newOverLeft > 0 || abs(newOverLeft) < overRight) {
-							position.left += myOffset + atOffset + offset;
-						}
-					}
-				},
-				top: function top(position, data) {
-					var within = data.within,
-					    withinOffset = within.offset.top + within.scrollTop,
-					    outerHeight = within.height,
-					    offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
-					    collisionPosTop = position.top - data.collisionPosition.marginTop,
-					    overTop = collisionPosTop - offsetTop,
-					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
-					    top = data.my[1] === "top",
-					    myOffset = top ? -data.elemHeight : data.my[1] === "bottom" ? data.elemHeight : 0,
-					    atOffset = data.at[1] === "top" ? data.targetHeight : data.at[1] === "bottom" ? -data.targetHeight : 0,
-					    offset = -2 * data.offset[1],
-					    newOverTop,
-					    newOverBottom;
-					if (overTop < 0) {
-						newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
-						if (newOverBottom < 0 || newOverBottom < abs(overTop)) {
-							position.top += myOffset + atOffset + offset;
-						}
-					} else if (overBottom > 0) {
-						newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
-						if (newOverTop > 0 || abs(newOverTop) < overBottom) {
-							position.top += myOffset + atOffset + offset;
-						}
-					}
-				}
-			},
-			flipfit: {
-				left: function left() {
-					$.ui.position.flip.left.apply(this, arguments);
-					$.ui.position.fit.left.apply(this, arguments);
-				},
-				top: function top() {
-					$.ui.position.flip.top.apply(this, arguments);
-					$.ui.position.fit.top.apply(this, arguments);
-				}
-			}
-		};
-	})();
-
-	return $.ui.position;
-});
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
-
-/*!
- * jQuery UI Unique ID 1.12.1
- * http://jqueryui.com
- *
- * Copyright jQuery Foundation and other contributors
- * Released under the MIT license.
- * http://jquery.org/license
- */
-
-//>>label: uniqueId
-//>>group: Core
-//>>description: Functions to generate and remove uniqueId's
-//>>docs: http://api.jqueryui.com/uniqueId/
-
-(function (factory) {
-	if (true) {
-
-		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	} else {
-
-		// Browser globals
-		factory(jQuery);
-	}
-})(function ($) {
-
-	return $.fn.extend({
-		uniqueId: function () {
-			var uuid = 0;
-
-			return function () {
-				return this.each(function () {
-					if (!this.id) {
-						this.id = "ui-id-" + ++uuid;
-					}
-				});
-			};
-		}(),
-
-		removeUniqueId: function removeUniqueId() {
-			return this.each(function () {
-				if (/^ui-id-\d+$/.test(this.id)) {
-					$(this).removeAttr("id");
-				}
-			});
-		}
-	});
-});
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-module.exports = function (module) {
-	if (!module.webpackPolyfill) {
-		module.deprecate = function () {};
-		module.paths = [];
-		// module.parent = undefined by default
-		if (!module.children) module.children = [];
-		Object.defineProperty(module, "loaded", {
-			enumerable: true,
-			get: function get() {
-				return module.l;
-			}
-		});
-		Object.defineProperty(module, "id", {
-			enumerable: true,
-			get: function get() {
-				return module.i;
-			}
-		});
-		module.webpackPolyfill = 1;
-	}
-	return module;
-};
-
-/***/ }),
-/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16181,7 +15621,37 @@ exports.initSearchListener = initSearchListener;
 exports.initPopupXListener = initPopupXListener;
 
 /***/ }),
-/* 14 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = function (module) {
+	if (!module.webpackPolyfill) {
+		module.deprecate = function () {};
+		module.paths = [];
+		// module.parent = undefined by default
+		if (!module.children) module.children = [];
+		Object.defineProperty(module, "loaded", {
+			enumerable: true,
+			get: function get() {
+				return module.l;
+			}
+		});
+		Object.defineProperty(module, "id", {
+			enumerable: true,
+			get: function get() {
+				return module.i;
+			}
+		});
+		module.webpackPolyfill = 1;
+	}
+	return module;
+};
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16260,7 +15730,7 @@ exports.maxLengthListener = maxLengthListener;
 exports.numbersOnlyListener = numbersOnlyListener;
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16278,15 +15748,15 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 __webpack_require__(139);
 
-__webpack_require__(131);
+__webpack_require__(129);
 
-__webpack_require__(132);
+__webpack_require__(130);
 
 var _userfeedback = __webpack_require__(4);
 
-var _override = __webpack_require__(137);
+var _override = __webpack_require__(136);
 
-var _contextmenu = __webpack_require__(155);
+var _contextmenu = __webpack_require__(154);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -16406,12 +15876,11 @@ var Cal = function () {
     key: 'initCalFor',
     value: function initCalFor(facing) {
       if (facing == 'public') {
-        this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+        this.initBusinessHours();
         this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
         this.initDraggable();
         this.initPubResCal(this.page.getFacilityInfo('type'));
       } else if (facing == 'admin') {
-        this.initDraggable();
         this.initAdminCal(this.page.cal);
       }
     }
@@ -16498,6 +15967,11 @@ var Cal = function () {
       });
     }
   }, {
+    key: 'initBusinessHours',
+    value: function initBusinessHours() {
+      this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+    }
+  }, {
     key: 'initAdminCal',
     value: function initAdminCal(cal) {
       var _this = this;
@@ -16505,7 +15979,12 @@ var Cal = function () {
       this.resetEvents();
       this.removePlaceholder();
 
-      if (this.page.cal == 'ResAdmin') this.updateResListSource();
+      if (this.page.cal == 'adminRes') {
+        this.updateResListSource();
+      } else {
+        //irreg
+        this.initDraggable();
+      }
 
       var neutralArgs = {
         editable: false, //new events will be made editable else where
@@ -16682,11 +16161,13 @@ var Cal = function () {
         },
         eventDrop: function eventDrop(event, d, revert) {
           that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
+          if (that.page.facility.Schedule.type == 'appointment') that.warnIfOutOfBounds(event);
           if (that.page.facility.Schedule.type == 'rental') that.adminCalEventDrop(event, d, revert);
         },
         eventResize: function eventResize(event, d, revert, jsevent) {
           that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
           that.currenRentalPeriod = event.period;
+          if (that.page.facility.Schedule.type == 'appointment') that.warnIfOutOfBounds(event);
           if (that.page.facility.Schedule.type == 'rental') that.adminCalEventResize(event, d, revert, jsevent);
         },
         eventMouseover: function eventMouseover(calEvent, jsEvent) {
@@ -16709,6 +16190,12 @@ var Cal = function () {
         },
         events: that.lastReservationResource
       };
+
+      if (that.page.facility.Schedule.type == 'appointment') {
+        if (typeof this.businessHoursConverted == 'undefined') this.initBusinessHours();
+        that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
+      }
+      console.log(that.calArgs.adminRes);
 
       this.calArgs['irregular'] = {
         header: {
@@ -16846,7 +16333,7 @@ var Cal = function () {
 exports.default = Cal;
 
 /***/ }),
-/* 16 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16929,7 +16416,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17067,7 +16554,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 18 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17135,7 +16622,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 19 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17203,7 +16690,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 20 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17325,7 +16812,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 21 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17394,7 +16881,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 22 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17508,7 +16995,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 23 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17576,7 +17063,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 24 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17692,7 +17179,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 25 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17834,7 +17321,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 26 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17933,7 +17420,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 27 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18059,7 +17546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 28 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18185,7 +17672,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 29 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18302,7 +17789,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 30 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18454,7 +17941,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 31 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18548,7 +18035,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 32 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18743,7 +18230,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 33 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18815,7 +18302,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 34 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18904,7 +18391,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 35 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18973,7 +18460,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 36 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19060,7 +18547,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 37 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19148,7 +18635,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 38 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19235,7 +18722,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 39 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19323,7 +18810,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 40 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19433,7 +18920,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 41 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19506,7 +18993,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 42 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19575,7 +19062,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 43 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19648,7 +19135,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 44 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19721,7 +19208,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 45 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19794,7 +19281,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 46 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19876,7 +19363,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 47 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19968,7 +19455,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 48 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20059,7 +19546,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 49 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20148,7 +19635,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 50 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20223,7 +19710,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 51 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20340,7 +19827,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 52 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20453,7 +19940,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 53 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20522,7 +20009,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 54 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20614,7 +20101,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 55 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20697,7 +20184,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 56 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20784,7 +20271,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 57 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20868,7 +20355,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 58 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20951,7 +20438,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 59 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21037,7 +20524,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 60 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21168,7 +20655,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 61 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21277,7 +20764,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 62 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21410,7 +20897,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 63 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21564,7 +21051,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 64 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21682,7 +21169,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 65 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21787,7 +21274,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 66 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21879,7 +21366,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 67 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22015,7 +21502,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 68 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22094,7 +21581,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 69 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22183,7 +21670,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 70 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22275,7 +21762,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 71 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22372,7 +21859,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 72 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22468,7 +21955,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 73 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22535,7 +22022,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 74 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22670,7 +22157,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 75 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22748,7 +22235,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 76 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22844,7 +22331,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 77 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -22991,7 +22478,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 78 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23070,7 +22557,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 79 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23196,7 +22683,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 80 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23302,7 +22789,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 81 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23414,7 +22901,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 82 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23487,7 +22974,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 83 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23586,7 +23073,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 84 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23674,7 +23161,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 85 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23862,7 +23349,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 86 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -23953,7 +23440,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 87 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24045,7 +23532,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 88 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24150,7 +23637,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 89 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24222,7 +23709,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 90 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24354,7 +23841,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 91 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24451,7 +23938,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 92 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24548,7 +24035,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 93 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24617,7 +24104,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 94 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24750,7 +24237,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 95 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24866,7 +24353,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 96 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -24939,7 +24426,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 97 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25008,7 +24495,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 98 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25092,7 +24579,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 99 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25284,7 +24771,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 100 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25370,7 +24857,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 101 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25439,7 +24926,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 102 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25520,7 +25007,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 103 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25690,7 +25177,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 104 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25861,7 +25348,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 105 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25940,7 +25427,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 106 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26051,7 +25538,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 107 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26162,7 +25649,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 108 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26259,7 +25746,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 109 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26334,7 +25821,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 110 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26402,7 +25889,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 111 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26541,7 +26028,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 112 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26639,7 +26126,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 113 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26713,7 +26200,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 114 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26789,7 +26276,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 115 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26860,7 +26347,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 116 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26977,7 +26464,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 117 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27077,7 +26564,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 118 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27178,7 +26665,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 119 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27245,7 +26732,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 120 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27312,7 +26799,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 121 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27467,7 +26954,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 122 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27554,7 +27041,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 123 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27621,7 +27108,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 124 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27688,7 +27175,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 125 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27777,7 +27264,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 126 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27851,7 +27338,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 127 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -27920,7 +27407,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 128 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28039,7 +27526,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 129 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28153,7 +27640,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 130 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28266,7 +27753,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 131 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28282,7 +27769,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;
 })();
 
 /***/ }),
-/* 132 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -28308,7 +27795,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(142), __webpack_require__(133), __webpack_require__(9), __webpack_require__(134), __webpack_require__(143), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(142), __webpack_require__(131), __webpack_require__(8), __webpack_require__(132), __webpack_require__(143), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -29420,7 +28907,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 133 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29473,7 +28960,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 134 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29504,7 +28991,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 135 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29535,7 +29022,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 136 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29633,7 +29120,478 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 137 */
+/* 135 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Position 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ *
+ * http://api.jqueryui.com/position/
+ */
+
+//>>label: Position
+//>>group: Core
+//>>description: Positions elements relative to other elements.
+//>>docs: http://api.jqueryui.com/position/
+//>>demos: http://jqueryui.com/position/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+	(function () {
+		var cachedScrollbarWidth,
+		    max = Math.max,
+		    abs = Math.abs,
+		    rhorizontal = /left|center|right/,
+		    rvertical = /top|center|bottom/,
+		    roffset = /[\+\-]\d+(\.[\d]+)?%?/,
+		    rposition = /^\w+/,
+		    rpercent = /%$/,
+		    _position = $.fn.position;
+
+		function getOffsets(offsets, width, height) {
+			return [parseFloat(offsets[0]) * (rpercent.test(offsets[0]) ? width / 100 : 1), parseFloat(offsets[1]) * (rpercent.test(offsets[1]) ? height / 100 : 1)];
+		}
+
+		function parseCss(element, property) {
+			return parseInt($.css(element, property), 10) || 0;
+		}
+
+		function getDimensions(elem) {
+			var raw = elem[0];
+			if (raw.nodeType === 9) {
+				return {
+					width: elem.width(),
+					height: elem.height(),
+					offset: { top: 0, left: 0 }
+				};
+			}
+			if ($.isWindow(raw)) {
+				return {
+					width: elem.width(),
+					height: elem.height(),
+					offset: { top: elem.scrollTop(), left: elem.scrollLeft() }
+				};
+			}
+			if (raw.preventDefault) {
+				return {
+					width: 0,
+					height: 0,
+					offset: { top: raw.pageY, left: raw.pageX }
+				};
+			}
+			return {
+				width: elem.outerWidth(),
+				height: elem.outerHeight(),
+				offset: elem.offset()
+			};
+		}
+
+		$.position = {
+			scrollbarWidth: function scrollbarWidth() {
+				if (cachedScrollbarWidth !== undefined) {
+					return cachedScrollbarWidth;
+				}
+				var w1,
+				    w2,
+				    div = $("<div " + "style='display:block;position:absolute;width:50px;height:50px;overflow:hidden;'>" + "<div style='height:100px;width:auto;'></div></div>"),
+				    innerDiv = div.children()[0];
+
+				$("body").append(div);
+				w1 = innerDiv.offsetWidth;
+				div.css("overflow", "scroll");
+
+				w2 = innerDiv.offsetWidth;
+
+				if (w1 === w2) {
+					w2 = div[0].clientWidth;
+				}
+
+				div.remove();
+
+				return cachedScrollbarWidth = w1 - w2;
+			},
+			getScrollInfo: function getScrollInfo(within) {
+				var overflowX = within.isWindow || within.isDocument ? "" : within.element.css("overflow-x"),
+				    overflowY = within.isWindow || within.isDocument ? "" : within.element.css("overflow-y"),
+				    hasOverflowX = overflowX === "scroll" || overflowX === "auto" && within.width < within.element[0].scrollWidth,
+				    hasOverflowY = overflowY === "scroll" || overflowY === "auto" && within.height < within.element[0].scrollHeight;
+				return {
+					width: hasOverflowY ? $.position.scrollbarWidth() : 0,
+					height: hasOverflowX ? $.position.scrollbarWidth() : 0
+				};
+			},
+			getWithinInfo: function getWithinInfo(element) {
+				var withinElement = $(element || window),
+				    isWindow = $.isWindow(withinElement[0]),
+				    isDocument = !!withinElement[0] && withinElement[0].nodeType === 9,
+				    hasOffset = !isWindow && !isDocument;
+				return {
+					element: withinElement,
+					isWindow: isWindow,
+					isDocument: isDocument,
+					offset: hasOffset ? $(element).offset() : { left: 0, top: 0 },
+					scrollLeft: withinElement.scrollLeft(),
+					scrollTop: withinElement.scrollTop(),
+					width: withinElement.outerWidth(),
+					height: withinElement.outerHeight()
+				};
+			}
+		};
+
+		$.fn.position = function (options) {
+			if (!options || !options.of) {
+				return _position.apply(this, arguments);
+			}
+
+			// Make a copy, we don't want to modify arguments
+			options = $.extend({}, options);
+
+			var atOffset,
+			    targetWidth,
+			    targetHeight,
+			    targetOffset,
+			    basePosition,
+			    dimensions,
+			    target = $(options.of),
+			    within = $.position.getWithinInfo(options.within),
+			    scrollInfo = $.position.getScrollInfo(within),
+			    collision = (options.collision || "flip").split(" "),
+			    offsets = {};
+
+			dimensions = getDimensions(target);
+			if (target[0].preventDefault) {
+
+				// Force left top to allow flipping
+				options.at = "left top";
+			}
+			targetWidth = dimensions.width;
+			targetHeight = dimensions.height;
+			targetOffset = dimensions.offset;
+
+			// Clone to reuse original targetOffset later
+			basePosition = $.extend({}, targetOffset);
+
+			// Force my and at to have valid horizontal and vertical positions
+			// if a value is missing or invalid, it will be converted to center
+			$.each(["my", "at"], function () {
+				var pos = (options[this] || "").split(" "),
+				    horizontalOffset,
+				    verticalOffset;
+
+				if (pos.length === 1) {
+					pos = rhorizontal.test(pos[0]) ? pos.concat(["center"]) : rvertical.test(pos[0]) ? ["center"].concat(pos) : ["center", "center"];
+				}
+				pos[0] = rhorizontal.test(pos[0]) ? pos[0] : "center";
+				pos[1] = rvertical.test(pos[1]) ? pos[1] : "center";
+
+				// Calculate offsets
+				horizontalOffset = roffset.exec(pos[0]);
+				verticalOffset = roffset.exec(pos[1]);
+				offsets[this] = [horizontalOffset ? horizontalOffset[0] : 0, verticalOffset ? verticalOffset[0] : 0];
+
+				// Reduce to just the positions without the offsets
+				options[this] = [rposition.exec(pos[0])[0], rposition.exec(pos[1])[0]];
+			});
+
+			// Normalize collision option
+			if (collision.length === 1) {
+				collision[1] = collision[0];
+			}
+
+			if (options.at[0] === "right") {
+				basePosition.left += targetWidth;
+			} else if (options.at[0] === "center") {
+				basePosition.left += targetWidth / 2;
+			}
+
+			if (options.at[1] === "bottom") {
+				basePosition.top += targetHeight;
+			} else if (options.at[1] === "center") {
+				basePosition.top += targetHeight / 2;
+			}
+
+			atOffset = getOffsets(offsets.at, targetWidth, targetHeight);
+			basePosition.left += atOffset[0];
+			basePosition.top += atOffset[1];
+
+			return this.each(function () {
+				var collisionPosition,
+				    using,
+				    elem = $(this),
+				    elemWidth = elem.outerWidth(),
+				    elemHeight = elem.outerHeight(),
+				    marginLeft = parseCss(this, "marginLeft"),
+				    marginTop = parseCss(this, "marginTop"),
+				    collisionWidth = elemWidth + marginLeft + parseCss(this, "marginRight") + scrollInfo.width,
+				    collisionHeight = elemHeight + marginTop + parseCss(this, "marginBottom") + scrollInfo.height,
+				    position = $.extend({}, basePosition),
+				    myOffset = getOffsets(offsets.my, elem.outerWidth(), elem.outerHeight());
+
+				if (options.my[0] === "right") {
+					position.left -= elemWidth;
+				} else if (options.my[0] === "center") {
+					position.left -= elemWidth / 2;
+				}
+
+				if (options.my[1] === "bottom") {
+					position.top -= elemHeight;
+				} else if (options.my[1] === "center") {
+					position.top -= elemHeight / 2;
+				}
+
+				position.left += myOffset[0];
+				position.top += myOffset[1];
+
+				collisionPosition = {
+					marginLeft: marginLeft,
+					marginTop: marginTop
+				};
+
+				$.each(["left", "top"], function (i, dir) {
+					if ($.ui.position[collision[i]]) {
+						$.ui.position[collision[i]][dir](position, {
+							targetWidth: targetWidth,
+							targetHeight: targetHeight,
+							elemWidth: elemWidth,
+							elemHeight: elemHeight,
+							collisionPosition: collisionPosition,
+							collisionWidth: collisionWidth,
+							collisionHeight: collisionHeight,
+							offset: [atOffset[0] + myOffset[0], atOffset[1] + myOffset[1]],
+							my: options.my,
+							at: options.at,
+							within: within,
+							elem: elem
+						});
+					}
+				});
+
+				if (options.using) {
+
+					// Adds feedback as second argument to using callback, if present
+					using = function using(props) {
+						var left = targetOffset.left - position.left,
+						    right = left + targetWidth - elemWidth,
+						    top = targetOffset.top - position.top,
+						    bottom = top + targetHeight - elemHeight,
+						    feedback = {
+							target: {
+								element: target,
+								left: targetOffset.left,
+								top: targetOffset.top,
+								width: targetWidth,
+								height: targetHeight
+							},
+							element: {
+								element: elem,
+								left: position.left,
+								top: position.top,
+								width: elemWidth,
+								height: elemHeight
+							},
+							horizontal: right < 0 ? "left" : left > 0 ? "right" : "center",
+							vertical: bottom < 0 ? "top" : top > 0 ? "bottom" : "middle"
+						};
+						if (targetWidth < elemWidth && abs(left + right) < targetWidth) {
+							feedback.horizontal = "center";
+						}
+						if (targetHeight < elemHeight && abs(top + bottom) < targetHeight) {
+							feedback.vertical = "middle";
+						}
+						if (max(abs(left), abs(right)) > max(abs(top), abs(bottom))) {
+							feedback.important = "horizontal";
+						} else {
+							feedback.important = "vertical";
+						}
+						options.using.call(this, props, feedback);
+					};
+				}
+
+				elem.offset($.extend(position, { using: using }));
+			});
+		};
+
+		$.ui.position = {
+			fit: {
+				left: function left(position, data) {
+					var within = data.within,
+					    withinOffset = within.isWindow ? within.scrollLeft : within.offset.left,
+					    outerWidth = within.width,
+					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+					    overLeft = withinOffset - collisionPosLeft,
+					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - withinOffset,
+					    newOverRight;
+
+					// Element is wider than within
+					if (data.collisionWidth > outerWidth) {
+
+						// Element is initially over the left side of within
+						if (overLeft > 0 && overRight <= 0) {
+							newOverRight = position.left + overLeft + data.collisionWidth - outerWidth - withinOffset;
+							position.left += overLeft - newOverRight;
+
+							// Element is initially over right side of within
+						} else if (overRight > 0 && overLeft <= 0) {
+							position.left = withinOffset;
+
+							// Element is initially over both left and right sides of within
+						} else {
+							if (overLeft > overRight) {
+								position.left = withinOffset + outerWidth - data.collisionWidth;
+							} else {
+								position.left = withinOffset;
+							}
+						}
+
+						// Too far left -> align with left edge
+					} else if (overLeft > 0) {
+						position.left += overLeft;
+
+						// Too far right -> align with right edge
+					} else if (overRight > 0) {
+						position.left -= overRight;
+
+						// Adjust based on position and margin
+					} else {
+						position.left = max(position.left - collisionPosLeft, position.left);
+					}
+				},
+				top: function top(position, data) {
+					var within = data.within,
+					    withinOffset = within.isWindow ? within.scrollTop : within.offset.top,
+					    outerHeight = data.within.height,
+					    collisionPosTop = position.top - data.collisionPosition.marginTop,
+					    overTop = withinOffset - collisionPosTop,
+					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - withinOffset,
+					    newOverBottom;
+
+					// Element is taller than within
+					if (data.collisionHeight > outerHeight) {
+
+						// Element is initially over the top of within
+						if (overTop > 0 && overBottom <= 0) {
+							newOverBottom = position.top + overTop + data.collisionHeight - outerHeight - withinOffset;
+							position.top += overTop - newOverBottom;
+
+							// Element is initially over bottom of within
+						} else if (overBottom > 0 && overTop <= 0) {
+							position.top = withinOffset;
+
+							// Element is initially over both top and bottom of within
+						} else {
+							if (overTop > overBottom) {
+								position.top = withinOffset + outerHeight - data.collisionHeight;
+							} else {
+								position.top = withinOffset;
+							}
+						}
+
+						// Too far up -> align with top
+					} else if (overTop > 0) {
+						position.top += overTop;
+
+						// Too far down -> align with bottom edge
+					} else if (overBottom > 0) {
+						position.top -= overBottom;
+
+						// Adjust based on position and margin
+					} else {
+						position.top = max(position.top - collisionPosTop, position.top);
+					}
+				}
+			},
+			flip: {
+				left: function left(position, data) {
+					var within = data.within,
+					    withinOffset = within.offset.left + within.scrollLeft,
+					    outerWidth = within.width,
+					    offsetLeft = within.isWindow ? within.scrollLeft : within.offset.left,
+					    collisionPosLeft = position.left - data.collisionPosition.marginLeft,
+					    overLeft = collisionPosLeft - offsetLeft,
+					    overRight = collisionPosLeft + data.collisionWidth - outerWidth - offsetLeft,
+					    myOffset = data.my[0] === "left" ? -data.elemWidth : data.my[0] === "right" ? data.elemWidth : 0,
+					    atOffset = data.at[0] === "left" ? data.targetWidth : data.at[0] === "right" ? -data.targetWidth : 0,
+					    offset = -2 * data.offset[0],
+					    newOverRight,
+					    newOverLeft;
+
+					if (overLeft < 0) {
+						newOverRight = position.left + myOffset + atOffset + offset + data.collisionWidth - outerWidth - withinOffset;
+						if (newOverRight < 0 || newOverRight < abs(overLeft)) {
+							position.left += myOffset + atOffset + offset;
+						}
+					} else if (overRight > 0) {
+						newOverLeft = position.left - data.collisionPosition.marginLeft + myOffset + atOffset + offset - offsetLeft;
+						if (newOverLeft > 0 || abs(newOverLeft) < overRight) {
+							position.left += myOffset + atOffset + offset;
+						}
+					}
+				},
+				top: function top(position, data) {
+					var within = data.within,
+					    withinOffset = within.offset.top + within.scrollTop,
+					    outerHeight = within.height,
+					    offsetTop = within.isWindow ? within.scrollTop : within.offset.top,
+					    collisionPosTop = position.top - data.collisionPosition.marginTop,
+					    overTop = collisionPosTop - offsetTop,
+					    overBottom = collisionPosTop + data.collisionHeight - outerHeight - offsetTop,
+					    top = data.my[1] === "top",
+					    myOffset = top ? -data.elemHeight : data.my[1] === "bottom" ? data.elemHeight : 0,
+					    atOffset = data.at[1] === "top" ? data.targetHeight : data.at[1] === "bottom" ? -data.targetHeight : 0,
+					    offset = -2 * data.offset[1],
+					    newOverTop,
+					    newOverBottom;
+					if (overTop < 0) {
+						newOverBottom = position.top + myOffset + atOffset + offset + data.collisionHeight - outerHeight - withinOffset;
+						if (newOverBottom < 0 || newOverBottom < abs(overTop)) {
+							position.top += myOffset + atOffset + offset;
+						}
+					} else if (overBottom > 0) {
+						newOverTop = position.top - data.collisionPosition.marginTop + myOffset + atOffset + offset - offsetTop;
+						if (newOverTop > 0 || abs(newOverTop) < overBottom) {
+							position.top += myOffset + atOffset + offset;
+						}
+					}
+				}
+			},
+			flipfit: {
+				left: function left() {
+					$.ui.position.flip.left.apply(this, arguments);
+					$.ui.position.fit.left.apply(this, arguments);
+				},
+				top: function top() {
+					$.ui.position.flip.top.apply(this, arguments);
+					$.ui.position.fit.top.apply(this, arguments);
+				}
+			}
+		};
+	})();
+
+	return $.ui.position;
+});
+
+/***/ }),
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29648,9 +29606,9 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(131);
+__webpack_require__(129);
 
-__webpack_require__(145);
+__webpack_require__(144);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -29676,6 +29634,65 @@ function overridePrompt(args) {
 }
 
 exports.overridePrompt = overridePrompt;
+
+/***/ }),
+/* 137 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*!
+ * jQuery UI Unique ID 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: uniqueId
+//>>group: Core
+//>>description: Functions to generate and remove uniqueId's
+//>>docs: http://api.jqueryui.com/uniqueId/
+
+(function (factory) {
+	if (true) {
+
+		// AMD. Register as an anonymous module.
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	} else {
+
+		// Browser globals
+		factory(jQuery);
+	}
+})(function ($) {
+
+	return $.fn.extend({
+		uniqueId: function () {
+			var uuid = 0;
+
+			return function () {
+				return this.each(function () {
+					if (!this.id) {
+						this.id = "ui-id-" + ++uuid;
+					}
+				});
+			};
+		}(),
+
+		removeUniqueId: function removeUniqueId() {
+			return this.each(function () {
+				if (/^ui-id-\d+$/.test(this.id)) {
+					$(this).removeAttr("id");
+				}
+			});
+		}
+	});
+});
 
 /***/ }),
 /* 138 */
@@ -43321,236 +43338,236 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./af": 16,
-	"./af.js": 16,
-	"./ar": 17,
-	"./ar-dz": 18,
-	"./ar-dz.js": 18,
-	"./ar-kw": 19,
-	"./ar-kw.js": 19,
-	"./ar-ly": 20,
-	"./ar-ly.js": 20,
-	"./ar-ma": 21,
-	"./ar-ma.js": 21,
-	"./ar-sa": 22,
-	"./ar-sa.js": 22,
-	"./ar-tn": 23,
-	"./ar-tn.js": 23,
-	"./ar.js": 17,
-	"./az": 24,
-	"./az.js": 24,
-	"./be": 25,
-	"./be.js": 25,
-	"./bg": 26,
-	"./bg.js": 26,
-	"./bn": 27,
-	"./bn.js": 27,
-	"./bo": 28,
-	"./bo.js": 28,
-	"./br": 29,
-	"./br.js": 29,
-	"./bs": 30,
-	"./bs.js": 30,
-	"./ca": 31,
-	"./ca.js": 31,
-	"./cs": 32,
-	"./cs.js": 32,
-	"./cv": 33,
-	"./cv.js": 33,
-	"./cy": 34,
-	"./cy.js": 34,
-	"./da": 35,
-	"./da.js": 35,
-	"./de": 36,
-	"./de-at": 37,
-	"./de-at.js": 37,
-	"./de-ch": 38,
-	"./de-ch.js": 38,
-	"./de.js": 36,
-	"./dv": 39,
-	"./dv.js": 39,
-	"./el": 40,
-	"./el.js": 40,
-	"./en-au": 41,
-	"./en-au.js": 41,
-	"./en-ca": 42,
-	"./en-ca.js": 42,
-	"./en-gb": 43,
-	"./en-gb.js": 43,
-	"./en-ie": 44,
-	"./en-ie.js": 44,
-	"./en-nz": 45,
-	"./en-nz.js": 45,
-	"./eo": 46,
-	"./eo.js": 46,
-	"./es": 47,
-	"./es-do": 48,
-	"./es-do.js": 48,
-	"./es.js": 47,
-	"./et": 49,
-	"./et.js": 49,
-	"./eu": 50,
-	"./eu.js": 50,
-	"./fa": 51,
-	"./fa.js": 51,
-	"./fi": 52,
-	"./fi.js": 52,
-	"./fo": 53,
-	"./fo.js": 53,
-	"./fr": 54,
-	"./fr-ca": 55,
-	"./fr-ca.js": 55,
-	"./fr-ch": 56,
-	"./fr-ch.js": 56,
-	"./fr.js": 54,
-	"./fy": 57,
-	"./fy.js": 57,
-	"./gd": 58,
-	"./gd.js": 58,
-	"./gl": 59,
-	"./gl.js": 59,
-	"./gom-latn": 60,
-	"./gom-latn.js": 60,
-	"./he": 61,
-	"./he.js": 61,
-	"./hi": 62,
-	"./hi.js": 62,
-	"./hr": 63,
-	"./hr.js": 63,
-	"./hu": 64,
-	"./hu.js": 64,
-	"./hy-am": 65,
-	"./hy-am.js": 65,
-	"./id": 66,
-	"./id.js": 66,
-	"./is": 67,
-	"./is.js": 67,
-	"./it": 68,
-	"./it.js": 68,
-	"./ja": 69,
-	"./ja.js": 69,
-	"./jv": 70,
-	"./jv.js": 70,
-	"./ka": 71,
-	"./ka.js": 71,
-	"./kk": 72,
-	"./kk.js": 72,
-	"./km": 73,
-	"./km.js": 73,
-	"./kn": 74,
-	"./kn.js": 74,
-	"./ko": 75,
-	"./ko.js": 75,
-	"./ky": 76,
-	"./ky.js": 76,
-	"./lb": 77,
-	"./lb.js": 77,
-	"./lo": 78,
-	"./lo.js": 78,
-	"./lt": 79,
-	"./lt.js": 79,
-	"./lv": 80,
-	"./lv.js": 80,
-	"./me": 81,
-	"./me.js": 81,
-	"./mi": 82,
-	"./mi.js": 82,
-	"./mk": 83,
-	"./mk.js": 83,
-	"./ml": 84,
-	"./ml.js": 84,
-	"./mr": 85,
-	"./mr.js": 85,
-	"./ms": 86,
-	"./ms-my": 87,
-	"./ms-my.js": 87,
-	"./ms.js": 86,
-	"./my": 88,
-	"./my.js": 88,
-	"./nb": 89,
-	"./nb.js": 89,
-	"./ne": 90,
-	"./ne.js": 90,
-	"./nl": 91,
-	"./nl-be": 92,
-	"./nl-be.js": 92,
-	"./nl.js": 91,
-	"./nn": 93,
-	"./nn.js": 93,
-	"./pa-in": 94,
-	"./pa-in.js": 94,
-	"./pl": 95,
-	"./pl.js": 95,
-	"./pt": 96,
-	"./pt-br": 97,
-	"./pt-br.js": 97,
-	"./pt.js": 96,
-	"./ro": 98,
-	"./ro.js": 98,
-	"./ru": 99,
-	"./ru.js": 99,
-	"./sd": 100,
-	"./sd.js": 100,
-	"./se": 101,
-	"./se.js": 101,
-	"./si": 102,
-	"./si.js": 102,
-	"./sk": 103,
-	"./sk.js": 103,
-	"./sl": 104,
-	"./sl.js": 104,
-	"./sq": 105,
-	"./sq.js": 105,
-	"./sr": 106,
-	"./sr-cyrl": 107,
-	"./sr-cyrl.js": 107,
-	"./sr.js": 106,
-	"./ss": 108,
-	"./ss.js": 108,
-	"./sv": 109,
-	"./sv.js": 109,
-	"./sw": 110,
-	"./sw.js": 110,
-	"./ta": 111,
-	"./ta.js": 111,
-	"./te": 112,
-	"./te.js": 112,
-	"./tet": 113,
-	"./tet.js": 113,
-	"./th": 114,
-	"./th.js": 114,
-	"./tl-ph": 115,
-	"./tl-ph.js": 115,
-	"./tlh": 116,
-	"./tlh.js": 116,
-	"./tr": 117,
-	"./tr.js": 117,
-	"./tzl": 118,
-	"./tzl.js": 118,
-	"./tzm": 119,
-	"./tzm-latn": 120,
-	"./tzm-latn.js": 120,
-	"./tzm.js": 119,
-	"./uk": 121,
-	"./uk.js": 121,
-	"./ur": 122,
-	"./ur.js": 122,
-	"./uz": 123,
-	"./uz-latn": 124,
-	"./uz-latn.js": 124,
-	"./uz.js": 123,
-	"./vi": 125,
-	"./vi.js": 125,
-	"./x-pseudo": 126,
-	"./x-pseudo.js": 126,
-	"./yo": 127,
-	"./yo.js": 127,
-	"./zh-cn": 128,
-	"./zh-cn.js": 128,
-	"./zh-hk": 129,
-	"./zh-hk.js": 129,
-	"./zh-tw": 130,
-	"./zh-tw.js": 130
+	"./af": 14,
+	"./af.js": 14,
+	"./ar": 15,
+	"./ar-dz": 16,
+	"./ar-dz.js": 16,
+	"./ar-kw": 17,
+	"./ar-kw.js": 17,
+	"./ar-ly": 18,
+	"./ar-ly.js": 18,
+	"./ar-ma": 19,
+	"./ar-ma.js": 19,
+	"./ar-sa": 20,
+	"./ar-sa.js": 20,
+	"./ar-tn": 21,
+	"./ar-tn.js": 21,
+	"./ar.js": 15,
+	"./az": 22,
+	"./az.js": 22,
+	"./be": 23,
+	"./be.js": 23,
+	"./bg": 24,
+	"./bg.js": 24,
+	"./bn": 25,
+	"./bn.js": 25,
+	"./bo": 26,
+	"./bo.js": 26,
+	"./br": 27,
+	"./br.js": 27,
+	"./bs": 28,
+	"./bs.js": 28,
+	"./ca": 29,
+	"./ca.js": 29,
+	"./cs": 30,
+	"./cs.js": 30,
+	"./cv": 31,
+	"./cv.js": 31,
+	"./cy": 32,
+	"./cy.js": 32,
+	"./da": 33,
+	"./da.js": 33,
+	"./de": 34,
+	"./de-at": 35,
+	"./de-at.js": 35,
+	"./de-ch": 36,
+	"./de-ch.js": 36,
+	"./de.js": 34,
+	"./dv": 37,
+	"./dv.js": 37,
+	"./el": 38,
+	"./el.js": 38,
+	"./en-au": 39,
+	"./en-au.js": 39,
+	"./en-ca": 40,
+	"./en-ca.js": 40,
+	"./en-gb": 41,
+	"./en-gb.js": 41,
+	"./en-ie": 42,
+	"./en-ie.js": 42,
+	"./en-nz": 43,
+	"./en-nz.js": 43,
+	"./eo": 44,
+	"./eo.js": 44,
+	"./es": 45,
+	"./es-do": 46,
+	"./es-do.js": 46,
+	"./es.js": 45,
+	"./et": 47,
+	"./et.js": 47,
+	"./eu": 48,
+	"./eu.js": 48,
+	"./fa": 49,
+	"./fa.js": 49,
+	"./fi": 50,
+	"./fi.js": 50,
+	"./fo": 51,
+	"./fo.js": 51,
+	"./fr": 52,
+	"./fr-ca": 53,
+	"./fr-ca.js": 53,
+	"./fr-ch": 54,
+	"./fr-ch.js": 54,
+	"./fr.js": 52,
+	"./fy": 55,
+	"./fy.js": 55,
+	"./gd": 56,
+	"./gd.js": 56,
+	"./gl": 57,
+	"./gl.js": 57,
+	"./gom-latn": 58,
+	"./gom-latn.js": 58,
+	"./he": 59,
+	"./he.js": 59,
+	"./hi": 60,
+	"./hi.js": 60,
+	"./hr": 61,
+	"./hr.js": 61,
+	"./hu": 62,
+	"./hu.js": 62,
+	"./hy-am": 63,
+	"./hy-am.js": 63,
+	"./id": 64,
+	"./id.js": 64,
+	"./is": 65,
+	"./is.js": 65,
+	"./it": 66,
+	"./it.js": 66,
+	"./ja": 67,
+	"./ja.js": 67,
+	"./jv": 68,
+	"./jv.js": 68,
+	"./ka": 69,
+	"./ka.js": 69,
+	"./kk": 70,
+	"./kk.js": 70,
+	"./km": 71,
+	"./km.js": 71,
+	"./kn": 72,
+	"./kn.js": 72,
+	"./ko": 73,
+	"./ko.js": 73,
+	"./ky": 74,
+	"./ky.js": 74,
+	"./lb": 75,
+	"./lb.js": 75,
+	"./lo": 76,
+	"./lo.js": 76,
+	"./lt": 77,
+	"./lt.js": 77,
+	"./lv": 78,
+	"./lv.js": 78,
+	"./me": 79,
+	"./me.js": 79,
+	"./mi": 80,
+	"./mi.js": 80,
+	"./mk": 81,
+	"./mk.js": 81,
+	"./ml": 82,
+	"./ml.js": 82,
+	"./mr": 83,
+	"./mr.js": 83,
+	"./ms": 84,
+	"./ms-my": 85,
+	"./ms-my.js": 85,
+	"./ms.js": 84,
+	"./my": 86,
+	"./my.js": 86,
+	"./nb": 87,
+	"./nb.js": 87,
+	"./ne": 88,
+	"./ne.js": 88,
+	"./nl": 89,
+	"./nl-be": 90,
+	"./nl-be.js": 90,
+	"./nl.js": 89,
+	"./nn": 91,
+	"./nn.js": 91,
+	"./pa-in": 92,
+	"./pa-in.js": 92,
+	"./pl": 93,
+	"./pl.js": 93,
+	"./pt": 94,
+	"./pt-br": 95,
+	"./pt-br.js": 95,
+	"./pt.js": 94,
+	"./ro": 96,
+	"./ro.js": 96,
+	"./ru": 97,
+	"./ru.js": 97,
+	"./sd": 98,
+	"./sd.js": 98,
+	"./se": 99,
+	"./se.js": 99,
+	"./si": 100,
+	"./si.js": 100,
+	"./sk": 101,
+	"./sk.js": 101,
+	"./sl": 102,
+	"./sl.js": 102,
+	"./sq": 103,
+	"./sq.js": 103,
+	"./sr": 104,
+	"./sr-cyrl": 105,
+	"./sr-cyrl.js": 105,
+	"./sr.js": 104,
+	"./ss": 106,
+	"./ss.js": 106,
+	"./sv": 107,
+	"./sv.js": 107,
+	"./sw": 108,
+	"./sw.js": 108,
+	"./ta": 109,
+	"./ta.js": 109,
+	"./te": 110,
+	"./te.js": 110,
+	"./tet": 111,
+	"./tet.js": 111,
+	"./th": 112,
+	"./th.js": 112,
+	"./tl-ph": 113,
+	"./tl-ph.js": 113,
+	"./tlh": 114,
+	"./tlh.js": 114,
+	"./tr": 115,
+	"./tr.js": 115,
+	"./tzl": 116,
+	"./tzl.js": 116,
+	"./tzm": 117,
+	"./tzm-latn": 118,
+	"./tzm-latn.js": 118,
+	"./tzm.js": 117,
+	"./uk": 119,
+	"./uk.js": 119,
+	"./ur": 120,
+	"./ur.js": 120,
+	"./uz": 121,
+	"./uz-latn": 122,
+	"./uz-latn.js": 122,
+	"./uz.js": 121,
+	"./vi": 123,
+	"./vi.js": 123,
+	"./x-pseudo": 124,
+	"./x-pseudo.js": 124,
+	"./yo": 125,
+	"./yo.js": 125,
+	"./zh-cn": 126,
+	"./zh-cn.js": 126,
+	"./zh-hk": 127,
+	"./zh-hk.js": 127,
+	"./zh-tw": 128,
+	"./zh-tw.js": 128
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -43696,8 +43713,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 144 */,
-/* 145 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -43725,7 +43741,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(146), __webpack_require__(132), __webpack_require__(8), __webpack_require__(152), __webpack_require__(136), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(134), __webpack_require__(154), __webpack_require__(11), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(145), __webpack_require__(130), __webpack_require__(7), __webpack_require__(151), __webpack_require__(134), __webpack_require__(9), __webpack_require__(135), __webpack_require__(8), __webpack_require__(132), __webpack_require__(153), __webpack_require__(137), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -44597,7 +44613,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 146 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -44631,7 +44647,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(147), __webpack_require__(148), __webpack_require__(7), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(146), __webpack_require__(147), __webpack_require__(9), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -44982,7 +44998,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 });
 
 /***/ }),
-/* 147 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45278,7 +45294,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 148 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45307,7 +45323,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(135), __webpack_require__(149), __webpack_require__(151), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(133), __webpack_require__(148), __webpack_require__(150), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -45564,7 +45580,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 149 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45588,7 +45604,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(150), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(149), __webpack_require__(2)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -45645,7 +45661,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 150 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45675,7 +45691,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 151 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45699,7 +45715,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(135)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(133)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -45746,7 +45762,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 152 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -45774,7 +45790,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(153), __webpack_require__(133), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(152), __webpack_require__(131), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -46918,7 +46934,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 153 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46972,7 +46988,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 154 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -46996,7 +47012,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(136)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(134)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47017,7 +47033,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 155 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47812,11 +47828,11 @@ function initContextMenuLib() {
 exports.initContextMenuLib = initContextMenuLib;
 
 /***/ }),
+/* 155 */,
 /* 156 */,
 /* 157 */,
 /* 158 */,
-/* 159 */,
-/* 160 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -47828,35 +47844,35 @@ var _jquery = __webpack_require__(1);
 
 var _jquery2 = _interopRequireDefault(_jquery);
 
-__webpack_require__(161);
+__webpack_require__(160);
 
 var _utils = __webpack_require__(5);
 
 var _debug = __webpack_require__(138);
 
-var _textfieldlisteners = __webpack_require__(14);
+var _textfieldlisteners = __webpack_require__(12);
 
 var _serverresponse = __webpack_require__(6);
 
 var _userfeedback = __webpack_require__(4);
 
-var _override = __webpack_require__(137);
+var _override = __webpack_require__(136);
 
-var _uifunc = __webpack_require__(13);
+var _uifunc = __webpack_require__(10);
 
-var _useradmin = __webpack_require__(163);
+var _useradmin = __webpack_require__(162);
 
 var _useradmin2 = _interopRequireDefault(_useradmin);
 
-var _settingsadmin = __webpack_require__(164);
+var _settingsadmin = __webpack_require__(163);
 
 var _settingsadmin2 = _interopRequireDefault(_settingsadmin);
 
-var _reservationadmin = __webpack_require__(165);
+var _reservationadmin = __webpack_require__(164);
 
 var _reservationadmin2 = _interopRequireDefault(_reservationadmin);
 
-var _debugadmin = __webpack_require__(166);
+var _debugadmin = __webpack_require__(165);
 
 var _debugadmin2 = _interopRequireDefault(_debugadmin);
 
@@ -49972,7 +49988,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 })(jQuery);
 
 /***/ }),
-/* 161 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50000,7 +50016,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(162), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(161), __webpack_require__(9), __webpack_require__(135), __webpack_require__(8), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -50644,7 +50660,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 162 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -50672,7 +50688,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(10), __webpack_require__(9), __webpack_require__(11), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(9), __webpack_require__(135), __webpack_require__(8), __webpack_require__(137), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -51270,7 +51286,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 163 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51292,7 +51308,7 @@ var _userfeedback = __webpack_require__(4);
 
 var _utils = __webpack_require__(5);
 
-var _uifunc = __webpack_require__(13);
+var _uifunc = __webpack_require__(10);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -51450,7 +51466,7 @@ var UserAdmin = function () {
 exports.default = UserAdmin;
 
 /***/ }),
-/* 164 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51468,13 +51484,13 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(5);
 
-var _textfieldlisteners = __webpack_require__(14);
+var _textfieldlisteners = __webpack_require__(12);
 
 var _serverresponse = __webpack_require__(6);
 
 var _userfeedback = __webpack_require__(4);
 
-var _cal = __webpack_require__(15);
+var _cal = __webpack_require__(13);
 
 var _cal2 = _interopRequireDefault(_cal);
 
@@ -51775,7 +51791,7 @@ var SettingsAdmin = function () {
 exports.default = SettingsAdmin;
 
 /***/ }),
-/* 165 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -51793,15 +51809,15 @@ var _jquery2 = _interopRequireDefault(_jquery);
 
 var _utils = __webpack_require__(5);
 
-var _textfieldlisteners = __webpack_require__(14);
+var _textfieldlisteners = __webpack_require__(12);
 
 var _serverresponse = __webpack_require__(6);
 
 var _userfeedback = __webpack_require__(4);
 
-var _uifunc = __webpack_require__(13);
+var _uifunc = __webpack_require__(10);
 
-var _cal = __webpack_require__(15);
+var _cal = __webpack_require__(13);
 
 var _cal2 = _interopRequireDefault(_cal);
 
@@ -51814,6 +51830,7 @@ var ReservationAdmin = function () {
     _classCallCheck(this, ReservationAdmin);
 
     this.facility = (0, _jquery2.default)('.iam-reservation-wrap').data('facility');
+    this.facility.Schedule = JSON.parse(this.facility.Schedule);
     console.log(this.facility);
 
     this.initListItems();
@@ -51835,6 +51852,11 @@ var ReservationAdmin = function () {
         this.calendar.update();
       }
       (0, _userfeedback.submissionEnd)();
+    }
+  }, {
+    key: 'getFacilityInfo',
+    value: function getFacilityInfo(key) {
+      return this.facility.Schedule[key];
     }
   }, {
     key: 'initResCalSubmitListener',
@@ -51939,7 +51961,7 @@ var ReservationAdmin = function () {
 exports.default = ReservationAdmin;
 
 /***/ }),
-/* 166 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

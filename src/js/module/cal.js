@@ -109,14 +109,12 @@ export default class Cal {
 
   initCalFor (facing) {
     if (facing=='public') {
-      this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+      this.initBusinessHours();
       this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
       this.initDraggable();
       this.initPubResCal(this.page.getFacilityInfo('type'));
     } else if (facing=='admin') {
-      this.initDraggable();
       this.initAdminCal(this.page.cal);
-
     }
   }
 
@@ -202,12 +200,19 @@ export default class Cal {
 
   }
 
+  initBusinessHours () {
+    this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+  }
+
   initAdminCal (cal) {
     this.resetEvents();
     this.removePlaceholder();
 
-    if (this.page.cal=='ResAdmin')
+    if (this.page.cal=='adminRes') {
       this.updateResListSource();
+    } else { //irreg
+      this.initDraggable();
+    }
 
     let neutralArgs = {
       editable: false, //new events will be made editable else where
@@ -385,12 +390,16 @@ export default class Cal {
       },
       eventDrop: function (event, d ,revert) {
         that.eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
+        if (that.page.facility.Schedule.type=='appointment')
+          that.warnIfOutOfBounds(event);
         if (that.page.facility.Schedule.type=='rental')
           that.adminCalEventDrop(event, d ,revert);
       },
       eventResize: function (event, d ,revert, jsevent) {
         that.eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
         that.currenRentalPeriod = event.period;
+        if (that.page.facility.Schedule.type=='appointment')
+          that.warnIfOutOfBounds(event);
         if (that.page.facility.Schedule.type=='rental')
           that.adminCalEventResize(event, d ,revert, jsevent);
       },
@@ -414,6 +423,13 @@ export default class Cal {
         },
       events: that.lastReservationResource
     }
+
+    if (that.page.facility.Schedule.type=='appointment') {
+      if (typeof this.businessHoursConverted=='undefined')
+        this.initBusinessHours();
+      that.calArgs.adminRes['businessHours'] = that.businessHoursConverted;
+    }
+    console.log(that.calArgs.adminRes)
 
     this.calArgs['irregular'] = {
       header: {

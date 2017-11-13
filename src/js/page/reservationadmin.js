@@ -13,6 +13,7 @@ export default class ReservationAdmin {
 
   constructor () {
     this.facility = $('.iam-reservation-wrap').data('facility');
+    this.facility.Schedule = JSON.parse(this.facility.Schedule);
     console.log(this.facility)
 
     this.initListItems();
@@ -32,6 +33,10 @@ export default class ReservationAdmin {
       this.calendar.update();
     }
     submissionEnd();
+  }
+
+  getFacilityInfo (key) {
+    return this.facility.Schedule[key];
   }
 
 	initResCalSubmitListener () {
