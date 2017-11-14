@@ -15768,6 +15768,7 @@ var Cal = function () {
 
     this.page = page;
     this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+    if (this.page.cal == 'adminRes') this.updateResListSource();
     this.setCalArgs();
     this.initCalFor(facing);
   }
@@ -16164,6 +16165,8 @@ var Cal = function () {
         eventAfterAllRender: function eventAfterAllRender() {
           that.initContextMenu();
           that.initStatusHideListeners();
+          console.log(that.lastReservationResource);
+          console.log((0, _jquery2.default)(that.calID).fullCalendar('clientEvents'));
           (0, _userfeedback.submissionEnd)();
         },
         eventDrop: function eventDrop(event, d, revert) {

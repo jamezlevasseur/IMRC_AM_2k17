@@ -12,6 +12,8 @@ export default class Cal {
   constructor(page, facing) {
     this.page = page;
     this.daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
+    if (this.page.cal=='adminRes')
+      this.updateResListSource();
     this.setCalArgs();
     this.initCalFor(facing)
   }
@@ -394,6 +396,8 @@ export default class Cal {
       eventAfterAllRender: function () {
          that.initContextMenu();
          that.initStatusHideListeners();
+         console.log(that.lastReservationResource);
+         console.log( $(that.calID).fullCalendar('clientEvents') );
          submissionEnd();
       },
       eventDrop: function (event, d ,revert) {
