@@ -29,6 +29,7 @@ export default class ReservationAdmin {
       this.cal = 'adminRes';
       this.calendar = new Cal(this,'admin')
     } else {
+      console.log('update')
       this.calendar.update();
     }
     submissionEnd();
@@ -110,10 +111,7 @@ export default class ReservationAdmin {
           data: {action: 'load_all_events_admin_res_cal', facility: that.facility.Name},
           success: function (data) {
             let newData = handleServerResponse(data);
-            for (let i in newData) {
-              let c = newData[i];
-              $('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
-            }
+            that.updateEquipmentEvents(newData);
             that.didLoadAll = true;
             that.calRender();
           },
@@ -125,8 +123,10 @@ export default class ReservationAdmin {
   }
 
   updateEquipmentEvents (newData) {
-    for (var i in newData) {
-      var c = newData[i];
+    console.log(newData)
+    for (let i in newData) {
+      let c = newData[i];
+      console.log(i, c)
       $('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
     }
   }

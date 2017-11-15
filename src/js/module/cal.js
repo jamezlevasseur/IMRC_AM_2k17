@@ -12,42 +12,44 @@ export default class Cal {
   constructor(page, facing) {
     this.page = page;
     this.daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
+    this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
     if (this.page.cal=='adminRes')
       this.updateResListSource();
     this.setCalArgs();
-    this.initCalFor(facing)
+    this.initCalFor(facing);
+
   }
 
   adminCalEventDrop (event, d ,revert) {
-		if (eventFallsOnWeekend(event)) {
+		if (this.eventFallsOnWeekend(event)) {
 			overridePrompt({
 				title: 'Confirm Override',
 				body: this.ERinvalidTimePrompt,
 				cancel: () => { revert(); },
-				override: () => { updateEventsModified(event); }
+				override: () => { this.updateEventsModified(event); }
 			});
 		} else {
-			updateEventsModified(event);
+			this.updateEventsModified(event);
 		}
 	}
 
 	adminCalEventResize (event, d ,revert, jsevent) {
-		if (eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
+		if (this.eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
 			overridePrompt({
 				title: 'Confirm Override',
 				body: this.ERinvalidTimePrompt,
 				cancel: () => {
 					revert();
 				},
-				override: () => { updateEventsModified(event); }
+				override: () => { this.updateEventsModified(event); }
 			});
 		} else {
-			updateEventsModified(event);
+			this.updateEventsModified(event);
 		}
 	}
 
 	adminCalEventReceive (e) {
-		if (eventFallsOnWeekend(e)) {
+		if (this.eventFallsOnWeekend(e)) {
 			$('.iam-res-cal').fullCalendar('removeEvents',e._id);
 			return false;
 		}
@@ -112,7 +114,6 @@ export default class Cal {
   initCalFor (facing) {
     if (facing=='public') {
       this.initBusinessHours();
-      this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
       this.initDraggable();
       this.initPubResCal(this.page.getFacilityInfo('type'));
     } else if (facing=='admin') {
@@ -532,7 +533,7 @@ export default class Cal {
   }
 
   update () {
-    $('.iam-res-cal').fullCalendar( 'removeEventSource', this.lastReservationResource);
+    $('.iam-res-cal').fullCalendar( 'removeEventSources' );
     this.updateResListSource();
     $('.iam-res-cal').fullCalendar( 'addEventSource', this.lastReservationResource);
   }
@@ -544,6 +545,11 @@ export default class Cal {
       newEventResource = newEventResource.concat( $(this).data('calevents') );
     });
     this.lastReservationResource = newEventResource;
+  }
+
+  updateEventsModified (event) {
+    if (typeof event.nid != 'undefined')
+      this.eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
   }
 
   warnIfOutOfBounds (e) {

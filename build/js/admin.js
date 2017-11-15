@@ -15768,6 +15768,7 @@ var Cal = function () {
 
     this.page = page;
     this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+    this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
     if (this.page.cal == 'adminRes') this.updateResListSource();
     this.setCalArgs();
     this.initCalFor(facing);
@@ -15776,7 +15777,9 @@ var Cal = function () {
   _createClass(Cal, [{
     key: 'adminCalEventDrop',
     value: function adminCalEventDrop(event, d, revert) {
-      if (eventFallsOnWeekend(event)) {
+      var _this = this;
+
+      if (this.eventFallsOnWeekend(event)) {
         (0, _override.overridePrompt)({
           title: 'Confirm Override',
           body: this.ERinvalidTimePrompt,
@@ -15784,17 +15787,19 @@ var Cal = function () {
             revert();
           },
           override: function override() {
-            updateEventsModified(event);
+            _this.updateEventsModified(event);
           }
         });
       } else {
-        updateEventsModified(event);
+        this.updateEventsModified(event);
       }
     }
   }, {
     key: 'adminCalEventResize',
     value: function adminCalEventResize(event, d, revert, jsevent) {
-      if (eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
+      var _this2 = this;
+
+      if (this.eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
         (0, _override.overridePrompt)({
           title: 'Confirm Override',
           body: this.ERinvalidTimePrompt,
@@ -15802,17 +15807,17 @@ var Cal = function () {
             revert();
           },
           override: function override() {
-            updateEventsModified(event);
+            _this2.updateEventsModified(event);
           }
         });
       } else {
-        updateEventsModified(event);
+        this.updateEventsModified(event);
       }
     }
   }, {
     key: 'adminCalEventReceive',
     value: function adminCalEventReceive(e) {
-      if (eventFallsOnWeekend(e)) {
+      if (this.eventFallsOnWeekend(e)) {
         (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
         return false;
       }
@@ -15878,7 +15883,6 @@ var Cal = function () {
     value: function initCalFor(facing) {
       if (facing == 'public') {
         this.initBusinessHours();
-        this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
         this.initDraggable();
         this.initPubResCal(this.page.getFacilityInfo('type'));
       } else if (facing == 'admin') {
@@ -15975,7 +15979,7 @@ var Cal = function () {
   }, {
     key: 'initAdminCal',
     value: function initAdminCal(cal) {
-      var _this = this;
+      var _this3 = this;
 
       this.resetEvents();
       this.removePlaceholder();
@@ -16010,7 +16014,7 @@ var Cal = function () {
       (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
       (0, _userfeedback.submissionStart)();
       setTimeout(function () {
-        _this.initContextMenu(_this.page.cal);(0, _userfeedback.submissionEnd)();
+        _this3.initContextMenu(_this3.page.cal);(0, _userfeedback.submissionEnd)();
       }, 1000);
     }
   }, {
@@ -16300,7 +16304,7 @@ var Cal = function () {
   }, {
     key: 'update',
     value: function update() {
-      (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEventSource', this.lastReservationResource);
+      (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEventSources');
       this.updateResListSource();
       (0, _jquery2.default)('.iam-res-cal').fullCalendar('addEventSource', this.lastReservationResource);
     }
@@ -16313,6 +16317,11 @@ var Cal = function () {
         newEventResource = newEventResource.concat((0, _jquery2.default)(this).data('calevents'));
       });
       this.lastReservationResource = newEventResource;
+    }
+  }, {
+    key: 'updateEventsModified',
+    value: function updateEventsModified(event) {
+      if (typeof event.nid != 'undefined') this.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
     }
   }, {
     key: 'warnIfOutOfBounds',
@@ -51852,6 +51861,7 @@ var ReservationAdmin = function () {
         this.cal = 'adminRes';
         this.calendar = new _cal2.default(this, 'admin');
       } else {
+        console.log('update');
         this.calendar.update();
       }
       (0, _userfeedback.submissionEnd)();
@@ -51933,10 +51943,7 @@ var ReservationAdmin = function () {
           data: { action: 'load_all_events_admin_res_cal', facility: that.facility.Name },
           success: function success(data) {
             var newData = (0, _serverresponse.handleServerResponse)(data);
-            for (var i in newData) {
-              var c = newData[i];
-              (0, _jquery2.default)('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
-            }
+            that.updateEquipmentEvents(newData);
             that.didLoadAll = true;
             that.calRender();
           },
@@ -51949,8 +51956,10 @@ var ReservationAdmin = function () {
   }, {
     key: 'updateEquipmentEvents',
     value: function updateEquipmentEvents(newData) {
+      console.log(newData);
       for (var i in newData) {
         var c = newData[i];
+        console.log(i, c);
         (0, _jquery2.default)('.iam-reservations-equipment-list-item[data-nid=' + i + ']').data('calevents', c);
       }
     }
