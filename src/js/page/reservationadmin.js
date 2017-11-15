@@ -29,7 +29,6 @@ export default class ReservationAdmin {
       this.cal = 'adminRes';
       this.calendar = new Cal(this,'admin')
     } else {
-      console.log('update')
       this.calendar.update();
     }
     submissionEnd();
@@ -123,10 +122,8 @@ export default class ReservationAdmin {
   }
 
   updateEquipmentEvents (newData) {
-    console.log(newData)
     for (let i in newData) {
       let c = newData[i];
-      console.log(i, c)
       $('.iam-reservations-equipment-list-item[data-nid='+i+']').data('calevents', c);
     }
   }

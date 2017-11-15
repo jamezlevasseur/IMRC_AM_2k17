@@ -16169,8 +16169,6 @@ var Cal = function () {
         eventAfterAllRender: function eventAfterAllRender() {
           that.initContextMenu();
           that.initStatusHideListeners();
-          console.log(that.lastReservationResource);
-          console.log((0, _jquery2.default)(that.calID).fullCalendar('clientEvents'));
           (0, _userfeedback.submissionEnd)();
         },
         eventDrop: function eventDrop(event, d, revert) {
@@ -16282,7 +16280,7 @@ var Cal = function () {
           }
         },
         eventResize: function eventResize(e, d, revert) {
-          if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod) + 1)) {
+          if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod))) {
             alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.');
             revert();
           }

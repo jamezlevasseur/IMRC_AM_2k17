@@ -397,8 +397,6 @@ export default class Cal {
       eventAfterAllRender: function () {
          that.initContextMenu();
          that.initStatusHideListeners();
-         console.log(that.lastReservationResource);
-         console.log( $(that.calID).fullCalendar('clientEvents') );
          submissionEnd();
       },
       eventDrop: function (event, d ,revert) {
@@ -514,7 +512,7 @@ export default class Cal {
         }
       },
       eventResize: function (e, d, revert) {
-        if (that.eventIsLongerThan(e, (parseInt(that.page.rentalPeriod) + 1))) {
+        if (that.eventIsLongerThan(e, (parseInt(that.page.rentalPeriod)))) {
           alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.')
           revert();
         }
