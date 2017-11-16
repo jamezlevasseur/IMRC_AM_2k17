@@ -140,7 +140,7 @@ class IAM_Admin_Forms
 		foreach ($rental_types as $row) {
 			$r = json_decode($row->Meta_Value);
 			$selected = $chosen==$r->id ? 'selected' : '';
-			$rental_list.='<option value="'.$r->id.'" '.$selected.'>'.$r->label.' ('.$r->duration.')</option>';
+			$rental_list.='<option value="'.$r->id.'" '.$selected.'>'.$r->label.' ('.($r->duration-1).')</option>';
 		}
 		$rental_list = '<select data-onload-duration="'.get_rental_period($chosen).'" '.$rental_list;
 		$rental_list.='</select>';

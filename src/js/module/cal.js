@@ -513,7 +513,7 @@ export default class Cal {
       },
       eventResize: function (e, d, revert) {
         if (that.eventIsLongerThan(e, (parseInt(that.page.rentalPeriod)))) {
-          alert('The maximum rental time for this equipment is ' + that.page.rentalPeriod + ' days.')
+          alert('The maximum rental time for this equipment is ' + (that.page.rentalPeriod-1) + ' days.')
           revert();
         }
       },
