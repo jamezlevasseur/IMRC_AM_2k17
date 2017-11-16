@@ -48084,7 +48084,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				un.empty();
 				un.text(checkout_mats[selectedMat]['unit_name']);
 				ppu.empty();
-				ppu.text(checkout_mats[selectedMat]['price_per_unit']);
+				ppu.text(checkout_mats[selectedMat]['price_per_unit'] - checkout_mats[selectedMat]['price_per_unit'] * currentDiscount);
 				d.empty();
 				d.text(currentDiscount * 100 + '% ' + currentAccountType + ' discount');
 				bp.empty();
