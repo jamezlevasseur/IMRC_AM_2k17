@@ -33,24 +33,34 @@ class Checkout_Public
         $rightnow = date('Y-m-d H:i:s');
         $ni_id = IAM_Sec::textfield_cleaner($_POST['nid']);
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Checked_Out=%s, Status=%d WHERE NI_ID=%s",$rightnow,COMPLETED,$ni_id));
-        $reservation = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$ni_id));
-        $reservation = $reservation[0];
+
+        $reservation = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$ni_id))[0];
+
         $charge_ni_id = md5(uniqid());
         $equip_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$reservation->Equipment_ID))[0]->Name;
         $username = $wpdb->get_results($wpdb->prepare("SELECT WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$reservation->IAM_ID))[0]->WP_Username;
-        $mat_used = $_POST['mat'];
-        $amount = $_POST['amount'];
-        $total = $_POST['total'];
-        if (!is_numeric($total)) {
-            iam_throw_error(INVALID_INPUT_EXCEPTION);
-        }
-        if ($_POST['multiple_mats']) {
-            $charge_description = $username.' used '.$equip_name.' with multiple materials: ';
-            for ($i=0; $i < count($mat_used); $i++) {
-                $charge_description .= ' material #'.($i+1).' - '.$mat_used[$i]['name'].' for '.$amount[$i].' '.$mat_used[$i]['unit_name'].' at '.$mat_used[$i]['price_per_unit'].' per '.$mat_used[$i]['unit_name'].'.';
-            }
+
+        $mat_used = 0;
+        $amount = 0;
+        $total = 0;
+
+        if ($_POST['no_mats']==true) {
+          $charge_description = $username.' used '.$equip_name.' with no materials because none were required.';
         } else {
-            $charge_description = $username.' used '.$equip_name.' for '.$amount.' '.$mat_used['unit_name'].'. Item used: '.$mat_used['name'].' at '.$mat_used['price_per_unit'].' per '.$mat_used['unit_name'].'.';
+          $mat_used = $_POST['mat'];
+          $amount = $_POST['amount'];
+          $total = $_POST['total'];
+          if (!is_numeric($total)) {
+            iam_throw_error(INVALID_INPUT_EXCEPTION);
+          }
+          if ($_POST['multiple_mats']===true) {
+              $charge_description = $username.' used '.$equip_name.' with multiple materials: ';
+              for ($i=0; $i < count($mat_used); $i++) {
+                  $charge_description .= ' material #'.($i+1).' - '.$mat_used[$i]['name'].' for '.$amount[$i].' '.$mat_used[$i]['unit_name'].' at '.$mat_used[$i]['price_per_unit'].' per '.$mat_used[$i]['unit_name'].'.';
+              }
+          } else {
+              $charge_description = $username.' used '.$equip_name.' for '.$amount.' '.$mat_used['unit_name'].'. Item used: '.$mat_used['name'].' at '.$mat_used['price_per_unit'].' per '.$mat_used['unit_name'].'.';
+          }
         }
 
         $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Amount) VALUES (%s,%d,%s,%s,%d,%s,%f)",$charge_ni_id,$reservation->Equipment_ID,$username,$charge_description,0,$rightnow,$total));
@@ -109,11 +119,13 @@ class Checkout_Public
             $possible_mats[$mat_results[0]->Name] = ['price_per_unit'=>$mat_results[0]->Price_Per_Unit, 'unit_name'=>$mat_results[0]->Unit_Name, 'base_price'=>$mat_results[0]->Base_Price];
         }
         $possible_mats_list = '<select class="iam-checkout-possible-mats">';
+        $has_mats = false;
         foreach ($possible_mats as $key => $val) {
             if ($key=='' || $key==null) {
                 continue;
             }
             $possible_mats_list.='<option value="'.iam_output($key).'">'.iam_output($key).'</option>';
+            $has_mats = true;
         }
         $possible_mats_list.='</select>';
 
@@ -127,7 +139,10 @@ class Checkout_Public
                 <div>
                     <label class="iam-checkout-name"> <b>Name: </b> '.iam_output($username).' </label>
                     <label class="iam-checkout-equipment"> <b>Equipment: </b> '.iam_output($equip_name).' </label>
-                </div>
+                </div>';
+
+        if ($has_mats) {
+          $html.='
                 <div>
                     <label class="iam-checkout-balance"> <b>Available Balance: </b> <span class="iam-checkout-bal">'.$balanceHTML.' </span></label>
                 </div>
@@ -139,11 +154,15 @@ class Checkout_Public
                     <label><b>Min Price:</b> <span class="iam-checkout-base-price"></span></label>
                     <input type="number" class="iam-checkout-amount"> <span><span class="iam-checkout-unit-name"></span> x $<span class="iam-checkout-price-per-unit"></span>/<span class="iam-checkout-unit-name"></span> = <b>Total: </b><span class="iam-checkout-total"></span></span>
                 </div>
-
                 <div>
-                    <button type="button" class="iam-checkout-add-mat iam-green-button">Add</button>
-                    <button type="button" class="iam-checkout-del-mat iam-red-button">Delete</button>
-                    <br />
+                  <button type="button" class="iam-checkout-add-mat iam-green-button">Add</button>
+                  <button type="button" class="iam-checkout-del-mat iam-red-button">Delete</button>
+                </div>';
+        } else {
+          $html.='<div id="no-mats"><h3>No materials required. Just submit and you\'re done!</h3></div>';
+        }
+        $html.='
+                <div>
                     <button type="button" class="iam-checkout-submit">SUBMIT CHARGE</button>
                 </div>
             </div>

@@ -228,7 +228,7 @@ import ReservationPublic from '../page/reservationpublic';
 				un.empty();
 				un.text(checkout_mats[selectedMat]['unit_name']);
 				ppu.empty();
-				ppu.text(checkout_mats[selectedMat]['price_per_unit']);
+				ppu.text(checkout_mats[selectedMat]['price_per_unit']-checkout_mats[selectedMat]['price_per_unit']*currentDiscount);
 				d.empty();
 				d.text((currentDiscount*100)+'% '+currentAccountType+' discount');
 				bp.empty();
@@ -391,6 +391,24 @@ import ReservationPublic from '../page/reservationpublic';
 		}
 		var initCheckoutSubmitListener = function () {
 			$('.iam-checkout-submit').click(function(event) {
+				if ($('#no-mats').length>0) {
+					$.ajax({
+						url: ajaxurl,
+						type: 'POST',
+						data: {'action':'checkout_submit','nid':checkoutNid,'no_mats':true},
+						success: function (data) {
+							handleServerResponse(data);
+							$('body').removeClass('iam-no-select');
+							$('.iam-popup').remove();
+							$(checkoutRow).remove();
+							window.location.reload();
+						},
+						error: function (data) {
+							handleServerError(data, new Error());
+						}
+					});
+					return;
+				}
 				if ($('.iam-checkout-amount').val().length<1) {
 					alert("Please enter an amount.");
 					return;
@@ -676,7 +694,7 @@ import ReservationPublic from '../page/reservationpublic';
 		if ($('#iam-res').length>0) { //reservation page
 
 			var resPage = new ReservationPublic();
-			$('[data-toggle="tooltip"]').tooltip(); 
+			$('[data-toggle="tooltip"]').tooltip();
 
 		} else if ($('#signupform').length>0) {
 			removeNav();
