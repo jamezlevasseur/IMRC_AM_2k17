@@ -38,7 +38,10 @@ class Checkout_Public
 
         $charge_ni_id = md5(uniqid());
         $equip_name = $wpdb->get_results($wpdb->prepare("SELECT Name FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$reservation->Equipment_ID))[0]->Name;
-        $username = $wpdb->get_results($wpdb->prepare("SELECT WP_Username FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$reservation->IAM_ID))[0]->WP_Username;
+        $user_info = $wpdb->get_results($wpdb->prepare("SELECT WP_Username,Account_Type FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$reservation->IAM_ID))[0];
+
+        $username = $user_info->WP_Username;
+        $account_type = ezget("SELECT * FROM ".IAM_ACCOUNT_TYPES_TABLE." WHERE Account_Type_ID=%d",$user_info->Account_Type)[0];
 
         $mat_used = 0;
         $amount = 0;
@@ -53,13 +56,15 @@ class Checkout_Public
           if (!is_numeric($total)) {
             iam_throw_error(INVALID_INPUT_EXCEPTION);
           }
+          $discount_text = ' With a '.$account_type->Name.' discount of '.$discount.'%.';
           if ($_POST['multiple_mats']===true) {
               $charge_description = $username.' used '.$equip_name.' with multiple materials: ';
               for ($i=0; $i < count($mat_used); $i++) {
-                  $charge_description .= ' material #'.($i+1).' - '.$mat_used[$i]['name'].' for '.$amount[$i].' '.$mat_used[$i]['unit_name'].' at '.$mat_used[$i]['price_per_unit'].' per '.$mat_used[$i]['unit_name'].'.';
+                  $charge_description .= ' material #'.($i+1).' - '.$mat_used[$i]['name'].' for '.$amount[$i].' '.$mat_used[$i]['unit_name'].' at '.$mat_used[$i]['price_per_unit'].' per '.$mat_used[$i]['unit_name'].'. ';
               }
+              $charge_description.=$discount_text;
           } else {
-              $charge_description = $username.' used '.$equip_name.' for '.$amount.' '.$mat_used['unit_name'].'. Item used: '.$mat_used['name'].' at '.$mat_used['price_per_unit'].' per '.$mat_used['unit_name'].'.';
+              $charge_description = $username.' used '.$equip_name.' for '.$amount.' '.$mat_used['unit_name'].'. Item used: '.$mat_used['name'].' at '.$mat_used['price_per_unit'].' per '.$mat_used['unit_name'].'.'.$discount_text;
           }
         }
 
