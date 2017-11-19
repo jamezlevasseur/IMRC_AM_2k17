@@ -943,7 +943,10 @@ import DebugAdmin from '../page/debugadmin';
 						}
 
 						try {
-							if (eqLateFee>userBalances[$('.iam-er-user-emails').val()]) {
+							if (userBalances[$('.iam-er-user-emails').val()]=='permission-denied') {
+								alert('This user has no reservation privleges. They have been prohibited from renting equipment by an admin.');
+								return;
+							} else if (eqLateFee>userBalances[$('.iam-er-user-emails').val()]) {
 								alert('This user has less than the late fee amount of $'+eqLateFee+'. They will not be able to pay late fees if they keep the equipment late. User balance: $'+userBalances[$('.iam-er-user-emails').val()]);
 							}
 						} catch (error) {

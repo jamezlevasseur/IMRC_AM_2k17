@@ -124,6 +124,20 @@ function get_first_last_name($wpid)
 	return ['first'=>ucwords($u->first_name), 'last'=>ucwords($u->last_name)];
 }
 
+function has_privileges($WPID=null)
+{
+	if ($WPID===null){
+		$current_user = wp_get_current_user();
+  	get_currentuserinfo();
+  	$WPID = $current_user->ID;
+	}
+	$has_priv = get_user_meta($WPID,IAM_RESERVATIONS_PRIVILEGE_META);
+	if (count($has_priv)>0 && $has_priv!=false) {
+		return false;
+	}
+	return true;
+}
+
 function include_files_in($dir)
 {
 	$files = glob(iam_dir(). $dir . '/*.php');

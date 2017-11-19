@@ -61,7 +61,11 @@ class Admin_Content
 		foreach ($users as $row) {
 			$email = get_userdata($row->WP_ID)->user_email;
 			$emails[] = strtolower( $email );
-			$bal_dict[$email] = $row->Balance;
+			if (has_privileges($row->WP_ID)===false) {
+				$bal_dict[$email] = 'permission-denied';
+			} else {
+				$bal_dict[$email] = $row->Balance;
+			}
 		}
 		asort($emails);
 
