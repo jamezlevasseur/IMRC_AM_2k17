@@ -63,7 +63,7 @@ class Checkout_Public
           }
         }
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Amount) VALUES (%s,%d,%s,%s,%d,%s,%f)",$charge_ni_id,$reservation->Equipment_ID,$username,$charge_description,0,$rightnow,$total));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_CHARGE_TABLE." (NI_ID,Equipment_ID,WP_Username,Charge_Description,Status,Date,Amount,JSON) VALUES (%s,%d,%s,%s,%d,%s,%f,%s)",$charge_ni_id,$reservation->Equipment_ID,$username,$charge_description,0,$rightnow,$total,json_encode($_POST)));
         iam_respond(SUCCESS);
     }
 
