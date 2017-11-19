@@ -48324,7 +48324,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var initSearchWithTableDataSetListener = function initSearchWithTableDataSetListener(searchElement, dataset, fields, searchCallback) {
 			$(searchElement).next('input[type=submit]').click(function (event) {
 				(0, _userfeedback.submissionStart)();
-				var targetString = $(searchElement).val();
+				var targetString = $(searchElement).val().toLowerCase();
 				if (targetString == '') {
 					searchCallback(dataset);
 					(0, _userfeedback.submissionEnd)();
@@ -48347,7 +48347,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				if (fields.indexOf(key) == -1 && fields.length > 0) continue;
 				var val = data[key];
 				if (typeof val == 'string') {
-					if (val.indexOf(string) != -1) add = true;
+					if (val.toLowerCase().indexOf(string) != -1) add = true;
 				} else if (Array.isArray(val)) {
 					add = dataContainsString(string, val, fields);
 				} else if ((typeof val === 'undefined' ? 'undefined' : _typeof(val)) == 'object') {

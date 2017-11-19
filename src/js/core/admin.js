@@ -435,7 +435,7 @@ import DebugAdmin from '../page/debugadmin';
 			var initSearchWithTableDataSetListener = function (searchElement,dataset,fields,searchCallback) {
 				$(searchElement).next('input[type=submit]').click(function(event) {
 					submissionStart();
-					var targetString = $(searchElement).val();
+					var targetString = $(searchElement).val().toLowerCase();
 					if (targetString=='') {
 						searchCallback( dataset );
 						submissionEnd();
@@ -459,7 +459,7 @@ import DebugAdmin from '../page/debugadmin';
 						continue;
 					var val = data[key];
 					if (typeof val == 'string') {
-						if (val.indexOf(string)!=-1)
+						if (val.toLowerCase().indexOf(string)!=-1)
 							add = true;
 					} else if (Array.isArray(val)) {
 						add = dataContainsString(string, val, fields);
