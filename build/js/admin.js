@@ -47973,6 +47973,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 
 		var initChargeTable = function initChargeTable() {
+			(0, _userfeedback.submissionStart)();
 			$.ajax({
 				url: ajaxurl,
 				type: 'GET',
@@ -48002,6 +48003,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						});
 					});
 					updateSearch();
+					(0, _userfeedback.submissionEnd)();
 				},
 				error: function error(data) {
 					(0, _serverresponse.handleServerError)(data, new Error());

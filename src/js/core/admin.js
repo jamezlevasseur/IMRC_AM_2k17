@@ -80,6 +80,7 @@ import DebugAdmin from '../page/debugadmin';
 			}
 
 			var initChargeTable = function () {
+				submissionStart();
 				$.ajax({
 					url: ajaxurl,
 					type: 'GET',
@@ -109,6 +110,7 @@ import DebugAdmin from '../page/debugadmin';
 							});
 						});
 						updateSearch();
+						submissionEnd();
 					},
 					error: function (data) {
 						handleServerError(data, new Error());
