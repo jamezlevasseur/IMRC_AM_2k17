@@ -23,7 +23,71 @@ class Debug_Page
         </div>
         <?php
         /** de bugs go here **/
+        self::restructure_charge_sheet();
+    }
 
+    public static function restructure_charge_sheet()
+    {
+      $charges = ezget("SELECT * FROM ".IAM_CHARGE_TABLE);
+
+      foreach ($charges as $charge) {
+        $index_of_bad_desc = strpos($charge->Charge_Description, 'with multiple materials:  material #1 -');
+        $new_desc = self::make_generic_charge_desc($charge->Charge_Description,$index_of_bad_desc);
+        $tags = ezget("SELECT Tag_ID FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$charge->Equipment_ID);
+        if ($index_of_bad_desc!=false) {
+          $material_ids = [];
+          foreach ($tags as $tag) {
+            $material_ids = array_merge($material_ids,
+                                        ezget("SELECT Material_ID FROM ".IAM_MATERIAL_TAGS_TABLE." WHERE Tag_ID=%d",$tag->Tag_ID));
+          }
+          /*$material_ids = array_merge($material_ids,
+                                      ezget("SELECT Material_ID FROM ".IAM_MATERIAL_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$charge->Equipment_ID));*/
+          if (count($material_ids)===1) {
+            $material = ezget("SELECT * FROM ".IAM_MATERIAL_TABLE." WHERE Material_ID=%d",$material_ids[0]->Material_ID)[0];
+
+            $num = self::get_number_from_bad_desc($charge->Charge_Description,$index_of_bad_desc);
+
+            if ($num===false) {
+              echo '<br> <span style="color:red;">UNSALVAGEABLE NO NUM</span> <br>'.$charge->Charge_Description.'<br>';
+            }
+
+            $new_desc = substr($charge->Charge_Description,0,$index_of_bad_desc).' for '.$num.' '.$material->Unit_Name.'. Item used: '.$material->Name.' at '.$material->Price_Per_Unit.' per '.$material->Unit_Name.'.';
+            echo '<br> <span style="color:green;">SALVAGED</span> <br>'.$new_desc.'<br>';
+
+            //ezquery("UPDATE ".IAM_CHARGE_TABLE." SET Charge_Description=%s, WHERE Charge_ID=%d",$new_desc,$charge->Charge_ID);
+          } else {
+            $tag = count($tags)==1 ? $tags[0]->Tag_ID : 'none';
+            $tag = $tag!='none.' ? ezget("SELECT Tag FROM ".IAM_TAGS_TABLE." WHERE Tag_ID=%d",$tag)[0]->Tag : $tag;
+            $tag = count($tags)>1 ? 'more than one' : $tag;
+            echo '<br> <span style="color:red;">UNSALVAGEABLE '.$tag.'</span> <br>'.$charge->Charge_Description.'<br>';
+          }
+
+        } else {
+          $tag = count($tags)==1 ? $tags[0]->Tag_ID : 'none';
+          if (strpos($charge->Charge_Description,'late charge')!=false || strpos($charge->Charge_Description,'adjusted')!=false) {
+            echo '<br> <span style="color:teal;">CHARGE IS OK </span> <br>'.$charge->Charge_Description.'<br>';
+          } else {
+            echo '<br> <span style="color:pink;">CHARGE IS GOLDEN '.$tag.'</span> <br>'.$charge->Charge_Description.'<br>';
+          }
+
+        }
+      }
+    }
+
+    public static function get_number_from_bad_desc($bad_desc,$index_of_bad_desc)
+    {
+      $chopped = trim( substr($bad_desc,$index_of_bad_desc+44) );
+      $num = trim( substr($chopped, 0, strpos($chopped,' ')) );
+      if (!is_numeric($num)) {
+        return false;
+        exit($bad_desc.' <br> '.$num);
+      }
+      return $num;
+    }
+
+    public static function make_generic_charge_desc($current_desc,$index_of_bad_desc)
+    {
+      return substr($current_desc,0,$index_of_bad_desc).'. #####';
     }
 
     public static function make_dummy_res()
