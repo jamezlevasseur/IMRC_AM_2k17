@@ -47981,6 +47981,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					data = JSON.parse(data);
 					makeEditableTableHeaders(data, '#iam-table-container', 'iam-charge-table');
 					initSearchWithTableDataSetListener($('.iam-search'), data['data'], ['username', 'email', 'account_type', 'certifications', 'equipment_used', 'Charge_Description', 'date', 'approver', 'Comment', 'values'], function (searchResults) {
+						console.log(searchResults);
+						if (searchResults.length == 0) {
+							$('tbody').empty();
+							var noResultsMessage = '';
+							var noResultsMessageParts = ['No', 'results', 'were', 'found', ':(', '●︿●', '(✖╭╮✖)', '╮(─▽─)╭', 'o(╥﹏╥)o', '(╯︵╰,)', '(∩︵∩)', '(✖﹏✖)', '(ㄒoㄒ)', '(｡-_-｡)'];
+							for (var i = 0; i < $('th').length; i++) {
+								noResultsMessage += '<td style="text-align:center;">' + noResultsMessageParts[i] + '</td>';
+							}
+							$('tbody').append(noResultsMessage);
+						}
 						$('#iam-table-container').pagination({
 							position: 'top',
 							pageSize: 10,
@@ -48042,6 +48052,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				}
 				tbody += '</tr>';
 			}
+			console.log(json, tbody);
 			$(container).find('tbody').empty();
 			$(container).find('tbody').append(tbody);
 			editableTableTDListener(tableName, finishEditingCallback);
