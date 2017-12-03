@@ -1,6 +1,6 @@
 import $ from 'jquery';
 
-import { isEmail, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn } from '../core/utils';
+import { isEmail, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn, getSiteURL } from '../core/utils';
 import { publicDebug, debugWarn } from '../core/debug';
 
 import { initPopupXListener } from '../module/uifunc';

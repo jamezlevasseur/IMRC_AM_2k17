@@ -15042,7 +15042,7 @@ exports.submissionEnd = submissionEnd;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = exports.getSiteURL = undefined;
 
 var _jquery = __webpack_require__(1);
 
@@ -15146,6 +15146,7 @@ var rStr = function rStr(length) {
   return str;
 };
 
+exports.getSiteURL = getSiteURL;
 exports.rStr = rStr;
 exports.isEmail = isEmail;
 exports.getSize = getSize;
@@ -48618,8 +48619,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			if ((0, _cookie.readCookie)('iamLoginCookie') != null) {
 				loginLockout();
 			}
-			$('.slick-prev').append('<img src="' + getSiteURL() + 'wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
-			$('.slick-next').append('<img src="' + getSiteURL() + 'wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
+			$('.slick-prev').append('<img src="' + (0, _utils.getSiteURL)() + 'wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
+			$('.slick-next').append('<img src="' + (0, _utils.getSiteURL)() + 'wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
 			(0, _textfieldlisteners.alphaNumericOnlyListener)($('#user_login'));
 
 			$('#iam-slide-show').slick({

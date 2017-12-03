@@ -94,4 +94,4 @@ let rStr = function (length) {
   return str;
 }
 
-export {rStr, isEmail, getSize, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn, detectIE, doError};
+export {getSiteURL, rStr, isEmail, getSize, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn, detectIE, doError};

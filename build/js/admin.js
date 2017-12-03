@@ -15042,7 +15042,7 @@ exports.submissionEnd = submissionEnd;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = undefined;
+exports.doError = exports.detectIE = exports.phoneNumberIsFilledIn = exports.getPhoneNumberFromPage = exports.escapeHtml = exports.getSize = exports.isEmail = exports.rStr = exports.getSiteURL = undefined;
 
 var _jquery = __webpack_require__(1);
 
@@ -15146,6 +15146,7 @@ var rStr = function rStr(length) {
   return str;
 };
 
+exports.getSiteURL = getSiteURL;
 exports.rStr = rStr;
 exports.isEmail = isEmail;
 exports.getSize = getSize;
