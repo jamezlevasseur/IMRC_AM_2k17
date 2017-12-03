@@ -48644,6 +48644,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					data: { action: 'iam_login', user: $('#user_login').val(), password: $('#user_password').val(), captcha: grecaptcha.getResponse(), first: firstLoginAttempt },
 					success: function success(data) {
 						firstLoginAttempt = 0;
+						console.log(data);return;
 						(0, _serverresponse.handleServerResponse)(data);
 					},
 					error: function error(data) {
