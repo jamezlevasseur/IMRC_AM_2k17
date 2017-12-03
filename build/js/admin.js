@@ -15103,6 +15103,10 @@ var getSize = function getSize(obj) {
   return size;
 };
 
+function getSiteURL() {
+  return window.location.protocol + '//' + window.location.hostname + '/';
+}
+
 function escapeHtml(text) {
   var map = {
     '&': '&amp;',

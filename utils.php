@@ -31,6 +31,18 @@ function ezquery($string, ...$rest)
 	return $wpdb->query($wpdb->prepare($string, $rest));
 }
 
+function get_protocol_prefix()
+{
+	if (is_ssl())
+		return 'https://';
+	return 'http://';
+}
+
+function get_domain_url()
+{
+	return get_protocol_prefix().$_SERVER['HTTP_HOST'].'/';
+}
+
 function get_iam_prefix()
 {
 	global $wpdb;

@@ -15103,6 +15103,10 @@ var getSize = function getSize(obj) {
   return size;
 };
 
+function getSiteURL() {
+  return window.location.protocol + '//' + window.location.hostname + '/';
+}
+
 function escapeHtml(text) {
   var map = {
     '&': '&amp;',
@@ -48614,8 +48618,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			if ((0, _cookie.readCookie)('iamLoginCookie') != null) {
 				loginLockout();
 			}
-			$('.slick-prev').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
-			$('.slick-next').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
+			$('.slick-prev').append('<img src="' + getSiteURL() + 'wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
+			$('.slick-next').append('<img src="' + getSiteURL() + 'wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
 			(0, _textfieldlisteners.alphaNumericOnlyListener)($('#user_login'));
 
 			$('#iam-slide-show').slick({

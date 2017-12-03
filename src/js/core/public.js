@@ -786,8 +786,8 @@ import ReservationPublic from '../page/reservationpublic';
 			if (readCookie('iamLoginCookie')!=null) {
 				loginLockout();
 			}
-			$('.slick-prev').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
-			$('.slick-next').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
+			$('.slick-prev').append('<img src="'+getSiteURL()+'wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
+			$('.slick-next').append('<img src="'+getSiteURL()+'wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
 			alphaNumericOnlyListener($('#user_login'));
 
 			$('#iam-slide-show').slick({

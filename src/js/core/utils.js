@@ -52,6 +52,10 @@ let getSize = function (obj) {
   return size;
 }
 
+function getSiteURL() {
+  return window.location.protocol+'//'+window.location.hostname+'/';
+}
+
 function escapeHtml(text) {
 	let map = {
 		'&': '&amp;',
