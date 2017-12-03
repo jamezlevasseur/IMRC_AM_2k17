@@ -205,7 +205,12 @@ class Utils_Public
         if ($captcha_request->success==true && $captcha_request->hostname==$_SERVER['HTTP_HOST'] || $first_attempt===1) {
             $user = IAM_Sec::textfield_cleaner($_POST['user']);
             $password = IAM_Sec::textfield_cleaner($_POST['password']);
-            $attempt = wp_signon(['user_login'=>$user,'user_password'=>$password], false);
+            $secure_cookie = false;
+            if (is_ssl()) {
+              $secure_cookie = true;
+              force_ssl_admin(true);
+            }
+            $attempt = wp_signon(['user_login'=>$user,'user_password'=>$password], $secure_cookie);
             if ( !is_wp_error($attempt) ) {
                 iam_update_value(IAM_LOGIN_LOGS,$user,json_encode(array('time'=>time(),'fail_count'=>0)));
                 if (is_admin()) {
