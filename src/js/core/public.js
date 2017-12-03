@@ -811,7 +811,6 @@ import ReservationPublic from '../page/reservationpublic';
 					data: {action: 'iam_login',user:$('#user_login').val(),password:$('#user_password').val(),captcha:grecaptcha.getResponse(),first:firstLoginAttempt},
 					success: function (data) {
 						firstLoginAttempt = 0;
-						console.log(data);return;
 						handleServerResponse(data);
 					},
 					error: function (data) {
