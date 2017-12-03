@@ -899,18 +899,15 @@ import ReservationPublic from '../page/reservationpublic';
 				});
 			});
 		} else if ($('.login-action-lostpassword').length>0) {
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
 			$('#lostpasswordform input[type=hidden]').val('/');
-			$('p#nav a').eq(0).attr('href',p+window.location.hostname);
-			$('p#nav a').eq(1).attr('href',p+window.location.hostname+'/register');
+			$('p#nav a').eq(0).attr('href',getSiteURL());
+			$('p#nav a').eq(1).attr('href',getSiteURL()+'/register');
 		} else if ($('.login-action-register').length>0) {
 			$('body').empty();
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-			window.location.href = p+window.location.hostname;
+			window.location.href = getSiteURL();
 		} else if ($('.login-action-rp').length>0) {
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-			$('p#nav a').eq(0).attr('href',p+window.location.hostname);
-			$('p#nav a').eq(1).attr('href',p+window.location.hostname+'/register');
+			$('p#nav a').eq(0).attr('href',getSiteURL());
+			$('p#nav a').eq(1).attr('href',getSiteURL()+'/register');
 			$('input[type=submit]').click(function(event) {
 				var pw = $('#pass1-text').val();
 
@@ -922,9 +919,7 @@ import ReservationPublic from '../page/reservationpublic';
 				}
 			});
 		} else if ($('.login-action-resetpass').length>0) {
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-
-			$('a').attr('href',p+window.location.hostname);
+			$('a').attr('href',getSiteURL());
 		} else if ($('.error404').length>0) {
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
