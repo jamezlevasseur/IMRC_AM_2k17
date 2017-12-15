@@ -57,7 +57,7 @@ class Checkout_Public
             iam_throw_error(INVALID_INPUT_EXCEPTION);
           }
           $discount_text = ' With a '.$account_type->Name.' discount of '.$account_type->Discount.'%.';
-          if ($_POST['multiple_mats']===true) {
+          if ((int) $_POST['multiple_mats']===1) {
               $charge_description = $username.' used '.$equip_name.' with multiple materials: ';
               for ($i=0; $i < count($mat_used); $i++) {
                   $charge_description .= ' material #'.($i+1).' - '.$mat_used[$i]['name'].' for '.$amount[$i].' '.$mat_used[$i]['unit_name'].' at '.$mat_used[$i]['price_per_unit'].' per '.$mat_used[$i]['unit_name'].'. ';

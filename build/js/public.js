@@ -48290,9 +48290,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				if (!confirm("Are you sure all the information is correct?")) return;
 				var checkoutSubmitAmount = 0;
 				var matToSend = {};
-				var multipleMats = false;
+				var multipleMats = 0;
 				if ($('.iam-mats-row').length > 1) {
-					multipleMats = true;
+					multipleMats = 1;
 
 					$.each($('.iam-checkout-total'), function (index, val) {
 						checkoutSubmitAmount -= parseFloat($(this).text());

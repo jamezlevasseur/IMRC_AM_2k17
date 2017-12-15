@@ -421,9 +421,9 @@ import ReservationPublic from '../page/reservationpublic';
 					return;
 				var checkoutSubmitAmount = 0;
 				var matToSend = {};
-				var multipleMats = false;
+				var multipleMats = 0;
 				if ($('.iam-mats-row').length>1) {
-					multipleMats = true;
+					multipleMats = 1;
 
 					$.each($('.iam-checkout-total'), function(index, val) {
 						checkoutSubmitAmount -= parseFloat($(this).text());
