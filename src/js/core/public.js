@@ -7,9 +7,9 @@ import { initPopupXListener } from '../module/uifunc';
 import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
-import { convertBusinessHours } from '../module/cal';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 
+import Cal from '../module/cal';
 import ReservationPublic from '../page/reservationpublic';
 
 (function( $ ) {
@@ -490,7 +490,7 @@ import ReservationPublic from '../page/reservationpublic';
 				success: function (data) {
 					data = handleServerResponse(data);
 					checkoutBusinessHours = JSON.parse(data);
-					var businessHoursConverted = convertBusinessHours(data);
+					var businessHoursConverted = Cal.convertBusinessHours(data);
 					lastSource = ajaxurl+"?action=get_equipment_calendar&name="+selected_equip_name;
 					$('.iam-cal').fullCalendar({
 						header: {
@@ -565,7 +565,7 @@ import ReservationPublic from '../page/reservationpublic';
 
 				} else if (facility_info[current_root_tag]['schedule_type']=='Appointment') {
 
-					var businessHoursConverted = convertBusinessHours(facility_info[current_root_tag]['appointment_business_hours']);
+					var businessHoursConverted = Cal.convertBusinessHours(facility_info[current_root_tag]['appointment_business_hours']);
 					$('.iam-res-cal').fullCalendar({
 						header: {
 							left: 'prev,next today',

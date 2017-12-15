@@ -15768,11 +15768,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Cal = function () {
+  _createClass(Cal, null, [{
+    key: 'DAY_NUMS',
+
+
+    //static "properties"
+
+    get: function get() {
+      return { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
+    }
+  }]);
+
   function Cal(page, facing) {
     _classCallCheck(this, Cal);
 
     this.page = page;
-    this.daynums = { 'sun': 0, 'mon': 1, 'tue': 2, 'wed': 3, 'thu': 4, 'fri': 5, 'sat': 6 };
     this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
     if (this.page.cal == 'adminRes') this.updateResListSource();
     this.setCalArgs();
@@ -15826,25 +15836,6 @@ var Cal = function () {
         (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
         return false;
       }
-    }
-  }, {
-    key: 'convertBusinessHours',
-    value: function convertBusinessHours(jsonString) {
-      var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
-      var converted = [];
-      var counter = 1;
-      for (var key in json) {
-        var day = _jquery2.default.extend({}, json[key]);
-        if (day.start != '') {
-          day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
-          day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
-          converted.push({ 'start': day.start, 'end': day.end, dow: [this.daynums[key]], businessHoursMode: 'std' });
-        } else {
-          converted.push({ 'start': '00:00', 'end': '00:01', dow: [this.daynums[key]], businessHoursMode: 'std' });
-        }
-        counter++;
-      }
-      return converted;
     }
   }, {
     key: 'eventFallsOnWeekend',
@@ -15979,7 +15970,7 @@ var Cal = function () {
   }, {
     key: 'initBusinessHours',
     value: function initBusinessHours() {
-      this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+      this.businessHoursConverted = Cal.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
     }
   }, {
     key: 'initAdminCal',
@@ -16329,7 +16320,7 @@ var Cal = function () {
   }, {
     key: 'warnIfOutOfBounds',
     value: function warnIfOutOfBounds(e) {
-      var thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+      var thisDay = this.businessHoursConverted[Cal.DAY_NUMS[e.start.format('ddd').toLowerCase()]];
 
       var thisStart = moment(thisDay.start, 'HH:mm');
       var thisEnd = moment(thisDay.end, 'HH:mm');
@@ -16340,6 +16331,25 @@ var Cal = function () {
       if (targetTimeStart.isBefore(thisStart) || targetTimeEnd.isAfter(thisEnd) || e.start.format('ddd').toLowerCase() != e.end.format('ddd').toLowerCase()) {
         alert('Caution: You reservation takes place outside of operating hours. The IMRC may be closed during this time.');
       }
+    }
+  }], [{
+    key: 'convertBusinessHours',
+    value: function convertBusinessHours(jsonString) {
+      var json = typeof jsonString === 'string' ? JSON.parse(jsonString) : jsonString;
+      var converted = [];
+      var counter = 1;
+      for (var key in json) {
+        var day = _jquery2.default.extend({}, json[key]);
+        if (day.start != '') {
+          day.start = moment(day.start, 'hh:mm:a').format('HH:mm');
+          day.end = moment(day.end, 'hh:mm:a').format('HH:mm');
+          converted.push({ 'start': day.start, 'end': day.end, dow: [Cal.DAY_NUMS[key]], businessHoursMode: 'std' });
+        } else {
+          converted.push({ 'start': '00:00', 'end': '00:01', dow: [Cal.DAY_NUMS[key]], businessHoursMode: 'std' });
+        }
+        counter++;
+      }
+      return converted;
     }
   }]);
 
