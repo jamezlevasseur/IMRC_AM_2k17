@@ -56,7 +56,7 @@ class Checkout_Public
           if (!is_numeric($total)) {
             iam_throw_error(INVALID_INPUT_EXCEPTION);
           }
-          $discount_text = ' With a '.$account_type->Name.' discount of '.$discount.'%.';
+          $discount_text = ' With a '.$account_type->Name.' discount of '.$account_type->Discount.'%.';
           if ($_POST['multiple_mats']===true) {
               $charge_description = $username.' used '.$equip_name.' with multiple materials: ';
               for ($i=0; $i < count($mat_used); $i++) {

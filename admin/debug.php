@@ -23,7 +23,7 @@ class Debug_Page
         </div>
         <?php
         /** de bugs go here **/
-        self::restructure_charge_sheet();
+        //self::restructure_charge_sheet();
     }
 
     public static function restructure_charge_sheet()
