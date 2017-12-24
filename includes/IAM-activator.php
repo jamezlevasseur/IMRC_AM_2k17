@@ -118,6 +118,7 @@ class IAM_Activator {
 			Date varchar(60) NOT NULL,
 			Approver text DEFAULT NULL,
 			Amount float(10,2) NOT NULL,
+			JSON text DEFAULT NULL,
 			PRIMARY KEY(Charge_ID),
 			UNIQUE(NI_ID)
 			) $charset_collate";

@@ -80,6 +80,7 @@ import DebugAdmin from '../page/debugadmin';
 			}
 
 			var initChargeTable = function () {
+				submissionStart();
 				$.ajax({
 					url: ajaxurl,
 					type: 'GET',
@@ -88,6 +89,16 @@ import DebugAdmin from '../page/debugadmin';
 						data = JSON.parse(data);
 						makeEditableTableHeaders(data,'#iam-table-container','iam-charge-table');
 						initSearchWithTableDataSetListener($('.iam-search'),data['data'], ['username','email','account_type','certifications','equipment_used','Charge_Description','date','approver','Comment','values'], function (searchResults) {
+							console.log(searchResults);
+							if (searchResults.length==0) {
+								$('tbody').empty();
+								let noResultsMessage = '';
+								let noResultsMessageParts = ['No','results','were','found',':(','●︿●','(✖╭╮✖)','╮(─▽─)╭','o(╥﹏╥)o','(╯︵╰,)','(∩︵∩)','(✖﹏✖)','(ㄒoㄒ)','(｡-_-｡)'];
+								for (var i = 0; i < $('th').length; i++) {
+									noResultsMessage+='<td style="text-align:center;">'+noResultsMessageParts[i]+'</td>';
+								}
+								$('tbody').append(noResultsMessage);
+							}
 							$('#iam-table-container').pagination({
 								position: 'top',
 								pageSize: 10,
@@ -99,6 +110,7 @@ import DebugAdmin from '../page/debugadmin';
 							});
 						});
 						updateSearch();
+						submissionEnd();
 					},
 					error: function (data) {
 						handleServerError(data, new Error());
@@ -147,6 +159,7 @@ import DebugAdmin from '../page/debugadmin';
 					}
 					tbody+='</tr>';
 				}
+				console.log(json, tbody);
 				$(container).find('tbody').empty();
 				$(container).find('tbody').append(tbody);
 				editableTableTDListener(tableName,finishEditingCallback);
@@ -435,7 +448,7 @@ import DebugAdmin from '../page/debugadmin';
 			var initSearchWithTableDataSetListener = function (searchElement,dataset,fields,searchCallback) {
 				$(searchElement).next('input[type=submit]').click(function(event) {
 					submissionStart();
-					var targetString = $(searchElement).val();
+					var targetString = $(searchElement).val().toLowerCase();
 					if (targetString=='') {
 						searchCallback( dataset );
 						submissionEnd();
@@ -459,7 +472,7 @@ import DebugAdmin from '../page/debugadmin';
 						continue;
 					var val = data[key];
 					if (typeof val == 'string') {
-						if (val.indexOf(string)!=-1)
+						if (val.toLowerCase().indexOf(string)!=-1)
 							add = true;
 					} else if (Array.isArray(val)) {
 						add = dataContainsString(string, val, fields);
@@ -943,7 +956,10 @@ import DebugAdmin from '../page/debugadmin';
 						}
 
 						try {
-							if (eqLateFee>userBalances[$('.iam-er-user-emails').val()]) {
+							if (userBalances[$('.iam-er-user-emails').val()]=='permission-denied') {
+								alert('This user has no reservation privleges. They have been prohibited from renting equipment by an admin.');
+								return;
+							} else if (eqLateFee>userBalances[$('.iam-er-user-emails').val()]) {
 								alert('This user has less than the late fee amount of $'+eqLateFee+'. They will not be able to pay late fees if they keep the equipment late. User balance: $'+userBalances[$('.iam-er-user-emails').val()]);
 							}
 						} catch (error) {

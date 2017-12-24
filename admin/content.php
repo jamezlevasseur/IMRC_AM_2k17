@@ -22,7 +22,7 @@ class Admin_Content
 		$slug = md5($this->facility->Facility_ID);
 		$_slug = iam_slugify($name,'_');
 
-		add_menu_page ( $name, $name, 'manage_options', $slug, array($this, 'content'), 'http://jameslevasseur.com/imr-icon.png');
+		add_menu_page ( $name, $name, 'manage_options', $slug, array($this, 'content'), get_domain_url().'imr-icon.png');
 		add_submenu_page ($slug, 'Users', 'Users', 'manage_options', $_slug.'_users', array($this, 'users_content') );
 		add_submenu_page ($slug, 'Equipment', 'Equipment', 'manage_options', $_slug.'_equipment', array($this, 'equipment_content') );
 		add_submenu_page ($slug, 'Certifications', 'Certifications', 'manage_options', $_slug.'_certifications', array($this, 'certification_content') );
@@ -61,7 +61,11 @@ class Admin_Content
 		foreach ($users as $row) {
 			$email = get_userdata($row->WP_ID)->user_email;
 			$emails[] = strtolower( $email );
-			$bal_dict[$email] = $row->Balance;
+			if (has_privileges($row->WP_ID)===false) {
+				$bal_dict[$email] = 'permission-denied';
+			} else {
+				$bal_dict[$email] = $row->Balance;
+			}
 		}
 		asort($emails);
 

@@ -9,9 +9,14 @@ import {initContextMenuLib} from '../lib/contextmenu';
 
 export default class Cal {
 
+  //static "properties"
+
+  static get DAY_NUMS() {
+    return {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
+  }
+
   constructor(page, facing) {
     this.page = page;
-    this.daynums = {'sun':0,'mon':1,'tue':2,'wed':3,'thu':4,'fri':5,'sat':6};
     this.ERinvalidTimePrompt = 'Check out/in for the Equipment Room are allowed only during business hours. You may need to change your dates or shorten the reservation period.';
     if (this.page.cal=='adminRes')
       this.updateResListSource();
@@ -55,7 +60,7 @@ export default class Cal {
 		}
 	}
 
-  convertBusinessHours (jsonString) {
+  static convertBusinessHours (jsonString) {
     let json = typeof jsonString==='string' ? JSON.parse(jsonString) : jsonString;
     let converted = [];
     let counter = 1;
@@ -64,9 +69,9 @@ export default class Cal {
       if (day.start!='') {
         day.start = moment(day.start,'hh:mm:a').format('HH:mm');
         day.end = moment(day.end,'hh:mm:a').format('HH:mm');
-        converted.push({'start':day.start,'end':day.end,dow:[this.daynums[key]],businessHoursMode:'std'});
+        converted.push({'start':day.start,'end':day.end,dow:[Cal.DAY_NUMS[key]],businessHoursMode:'std'});
       } else {
-        converted.push({'start':'00:00','end':'00:01',dow:[this.daynums[key]],businessHoursMode:'std'});
+        converted.push({'start':'00:00','end':'00:01',dow:[Cal.DAY_NUMS[key]],businessHoursMode:'std'});
       }
       counter++;
     }
@@ -204,7 +209,7 @@ export default class Cal {
   }
 
   initBusinessHours () {
-    this.businessHoursConverted = this.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
+    this.businessHoursConverted = Cal.convertBusinessHours(this.page.getFacilityInfo('business_hours'));
   }
 
   initAdminCal (cal) {
@@ -551,7 +556,7 @@ export default class Cal {
   }
 
   warnIfOutOfBounds (e) {
-    let thisDay = this.businessHoursConverted[this.daynums[e.start.format('ddd').toLowerCase()]];
+    let thisDay = this.businessHoursConverted[Cal.DAY_NUMS[e.start.format('ddd').toLowerCase()]];
 
     let thisStart = moment(thisDay.start, 'HH:mm');
     let thisEnd = moment(thisDay.end, 'HH:mm');

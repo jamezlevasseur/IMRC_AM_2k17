@@ -31,6 +31,18 @@ function ezquery($string, ...$rest)
 	return $wpdb->query($wpdb->prepare($string, $rest));
 }
 
+function get_protocol_prefix()
+{
+	if (is_ssl())
+		return 'https://';
+	return 'http://';
+}
+
+function get_domain_url()
+{
+	return get_protocol_prefix().$_SERVER['HTTP_HOST'].'/';
+}
+
 function get_iam_prefix()
 {
 	global $wpdb;
@@ -122,6 +134,20 @@ function get_first_last_name($wpid)
 {
 	$u = get_userdata($wpid);
 	return ['first'=>ucwords($u->first_name), 'last'=>ucwords($u->last_name)];
+}
+
+function has_privileges($WPID=null)
+{
+	if ($WPID===null){
+		$current_user = wp_get_current_user();
+  	get_currentuserinfo();
+  	$WPID = $current_user->ID;
+	}
+	$has_priv = get_user_meta($WPID,IAM_RESERVATIONS_PRIVILEGE_META);
+	if (count($has_priv)>0 && $has_priv!=false) {
+		return false;
+	}
+	return true;
 }
 
 function include_files_in($dir)

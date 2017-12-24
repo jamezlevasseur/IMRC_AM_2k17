@@ -1,15 +1,15 @@
 import $ from 'jquery';
 
-import { isEmail, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn } from '../core/utils';
+import { isEmail, escapeHtml, getPhoneNumberFromPage, phoneNumberIsFilledIn, getSiteURL } from '../core/utils';
 import { publicDebug, debugWarn } from '../core/debug';
 
 import { initPopupXListener } from '../module/uifunc';
 import { alphaNumericOnlyListener, alphaOnlyListener, emailOnlyListener, numbersOnlyListener } from '../module/textfieldlisteners';
 import { createCookie, readCookie, eraseCookie } from '../module/cookie';
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
-import { convertBusinessHours } from '../module/cal';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 
+import Cal from '../module/cal';
 import ReservationPublic from '../page/reservationpublic';
 
 (function( $ ) {
@@ -421,9 +421,9 @@ import ReservationPublic from '../page/reservationpublic';
 					return;
 				var checkoutSubmitAmount = 0;
 				var matToSend = {};
-				var multipleMats = false;
+				var multipleMats = 0;
 				if ($('.iam-mats-row').length>1) {
-					multipleMats = true;
+					multipleMats = 1;
 
 					$.each($('.iam-checkout-total'), function(index, val) {
 						checkoutSubmitAmount -= parseFloat($(this).text());
@@ -490,7 +490,7 @@ import ReservationPublic from '../page/reservationpublic';
 				success: function (data) {
 					data = handleServerResponse(data);
 					checkoutBusinessHours = JSON.parse(data);
-					var businessHoursConverted = convertBusinessHours(data);
+					var businessHoursConverted = Cal.convertBusinessHours(data);
 					lastSource = ajaxurl+"?action=get_equipment_calendar&name="+selected_equip_name;
 					$('.iam-cal').fullCalendar({
 						header: {
@@ -565,7 +565,7 @@ import ReservationPublic from '../page/reservationpublic';
 
 				} else if (facility_info[current_root_tag]['schedule_type']=='Appointment') {
 
-					var businessHoursConverted = convertBusinessHours(facility_info[current_root_tag]['appointment_business_hours']);
+					var businessHoursConverted = Cal.convertBusinessHours(facility_info[current_root_tag]['appointment_business_hours']);
 					$('.iam-res-cal').fullCalendar({
 						header: {
 							left: 'prev,next today',
@@ -786,8 +786,8 @@ import ReservationPublic from '../page/reservationpublic';
 			if (readCookie('iamLoginCookie')!=null) {
 				loginLockout();
 			}
-			$('.slick-prev').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
-			$('.slick-next').append('<img src="http://imrc.jameslevasseur.com/wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
+			$('.slick-prev').append('<img src="'+getSiteURL()+'wp-content/plugins/imrc-account-manager/assets/left-arrow.png">');
+			$('.slick-next').append('<img src="'+getSiteURL()+'wp-content/plugins/imrc-account-manager/assets/right-arrow.png">');
 			alphaNumericOnlyListener($('#user_login'));
 
 			$('#iam-slide-show').slick({
@@ -899,18 +899,15 @@ import ReservationPublic from '../page/reservationpublic';
 				});
 			});
 		} else if ($('.login-action-lostpassword').length>0) {
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
 			$('#lostpasswordform input[type=hidden]').val('/');
-			$('p#nav a').eq(0).attr('href',p+window.location.hostname);
-			$('p#nav a').eq(1).attr('href',p+window.location.hostname+'/register');
+			$('p#nav a').eq(0).attr('href',getSiteURL());
+			$('p#nav a').eq(1).attr('href',getSiteURL()+'/register');
 		} else if ($('.login-action-register').length>0) {
 			$('body').empty();
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-			window.location.href = p+window.location.hostname;
+			window.location.href = getSiteURL();
 		} else if ($('.login-action-rp').length>0) {
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-			$('p#nav a').eq(0).attr('href',p+window.location.hostname);
-			$('p#nav a').eq(1).attr('href',p+window.location.hostname+'/register');
+			$('p#nav a').eq(0).attr('href',getSiteURL());
+			$('p#nav a').eq(1).attr('href',getSiteURL()+'/register');
 			$('input[type=submit]').click(function(event) {
 				var pw = $('#pass1-text').val();
 
@@ -922,9 +919,7 @@ import ReservationPublic from '../page/reservationpublic';
 				}
 			});
 		} else if ($('.login-action-resetpass').length>0) {
-			var p = window.location.protocol=='http:' ? 'http://' : 'https://';
-
-			$('a').attr('href',p+window.location.hostname);
+			$('a').attr('href',getSiteURL());
 		} else if ($('.error404').length>0) {
 			$('.entry-content').empty();
 			$('.entry-content').html('<p>There\'s nothing here.</p>');
