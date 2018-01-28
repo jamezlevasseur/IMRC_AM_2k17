@@ -1,7 +1,7 @@
-<?php 
+<?php
 
 /**
-* 
+*
 */
 class IAM_Certification_Page
 {
@@ -15,7 +15,7 @@ class IAM_Certification_Page
 	{
 		global $wpdb;
 		$html = '';
-		for ($p=0; $p < count($current_phase); $p++) { 
+		for ($p=0; $p < count($current_phase); $p++) {
 			$no_cert = 'iam-no-cert';
 			$cert_status_text = '<p style="color:red;">You do not have this certification.</p>';
 			if (in_array($current_phase[$p][1]->Certification_ID, $user_certs)) {
@@ -69,13 +69,13 @@ class IAM_Certification_Page
 		}
 
 		$phase_blocks = '';
-		
+
       	$current_user = wp_get_current_user()->user_login;
-   		
+
    		$iam_id = $wpdb->get_results("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_Username='$current_user'")[0]->IAM_ID;
-		
+
 		$user_cert_results = $wpdb->get_results($wpdb->prepare("SELECT Certification_ID FROM ".IAM_USER_CERTIFICATIONS_TABLE." WHERE IAM_ID=%d ",$iam_id));
-		
+
 		$user_certs = [];
 		foreach ($user_cert_results as $row) {
 			$user_certs[] = $row->Certification_ID;
@@ -106,7 +106,7 @@ class IAM_Certification_Page
 			'.$phase_blocks.'
 		</div>
 		';
-		Utils_Public::render_page_for_login_status($html);
+		return Utils_Public::render_page_for_login_status($html);
 	}
 
 }

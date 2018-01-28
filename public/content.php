@@ -19,33 +19,32 @@ class Public_Content
 
     public static function render_reservation_page()
     {
-        echo IAM_Reservation_Page::get();
+        return IAM_Reservation_Page::get();
     }
 
     public static function render_certification_page()
     {
-        echo IAM_Certification_Page::get();
+        return  IAM_Certification_Page::get();
     }
 
     public static function render_faq_page()
     {
-        echo IAM_FAQ_Page::get();
+        return IAM_FAQ_Page::get();
     }
 
     public static function render_training_page()
     {
-        echo IAM_Training_Page::get();
+        return IAM_Training_Page::get();
     }
 
     public static function render_checkout_page()
     {
-        echo IAM_Checkout_Page::get();
-        exit;
+        return IAM_Checkout_Page::get();
     }
 
     public static function render_account_balances_page()
     {
-        echo IAM_User_Account_Page::get();
+        return IAM_User_Account_Page::get();
     }
 
 }

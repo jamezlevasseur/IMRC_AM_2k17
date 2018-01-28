@@ -377,10 +377,9 @@ class Utils_Public
 
     public static function render_page_for_login_status($page_html)
     {
-
         if (is_user_logged_in()) {
             Utils_Public::render_user_logout_bar();
-            echo $page_html;
+            return $page_html;
         } else {
             require iam_dir() . 'templates/login_form.php';
             exit;

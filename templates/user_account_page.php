@@ -108,7 +108,7 @@ class IAM_User_Account_Page
 
 */
 
-		Utils_Public::render_page_for_login_status($html);
+		return Utils_Public::render_page_for_login_status($html);
 	}
 
 }
