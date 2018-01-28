@@ -1,11 +1,11 @@
 <?php
 
 /**
-* 
+*
 */
 class IAM_Training_Page
 {
-	
+
 	public static function get()
 	{
 		$html = '
@@ -16,7 +16,7 @@ class IAM_Training_Page
 			<input type="submit" name="submit">
 		</div>
 		';
-		Utils_Public::render_page_for_login_status($html);
+		return Utils_Public::render_page_for_login_status($html);
 	}
 
 }

@@ -257,8 +257,7 @@ class IAM_Reservation_Page
   	$has_priv = get_user_meta($current_user->ID,IAM_RESERVATIONS_PRIVILEGE_META);
 
 		if (count($has_priv)>0 && $has_priv!=false) {
-			Utils_Public::render_page_for_login_status('<h1>Your reservation privileges have been removed</h1><p>Please contact an admin for further assistance.</p>');
-			return;
+			return Utils_Public::render_page_for_login_status('<h1>Your reservation privileges have been removed</h1><p>Please contact an admin for further assistance.</p>');
 		} else {
 			$can_reserve_er = 1;
 			$user_bal = $wpdb->get_results("SELECT Balance FROM ".IAM_USERS_TABLE." WHERE WP_ID=".$current_user->ID)[0]->Balance;
@@ -282,7 +281,7 @@ class IAM_Reservation_Page
 			$facility_crumb_buttons .= '<button class="iam-crumb-button">'.$row->Name.'</button>';
 		}
 		$facility_names = substr($facility_names, 0, strlen($facility_names)-1);
-		$html = '<div id="iam-res">'.IAM_Reservation_Page::res_banner().'
+		$html = '<div id="iam-res">
 		<p class="iam-page-header">Available Equiment</p>
 		<div class="iam-ninja iam-cal-data" data-late-fee="'.get_setting_iam(LATE_CHARGE_FEE_KEY).'" data-can-res-er="'.$can_reserve_er.'" data-names="'.iam_output($facility_names).'" '.$facility_html.' data-root-tags="'.iam_output(implode(',',$root_tags)).'"></div>
 		<div class="iam-res-left-top">
@@ -312,7 +311,7 @@ class IAM_Reservation_Page
 			<textarea class="iam-textarea iam-res-comment" placeholder="Additional details go here." rows="4"></textarea>
 		</div>';
 
-		Utils_Public::render_page_for_login_status($html);
+		return Utils_Public::render_page_for_login_status($html);
 	}
 
 }
