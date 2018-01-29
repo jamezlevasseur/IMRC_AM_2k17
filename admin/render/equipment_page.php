@@ -438,6 +438,32 @@ class Equipment_Page extends Item_Mgmt
                 if (trim($tags[$i])=='')
                     continue;
                 $current = IAM_Sec::textfield_cleaner($tags[$i]);
+                //if adding a new tag
+                if (strpos($current,'->')!=false) {
+                  $parts = explode('->', $current);
+
+                  $all_tags = ezget("SELECT Tag FROM ".IAM_TAGS_TABLE);
+                  $potential_new_tag = strtolower(trim($parts[0]));
+                  $potential_parent_tag = strtolower(trim($parts[1]));
+                  $confirmed_parent_tag = '';
+                  foreach ($all_tags as $t) {
+                    //if an existing tag matches this one
+                    $lower_t = strtolower($t->Tag);
+                    if ($potential_new_tag==$lower_t) {
+                      continue;
+                    }
+                    if ($potential_parent_tag==$lower_t) {
+                      $confirmed_parent_tag = $t->Tag;
+                    }
+                  }
+                  //if the parent tag doesn't exist
+                  if ($confirmed_parent_tag=='') {
+                    continue;
+                  }
+
+                  ezquery("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES (%s,%s)",$potential_new_tag,$confirmed_parent_tag);
+                  $current = $potential_new_tag;
+                }
                 if (gettype($current)!='string') {
                     iam_throw_error( 'Error - Field "Tags"');
                     exit;
@@ -453,7 +479,9 @@ class Equipment_Page extends Item_Mgmt
                     while (true) {
                         $search_parent = $wpdb->get_results($wpdb->prepare("SELECT Parent FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",$search_tag))[0]->Parent;
                         if ($search_parent=='') {
-                            break;
+                          if ($search_tag==$current)
+                            $search_tag = '';
+                          break;
                         }
                         $search_tag = $search_parent;
                     }
