@@ -48001,7 +48001,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					data = JSON.parse(data);
 					makeEditableTableHeaders(data, '#iam-table-container', 'iam-charge-table');
 					initSearchWithTableDataSetListener($('.iam-search'), data['data'], ['username', 'email', 'account_type', 'certifications', 'equipment_used', 'Charge_Description', 'date', 'approver', 'Comment', 'values'], function (searchResults) {
-						console.log(searchResults);
 						if (searchResults.length == 0) {
 							$('tbody').empty();
 							var noResultsMessage = '';
@@ -48073,7 +48072,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				}
 				tbody += '</tr>';
 			}
-			console.log(json, tbody);
 			$(container).find('tbody').empty();
 			$(container).find('tbody').append(tbody);
 			editableTableTDListener(tableName, finishEditingCallback);
@@ -48814,7 +48812,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		var initCheckinCheckout = function initCheckinCheckout() {
 			userEmails = $('.iam-on-load-data').data('users').split(',');
-			console.log(userEmails);
 			$('.iam-er-user-emails').autocomplete({
 				source: userEmails
 			});
@@ -49955,7 +49952,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 			initRegKeyButtonListener();
 			initDeleteRegKeyButtonListener();
-			(0, _uifunc.initSearchListener)('.iam-registration-search', 'tr .iam-username', 1);
+			(0, _uifunc.initSearchListener)('.iam-search', '.iam-username', 1);
 		} else if ($('.iam-user-privileges-wrap').length > 0) {
 			var approvedUsers = [];
 			var deniedUsers = [];
