@@ -434,6 +434,9 @@ class Equipment_Page extends Item_Mgmt
             $equip_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$name))[0]->Equipment_ID;
             $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id));
             $set_parent = false;
+            if (count($tags)==0) {
+              $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Root_Tag=%s WHERE Equipment_ID=%d",'',$equip_id));
+            }
             for ($i=0; $i < count($tags); $i++) {
                 if (gettype($tags[$i])!='string') {
                     iam_throw_error( 'Error - Field "Tags"');
