@@ -435,6 +435,10 @@ class Equipment_Page extends Item_Mgmt
             $wpdb->query($wpdb->prepare("DELETE FROM ".IAM_TAGS_EQUIPMENT_TABLE." WHERE Equipment_ID=%d",$equip_id));
             $set_parent = false;
             for ($i=0; $i < count($tags); $i++) {
+                if (gettype($tags[$i])!='string') {
+                    iam_throw_error( 'Error - Field "Tags"');
+                    exit;
+                }
                 if (trim($tags[$i])=='')
                     continue;
                 $current = IAM_Sec::textfield_cleaner($tags[$i]);
@@ -464,10 +468,7 @@ class Equipment_Page extends Item_Mgmt
                   ezquery("INSERT INTO ".IAM_TAGS_TABLE." (Tag,Parent) VALUES (%s,%s)",$potential_new_tag,$confirmed_parent_tag);
                   $current = $potential_new_tag;
                 }
-                if (gettype($current)!='string') {
-                    iam_throw_error( 'Error - Field "Tags"');
-                    exit;
-                }
+
                 $tag_id = $wpdb->get_results($wpdb->prepare("SELECT Tag_ID FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",$current))[0]->Tag_ID;
                 $tag_result = $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_TAGS_EQUIPMENT_TABLE." (Equipment_ID, Tag_ID, Unique_ID) VALUES (%d,%d,%d) ",$equip_id,$tag_id,$tag_id.''.$equip_id));
 
@@ -477,10 +478,13 @@ class Equipment_Page extends Item_Mgmt
                     $search_tag = $current;
                     $search_parent = '';
                     while (true) {
-                        $search_parent = $wpdb->get_results($wpdb->prepare("SELECT Parent FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",$search_tag))[0]->Parent;
-                        if ($search_parent=='') {
-                          if ($search_tag==$current)
+                        $search_parent = $wpdb->get_results($wpdb->prepare("SELECT Parent FROM ".IAM_TAGS_TABLE." WHERE Tag=%s",$search_tag));
+                        if (count($search_parent)==0) {
                             $search_tag = '';
+                            break;
+                        }
+                        $search_parent = $search_parent[0]->Parent;
+                        if ($search_parent=='') {
                           break;
                         }
                         $search_tag = $search_parent;
