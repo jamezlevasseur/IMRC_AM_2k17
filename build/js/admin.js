@@ -15814,7 +15814,7 @@ var Cal = function () {
     value: function adminCalEventResize(event, d, revert, jsevent) {
       var _this2 = this;
 
-      if (this.eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
+      if (this.eventIsLongerThan(event, parseInt(this.currenRentalPeriod))) {
         (0, _override.overridePrompt)({
           title: 'Confirm Override',
           body: this.ERinvalidTimePrompt,
