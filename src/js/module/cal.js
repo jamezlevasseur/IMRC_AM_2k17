@@ -369,6 +369,7 @@ export default class Cal {
         center: 'title',
         right: 'month,agendaWeek,agendaDay'
       },
+      allDaySlot: (that.page.facility.Schedule.type=='rental'),
       droppable: true,
       eventOverlap: true,
       weekends:true,
