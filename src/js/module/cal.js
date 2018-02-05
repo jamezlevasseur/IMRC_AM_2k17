@@ -39,7 +39,7 @@ export default class Cal {
 	}
 
 	adminCalEventResize (event, d ,revert, jsevent) {
-		if (this.eventIsLongerThan(event, parseInt(that.currenRentalPeriod))) {
+		if (this.eventIsLongerThan(event, parseInt(this.currenRentalPeriod))) {
 			overridePrompt({
 				title: 'Confirm Override',
 				body: this.ERinvalidTimePrompt,
