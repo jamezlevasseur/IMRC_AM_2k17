@@ -89,7 +89,6 @@ import DebugAdmin from '../page/debugadmin';
 						data = JSON.parse(data);
 						makeEditableTableHeaders(data,'#iam-table-container','iam-charge-table');
 						initSearchWithTableDataSetListener($('.iam-search'),data['data'], ['username','email','account_type','certifications','equipment_used','Charge_Description','date','approver','Comment','values'], function (searchResults) {
-							console.log(searchResults);
 							if (searchResults.length==0) {
 								$('tbody').empty();
 								let noResultsMessage = '';
@@ -159,7 +158,6 @@ import DebugAdmin from '../page/debugadmin';
 					}
 					tbody+='</tr>';
 				}
-				console.log(json, tbody);
 				$(container).find('tbody').empty();
 				$(container).find('tbody').append(tbody);
 				editableTableTDListener(tableName,finishEditingCallback);
@@ -921,7 +919,6 @@ import DebugAdmin from '../page/debugadmin';
 
 				var initCheckinCheckout = function () {
 						userEmails = $('.iam-on-load-data').data('users').split(',');
-						console.log(userEmails)
 						$('.iam-er-user-emails').autocomplete({
 				      source: userEmails
 				    });
@@ -2092,7 +2089,7 @@ import DebugAdmin from '../page/debugadmin';
 				});
 				initRegKeyButtonListener();
 				initDeleteRegKeyButtonListener();
-				initSearchListener('.iam-registration-search','tr .iam-username',1);
+				initSearchListener('.iam-search','.iam-username',1);
 			} else if ($('.iam-user-privileges-wrap').length>0) {
 				var approvedUsers = [];
 				var deniedUsers = [];

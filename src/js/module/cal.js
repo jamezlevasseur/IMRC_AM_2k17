@@ -363,13 +363,17 @@ export default class Cal {
     let that = this;
     this.calArgs = {};
 
+    let adminResAllDaySlot = false;
+    if (typeof that.page.facility!='undefined')
+      adminResAllDaySlot = that.page.facility.Schedule.type=='rental'
+
     this.calArgs['adminRes'] = {
       header: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,agendaWeek,agendaDay'
       },
-      allDaySlot: (that.page.facility.Schedule.type=='rental'),
+      allDaySlot: adminResAllDaySlot,
       droppable: true,
       eventOverlap: true,
       weekends:true,
