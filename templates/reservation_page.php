@@ -197,7 +197,7 @@ class IAM_Reservation_Page
 		if ($iam_id===null || $iam_id===false) {
 			return '';
 		}
-		$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE IAM_ID=%d AND Start_Time >= '$today'",$iam_id));
+		$reservation_results = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_RESERVATION_TABLE." WHERE IAM_ID=%d AND Status=%d AND Start_Time >= '$today'",$iam_id,UPCOMING));
 		$html = '';
 		foreach ($reservation_results as $res_row) {
 			$equip_id = $res_row->Equipment_ID;
@@ -235,7 +235,7 @@ class IAM_Reservation_Page
 					</div>';
 		}
 		if ($html=='') {
-			$html='<div class="iam-server-message">You have no reservations!</div>';
+			$html='<div class="iam-server-message">You have no upcoming reservations!</div>';
 		}
 		return $html;
 	}
@@ -293,7 +293,7 @@ class IAM_Reservation_Page
 		</div>
 		<div class="iam-res-left">'.IAM_Reservation_Page::get_equipment().'
 		</div>
-		<div id="iam-res-right"><div id="iam-res-right-title">Existing Reservations</div><div id="iam-existing-res-container">'.IAM_Reservation_Page::get_user_reservations().'</div></div>
+		<div id="iam-res-right"><div id="iam-res-right-title">Upcoming Reservations</div><div id="iam-existing-res-container">'.IAM_Reservation_Page::get_user_reservations().'</div></div>
 		</div>';
 
 		$current_user = wp_get_current_user();
