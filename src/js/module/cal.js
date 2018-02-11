@@ -5,7 +5,9 @@ import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widgets/draggable';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 import { overridePrompt } from '../module/override';
-import {initContextMenuLib} from '../lib/contextmenu';
+import { initContextMenuLib } from '../lib/contextmenu';
+import { copyToClipboard } from '../module/uifunc';
+
 
 export default class Cal {
 
@@ -114,6 +116,15 @@ export default class Cal {
       this.eventsToDelete.push(event.nid);
     }
     $(this.calID).fullCalendar('rerenderEvents');
+  }
+
+  handleEventCopyEmail (event) {
+    let e = $('<div>'+event.email+'</div>');
+    copyToClipboard(e[0]);
+    $('body').append('<div class="iam-copy-notification">Email Copied to Clipboard</div>');
+    $('.iam-copy-notification').fadeOut(3500, function() {
+      $('.iam-copy-notification').remove();
+    });
   }
 
   initCalFor (facing) {
@@ -244,8 +255,11 @@ export default class Cal {
     let finalArgs = $.extend(neutralArgs, this.calArgs[cal]);
     this.calID = this.getCalID();
     $(this.calID).fullCalendar(finalArgs);
-    submissionStart();
-    setTimeout( () => {this.initContextMenu(this.page.cal); submissionEnd();}, 1000 );
+
+    if (cal!='adminRes') {
+      submissionStart();
+      setTimeout( () => {this.initContextMenu(this.page.cal); submissionEnd();}, 1000 );
+    }
   }
 
   initPubResCal (facilitType) {
@@ -271,8 +285,9 @@ export default class Cal {
 		$('.iam-res-cal').fullCalendar(finalArgs);
   }
 
-  initContextMenu (menuToUse) {
+  initContextMenu (menuToUse, parentID = null) {
     let that = this;
+    parentID = parentID===null ? that.calID : parentID;
     initContextMenuLib();
   	menuToUse = typeof menuToUse=='undefined' ? 'default' : menuToUse;
 
@@ -329,7 +344,7 @@ export default class Cal {
   		let menuDict = {'default':menu, 'rental':rentalMenu, 'irregular': irregularMenu};
   		let menuOfChoice = menuDict[menuToUse];
 
-      $(that.calID+' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
+      $(parentID+' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
   }
 
   preventPastReservation (e) {
@@ -363,17 +378,17 @@ export default class Cal {
     let that = this;
     this.calArgs = {};
 
-    let adminResAllDaySlot = false;
+    let adminResViews = 'month,agendaWeek,agendaDay';
     if (typeof that.page.facility!='undefined')
-      adminResAllDaySlot = that.page.facility.Schedule.type=='rental'
+      if (that.page.facility.Schedule.type=='rental')
+        adminResViews = 'month,basicWeek,basicDay';
 
     this.calArgs['adminRes'] = {
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,agendaDay'
+        right: adminResViews
       },
-      allDaySlot: adminResAllDaySlot,
       droppable: true,
       eventOverlap: true,
       weekends:true,
@@ -408,6 +423,10 @@ export default class Cal {
          that.initContextMenu();
          that.initStatusHideListeners();
          submissionEnd();
+         $('.fc-more').click(function(event) {
+           $(document).off('mousedown');
+           that.initContextMenu('default','');
+         });
       },
       eventDrop: function (event, d ,revert) {
         that.eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};

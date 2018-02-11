@@ -15203,6 +15203,162 @@ exports.handleServerError = handleServerError;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.copyToClipboard = exports.initPopupXListener = exports.initSearchListener = exports.initCSVAJAXButtonListener = exports.initCSVButtonListener = undefined;
+
+var _jquery = __webpack_require__(1);
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _serverresponse = __webpack_require__(6);
+
+var _userfeedback = __webpack_require__(4);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var copyToClipboard = function copyToClipboard(elem) {
+  // create hidden text element, if it doesn't already exist
+  var targetId = "_hiddenCopyText_";
+  var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
+  var origSelectionStart = void 0,
+      origSelectionEnd = void 0;
+  if (isInput) {
+    // can just use the original source element for the selection and copy
+    target = elem;
+    origSelectionStart = elem.selectionStart;
+    origSelectionEnd = elem.selectionEnd;
+  } else {
+    // must use a temporary form element for the selection and copy
+    target = document.getElementById(targetId);
+    if (!target) {
+      var target = document.createElement("textarea");
+      target.style.position = "absolute";
+      target.style.left = "-9999px";
+      target.style.top = "0";
+      target.id = targetId;
+      document.body.appendChild(target);
+    }
+    target.textContent = elem.textContent;
+  }
+  // select the content
+  var currentFocus = document.activeElement;
+  target.focus();
+  target.setSelectionRange(0, target.value.length);
+
+  // copy the selection
+  var succeed = void 0;
+  try {
+    succeed = document.execCommand("copy");
+  } catch (e) {
+    succeed = false;
+  }
+  // restore original focus
+  if (currentFocus && typeof currentFocus.focus === "function") {
+    currentFocus.focus();
+  }
+
+  if (isInput) {
+    // restore prior selection
+    elem.setSelectionRange(origSelectionStart, origSelectionEnd);
+  } else {
+    // clear temporary content
+    target.textContent = "";
+  }
+  return succeed;
+};
+
+var initCSVButtonListener = function initCSVButtonListener(ignoreColumn, id) {
+  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
+    var csvText = 'data:text/csv;charset=utf-8,';
+    id = typeof id === 'undefined' ? '' : '#' + id + ' ';
+    if (id.substring(1, 2) == '#') id = id.substring(1, id.length);
+    (0, _jquery2.default)(id + 'th').each(function (index, el) {
+      csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
+    });
+    csvText = csvText.substring(0, csvText.length - 1) + '\n';
+    (0, _jquery2.default)(id + 'tr').each(function (index, el) {
+      (0, _jquery2.default)(this).children('td').each(function (i, e) {
+        if (i != ignoreColumn) csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
+      });
+      csvText = csvText.substring(0, csvText.length - 1) + '\n';
+    });
+    var encodedUri = encodeURI(csvText);
+    window.open(encodedUri);
+  });
+};
+
+var initPopupXListener = function initPopupXListener(callback) {
+  (0, _jquery2.default)('.iam-x').click(function (event) {
+    (0, _jquery2.default)('.iam-res-popup').remove();
+    if (typeof callback != 'undefined') {
+      callback();
+    }
+  });
+};
+
+var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
+  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
+    (0, _userfeedback.submissionStart)();
+    _jquery2.default.ajax({
+      url: ajaxurl,
+      type: 'POST',
+      data: { action: ajaxaction },
+      success: function success(data) {
+        (0, _userfeedback.submissionEnd)();
+        var d = (0, _serverresponse.handleServerResponse)(data);
+        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + d);
+        window.open(encodedUri);
+      },
+      error: function error(data) {
+        (0, _userfeedback.submissionEnd)();
+        (0, _serverresponse.handleServerError)(data, new Error());
+      }
+    });
+  });
+};
+
+var initSearchListener = function initSearchListener(searchElement, elementWithText, parents) {
+  (0, _jquery2.default)(searchElement).keyup(function (event) {
+    (0, _jquery2.default)(elementWithText).each(function (index, el) {
+      if ((0, _jquery2.default)(this).text().toLowerCase().indexOf((0, _jquery2.default)(searchElement).val().toLowerCase()) == -1) {
+        var hideable = (0, _jquery2.default)(this);
+        for (var i = 0; i < parents; i++) {
+          hideable = hideable.parent();
+        }
+        hideable.addClass('iam-ninja');
+      } else {
+        var _hideable = (0, _jquery2.default)(this);
+        for (var _i = 0; _i < parents; _i++) {
+          _hideable = _hideable.parent();
+        }
+        _hideable.removeClass('iam-ninja');
+      }
+      if ((0, _jquery2.default)(searchElement).val().length == 0) {
+        var _hideable2 = (0, _jquery2.default)(this);
+        for (var _i2 = 0; _i2 < parents; _i2++) {
+          _hideable2 = _hideable2.parent();
+        }
+        _hideable2.removeClass('iam-ninja');
+      }
+    });
+  });
+};
+
+exports.initCSVButtonListener = initCSVButtonListener;
+exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
+exports.initSearchListener = initSearchListener;
+exports.initPopupXListener = initPopupXListener;
+exports.copyToClipboard = copyToClipboard;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;
 
 /*!
@@ -15417,7 +15573,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15467,7 +15623,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 });
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15520,110 +15676,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 		UP: 38
 	};
 });
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.initPopupXListener = exports.initSearchListener = exports.initCSVAJAXButtonListener = exports.initCSVButtonListener = undefined;
-
-var _jquery = __webpack_require__(1);
-
-var _jquery2 = _interopRequireDefault(_jquery);
-
-var _serverresponse = __webpack_require__(6);
-
-var _userfeedback = __webpack_require__(4);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var initCSVButtonListener = function initCSVButtonListener(ignoreColumn, id) {
-  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
-    var csvText = 'data:text/csv;charset=utf-8,';
-    id = typeof id === 'undefined' ? '' : '#' + id + ' ';
-    if (id.substring(1, 2) == '#') id = id.substring(1, id.length);
-    (0, _jquery2.default)(id + 'th').each(function (index, el) {
-      csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
-    });
-    csvText = csvText.substring(0, csvText.length - 1) + '\n';
-    (0, _jquery2.default)(id + 'tr').each(function (index, el) {
-      (0, _jquery2.default)(this).children('td').each(function (i, e) {
-        if (i != ignoreColumn) csvText += (0, _jquery2.default)(this).text().replace(/(<([^>]+)>)/ig, "") + ',';
-      });
-      csvText = csvText.substring(0, csvText.length - 1) + '\n';
-    });
-    var encodedUri = encodeURI(csvText);
-    window.open(encodedUri);
-  });
-};
-
-var initPopupXListener = function initPopupXListener(callback) {
-  (0, _jquery2.default)('.iam-x').click(function (event) {
-    (0, _jquery2.default)('.iam-res-popup').remove();
-    if (typeof callback != 'undefined') {
-      callback();
-    }
-  });
-};
-
-var initCSVAJAXButtonListener = function initCSVAJAXButtonListener(ajaxaction) {
-  (0, _jquery2.default)('.iam-csv-button').click(function (event) {
-    (0, _userfeedback.submissionStart)();
-    _jquery2.default.ajax({
-      url: ajaxurl,
-      type: 'POST',
-      data: { action: ajaxaction },
-      success: function success(data) {
-        (0, _userfeedback.submissionEnd)();
-        var d = (0, _serverresponse.handleServerResponse)(data);
-        var encodedUri = encodeURI('data:text/csv;charset=utf-8,' + d);
-        window.open(encodedUri);
-      },
-      error: function error(data) {
-        (0, _userfeedback.submissionEnd)();
-        (0, _serverresponse.handleServerError)(data, new Error());
-      }
-    });
-  });
-};
-
-var initSearchListener = function initSearchListener(searchElement, elementWithText, parents) {
-  (0, _jquery2.default)(searchElement).keyup(function (event) {
-    (0, _jquery2.default)(elementWithText).each(function (index, el) {
-      if ((0, _jquery2.default)(this).text().toLowerCase().indexOf((0, _jquery2.default)(searchElement).val().toLowerCase()) == -1) {
-        var hideable = (0, _jquery2.default)(this);
-        for (var i = 0; i < parents; i++) {
-          hideable = hideable.parent();
-        }
-        hideable.addClass('iam-ninja');
-      } else {
-        var _hideable = (0, _jquery2.default)(this);
-        for (var _i = 0; _i < parents; _i++) {
-          _hideable = _hideable.parent();
-        }
-        _hideable.removeClass('iam-ninja');
-      }
-      if ((0, _jquery2.default)(searchElement).val().length == 0) {
-        var _hideable2 = (0, _jquery2.default)(this);
-        for (var _i2 = 0; _i2 < parents; _i2++) {
-          _hideable2 = _hideable2.parent();
-        }
-        _hideable2.removeClass('iam-ninja');
-      }
-    });
-  });
-};
-
-exports.initCSVButtonListener = initCSVButtonListener;
-exports.initCSVAJAXButtonListener = initCSVAJAXButtonListener;
-exports.initSearchListener = initSearchListener;
-exports.initPopupXListener = initPopupXListener;
 
 /***/ }),
 /* 11 */
@@ -15763,6 +15815,8 @@ var _override = __webpack_require__(136);
 
 var _contextmenu = __webpack_require__(154);
 
+var _uifunc = __webpack_require__(7);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -15873,6 +15927,16 @@ var Cal = function () {
         this.eventsToDelete.push(event.nid);
       }
       (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
+    }
+  }, {
+    key: 'handleEventCopyEmail',
+    value: function handleEventCopyEmail(event) {
+      var e = (0, _jquery2.default)('<div>' + event.email + '</div>');
+      (0, _uifunc.copyToClipboard)(e[0]);
+      (0, _jquery2.default)('body').append('<div class="iam-copy-notification">Email Copied to Clipboard</div>');
+      (0, _jquery2.default)('.iam-copy-notification').fadeOut(3500, function () {
+        (0, _jquery2.default)('.iam-copy-notification').remove();
+      });
     }
   }, {
     key: 'initCalFor',
@@ -16008,10 +16072,13 @@ var Cal = function () {
       var finalArgs = _jquery2.default.extend(neutralArgs, this.calArgs[cal]);
       this.calID = this.getCalID();
       (0, _jquery2.default)(this.calID).fullCalendar(finalArgs);
-      (0, _userfeedback.submissionStart)();
-      setTimeout(function () {
-        _this3.initContextMenu(_this3.page.cal);(0, _userfeedback.submissionEnd)();
-      }, 1000);
+
+      if (cal != 'adminRes') {
+        (0, _userfeedback.submissionStart)();
+        setTimeout(function () {
+          _this3.initContextMenu(_this3.page.cal);(0, _userfeedback.submissionEnd)();
+        }, 1000);
+      }
     }
   }, {
     key: 'initPubResCal',
@@ -16037,7 +16104,10 @@ var Cal = function () {
   }, {
     key: 'initContextMenu',
     value: function initContextMenu(menuToUse) {
+      var parentID = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
       var that = this;
+      parentID = parentID === null ? that.calID : parentID;
       (0, _contextmenu.initContextMenuLib)();
       menuToUse = typeof menuToUse == 'undefined' ? 'default' : menuToUse;
 
@@ -16091,7 +16161,7 @@ var Cal = function () {
       var menuDict = { 'default': menu, 'rental': rentalMenu, 'irregular': irregularMenu };
       var menuOfChoice = menuDict[menuToUse];
 
-      (0, _jquery2.default)(that.calID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
+      (0, _jquery2.default)(parentID + ' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice, { triggerOn: 'click', mouseClick: 'right' });
     }
   }, {
     key: 'preventPastReservation',
@@ -16126,16 +16196,15 @@ var Cal = function () {
       var that = this;
       this.calArgs = {};
 
-      var adminResAllDaySlot = false;
-      if (typeof that.page.facility != 'undefined') adminResAllDaySlot = that.page.facility.Schedule.type == 'rental';
+      var adminResViews = 'month,agendaWeek,agendaDay';
+      if (typeof that.page.facility != 'undefined') if (that.page.facility.Schedule.type == 'rental') adminResViews = 'month,basicWeek,basicDay';
 
       this.calArgs['adminRes'] = {
         header: {
           left: 'prev,next today',
           center: 'title',
-          right: 'month,agendaWeek,agendaDay'
+          right: adminResViews
         },
-        allDaySlot: adminResAllDaySlot,
         droppable: true,
         eventOverlap: true,
         weekends: true,
@@ -16170,6 +16239,10 @@ var Cal = function () {
           that.initContextMenu();
           that.initStatusHideListeners();
           (0, _userfeedback.submissionEnd)();
+          (0, _jquery2.default)('.fc-more').click(function (event) {
+            (0, _jquery2.default)(document).off('mousedown');
+            that.initContextMenu('default', '');
+          });
         },
         eventDrop: function eventDrop(event, d, revert) {
           that.eventsModified[event.nid] = { start: event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss') };
@@ -27825,7 +27898,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(142), __webpack_require__(131), __webpack_require__(8), __webpack_require__(132), __webpack_require__(143), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(142), __webpack_require__(131), __webpack_require__(9), __webpack_require__(132), __webpack_require__(143), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -43771,7 +43844,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(145), __webpack_require__(130), __webpack_require__(7), __webpack_require__(151), __webpack_require__(134), __webpack_require__(9), __webpack_require__(135), __webpack_require__(8), __webpack_require__(132), __webpack_require__(153), __webpack_require__(137), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(145), __webpack_require__(130), __webpack_require__(8), __webpack_require__(151), __webpack_require__(134), __webpack_require__(10), __webpack_require__(135), __webpack_require__(9), __webpack_require__(132), __webpack_require__(153), __webpack_require__(137), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -44677,7 +44750,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 		// These are only for backcompat
 		// TODO: Remove after 1.12
-		__webpack_require__(146), __webpack_require__(147), __webpack_require__(9), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		__webpack_require__(146), __webpack_require__(147), __webpack_require__(10), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -45820,7 +45893,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(7), __webpack_require__(152), __webpack_require__(131), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(8), __webpack_require__(152), __webpack_require__(131), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -47888,7 +47961,7 @@ var _userfeedback = __webpack_require__(4);
 
 var _override = __webpack_require__(136);
 
-var _uifunc = __webpack_require__(10);
+var _uifunc = __webpack_require__(7);
 
 var _useradmin = __webpack_require__(162);
 
@@ -48120,56 +48193,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					(0, _userfeedback.submissionEnd)();
 				}
 			});
-		};
-
-		var copyToClipboard = function copyToClipboard(elem) {
-			// create hidden text element, if it doesn't already exist
-			var targetId = "_hiddenCopyText_";
-			var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
-			var origSelectionStart, origSelectionEnd;
-			if (isInput) {
-				// can just use the original source element for the selection and copy
-				target = elem;
-				origSelectionStart = elem.selectionStart;
-				origSelectionEnd = elem.selectionEnd;
-			} else {
-				// must use a temporary form element for the selection and copy
-				target = document.getElementById(targetId);
-				if (!target) {
-					var target = document.createElement("textarea");
-					target.style.position = "absolute";
-					target.style.left = "-9999px";
-					target.style.top = "0";
-					target.id = targetId;
-					document.body.appendChild(target);
-				}
-				target.textContent = elem.textContent;
-			}
-			// select the content
-			var currentFocus = document.activeElement;
-			target.focus();
-			target.setSelectionRange(0, target.value.length);
-
-			// copy the selection
-			var succeed;
-			try {
-				succeed = document.execCommand("copy");
-			} catch (e) {
-				succeed = false;
-			}
-			// restore original focus
-			if (currentFocus && typeof currentFocus.focus === "function") {
-				currentFocus.focus();
-			}
-
-			if (isInput) {
-				// restore prior selection
-				elem.setSelectionRange(origSelectionStart, origSelectionEnd);
-			} else {
-				// clear temporary content
-				target.textContent = "";
-			}
-			return succeed;
 		};
 
 		var eventToolTip = function eventToolTip(event, element) {
@@ -49407,7 +49430,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		var handleEventCopyEmail = function handleEventCopyEmail(event) {
 			var e = $('<div>' + event.email + '</div>');
-			copyToClipboard(e[0]);
+			(0, _uifunc.copyToClipboard)(e[0]);
 			$('body').append('<div class="iam-copy-notification">Email Copied to Clipboard</div>');
 			$('.iam-copy-notification').fadeOut(3500, function () {
 				$('.iam-copy-notification').remove();
@@ -50059,7 +50082,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(161), __webpack_require__(9), __webpack_require__(135), __webpack_require__(8), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(161), __webpack_require__(10), __webpack_require__(135), __webpack_require__(9), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -50731,7 +50754,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 	if (true) {
 
 		// AMD. Register as an anonymous module.
-		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(9), __webpack_require__(135), __webpack_require__(8), __webpack_require__(137), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+		!(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1), __webpack_require__(10), __webpack_require__(135), __webpack_require__(9), __webpack_require__(137), __webpack_require__(2), __webpack_require__(3)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -51351,7 +51374,7 @@ var _userfeedback = __webpack_require__(4);
 
 var _utils = __webpack_require__(5);
 
-var _uifunc = __webpack_require__(10);
+var _uifunc = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -51858,7 +51881,7 @@ var _serverresponse = __webpack_require__(6);
 
 var _userfeedback = __webpack_require__(4);
 
-var _uifunc = __webpack_require__(10);
+var _uifunc = __webpack_require__(7);
 
 var _cal = __webpack_require__(13);
 
