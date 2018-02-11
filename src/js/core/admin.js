@@ -733,7 +733,7 @@ import DebugAdmin from '../page/debugadmin';
 			var initSubmitEquipmentFormListener = function () {
 				$('.iam-admin-submit-button').off();
 				$('.iam-admin-submit-button').click(function(event) {
-					submissionStart();
+
 					var form = $('form#iam-update-form').hasClass('iam-ninja') ? $('form#iam-new-form') : $('form#iam-update-form') ;
 					var method = form.attr('id')=='iam-new-form' ? 'n' : 'u' ;
 					var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0 ;
@@ -747,7 +747,8 @@ import DebugAdmin from '../page/debugadmin';
 					for (var i = 0; i < equip_tags.length; i++) {
 						equip_tags[i] = equip_tags[i].trim();
 						if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1) {
-							new_tags.push(equip_tags[i]);
+							alert('The tag "'+equip_tags[i]+'" is invalid.');
+							return false;
 						}
 					};
 					var formData = new FormData();
@@ -770,6 +771,7 @@ import DebugAdmin from '../page/debugadmin';
 					formData.append('on-slide-show',slideShow);
 					formData.append('tags',equip_tags);
 					formData.append('new_tags',new_tags);
+					submissionStart();
 
 					if (method=='u')
 						formData.append('x',form.children('.iam-form-row').children('#x').val());
