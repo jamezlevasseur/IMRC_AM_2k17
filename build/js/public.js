@@ -15952,6 +15952,7 @@ var Cal = function () {
   }, {
     key: 'initStatusHideListeners',
     value: function initStatusHideListeners() {
+      var that = this;
       (0, _jquery2.default)('.res-toolbar input[name=upcoming]').off();
       (0, _jquery2.default)('.res-toolbar input[name=active]').off();
       (0, _jquery2.default)('.res-toolbar input[name=completed]').off();
@@ -15963,49 +15964,49 @@ var Cal = function () {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-upcoming').toggleClass('iam-ninja');
+        that.updateStatusFilter('upcoming');
       });
       (0, _jquery2.default)('.res-toolbar input[name=active]').click(function (e) {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-active').toggleClass('iam-ninja');
+        that.updateStatusFilter('active');
       });
       (0, _jquery2.default)('.res-toolbar input[name=completed]').click(function (e) {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-completed').toggleClass('iam-ninja');
+        that.updateStatusFilter('completed');
       });
       (0, _jquery2.default)('.res-toolbar input[name=no-show]').click(function (e) {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-no-show').toggleClass('iam-ninja');
+        that.updateStatusFilter('no-show');
       });
       (0, _jquery2.default)('.res-toolbar input[name=no-pay]').click(function (e) {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-no-pay').toggleClass('iam-ninja');
+        that.updateStatusFilter('no-pay');
       });
       (0, _jquery2.default)('.res-toolbar input[name=is-late]').click(function (e) {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-is-late').toggleClass('iam-ninja');
+        that.updateStatusFilter('is-late');
       });
       (0, _jquery2.default)('.res-toolbar input[name=was-late]').click(function (e) {
         if ((0, _jquery2.default)('.iam-res-cal-placeholder').length > 0) {
           e.preventDefault();
           return false;
         }
-        (0, _jquery2.default)('.iam-status-was-late').toggleClass('iam-ninja');
+        that.updateStatusFilter('was-late');
       });
     }
   }, {
@@ -16043,6 +16044,7 @@ var Cal = function () {
 
       this.resetEvents();
       this.removePlaceholder();
+      this.hiddenEvents = [];
 
       if (this.page.cal == 'adminRes') {
         this.updateResListSource();
@@ -16226,6 +16228,7 @@ var Cal = function () {
           if (that.eventsToDelete.indexOf(event.nid) != -1) {
             (0, _jquery2.default)(element).addClass('marked-for-delete');
           }
+          if (that.hiddenEvents.includes(event.status)) return false;
         },
         eventAfterRender: function eventAfterRender(event, element) {
           if (event.toDelete == 1) {
@@ -16388,6 +16391,14 @@ var Cal = function () {
         newEventResource = newEventResource.concat((0, _jquery2.default)(this).data('calevents'));
       });
       this.lastReservationResource = newEventResource;
+    }
+  }, {
+    key: 'updateStatusFilter',
+    value: function updateStatusFilter(status) {
+      if (this.hiddenEvents.includes(status)) for (var i = 0; i < this.hiddenEvents.length; i++) {
+        if (this.hiddenEvents[i] == status) this.hiddenEvents.splice(i, 1);
+      } else this.hiddenEvents.push(status);
+      (0, _jquery2.default)(this.calID).fullCalendar('rerenderEvents');
     }
   }, {
     key: 'updateEventsModified',

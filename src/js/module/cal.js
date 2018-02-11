@@ -138,6 +138,7 @@ export default class Cal {
   }
 
   initStatusHideListeners () {
+    let that = this;
     $('.res-toolbar input[name=upcoming]').off();
     $('.res-toolbar input[name=active]').off();
     $('.res-toolbar input[name=completed]').off();
@@ -149,49 +150,49 @@ export default class Cal {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-upcoming').toggleClass('iam-ninja');
+      that.updateStatusFilter('upcoming');
     });
     $('.res-toolbar input[name=active]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-active').toggleClass('iam-ninja');
+      that.updateStatusFilter('active');
     });
     $('.res-toolbar input[name=completed]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-completed').toggleClass('iam-ninja');
+      that.updateStatusFilter('completed');
     });
     $('.res-toolbar input[name=no-show]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-no-show').toggleClass('iam-ninja');
+      that.updateStatusFilter('no-show');
     });
     $('.res-toolbar input[name=no-pay]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-no-pay').toggleClass('iam-ninja');
+      that.updateStatusFilter('no-pay');
     });
     $('.res-toolbar input[name=is-late]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-is-late').toggleClass('iam-ninja');
+      that.updateStatusFilter('is-late');
     });
     $('.res-toolbar input[name=was-late]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-was-late').toggleClass('iam-ninja');
+      that.updateStatusFilter('was-late');
     });
   }
 
@@ -226,6 +227,7 @@ export default class Cal {
   initAdminCal (cal) {
     this.resetEvents();
     this.removePlaceholder();
+    this.hiddenEvents = [];
 
     if (this.page.cal=='adminRes') {
       this.updateResListSource();
@@ -410,6 +412,8 @@ export default class Cal {
         if (that.eventsToDelete.indexOf(event.nid)!=-1) {
           $(element).addClass('marked-for-delete');
         }
+        if (that.hiddenEvents.includes(event.status))
+          return false;
       },
       eventAfterRender: function (event, element) {
         if (event.toDelete==1) {
@@ -572,6 +576,17 @@ export default class Cal {
       newEventResource = newEventResource.concat( $(this).data('calevents') );
     });
     this.lastReservationResource = newEventResource;
+  }
+
+  updateStatusFilter (status) {
+    if (this.hiddenEvents.includes(status))
+      for (var i = 0; i < this.hiddenEvents.length; i++) {
+        if (this.hiddenEvents[i]==status)
+          this.hiddenEvents.splice(i,1);
+      }
+    else
+      this.hiddenEvents.push(status);
+    $(this.calID).fullCalendar('rerenderEvents');
   }
 
   updateEventsModified (event) {
