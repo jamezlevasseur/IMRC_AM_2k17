@@ -1059,7 +1059,7 @@ import DebugAdmin from '../page/debugadmin';
 								stick: true, // maintain when user navigates (see docs on the renderEvent method)
 								editable: true,
 								className: 'iam-new-event',
-								allDay:true
+								allDay:true,
 							});
 
 							// make the event draggable using jQuery UI
@@ -1075,18 +1075,18 @@ import DebugAdmin from '../page/debugadmin';
 							header: {
 								left: 'prev,next today',
 								center: 'title',
-								right: 'month,agendaWeek'
+								right: 'month,basicWeek'
 							},
 							droppable: true,
 							eventOverlap: true,
 						  weekends:true,
 							height: 600,
-							forceEventDuration: true,
+							forceEventDuration:  true,
+							defaultAllDayEventDuration: {days: parseInt(thisRentalDays)},
 							defaultView: 'month',
 							editable: true,
 							durationEditable: true,
 							allDay: true,
-							defaultAllDayEventDuration: {days: parseInt(thisRentalDays)},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
 								$(element).data('fullname', event.fullname);

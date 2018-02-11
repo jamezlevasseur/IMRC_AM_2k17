@@ -122,7 +122,7 @@ class IAM_Cal
 							$optional_event_args['startEditable'] = false;
 						}
 						$formatted_events[] = array_merge($optional_event_args, $new_event);
-						if ($all_day) {
+						if ($all_day && empty($row->Checked_In)) {
 							$formatted_events[count($formatted_events)-1]['allDay'] = true;
 						}
 					} else {

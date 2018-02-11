@@ -48967,18 +48967,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					header: {
 						left: 'prev,next today',
 						center: 'title',
-						right: 'month,agendaWeek'
+						right: 'month,basicWeek'
 					},
 					droppable: true,
 					eventOverlap: true,
 					weekends: true,
 					height: 600,
 					forceEventDuration: true,
+					defaultAllDayEventDuration: { days: parseInt(thisRentalDays) },
 					defaultView: 'month',
 					editable: true,
 					durationEditable: true,
 					allDay: true,
-					defaultAllDayEventDuration: { days: parseInt(thisRentalDays) },
 					eventLimit: true, // allow "more" link when too many events
 					eventRender: function eventRender(event, element) {
 						$(element).data('fullname', event.fullname);

@@ -272,11 +272,16 @@ class Equipment_Page extends Item_Mgmt
       $res_id = $wpdb->get_results($wpdb->prepare("SELECT Checked_Out FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e))[0]->Checked_Out;
       $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Checked_Out=%d",$res_id));
 
-      $status = $wpdb->get_results($wpdb->prepare("SELECT Status FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$res_id))[0]->Status;
+      $res = $wpdb->get_results($wpdb->prepare("SELECT Status,End_Time FROM ".IAM_RESERVATION_TABLE." WHERE Reservation_ID=%d",$res_id))[0];
+
+      $status = $res->Status;
+      $end_time = $res->End_Time;
+
+      $end_time = date('DATE_ONLY_FORMAT').' '.explode(' ',$end_time)[1];
 
       $new_status = $status==IS_LATE ? WAS_LATE : COMPLETED;
 
-      $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$res_id));
+      $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s,End_Time=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$end_time,$res_id));
 
       iam_respond(SUCCESS);
     }
