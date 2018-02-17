@@ -16259,7 +16259,7 @@ var Cal = function () {
           if (that.page.facility.Schedule.type == 'rental') that.adminCalEventResize(event, d, revert, jsevent);
         },
         eventMouseover: function eventMouseover(calEvent, jsEvent) {
-          var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: ' + calEvent.fullname + '<br /> Email: ' + calEvent.email + ' <br /> Equipment: ' + calEvent.equipment + '<br /> Checked In: ' + calEvent.in + '<br /> Checked Out: ' + calEvent.out + '</div>';
+          var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: ' + calEvent.fullname + '<br /> Email: ' + calEvent.email + ' <br /> Equipment: ' + calEvent.equipment + '<br /> Checked In: ' + calEvent.in + '<br /> Checked Out: ' + calEvent.out + '<br /> Comment: ' + calEvent.comment + '</div>';
 
           var $tooltip = (0, _jquery2.default)(tooltip).appendTo('body');
 
@@ -48208,7 +48208,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		var eventToolTip = function eventToolTip(event, element) {
 			var e = $(element);
-			e.attr('title', 'Name: ' + event.fullname + '\n Email: ' + event.email + ' \n Equipment: ' + event.equipment + '\n Checked In: ' + event.in + '\n Checked Out: ' + event.out);
+			e.attr('title', 'Name: ' + event.fullname + '\n Email: ' + event.email + ' \n Equipment: ' + event.equipment + '\n Checked In: ' + event.in + '\n Checked Out: ' + event.out + '\n Comment: ' + event.comment);
 		};
 
 		var makeSubmitPopup = function makeSubmitPopup(heading, body, callback, a) {

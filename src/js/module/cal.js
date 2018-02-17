@@ -448,7 +448,7 @@ export default class Cal {
           that.adminCalEventResize(event, d ,revert, jsevent);
       },
       eventMouseover: function(calEvent, jsEvent) {
-        var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: '+calEvent.fullname+'<br /> Email: '+calEvent.email+' <br /> Equipment: '+calEvent.equipment+'<br /> Checked In: '+calEvent.in+'<br /> Checked Out: '+calEvent.out+'</div>';
+        var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: '+calEvent.fullname+'<br /> Email: '+calEvent.email+' <br /> Equipment: '+calEvent.equipment+'<br /> Checked In: '+calEvent.in+'<br /> Checked Out: '+calEvent.out+'<br /> Comment: '+calEvent.comment+'</div>';
 
         var $tooltip = $(tooltip).appendTo('body');
 
@@ -460,11 +460,11 @@ export default class Cal {
                 $tooltip.css('top', e.pageY + 10);
                 $tooltip.css('left', e.pageX + 20);
             });
-        },
-        eventMouseout: function(calEvent, jsEvent) {
-            $(this).css('z-index', 8);
-            $('.tooltipevent').remove();
-        },
+      },
+      eventMouseout: function(calEvent, jsEvent) {
+          $(this).css('z-index', 8);
+          $('.tooltipevent').remove();
+      },
       events: that.lastReservationResource
     }
 

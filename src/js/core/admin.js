@@ -209,7 +209,7 @@ import DebugAdmin from '../page/debugadmin';
 
 			var eventToolTip = function (event,element) {
 				var e = $(element);
-				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment+'\n Checked In: '+event.in+'\n Checked Out: '+event.out);
+				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment+'\n Checked In: '+event.in+'\n Checked Out: '+event.out+'\n Comment: '+event.comment);
 			}
 
 			var makeSubmitPopup = function (heading,body,callback,a) {
