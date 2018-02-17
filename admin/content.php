@@ -147,7 +147,7 @@ class Admin_Content
 			    <div class="modal-content">
 			      <div class="modal-header" style="min-height:24px;">
 			        <div class="fc-event" style="text-align:center; max-width:120px;">  drag me </div>
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;top:10px;">
 			          <span aria-hidden="true">&times;</span>
 			        </button>
 			      </div>
@@ -266,7 +266,7 @@ class Admin_Content
 					<div class="modal-content">
 						<div class="modal-header" style="min-height:24px;">
 							Manage User Funds
-							<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;">
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close" style="position:absolute;right:10px;top:10px;">
 								<span aria-hidden="true">&times;</span>
 							</button>
 						</div>
