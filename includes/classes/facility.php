@@ -51,6 +51,10 @@ class Facility
   {
     $search = [];
     $replace = [];
+    if (isset($email_args['comment'])) {
+      $search[] = '%comment%';
+      $replace[] = $email_args['comment'];
+    }
     if (isset($email_args['fee'])) {
       $search[] = '%fee%';
       $replace[] = $email_args['fee'];
