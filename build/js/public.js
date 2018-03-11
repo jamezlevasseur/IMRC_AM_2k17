@@ -16348,17 +16348,29 @@ var Cal = function () {
             (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
             return false;
           }
+          if (!that.preventPastReservation(e)) {
+            (0, _jquery2.default)('.iam-res-cal').fullCalendar('removeEvents', e._id);
+            return false;
+          }
         },
         eventDrop: function eventDrop(e, d, revert) {
           if (that.eventFallsOnWeekend(e)) {
             alert(that.ERinvalidTimePrompt);
             revert();
           }
+          if (!that.preventPastReservation(e)) {
+            revert();
+            return;
+          }
         },
         eventResize: function eventResize(e, d, revert) {
           if (that.eventIsLongerThan(e, parseInt(that.page.rentalPeriod))) {
             alert('The maximum rental time for this equipment is ' + (that.page.rentalPeriod - 1) + ' days.');
             revert();
+          }
+          if (!that.preventPastReservation(e)) {
+            revert();
+            return;
           }
         },
         eventRender: function eventRender(event, element) {

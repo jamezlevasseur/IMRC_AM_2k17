@@ -537,17 +537,29 @@ export default class Cal {
           $('.iam-res-cal').fullCalendar('removeEvents',e._id);
           return false;
         }
+        if (!that.preventPastReservation(e)) {
+          $('.iam-res-cal').fullCalendar('removeEvents',e._id);
+          return false;
+        }
       },
       eventDrop: function (e, d, revert) {
         if (that.eventFallsOnWeekend(e)) {
           alert(that.ERinvalidTimePrompt);
           revert();
         }
+        if (!that.preventPastReservation(e)) {
+          revert();
+          return;
+        }
       },
       eventResize: function (e, d, revert) {
         if (that.eventIsLongerThan(e, (parseInt(that.page.rentalPeriod)))) {
           alert('The maximum rental time for this equipment is ' + (that.page.rentalPeriod-1) + ' days.')
           revert();
+        }
+        if (!that.preventPastReservation(e)) {
+          revert();
+          return;
         }
       },
       eventRender: function (event, element) {
