@@ -269,7 +269,7 @@ export default class Cal {
       editable: false, //new events will be made editable else where
       eventLimit: true, // allow "more" link when too many events
       allDay: false,
-      height: 500,
+      height: 400,
 			forceEventDuration: true,
       businessHours: this.businessHoursConverted,
       droppable: true,

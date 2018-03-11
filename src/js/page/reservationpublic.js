@@ -85,8 +85,8 @@ export default class ReservationPublic {
   spawnResPopup (facilityName, description) {
     $('body').append(this.resPopup);
     $('.iam-res-popup').removeClass('iam-ninja');
-    $('.iam-res-popup-header').append(this.activeEquipName);
-    $('.iam-facility-info').html('<h1>'+facilityName+' Hours</h1><p>'+description+'</p>');
+    $('.iam-res-popup-header').append(this.activeEquipName.split('_').join(' '));
+    $('.iam-facility-info').html('<p>'+description+'</p>');
   }
 
   getFacilityInfo (key) {

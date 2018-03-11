@@ -16089,7 +16089,7 @@ var Cal = function () {
         editable: false, //new events will be made editable else where
         eventLimit: true, // allow "more" link when too many events
         allDay: false,
-        height: 500,
+        height: 400,
         forceEventDuration: true,
         businessHours: this.businessHoursConverted,
         droppable: true,
@@ -48491,7 +48491,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				var d = moment().day();
 				if (d == 0 || d == 6) wknd = true;
 				if (facility_info[current_root_tag]['schedule_type'] == 'Rental') {
-					$('.iam-facility-info').html('<h1>' + $(this).data('equiproot') + ' Hours</h1><p>' + facility_info[current_root_tag]['rental_hours_description']) + '</p>';
+					$('.iam-facility-info').html('<p>' + facility_info[current_root_tag]['rental_hours_description']) + '</p>';
 
 					$('.iam-res-cal').fullCalendar({
 						header: {
@@ -49047,8 +49047,8 @@ var ReservationPublic = function () {
     value: function spawnResPopup(facilityName, description) {
       (0, _jquery2.default)('body').append(this.resPopup);
       (0, _jquery2.default)('.iam-res-popup').removeClass('iam-ninja');
-      (0, _jquery2.default)('.iam-res-popup-header').append(this.activeEquipName);
-      (0, _jquery2.default)('.iam-facility-info').html('<h1>' + facilityName + ' Hours</h1><p>' + description + '</p>');
+      (0, _jquery2.default)('.iam-res-popup-header').append(this.activeEquipName.split('_').join(' '));
+      (0, _jquery2.default)('.iam-facility-info').html('<p>' + description + '</p>');
     }
   }, {
     key: 'getFacilityInfo',
