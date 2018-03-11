@@ -541,7 +541,7 @@ import ReservationPublic from '../page/reservationpublic';
 				if (d==0 || d==6)
 					wknd = true;
 				if (facility_info[current_root_tag]['schedule_type']=='Rental') {
-					$('.iam-facility-info').html('<h1>'+$(this).data('equiproot')+' Hours</h1><p>'+facility_info[current_root_tag]['rental_hours_description'])+'</p>';
+					$('.iam-facility-info').html('<p>'+facility_info[current_root_tag]['rental_hours_description'])+'</p>';
 
 					$('.iam-res-cal').fullCalendar({
 						header: {

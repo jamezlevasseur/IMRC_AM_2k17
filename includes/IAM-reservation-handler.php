@@ -46,7 +46,8 @@ class IAM_Reservation_Handler
 																							'username'=>$user,
 																							'start'=>$format_start,
 																							'end'=>$format_end,
-																							'datetime'=>$format_start
+																							'datetime'=>$format_start,
+																							'comment'=>$comment
 																						]);
 
 		}

@@ -300,15 +300,14 @@ class IAM_Reservation_Page
 		$html.= '<div class="iam-res-popup iam-ninja">
 			<div class="iam-res-popup-header"><div class="iam-x fa fa-close fa-4"></div></div>
 			<div class="iam-res-popup-body">
-				<div class="iam-events">
-					<h4 style="font-weight:bold;color:#248cc8;text-align:center;">DRAG ME OVER --></h4>
-					<div class="fc-event">'.$current_user->user_login.'</div>
+				<div class="iam-info-wrap">
 					<div class="iam-facility-info"></div>
-					<div class="iam-popup-submit"><button type="button">Submit</button></div>
 				</div>
+				<span class="iam-events"><div class="fc-event" style="float:left;margin-left:5%;position:relative;width:120px;text-align:center;margin-bottom:5px;">'.$current_user->user_login.'</div></span>
 				<div class="iam-res-cal"></div>
 			</div>
 			<textarea class="iam-textarea iam-res-comment" placeholder="Additional details go here." rows="4"></textarea>
+			<div class="iam-popup-submit"><button type="button">Submit</button></div>
 		</div>';
 
 		return Utils_Public::render_page_for_login_status($html);

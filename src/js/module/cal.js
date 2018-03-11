@@ -5,7 +5,9 @@ import 'jquery-ui/ui/core';
 import 'jquery-ui/ui/widgets/draggable';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 import { overridePrompt } from '../module/override';
-import {initContextMenuLib} from '../lib/contextmenu';
+import { initContextMenuLib } from '../lib/contextmenu';
+import { copyToClipboard } from '../module/uifunc';
+
 
 export default class Cal {
 
@@ -116,6 +118,15 @@ export default class Cal {
     $(this.calID).fullCalendar('rerenderEvents');
   }
 
+  handleEventCopyEmail (event) {
+    let e = $('<div>'+event.email+'</div>');
+    copyToClipboard(e[0]);
+    $('body').append('<div class="iam-copy-notification">Email Copied to Clipboard</div>');
+    $('.iam-copy-notification').fadeOut(3500, function() {
+      $('.iam-copy-notification').remove();
+    });
+  }
+
   initCalFor (facing) {
     if (facing=='public') {
       this.initBusinessHours();
@@ -127,6 +138,7 @@ export default class Cal {
   }
 
   initStatusHideListeners () {
+    let that = this;
     $('.res-toolbar input[name=upcoming]').off();
     $('.res-toolbar input[name=active]').off();
     $('.res-toolbar input[name=completed]').off();
@@ -138,49 +150,49 @@ export default class Cal {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-upcoming').toggleClass('iam-ninja');
+      that.updateStatusFilter('upcoming');
     });
     $('.res-toolbar input[name=active]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-active').toggleClass('iam-ninja');
+      that.updateStatusFilter('active');
     });
     $('.res-toolbar input[name=completed]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-completed').toggleClass('iam-ninja');
+      that.updateStatusFilter('completed');
     });
     $('.res-toolbar input[name=no-show]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-no-show').toggleClass('iam-ninja');
+      that.updateStatusFilter('no-show');
     });
     $('.res-toolbar input[name=no-pay]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-no-pay').toggleClass('iam-ninja');
+      that.updateStatusFilter('no-pay');
     });
     $('.res-toolbar input[name=is-late]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-is-late').toggleClass('iam-ninja');
+      that.updateStatusFilter('is-late');
     });
     $('.res-toolbar input[name=was-late]').click(function (e) {
       if($('.iam-res-cal-placeholder').length>0) {
         e.preventDefault();
         return false;
       }
-      $('.iam-status-was-late').toggleClass('iam-ninja');
+      that.updateStatusFilter('was-late');
     });
   }
 
@@ -215,6 +227,7 @@ export default class Cal {
   initAdminCal (cal) {
     this.resetEvents();
     this.removePlaceholder();
+    this.hiddenEvents = [];
 
     if (this.page.cal=='adminRes') {
       this.updateResListSource();
@@ -244,8 +257,11 @@ export default class Cal {
     let finalArgs = $.extend(neutralArgs, this.calArgs[cal]);
     this.calID = this.getCalID();
     $(this.calID).fullCalendar(finalArgs);
-    submissionStart();
-    setTimeout( () => {this.initContextMenu(this.page.cal); submissionEnd();}, 1000 );
+
+    if (cal!='adminRes') {
+      submissionStart();
+      setTimeout( () => {this.initContextMenu(this.page.cal); submissionEnd();}, 1000 );
+    }
   }
 
   initPubResCal (facilitType) {
@@ -253,7 +269,7 @@ export default class Cal {
       editable: false, //new events will be made editable else where
       eventLimit: true, // allow "more" link when too many events
       allDay: false,
-      height: 500,
+      height: 400,
 			forceEventDuration: true,
       businessHours: this.businessHoursConverted,
       droppable: true,
@@ -271,8 +287,9 @@ export default class Cal {
 		$('.iam-res-cal').fullCalendar(finalArgs);
   }
 
-  initContextMenu (menuToUse) {
+  initContextMenu (menuToUse, parentID = null) {
     let that = this;
+    parentID = parentID===null ? that.calID : parentID;
     initContextMenuLib();
   	menuToUse = typeof menuToUse=='undefined' ? 'default' : menuToUse;
 
@@ -329,7 +346,7 @@ export default class Cal {
   		let menuDict = {'default':menu, 'rental':rentalMenu, 'irregular': irregularMenu};
   		let menuOfChoice = menuDict[menuToUse];
 
-      $(that.calID+' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
+      $(parentID+' .fc-event:not(.event-not-editable)').contextMenu(menuOfChoice,{triggerOn:'click',mouseClick:'right'});
   }
 
   preventPastReservation (e) {
@@ -363,17 +380,17 @@ export default class Cal {
     let that = this;
     this.calArgs = {};
 
-    let adminResAllDaySlot = false;
+    let adminResViews = 'month,agendaWeek,agendaDay';
     if (typeof that.page.facility!='undefined')
-      adminResAllDaySlot = that.page.facility.Schedule.type=='rental'
+      if (that.page.facility.Schedule.type=='rental')
+        adminResViews = 'month,basicWeek,basicDay';
 
     this.calArgs['adminRes'] = {
       header: {
         left: 'prev,next today',
         center: 'title',
-        right: 'month,agendaWeek,agendaDay'
+        right: adminResViews
       },
-      allDaySlot: adminResAllDaySlot,
       droppable: true,
       eventOverlap: true,
       weekends:true,
@@ -395,6 +412,8 @@ export default class Cal {
         if (that.eventsToDelete.indexOf(event.nid)!=-1) {
           $(element).addClass('marked-for-delete');
         }
+        if (that.hiddenEvents.includes(event.status))
+          return false;
       },
       eventAfterRender: function (event, element) {
         if (event.toDelete==1) {
@@ -408,6 +427,10 @@ export default class Cal {
          that.initContextMenu();
          that.initStatusHideListeners();
          submissionEnd();
+         $('.fc-more').click(function(event) {
+           $(document).off('mousedown');
+           that.initContextMenu('default','');
+         });
       },
       eventDrop: function (event, d ,revert) {
         that.eventsModified[event.nid] = {start:event.start.format('YYYY-MM-DD HH:mm:ss'), end: event.end.format('YYYY-MM-DD HH:mm:ss')};
@@ -425,7 +448,7 @@ export default class Cal {
           that.adminCalEventResize(event, d ,revert, jsevent);
       },
       eventMouseover: function(calEvent, jsEvent) {
-        var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: '+calEvent.fullname+'<br /> Email: '+calEvent.email+' <br /> Equipment: '+calEvent.equipment+'<br /> Checked In: '+calEvent.in+'<br /> Checked Out: '+calEvent.out+'</div>';
+        var tooltip = '<div class="tooltipevent" style="box-shadow: 0px 0px 8px #888;border-radius:4px;padding:5px;background:#eee;position:absolute;z-index:10001;">Name: '+calEvent.fullname+'<br /> Email: '+calEvent.email+' <br /> Equipment: '+calEvent.equipment+'<br /> Checked In: '+calEvent.in+'<br /> Checked Out: '+calEvent.out+'<br /> Comment: '+calEvent.comment+'</div>';
 
         var $tooltip = $(tooltip).appendTo('body');
 
@@ -437,11 +460,11 @@ export default class Cal {
                 $tooltip.css('top', e.pageY + 10);
                 $tooltip.css('left', e.pageX + 20);
             });
-        },
-        eventMouseout: function(calEvent, jsEvent) {
-            $(this).css('z-index', 8);
-            $('.tooltipevent').remove();
-        },
+      },
+      eventMouseout: function(calEvent, jsEvent) {
+          $(this).css('z-index', 8);
+          $('.tooltipevent').remove();
+      },
       events: that.lastReservationResource
     }
 
@@ -514,17 +537,29 @@ export default class Cal {
           $('.iam-res-cal').fullCalendar('removeEvents',e._id);
           return false;
         }
+        if (!that.preventPastReservation(e)) {
+          $('.iam-res-cal').fullCalendar('removeEvents',e._id);
+          return false;
+        }
       },
       eventDrop: function (e, d, revert) {
         if (that.eventFallsOnWeekend(e)) {
           alert(that.ERinvalidTimePrompt);
           revert();
         }
+        if (!that.preventPastReservation(e)) {
+          revert();
+          return;
+        }
       },
       eventResize: function (e, d, revert) {
         if (that.eventIsLongerThan(e, (parseInt(that.page.rentalPeriod)))) {
           alert('The maximum rental time for this equipment is ' + (that.page.rentalPeriod-1) + ' days.')
           revert();
+        }
+        if (!that.preventPastReservation(e)) {
+          revert();
+          return;
         }
       },
       eventRender: function (event, element) {
@@ -553,6 +588,17 @@ export default class Cal {
       newEventResource = newEventResource.concat( $(this).data('calevents') );
     });
     this.lastReservationResource = newEventResource;
+  }
+
+  updateStatusFilter (status) {
+    if (this.hiddenEvents.includes(status))
+      for (var i = 0; i < this.hiddenEvents.length; i++) {
+        if (this.hiddenEvents[i]==status)
+          this.hiddenEvents.splice(i,1);
+      }
+    else
+      this.hiddenEvents.push(status);
+    $(this.calID).fullCalendar('rerenderEvents');
   }
 
   updateEventsModified (event) {

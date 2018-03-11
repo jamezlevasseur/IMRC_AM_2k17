@@ -103,6 +103,7 @@ class IAM_Cal
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
 						$in = make_human_readable_date($row->Checked_In);
 						$out = make_human_readable_date($row->Checked_Out);
+						$comment = empty(trim($row->Comment)) ? 'None.' : $row->Comment;
 						$new_event = [	'nid'=>$row->NI_ID,
 														'fullname'=> get_full_name($wp_id),
 														'title'=>$title,
@@ -113,7 +114,8 @@ class IAM_Cal
 														'email'=>$email,
 														'equipment'=>$item_name,
 														'status'=>$RES_STATUS_CLASS_DICT[$row->Status],
-														'period'=>get_rental_period($equip_result[0]->Rental_Type)
+														'period'=>get_rental_period($equip_result[0]->Rental_Type),
+														'comment'=>$comment
 													];
 						$optional_event_args = [];
 						if ($row->Status==3 || $row->Status==6) {
@@ -122,7 +124,7 @@ class IAM_Cal
 							$optional_event_args['startEditable'] = false;
 						}
 						$formatted_events[] = array_merge($optional_event_args, $new_event);
-						if ($all_day) {
+						if ($all_day && empty($row->Checked_In)) {
 							$formatted_events[count($formatted_events)-1]['allDay'] = true;
 						}
 					} else {

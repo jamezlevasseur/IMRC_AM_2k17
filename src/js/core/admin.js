@@ -8,7 +8,7 @@ import { itemNameListener, maxLengthListener, numbersOnlyListener } from '../mod
 import { handleServerResponse, handleServerError } from '../module/serverresponse';
 import { submissionStart, submissionEnd } from '../module/userfeedback';
 import { overridePrompt } from '../module/override';
-import { initCSVButtonListener, initCSVAJAXButtonListener, initSearchListener } from '../module/uifunc';
+import { initCSVButtonListener, initCSVAJAXButtonListener, initSearchListener, copyToClipboard } from '../module/uifunc';
 
 import UserAdmin from '../page/useradmin';
 import SettingsAdmin from '../page/settingsadmin';
@@ -207,59 +207,9 @@ import DebugAdmin from '../page/debugadmin';
 
 			}
 
-			var copyToClipboard = function(elem) {
-				  // create hidden text element, if it doesn't already exist
-			    var targetId = "_hiddenCopyText_";
-			    var isInput = elem.tagName === "INPUT" || elem.tagName === "TEXTAREA";
-			    var origSelectionStart, origSelectionEnd;
-			    if (isInput) {
-			        // can just use the original source element for the selection and copy
-			        target = elem;
-			        origSelectionStart = elem.selectionStart;
-			        origSelectionEnd = elem.selectionEnd;
-			    } else {
-			        // must use a temporary form element for the selection and copy
-			        target = document.getElementById(targetId);
-			        if (!target) {
-			            var target = document.createElement("textarea");
-			            target.style.position = "absolute";
-			            target.style.left = "-9999px";
-			            target.style.top = "0";
-			            target.id = targetId;
-			            document.body.appendChild(target);
-			        }
-			        target.textContent = elem.textContent;
-			    }
-			    // select the content
-			    var currentFocus = document.activeElement;
-			    target.focus();
-			    target.setSelectionRange(0, target.value.length);
-
-			    // copy the selection
-			    var succeed;
-			    try {
-			    	  succeed = document.execCommand("copy");
-			    } catch(e) {
-			        succeed = false;
-			    }
-			    // restore original focus
-			    if (currentFocus && typeof currentFocus.focus === "function") {
-			        currentFocus.focus();
-			    }
-
-			    if (isInput) {
-			        // restore prior selection
-			        elem.setSelectionRange(origSelectionStart, origSelectionEnd);
-			    } else {
-			        // clear temporary content
-			        target.textContent = "";
-			    }
-			    return succeed;
-			}
-
 			var eventToolTip = function (event,element) {
 				var e = $(element);
-				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment+'\n Checked In: '+event.in+'\n Checked Out: '+event.out);
+				e.attr('title','Name: '+event.fullname+'\n Email: '+event.email+' \n Equipment: '+event.equipment+'\n Checked In: '+event.in+'\n Checked Out: '+event.out+'\n Comment: '+event.comment);
 			}
 
 			var makeSubmitPopup = function (heading,body,callback,a) {
@@ -783,7 +733,7 @@ import DebugAdmin from '../page/debugadmin';
 			var initSubmitEquipmentFormListener = function () {
 				$('.iam-admin-submit-button').off();
 				$('.iam-admin-submit-button').click(function(event) {
-					submissionStart();
+
 					var form = $('form#iam-update-form').hasClass('iam-ninja') ? $('form#iam-new-form') : $('form#iam-update-form') ;
 					var method = form.attr('id')=='iam-new-form' ? 'n' : 'u' ;
 					var outOfOrder = form.children('.iam-form-row').children('#out-of-order').is(':checked') ? 1 : 0 ;
@@ -797,7 +747,8 @@ import DebugAdmin from '../page/debugadmin';
 					for (var i = 0; i < equip_tags.length; i++) {
 						equip_tags[i] = equip_tags[i].trim();
 						if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1) {
-							new_tags.push(equip_tags[i]);
+							alert('The tag "'+equip_tags[i]+'" is invalid.');
+							return false;
 						}
 					};
 					var formData = new FormData();
@@ -820,6 +771,7 @@ import DebugAdmin from '../page/debugadmin';
 					formData.append('on-slide-show',slideShow);
 					formData.append('tags',equip_tags);
 					formData.append('new_tags',new_tags);
+					submissionStart();
 
 					if (method=='u')
 						formData.append('x',form.children('.iam-form-row').children('#x').val());
@@ -1059,7 +1011,7 @@ import DebugAdmin from '../page/debugadmin';
 								stick: true, // maintain when user navigates (see docs on the renderEvent method)
 								editable: true,
 								className: 'iam-new-event',
-								allDay:true
+								allDay:true,
 							});
 
 							// make the event draggable using jQuery UI
@@ -1075,18 +1027,18 @@ import DebugAdmin from '../page/debugadmin';
 							header: {
 								left: 'prev,next today',
 								center: 'title',
-								right: 'month,agendaWeek'
+								right: 'month,basicWeek'
 							},
 							droppable: true,
 							eventOverlap: true,
 						  weekends:true,
 							height: 600,
-							forceEventDuration: true,
+							forceEventDuration:  true,
+							defaultAllDayEventDuration: {days: parseInt(thisRentalDays)},
 							defaultView: 'month',
 							editable: true,
 							durationEditable: true,
 							allDay: true,
-							defaultAllDayEventDuration: {days: parseInt(thisRentalDays)},
 							eventLimit: true, // allow "more" link when too many events
 							eventRender: function (event, element) {
 								$(element).data('fullname', event.fullname);

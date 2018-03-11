@@ -175,9 +175,7 @@ class Settings_Page
 																							'start'=>$now->format('M d, Y \a\t g:i a'),
 																							'end'=>$now->format('M d, Y \a\t g:i a'),
                                               'datetime'=>$now->format('M d, Y \a\t g:i a'),
-                                              'schedule_description'=>$description,
-                                              'notification_num'=>ordinal_format(3),
-                                              'fee'=>'9.99'
+                                              'comment','This is an example comment.'
 																						]);
 
       iam_respond(SUCCESS,'new');
@@ -270,6 +268,7 @@ class Settings_Page
       <p>%start_time% - The start data and time of the reservation.</p>
       <p>%end_time% - The end data and time of the reservation.</p>
       <p>%time_of_reservation% - The start data and time of the reservation.</p>
+      <p>%comment% - The comment a user added.</p>
       <p>%schedule_description% - The description of facility operating hours. Set in the facility settings menu.</p>
       <?php
     }
@@ -283,6 +282,7 @@ class Settings_Page
       <p>%end_time% - The end data and time of the reservation.</p>
       <p>%time_of_reservation% - The start data and time of the reservation.</p>
       <p>%schedule_description% - The description of facility operating hours. Set in the facility settings menu.</p>
+      <p>%comment% - The comment a user added.</p>
       <p>%notification_number% - The number of times this person has been notified. Comes in ordinal format (1st, 2nd, 3rd).</p>
       <p>%fee% - The late fee applied to a users account. For rentals only.</p>
       <?php
