@@ -51957,6 +51957,7 @@ var ReservationAdmin = function () {
         if (!(0, _utils.getSize)(that.calendar.eventsModified) && !that.calendar.eventsToDelete.length) return;
         if (!confirm("Are you sure you want to make these changes?")) return;
         (0, _userfeedback.submissionStart)();
+        console.log({ action: 'admin_update_reservations', to_delete: that.calendar.eventsToDelete, modified: that.calendar.eventsModified, sendEmails: (0, _jquery2.default)('.iam-res-cal-send-emails').is(':checked'), reason: (0, _jquery2.default)('.iam-res-cal-reason').val(), facility: that.facility.Name, load_all: that.didLoadAll });
         _jquery2.default.ajax({
           url: ajaxurl,
           type: 'POST',
@@ -51964,6 +51965,7 @@ var ReservationAdmin = function () {
           success: function success(data) {
             that.updateEquipmentEvents((0, _serverresponse.handleServerResponse)(data));
             that.calRender();
+            that.calendar.resetEvents();
             (0, _userfeedback.submissionEnd)();
           },
           error: function error(data) {

@@ -48,6 +48,7 @@ export default class ReservationAdmin {
 			if (!confirm("Are you sure you want to make these changes?"))
 				return;
 			submissionStart();
+      console.log({action: 'admin_update_reservations', to_delete: that.calendar.eventsToDelete, modified: that.calendar.eventsModified, sendEmails: $('.iam-res-cal-send-emails').is(':checked'), reason: $('.iam-res-cal-reason').val(), facility: that.facility.Name, load_all: that.didLoadAll})
 			$.ajax({
 			  url: ajaxurl,
 			  type: 'POST',
@@ -55,6 +56,7 @@ export default class ReservationAdmin {
 			  success: function (data) {
 			    that.updateEquipmentEvents( handleServerResponse(data) );
 			    that.calRender();
+          that.calendar.resetEvents();
 			    submissionEnd();
 			  },
 			  error: function (data) {
