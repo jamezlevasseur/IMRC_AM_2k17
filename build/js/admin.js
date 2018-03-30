@@ -16170,10 +16170,16 @@ var Cal = function () {
     value: function preventPastReservation(e) {
 
       var targetTimeStart = null;
+      var fullDateFormat = 'MM-DD-YYYY HH:mm';
 
-      if (typeof e.start == 'undefined') targetTimeStart = moment(e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');else targetTimeStart = moment(e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm');
+      if (typeof e.start == 'undefined') targetTimeStart = moment(e.format(fullDateFormat), fullDateFormat);else targetTimeStart = moment(e.start.format(fullDateFormat), fullDateFormat);
 
-      if (targetTimeStart.isBefore(moment())) {
+      var formatted = targetTimeStart.format(fullDateFormat);
+      var currentMoment = moment();
+
+      if (formatted.substring(formatted.length - 5, formatted.length) == '00:00') currentMoment = moment(currentMoment.format('MM-DD-YYYY'), 'MM-DD-YYYY');
+
+      if (targetTimeStart.isBefore(currentMoment)) {
         alert('You cannot make reservations in the past.');
         return false;
       }
@@ -51957,7 +51963,6 @@ var ReservationAdmin = function () {
         if (!(0, _utils.getSize)(that.calendar.eventsModified) && !that.calendar.eventsToDelete.length) return;
         if (!confirm("Are you sure you want to make these changes?")) return;
         (0, _userfeedback.submissionStart)();
-        console.log({ action: 'admin_update_reservations', to_delete: that.calendar.eventsToDelete, modified: that.calendar.eventsModified, sendEmails: (0, _jquery2.default)('.iam-res-cal-send-emails').is(':checked'), reason: (0, _jquery2.default)('.iam-res-cal-reason').val(), facility: that.facility.Name, load_all: that.didLoadAll });
         _jquery2.default.ajax({
           url: ajaxurl,
           type: 'POST',
