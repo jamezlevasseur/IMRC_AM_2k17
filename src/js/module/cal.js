@@ -352,13 +352,20 @@ export default class Cal {
   preventPastReservation (e) {
 
     let targetTimeStart = null;
+    let fullDateFormat = 'MM-DD-YYYY HH:mm';
 
     if (typeof e.start == 'undefined')
-      targetTimeStart = moment( e.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
+      targetTimeStart = moment( e.format(fullDateFormat), fullDateFormat );
     else
-      targetTimeStart = moment( e.start.format('MM-DD-YYYY HH:mm'), 'MM-DD-YYYY HH:mm' );
+      targetTimeStart = moment( e.start.format(fullDateFormat), fullDateFormat );
 
-    if (targetTimeStart.isBefore(moment())) {
+    let formatted = targetTimeStart.format(fullDateFormat);
+    let currentMoment = moment();
+
+    if (formatted.substring(formatted.length-5,formatted.length)=='00:00')
+      currentMoment = moment( currentMoment.format('MM-DD-YYYY'), 'MM-DD-YYYY' );
+
+    if (targetTimeStart.isBefore(currentMoment)) {
       alert ('You cannot make reservations in the past.');
       return false;
     }
