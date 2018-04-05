@@ -74,9 +74,13 @@ class IAM_Cal
 
 		$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
 
+		if (empty($equip_result)) {
+			//it might be an ID
+			$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID='$item_name'");
+		}
+
 		if ($equip_result) {
 			$equip_id = $equip_result[0]->Equipment_ID;
-
 			date_default_timezone_set(IMRC_TIME_ZONE);
 			$monthago = short_res_period();
 			$date_condition = $get_all_reservations ? " " : " AND Start_Time > '$monthago' ";

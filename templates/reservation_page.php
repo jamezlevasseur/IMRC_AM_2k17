@@ -44,7 +44,7 @@ class IAM_Reservation_Page
 		return $key.$val;
 	}
 
-	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag)
+	public static function make_equipment_block($is_out_of_order, $name, $photo_url, $manufacturer_info, $description, $pricing_description, $cert_name, $cert_id, $rental_period, $equip_root_tag, $equip_id)
 	{
 		global $wpdb;
 		$current_username = wp_get_current_user()->user_login;
@@ -67,7 +67,7 @@ class IAM_Reservation_Page
 		return '<div class="iam-equipment-block">
 							'.$out_of_order.'
 							<div class="iam-equipment-block-left">
-								<div class="iam-equipment-title">'.iam_output($name).'</div>
+								<div class="iam-equipment-title" data-eid="'.$equip_id.'">'.iam_output($name).'</div>
 								<div class="iam-equipment-photo"><img width="200" src="'.iam_output($photo_url).'" alt="picture of '.iam_output($name).'"></div>
 							</div>
 							<div class="iam-equipment-block-right">
@@ -129,7 +129,9 @@ class IAM_Reservation_Page
 							$cert_name,
 							$cert_id,
 							$rental_type,
-							$equip_row->Root_Tag);
+							$equip_row->Root_Tag,
+							$equip_id
+						);
 					}
 				}
 			}
@@ -171,7 +173,9 @@ class IAM_Reservation_Page
 				$cert_name,
 				$cert_id,
 				get_rental_period($row->Rental_Type),
-				$row->Root_Tag);
+				$row->Root_Tag,
+				$row->Equipment_ID
+			);
 		}
 		return $html;
 	}

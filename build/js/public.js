@@ -49065,7 +49065,7 @@ var ReservationPublic = function () {
     value: function spawnResPopup(facilityName, description) {
       (0, _jquery2.default)('body').append(this.resPopup);
       (0, _jquery2.default)('.iam-res-popup').removeClass('iam-ninja');
-      (0, _jquery2.default)('.iam-res-popup-header').append(this.activeEquipName.split('_').join(' '));
+      (0, _jquery2.default)('.iam-res-popup-header').append(this.activeEquipName);
       (0, _jquery2.default)('.iam-facility-info').html('<p>' + description + '</p>');
     }
   }, {
@@ -49084,7 +49084,7 @@ var ReservationPublic = function () {
       (0, _jquery2.default)('.iam-equipment-button').click(function (event) {
 
         that.currentRootTag = (0, _jquery2.default)(this).data('equiproot').split(' ').join('_').toLowerCase();
-        that.activeEquipName = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text().split(' ').join('_');
+        that.activeEquipName = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').data('eid');
 
         if (that.canReserveER == 0 && that.currentRootTag == 'equipment_room') {
           alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $' + that.erLateFee + '.');
