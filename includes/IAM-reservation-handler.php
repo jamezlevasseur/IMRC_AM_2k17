@@ -15,6 +15,9 @@ class IAM_Reservation_Handler
 		$root_tag = '';
 
 		$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$equip_name));
+
+		if (empty($equip_results))//might be an id
+			$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%s",$equip_name));
 		$root_tag = $equip_results[0]->Root_Tag;
 		$equip_id = $equip_results[0]->Equipment_ID;
 
