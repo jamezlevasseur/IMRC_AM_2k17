@@ -134,6 +134,8 @@ class Utils_Public
 
           iam_mail($equipment_room_email,"Reservation ERROR",
           "A reservation was found with no associated equipment by the rental late check process. Search the log file for the Bug ID $bug_id");
+
+          continue;
         }
 
         $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%s",$entry->IAM_ID)[0];
