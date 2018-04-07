@@ -117,6 +117,25 @@ class Utils_Public
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$rightnow,LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
         $eq = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Checked_Out=%d",$entry->Reservation_ID))[0];
+
+        if (empty($eq)) {
+          $bug_id = md5(uniqid());
+          send_to_debug_file("ERROR: Equipment is NULL on Reservation {$entry->Reservation_ID}");
+          send_to_debug_file("Bug ID: $bug_id");
+          send_to_debug_file("Reservation info");
+          foreach ($entry as $key => $value) {
+              send_to_debug_file("$key => $value");
+          }
+          send_to_debug_file("Sending email to admins");
+          iam_mail("james.levasseur@maine.edu","Reservation ERROR",
+          "A reservation was found with no associated equipment by the rental late check process. Search the log file for the Bug ID $bug_id");
+
+          $equipment_room_email = ezget("SELECT Email,Late_Reservation_Admin_Email_Body,Late_Reservation_Admin_Email_Subject FROM ".IAM_FACILITY_TABLE." WHERE Name=%s","Equipment Room")[0]->email;
+
+          iam_mail($equipment_room_email,"Reservation ERROR",
+          "A reservation was found with no associated equipment by the rental late check process. Search the log file for the Bug ID $bug_id");
+        }
+
         $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%s",$entry->IAM_ID)[0];
 
         $fee = get_setting_iam(LATE_CHARGE_FEE_KEY);

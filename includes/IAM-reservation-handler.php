@@ -42,6 +42,16 @@ class IAM_Reservation_Handler
 			$format_start = $format_start->format('M d, Y \a\t g:i a');
 			$format_end = $format_end->format('M d, Y \a\t g:i a');
 
+			if (empty($equip_id) || empty($iam_id) || empty($ni_id)) {
+				send_to_debug_file("======== ERROR WHEN CHECKING OUT EQUIPMENT ========");
+				send_to_debug_file("One of the follow is an invalid value:");
+				send_to_debug_file("Equipment ID: $equip_id");
+				send_to_debug_file("User ID: $iam_id");
+				send_to_debug_file("NI ID: $ni_id");
+				
+				iam_throw_error("ERROR WHEN CHECKING OUT EQUIPMENT");
+			}
+
 			$wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (IAM_ID,NI_ID,Equipment_ID,Start_Time,End_Time,Comment) VALUES (%d,%s,%d,%s,%s,%s) ",$iam_id,$ni_id,$equip_id,$start,$end,$comment));
 
 			Facility::send_facility_new_res_email($root_tag,
