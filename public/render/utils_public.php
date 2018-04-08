@@ -138,6 +138,8 @@ class Utils_Public
           continue;
         }
 
+        send_to_debug_file("did not continue");
+
         $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%s",$entry->IAM_ID)[0];
 
         $fee = get_setting_iam(LATE_CHARGE_FEE_KEY);
