@@ -136,8 +136,6 @@ class Utils_Public
           "A reservation was found with no associated equipment by the rental late check process. Search the log file for the Bug ID $bug_id");
 
           continue;
-          send_to_debug_file("past continue");
-          return;
         }
 
         $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%s",$entry->IAM_ID)[0];
