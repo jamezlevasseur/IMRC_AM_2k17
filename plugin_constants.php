@@ -86,6 +86,10 @@ define('INVALID_REQUEST_EXCEPTION', 'Error: Invalid Request.');
 
 define('DEBUG_FILE', plugin_dir_path( dirname( __FILE__ ) ).'imrc-account-manager/logs/iam_debug.txt');
 
+define('LOG_FILE', plugin_dir_path( dirname( __FILE__ ) ).'imrc-account-manager/logs/iam_log.txt');
+
+define('EMAIL_LOG_FILE', plugin_dir_path( dirname( __FILE__ ) ).'imrc-account-manager/logs/iam_email_log.txt');
+
 define('E_REPORTING', json_decode( file_get_contents(iam_dir().'config/operations.json') )->ereporting);
 
 define('DEV_MODE', json_decode( file_get_contents(iam_dir().'config/operations.json') )->dev);
@@ -101,7 +105,6 @@ define('HOUR_FORMAT', 'G:i');
 define('RENTAL_PREFIX', 'rental_type_');
 
 define('DEFAULT_RENTAL_TYPE_KEY', 'default_rental_type');
-
 
 define('LAST_ER_CHECK_PREFIX', 'last_er_check_');
 

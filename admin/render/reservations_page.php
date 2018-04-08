@@ -32,6 +32,9 @@ class Reservations_Page
   					$new_end = DateTime::createFromFormat('Y-m-d H:i:s',$value['end']);
   					$new_end = $new_end->format('M d, Y \a\t g:i a');
   					iam_mail(get_userdata($wp_id)->user_email, 'Your IMRC reservation', 'Your reservation for '.$equip_name.' at '.$old_time.' has been changed. The new time is from '.$new_start.' to '.$new_end.'.'.$reason,'Failed to send update appointment email');
+
+            send_to_email_log_file(get_userdata($wp_id)->user_email);
+            send_to_email_log_file('Your reservation for '.$equip_name.' at '.$old_time.' has been changed. The new time is from '.$new_start.' to '.$new_end.'.'.$reason,'Failed to send update appointment email');
   				}
   			}
   		}
@@ -50,6 +53,9 @@ class Reservations_Page
   					$old_time = DateTime::createFromFormat('Y-m-d H:i:s',$reservation_results[0]->Start_Time);
   					$old_time = $old_time->format('M d, Y \a\t g:i a');
   					iam_mail(get_userdata($wp_id)->user_email, 'Your IMRC reservation', 'Your reservation for '.$equip_name.' at '.$old_time.' has been cancelled by an IMRC administrator.'.$reason,'Failed to send delete appointment email');
+
+            send_to_email_log_file(get_userdata($wp_id)->user_email);
+            send_to_email_log_file('Your reservation for '.$equip_name.' at '.$old_time.' has been cancelled by an IMRC administrator.'.$reason,'Failed to send delete appointment email');
   				}
   			}
   		}

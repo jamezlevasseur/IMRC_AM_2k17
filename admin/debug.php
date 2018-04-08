@@ -19,6 +19,7 @@ class Debug_Page
           <div class="late-res-check">
             <input type="submit">
           </div>
+          <p>Note: Test emails for fab lab have been disabled</p>
           <h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>
         </div>
         <?php

@@ -106,8 +106,8 @@ class Facility
               $email_template,
               'Failed to send notification.' );
 
-    send_to_debug_file( $email_info->Email );
-    send_to_debug_file( $email_template );
+    send_to_email_log_file( $email_info->Email );
+    send_to_email_log_file( $email_template );
   }
 
   public static function send_user_late_res_email($facility_name, $email_args)
@@ -125,8 +125,8 @@ class Facility
               $email_template,
               'Failed to send notification.' );
 
-    send_to_debug_file( $email_args['user_email'] );
-    send_to_debug_file( $email_template );
+    send_to_email_log_file( $email_args['user_email'] );
+    send_to_email_log_file( $email_template );
   }
 
   public static function send_facility_new_res_email($facility_name, $email_args)
@@ -144,8 +144,8 @@ class Facility
               $email_template,
               'Failed to send notification.' );
 
-    send_to_debug_file( $email_info->Email );
-    send_to_debug_file( $email_template );
+    send_to_email_log_file( $email_info->Email );
+    send_to_email_log_file( $email_template );
   }
 
 }

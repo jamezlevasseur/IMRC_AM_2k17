@@ -48,11 +48,16 @@ class IAM_Reservation_Handler
 				send_to_debug_file("Equipment ID: $equip_id");
 				send_to_debug_file("User ID: $iam_id");
 				send_to_debug_file("NI ID: $ni_id");
-				
 				iam_throw_error("ERROR WHEN CHECKING OUT EQUIPMENT");
 			}
 
-			$wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (IAM_ID,NI_ID,Equipment_ID,Start_Time,End_Time,Comment) VALUES (%d,%s,%d,%s,%s,%s) ",$iam_id,$ni_id,$equip_id,$start,$end,$comment));
+			$res_prepared_statement = $wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (IAM_ID,NI_ID,Equipment_ID,Start_Time,End_Time,Comment) VALUES (%d,%s,%d,%s,%s,%s) ",$iam_id,$ni_id,$equip_id,$start,$end,$comment);
+
+			send_to_log_file("======== Reservation Made ========");
+			send_to_log_file("$user");
+			send_to_log_file("$res_prepared_statement");
+
+			$wpdb->query($res_prepared_statement);
 
 			Facility::send_facility_new_res_email($root_tag,
 																						[ 'equipment'=>$equip_name,

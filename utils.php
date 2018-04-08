@@ -328,3 +328,25 @@ function send_to_debug_file($s)
     $content = "================== ".date('M-j-y g:i:s a')." =================\n".$s;
     file_put_contents(DEBUG_FILE, $content.PHP_EOL , FILE_APPEND | LOCK_EX);
 }
+
+function send_to_log_file($s)
+{
+    if(!file_exists(LOG_FILE)) {
+        $debugfile = fopen(LOG_FILE, "w+");
+        fclose($debugfile);
+    }
+    date_default_timezone_set(IMRC_TIME_ZONE);
+    $content = "================== ".date('M-j-y g:i:s a')." =================\n".$s;
+    file_put_contents(LOG_FILE, $content.PHP_EOL , FILE_APPEND | LOCK_EX);
+}
+
+function send_to_email_log_file($s)
+{
+    if(!file_exists(LOG_FILE)) {
+        $debugfile = fopen(LOG_FILE, "w+");
+        fclose($debugfile);
+    }
+    date_default_timezone_set(IMRC_TIME_ZONE);
+    $content = "================== ".date('M-j-y g:i:s a')." =================\n".$s;
+    file_put_contents(LOG_FILE, $content.PHP_EOL , FILE_APPEND | LOCK_EX);
+}
