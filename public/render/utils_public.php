@@ -47,7 +47,7 @@ class Utils_Public
                                               'end'=>format_res_time($row->End_Time)
                                             ]);
 
-        Facility::send_user_late_res_email( 'Fab Lab',
+        /*Facility::send_user_late_res_email( 'Fab Lab',
                                             [ 'user_email'=>$user_email,
                                               'equipment'=>$equip_name,
                                               'datetime'=>$date.' '.$time,
@@ -56,6 +56,7 @@ class Utils_Public
                                               'start'=>format_res_time($row->Start_Time),
                                               'end'=>format_res_time($row->End_Time)
                                             ]);
+                                            */
       }//if
 
     }//for
