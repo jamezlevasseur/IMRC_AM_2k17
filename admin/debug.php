@@ -112,8 +112,8 @@ class Debug_Page
     public static function late_res_testing()
     {
       self::make_late_res_for('rental');
-      self::make_late_res_for('appointment');
-      Utils_Public::appointment_late_reservations_check();
+      //self::make_late_res_for('appointment');
+      //Utils_Public::appointment_late_reservations_check();
       Utils_Public::rental_late_reservations_check();
       sleep(5);
       ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Name='ACM Monopad'");
