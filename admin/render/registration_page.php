@@ -41,9 +41,6 @@ class Registration_Page
         delete_user_meta($user_id, 'iam_need_admin_approval');
         iam_mail($user_email,'Your IMRC account has been approved','Congratulations, <br /><br /> Your account for the imrcaccounts.com has been approved. Please login at your leisure with the username "'.IAM_Sec::textfield_cleaner($_POST['user']).'" and the password you chose at registration. <br /><br /> The IMRC Team');
 
-        send_to_email_log_file($user_email);
-        send_to_email_log_file('Your IMRC account has been approved','Congratulations, <br /><br /> Your account for the imrcaccounts.com has been approved. Please login at your leisure with the username "'.IAM_Sec::textfield_cleaner($_POST['user']).'" and the password you chose at registration. <br /><br /> The IMRC Team');
-
         iam_respond(SUCCESS,'',IAM::$status_message);
     }
 

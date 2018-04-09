@@ -212,6 +212,9 @@ function iam_mail($to,$subject,$message,$failure_message="Failed to send email."
 		if (!wp_mail($to, $subject, $message, array('Content-Type: text/html; charset=UTF-8'))) {
 			throw new Exception($failure_message);
 		}
+		send_to_email_log_file("to: $to");
+		send_to_email_log_file("subject: $subject");
+		send_to_email_log_file("message: $message");
 	}
 	catch(Exception $e) {
 	   IAM::$status_message = $e->getMessage();
