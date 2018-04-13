@@ -16230,6 +16230,8 @@ var Cal = function () {
           (0, _jquery2.default)(element).addClass('iam-status-' + event.status);
           if (event.status == 'completed' || event.status == 'was-late') {
             (0, _jquery2.default)(element).addClass('event-not-editable');
+            console.log((0, _jquery2.default)(element).data());
+            console.log(event);
           }
           if (that.eventsToDelete.indexOf(event.nid) != -1) {
             (0, _jquery2.default)(element).addClass('marked-for-delete');
@@ -48925,8 +48927,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					    chosen = null;
 					if (typeof relRes.data('nid') != 'undefined') {
 
-						chosen = { nid: relRes.data('nid'),
-							equipment: equip_name.split('_').join(' ') };
+						chosen = {
+							nid: relRes.data('nid'),
+							equipment: equip_name.split('_').join(' ')
+						};
 					} else {
 						var events = $('.iam-cal').fullCalendar('clientEvents');
 
@@ -48943,7 +48947,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						}
 					}
 
-					if (chosen === null || releventResEventStart === null) {
+					if (chosen === null || typeof chosen === 'undefined' || releventResEventStart === null) {
 						alert("Error selecting reservation.");
 						return;
 					}

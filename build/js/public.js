@@ -16230,6 +16230,8 @@ var Cal = function () {
           (0, _jquery2.default)(element).addClass('iam-status-' + event.status);
           if (event.status == 'completed' || event.status == 'was-late') {
             (0, _jquery2.default)(element).addClass('event-not-editable');
+            console.log((0, _jquery2.default)(element).data());
+            console.log(event);
           }
           if (that.eventsToDelete.indexOf(event.nid) != -1) {
             (0, _jquery2.default)(element).addClass('marked-for-delete');
@@ -49084,7 +49086,8 @@ var ReservationPublic = function () {
       (0, _jquery2.default)('.iam-equipment-button').click(function (event) {
 
         that.currentRootTag = (0, _jquery2.default)(this).data('equiproot').split(' ').join('_').toLowerCase();
-        that.activeEquipName = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').data('eid');
+        that.activeEquipName = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text().split('_').join(' ');
+        that.activeEquipID = (0, _jquery2.default)(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').data('eid');
 
         if (that.canReserveER == 0 && that.currentRootTag == 'equipment_room') {
           alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $' + that.erLateFee + '.');
@@ -49141,7 +49144,7 @@ var ReservationPublic = function () {
           url: ajaxurl,
           type: 'POST',
           async: false,
-          data: { action: 'submit_reservation', equipment: that.activeEquipName, events: newEvents },
+          data: { action: 'submit_reservation', equipment: that.activeEquipID, events: newEvents },
           success: function success(data) {
             (0, _serverresponse.handleServerResponse)(data);
             (0, _jquery2.default)('.iam-res-popup').remove();

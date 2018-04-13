@@ -102,7 +102,8 @@ export default class ReservationPublic {
 		$('.iam-equipment-button').click(function(event) {
 
 			that.currentRootTag = $(this).data('equiproot').split(' ').join('_').toLowerCase();
-      that.activeEquipName = $(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').data('eid');
+      that.activeEquipName = $(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').text().split('_').join(' ');
+      that.activeEquipID = $(this).parent().parent().children('.iam-equipment-block-left').children('.iam-equipment-title').data('eid');
 
       if(that.canReserveER==0 && that.currentRootTag=='equipment_room') {
         alert('You have insufficient funds to reserve from the Equipment Room. You must have at least enough funds to cover the standard late fee of $'+that.erLateFee+'.');
@@ -157,7 +158,7 @@ export default class ReservationPublic {
         url: ajaxurl,
         type: 'POST',
         async: false,
-        data: {action: 'submit_reservation', equipment: that.activeEquipName, events: newEvents},
+        data: {action: 'submit_reservation', equipment: that.activeEquipID, events: newEvents},
         success: function (data) {
           handleServerResponse(data);
           $('.iam-res-popup').remove();

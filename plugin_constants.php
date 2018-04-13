@@ -102,6 +102,8 @@ define('DATE_FORMAT', 'Y-m-d H:i:s');
 
 define('HOUR_FORMAT', 'G:i');
 
+define('RESERVATION_NOT_ENDED_YET', 'Not yet.');
+
 define('RENTAL_PREFIX', 'rental_type_');
 
 define('DEFAULT_RENTAL_TYPE_KEY', 'default_rental_type');

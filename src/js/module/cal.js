@@ -415,6 +415,8 @@ export default class Cal {
         $(element).addClass('iam-status-'+event.status);
         if (event.status=='completed' || event.status=='was-late') {
           $(element).addClass('event-not-editable');
+          console.log($(element).data());
+          console.log(event);
         }
         if (that.eventsToDelete.indexOf(event.nid)!=-1) {
           $(element).addClass('marked-for-delete');

@@ -927,11 +927,13 @@ import DebugAdmin from '../page/debugadmin';
 								return;
 							}
 
-							let relRes = $('.relevant-res'), chosen = null;
+							var relRes = $('.relevant-res'), chosen = null;
 							if (typeof relRes.data('nid') != 'undefined') {
 
-								chosen = {nid: relRes.data('nid'),
-													equipment: equip_name.split('_').join(' ')};
+								chosen = {
+													nid: relRes.data('nid'),
+													equipment: equip_name.split('_').join(' ')
+												};
 							} else {
 								var events = $('.iam-cal').fullCalendar('clientEvents');
 
@@ -948,7 +950,7 @@ import DebugAdmin from '../page/debugadmin';
 								}
 							}
 
-							if (chosen===null || releventResEventStart===null) {
+							if (chosen===null || typeof chosen==='undefined' || releventResEventStart===null) {
 								alert("Error selecting reservation.");
 								return;
 							}
