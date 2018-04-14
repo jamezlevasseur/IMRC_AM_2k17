@@ -19,7 +19,7 @@ class Debug_Page
           <div class="late-res-check">
             <input type="submit">
           </div>
-          <p>Note: Test emails for fab lab have been disabled</p>
+          <p>Note: 10 second delay between FL and ER tests</p>
           <h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>
         </div>
         <?php
@@ -114,11 +114,14 @@ class Debug_Page
     {
 
       self::make_late_res_for('rental');
-      //self::make_late_res_for('appointment');
-      //Utils_Public::appointment_late_reservations_check();
       Utils_Public::rental_late_reservations_check();
-      sleep(60);
+      sleep(10);
       ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE 1 ORDER BY Equipment_ID DESC LIMIT 1");
+
+      self::make_late_res_for('appointment');
+      Utils_Public::appointment_late_reservations_check();
+      sleep(10);
+
     }
 
     public static function make_late_res_for($facility_type)
@@ -146,6 +149,8 @@ class Debug_Page
         ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d",$res_id);
 
       } else if ($facility_type=='appointment') {
+
+        //ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order,Root_Tag,Checked_Out,Rental_Type,Comments,Serial_Number) VALUES ('12316ewtqt13t31f1',0,'%s','i am described','pricing described','manutfactured, prolly','no/path',0,0,'Equipment Room',0,0,'a comment.','12345')",$equip_name);
 
         global $wpdb;
         $nid = make_nid();
