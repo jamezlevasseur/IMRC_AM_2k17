@@ -112,6 +112,7 @@ class Debug_Page
 
     public static function late_res_testing()
     {
+
       self::make_late_res_for('rental');
       //self::make_late_res_for('appointment');
       //Utils_Public::appointment_late_reservations_check();
@@ -123,10 +124,12 @@ class Debug_Page
     public static function make_late_res_for($facility_type)
     {
       if ($facility_type=='rental') {
+        $equip_name = 'Test Equipment '.make_nid();
+        ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order,Root_Tag,Checked_Out,Rental_Type,Comments,Serial_Number) VALUES ('12316ewtqt13t31f1',0,'%s','i am described','pricing described','manutfactured, prolly','no/path',0,0,'Equipment Room',0,0,'a comment.','12345')",$equip_name);
 
         global $wpdb;
         $nid = make_nid();
-        $eq = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='ACM Monopad'")[0];
+        $eq = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$equip_name'")[0];
         $equip_id = $eq->Equipment_ID;
         $iam_id = ezget("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_Username='jlevasseur'")[0]->IAM_ID;
 
@@ -136,11 +139,11 @@ class Debug_Page
         $start = date_format($s, DATE_FORMAT);
         $end = date_format( date_add($s, date_interval_create_from_date_string("3 days")), DATE_FORMAT);
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,Equipment_ID,IAM_ID,Start_Time,End_Time,Status,Checked_Out) VALUES (%s,%d,%d,%s,%s,%d,%s)",$nid,$equip_id,$iam_id,$start,$end,1,$start));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,Equipment_ID,IAM_ID,Start_Time,End_Time,Status,Checked_Out) VALUES (1000,%s,%d,%d,%s,%s,%d,%s)",$nid,$equip_id,$iam_id,$start,$end,1,$start));
 
         $res_id = ezget("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$nid)[0]->Reservation_ID;
 
-        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name='ACM Monopad'",$res_id);
+        ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$equip_name'");
 
       } else if ($facility_type=='appointment') {
 
