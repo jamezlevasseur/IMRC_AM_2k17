@@ -139,7 +139,7 @@ class Debug_Page
         $start = date_format($s, DATE_FORMAT);
         $end = date_format( date_add($s, date_interval_create_from_date_string("3 days")), DATE_FORMAT);
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,Equipment_ID,IAM_ID,Start_Time,End_Time,Status,Checked_Out) VALUES (1000,%s,%d,%d,%s,%s,%d,%s)",$nid,$equip_id,$iam_id,$start,$end,1,$start));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,Equipment_ID,IAM_ID,Start_Time,End_Time,Status,Checked_Out) VALUES (%s,%d,%d,%s,%s,%d,%s)",$nid,$equip_id,$iam_id,$start,$end,1,$start));
 
         $res_id = ezget("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$nid)[0]->Reservation_ID;
 
