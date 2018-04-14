@@ -118,7 +118,7 @@ class Debug_Page
       //Utils_Public::appointment_late_reservations_check();
       Utils_Public::rental_late_reservations_check();
       sleep(5);
-      ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Name='ACM Monopad'");
+      ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE 1 ORDER BY Equipment_ID DESC LIMIT 1");
     }
 
     public static function make_late_res_for($facility_type)
@@ -142,8 +142,6 @@ class Debug_Page
         $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,Equipment_ID,IAM_ID,Start_Time,End_Time,Status,Checked_Out) VALUES (1000,%s,%d,%d,%s,%s,%d,%s)",$nid,$equip_id,$iam_id,$start,$end,1,$start));
 
         $res_id = ezget("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$nid)[0]->Reservation_ID;
-
-        ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$equip_name'");
 
       } else if ($facility_type=='appointment') {
 
