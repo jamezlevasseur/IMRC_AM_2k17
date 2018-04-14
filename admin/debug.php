@@ -146,7 +146,7 @@ class Debug_Page
 
         $res_id = ezget("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$nid)[0]->Reservation_ID;
 
-        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d",$res_id);
+        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name='$equip_name'",$res_id);
 
       } else if ($facility_type=='appointment') {
 
