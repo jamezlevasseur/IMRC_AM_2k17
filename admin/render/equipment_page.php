@@ -293,7 +293,7 @@ class Equipment_Page extends Item_Mgmt
 
       $new_status = $status==IS_LATE ? WAS_LATE : COMPLETED;
 
-      $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s,End_Time=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$res_id));
+      $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s,End_Time=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$end_time,$res_id));
 
       send_to_log_file("======== Reservation Ended, Item Check in ========");
       send_to_log_file("equipment: ".$e);
