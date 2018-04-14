@@ -11,13 +11,21 @@ class IAM_Reservation_Handler
 		global $wpdb;
 
 		$events = $_POST['events'];
-		$equip_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner($_POST['equipment']));
+		$equip_name_or_id = str_replace('_', ' ', IAM_Sec::textfield_cleaner($_POST['equipment']));
 		$root_tag = '';
 
-		$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$equip_name));
+		$query_start = "SELECT Equipment_ID,Name,Root_Tag FROM ".IAM_EQUIPMENT_TABLE;
 
-		if (empty($equip_results))//might be an id
-			$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%s",$equip_name));
+		$equip_results = $wpdb->get_results($wpdb->prepare($query_start." WHERE Name=%s",$equip_name_or_id));
+
+		if (empty($equip_results)) { //might be an id
+			$equip_results = $wpdb->get_results($wpdb->prepare($query_start." WHERE Equipment_ID=%s",$equip_name_or_id));
+
+			if (empty($equip_results))
+				iam_throw_error("Could not checkout equipment, invalid name or id supplied.");
+		}
+
+		$equip_name = $equip_results[0]->Name;
 		$root_tag = $equip_results[0]->Root_Tag;
 		$equip_id = $equip_results[0]->Equipment_ID;
 
