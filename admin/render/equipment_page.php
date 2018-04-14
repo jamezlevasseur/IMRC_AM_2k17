@@ -248,6 +248,12 @@ class Equipment_Page extends Item_Mgmt
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_Out=%s WHERE NI_ID=%s",ACTIVE,$rightnow,$e['nid']));
+
+        send_to_log_file("======== Reservation Started, Item Checkout ========");
+        send_to_log_file("equipment: ".$e['equipment']);
+  			send_to_log_file("res id: ".$res_id);
+        send_to_log_file("user: ".$e['user']);
+
       } else {
         $nid = make_nid();
         $equipment_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e['equipment']))[0]->Equipment_ID;
@@ -257,6 +263,12 @@ class Equipment_Page extends Item_Mgmt
 
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s AND IAM_ID=%d",$nid,$iam_id))[0]->Reservation_ID;
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
+
+        send_to_log_file("======== Reservation Started, Item Checkout ========");
+  			send_to_log_file("equipment: ".$e['equipment']);
+  			send_to_log_file("res id: ".$res_id);
+        send_to_log_file("user: ".$e['user']);
+
       }
       iam_respond(SUCCESS);
     }
@@ -282,6 +294,11 @@ class Equipment_Page extends Item_Mgmt
       $new_status = $status==IS_LATE ? WAS_LATE : COMPLETED;
 
       $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_In=%s,End_Time=%s WHERE Reservation_ID=%d",$new_status,$rightnow,$end_time,$res_id));
+
+      send_to_log_file("======== Reservation Ended, Item Check in ========");
+      send_to_log_file("equipment: ".$e);
+      send_to_log_file("res id: ".$res_id);
+      send_to_log_file("new status: ".$new_status);
 
       iam_respond(SUCCESS);
     }

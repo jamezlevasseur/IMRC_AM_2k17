@@ -40,7 +40,9 @@ class Admin_Content
 	 {
 		 ?>
 		 <h3>Debug Files</h3>
-		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a>
+		 <a href="<?php echo plugins_url( 'logs/iam_debug.txt', dirname(__FILE__) ); ?>">debug file</a> <br />
+		 <a href="<?php echo plugins_url( 'logs/iam_log.txt', dirname(__FILE__) ); ?>">event log file</a> <br />
+		 <a href="<?php echo plugins_url( 'logs/iam_email_log.txt', dirname(__FILE__) ); ?>">email log file</a> <br />
 		 <h3>Equipment CSV Upload</h3>
 		 <form class="equipment-csv-upload" method="post">
 			 <input type="file" name="">

@@ -72,11 +72,11 @@ class IAM_Cal
 
 		global $wpdb;
 
-		$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
+		$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$item_name'");
 
 		if (empty($equip_result)) {
 			//it might be an ID
-			$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID='$item_name'");
+			$equip_result = $wpdb->get_results("SELECT Equipment_ID,Rental_Type,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID='$item_name'");
 		}
 
 		if ($equip_result) {
@@ -107,12 +107,26 @@ class IAM_Cal
 						$RES_STATUS_CLASS_DICT = [0=>'upcoming',1=>'active',2=>'no-show',3=>'completed',4=>'no-pay',5=>'is-late',6=>'was-late'];
 						$in = make_human_readable_date($row->Checked_In);
 						$out = make_human_readable_date($row->Checked_Out);
+
+						$start_time = $row->Start_Time;
+						$end_time = $row->End_Time;
+
+						if ($out!=RESERVATION_NOT_ENDED_YET && $in!=RESERVATION_NOT_ENDED_YET) {
+							if ($equip_result[0]->Root_Tag=='Equipment Room') {
+								$checkin_date = date_create($row->Checked_In);
+								//add a day so the calendar will render it properly
+								date_add($checkin_date, date_interval_create_from_date_string('1 day'));
+								$start_time = $row->Checked_Out;
+								$end_time = date_format($checkin_date, DATE_FORMAT);
+							}
+						}
+
 						$comment = empty(trim($row->Comment)) ? 'None.' : $row->Comment;
 						$new_event = [	'nid'=>$row->NI_ID,
 														'fullname'=> get_full_name($wp_id),
 														'title'=>$title,
-														'start'=>$row->Start_Time,
-														'end'=>$row->End_Time,
+														'start'=>$start_time,
+														'end'=>$end_time,
 														'in'=>$in,
 														'out'=>$out,
 														'email'=>$email,

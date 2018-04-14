@@ -19,6 +19,7 @@ class Debug_Page
           <div class="late-res-check">
             <input type="submit">
           </div>
+          <p>Note: 10 second delay between FL and ER tests</p>
           <h1 class="iam-ninja" id="debug-success" style=" position: fixed; top:20%; left:35%; padding:10px; margin:0; display:inline; font-size:30px; background:#0bbf56; border-radius:8px; color:white;">SUCCESS</h1>
         </div>
         <?php
@@ -111,21 +112,27 @@ class Debug_Page
 
     public static function late_res_testing()
     {
+
       self::make_late_res_for('rental');
+      Utils_Public::rental_late_reservations_check();
+      sleep(10);
+      ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE 1 ORDER BY Equipment_ID DESC LIMIT 1");
+
       self::make_late_res_for('appointment');
       Utils_Public::appointment_late_reservations_check();
-      Utils_Public::rental_late_reservations_check();
-      sleep(5);
-      ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=0 WHERE Name='ACM Monopad'");
+      sleep(10);
+
     }
 
     public static function make_late_res_for($facility_type)
     {
       if ($facility_type=='rental') {
+        $equip_name = 'Test Equipment '.make_nid();
+        ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order,Root_Tag,Checked_Out,Rental_Type,Comments,Serial_Number) VALUES ('12316ewtqt13t31f1',0,'%s','i am described','pricing described','manutfactured, prolly','no/path',0,0,'Equipment Room',0,0,'a comment.','12345')",$equip_name);
 
         global $wpdb;
         $nid = make_nid();
-        $eq = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='ACM Monopad'")[0];
+        $eq = $wpdb->get_results("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Name='$equip_name'")[0];
         $equip_id = $eq->Equipment_ID;
         $iam_id = ezget("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE WP_Username='jlevasseur'")[0]->IAM_ID;
 
@@ -139,9 +146,11 @@ class Debug_Page
 
         $res_id = ezget("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$nid)[0]->Reservation_ID;
 
-        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name='ACM Monopad'",$res_id);
+        ezquery("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name='$equip_name'",$res_id);
 
       } else if ($facility_type=='appointment') {
+
+        //ezquery("INSERT INTO ".IAM_EQUIPMENT_TABLE." (NI_ID,Certification_ID,Name,Description,Pricing_Description,Manufacturer_Info,Photo,On_Slide_Show,Out_Of_Order,Root_Tag,Checked_Out,Rental_Type,Comments,Serial_Number) VALUES ('12316ewtqt13t31f1',0,'%s','i am described','pricing described','manutfactured, prolly','no/path',0,0,'Equipment Room',0,0,'a comment.','12345')",$equip_name);
 
         global $wpdb;
         $nid = make_nid();

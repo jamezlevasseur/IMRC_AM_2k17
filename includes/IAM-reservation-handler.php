@@ -11,13 +11,21 @@ class IAM_Reservation_Handler
 		global $wpdb;
 
 		$events = $_POST['events'];
-		$equip_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner($_POST['equipment']));
+		$equip_name_or_id = str_replace('_', ' ', IAM_Sec::textfield_cleaner($_POST['equipment']));
 		$root_tag = '';
 
-		$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$equip_name));
+		$query_start = "SELECT Equipment_ID,Name,Root_Tag FROM ".IAM_EQUIPMENT_TABLE;
 
-		if (empty($equip_results))//might be an id
-			$equip_results = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID,Root_Tag FROM ".IAM_EQUIPMENT_TABLE." WHERE Equipment_ID=%s",$equip_name));
+		$equip_results = $wpdb->get_results($wpdb->prepare($query_start." WHERE Name=%s",$equip_name_or_id));
+
+		if (empty($equip_results)) { //might be an id
+			$equip_results = $wpdb->get_results($wpdb->prepare($query_start." WHERE Equipment_ID=%s",$equip_name_or_id));
+
+			if (empty($equip_results))
+				iam_throw_error("Could not checkout equipment, invalid name or id supplied.");
+		}
+
+		$equip_name = $equip_results[0]->Name;
 		$root_tag = $equip_results[0]->Root_Tag;
 		$equip_id = $equip_results[0]->Equipment_ID;
 
@@ -42,7 +50,22 @@ class IAM_Reservation_Handler
 			$format_start = $format_start->format('M d, Y \a\t g:i a');
 			$format_end = $format_end->format('M d, Y \a\t g:i a');
 
-			$wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (IAM_ID,NI_ID,Equipment_ID,Start_Time,End_Time,Comment) VALUES (%d,%s,%d,%s,%s,%s) ",$iam_id,$ni_id,$equip_id,$start,$end,$comment));
+			if (empty($equip_id) || empty($iam_id) || empty($ni_id)) {
+				send_to_debug_file("======== ERROR WHEN CHECKING OUT EQUIPMENT ========");
+				send_to_debug_file("One of the follow is an invalid value:");
+				send_to_debug_file("Equipment ID: $equip_id");
+				send_to_debug_file("User ID: $iam_id");
+				send_to_debug_file("NI ID: $ni_id");
+				iam_throw_error("ERROR WHEN CHECKING OUT EQUIPMENT");
+			}
+
+			$res_prepared_statement = $wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (IAM_ID,NI_ID,Equipment_ID,Start_Time,End_Time,Comment) VALUES (%d,%s,%d,%s,%s,%s) ",$iam_id,$ni_id,$equip_id,$start,$end,$comment);
+
+			send_to_log_file("======== Reservation Made ========");
+			send_to_log_file("$user");
+			send_to_log_file("$res_prepared_statement");
+
+			$wpdb->query($res_prepared_statement);
 
 			Facility::send_facility_new_res_email($root_tag,
 																						[ 'equipment'=>$equip_name,

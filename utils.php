@@ -212,6 +212,9 @@ function iam_mail($to,$subject,$message,$failure_message="Failed to send email."
 		if (!wp_mail($to, $subject, $message, array('Content-Type: text/html; charset=UTF-8'))) {
 			throw new Exception($failure_message);
 		}
+		send_to_email_log_file("to: $to");
+		send_to_email_log_file("subject: $subject");
+		send_to_email_log_file("message: $message");
 	}
 	catch(Exception $e) {
 	   IAM::$status_message = $e->getMessage();
@@ -227,7 +230,7 @@ function iam_respond($status='success',$content='',$message='',$redirect='')
 function make_human_readable_date($date)
 {
 	if (empty($date))
-		return 'Not yet.';
+		return RESERVATION_NOT_ENDED_YET;
 	$dt = DateTime::createFromFormat(DATE_FORMAT,$date);
 	return $dt->format('M-d-y g:i a');
 }
@@ -327,4 +330,26 @@ function send_to_debug_file($s)
     date_default_timezone_set(IMRC_TIME_ZONE);
     $content = "================== ".date('M-j-y g:i:s a')." =================\n".$s;
     file_put_contents(DEBUG_FILE, $content.PHP_EOL , FILE_APPEND | LOCK_EX);
+}
+
+function send_to_log_file($s)
+{
+    if(!file_exists(LOG_FILE)) {
+        $debugfile = fopen(LOG_FILE, "w+");
+        fclose($debugfile);
+    }
+    date_default_timezone_set(IMRC_TIME_ZONE);
+    $content = "================== ".date('M-j-y g:i:s a')." =================\n".$s;
+    file_put_contents(LOG_FILE, $content.PHP_EOL , FILE_APPEND | LOCK_EX);
+}
+
+function send_to_email_log_file($s)
+{
+    if(!file_exists(EMAIL_LOG_FILE)) {
+        $debugfile = fopen(EMAIL_LOG_FILE, "w+");
+        fclose($debugfile);
+    }
+    date_default_timezone_set(IMRC_TIME_ZONE);
+    $content = "================== ".date('M-j-y g:i:s a')." =================\n".$s;
+    file_put_contents(EMAIL_LOG_FILE, $content.PHP_EOL , FILE_APPEND | LOCK_EX);
 }

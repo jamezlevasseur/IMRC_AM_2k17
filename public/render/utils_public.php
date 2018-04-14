@@ -56,6 +56,7 @@ class Utils_Public
                                               'start'=>format_res_time($row->Start_Time),
                                               'end'=>format_res_time($row->End_Time)
                                             ]);
+
       }//if
 
     }//for
@@ -96,27 +97,48 @@ class Utils_Public
 
         $last_attempt = $wpdb->get_results($wpdb->prepare("SELECT Meta_Value FROM ".IAM_META_TABLE." WHERE Meta_Key=%s",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
-        send_to_debug_file('FOR RES: '.$entry->Reservation_ID);
-        send_to_debug_file('LAST ATTEMPT COUNT '.count($last_attempt));
+        send_to_email_log_file('FOR RES: '.$entry->Reservation_ID);
+        send_to_email_log_file('LAST ATTEMPT COUNT '.count($last_attempt));
 
         if (count($last_attempt)==0) {
           $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES (%s,%s)",LAST_ER_CHECK_PREFIX.$entry->Reservation_ID,$rightnow));
         } else if (get_setting_iam('force_email_check_all_emails')=='yes') {
-          send_to_debug_file('force_email_check_all_emails is set. Ignoring check and sending all emails.');
-          send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY);
-          send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
+          send_to_email_log_file('force_email_check_all_emails is set. Ignoring check and sending all emails.');
+          send_to_email_log_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY);
+          send_to_email_log_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
         } else if ((int)$rightnow-(int)$last_attempt[0]->Meta_Value<SECONDS_IN_DAY) {
-          send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS TRUE');
-          send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
+          send_to_email_log_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS TRUE');
+          send_to_email_log_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
           continue;
         }
 
-        send_to_debug_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS FALSE, EMAIL SENT');
-        send_to_debug_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
+        send_to_email_log_file((int)$rightnow.' - '.(int)$last_attempt[0]->Meta_Value.' < '.SECONDS_IN_DAY.' IS FALSE, EMAIL SENT');
+        send_to_email_log_file((int)$rightnow-(int)$last_attempt[0]->Meta_Value);
 
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_META_TABLE." SET Meta_Value=%s WHERE Meta_Key=%s",$rightnow,LAST_ER_CHECK_PREFIX.$entry->Reservation_ID));
 
         $eq = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".IAM_EQUIPMENT_TABLE." WHERE Checked_Out=%d",$entry->Reservation_ID))[0];
+
+        if (empty($eq)) {
+          $bug_id = md5(uniqid());
+          send_to_debug_file("ERROR: Equipment is NULL on Reservation {$entry->Reservation_ID}");
+          send_to_debug_file("Bug ID: $bug_id");
+          send_to_debug_file("Reservation info");
+          foreach ($entry as $key => $value) {
+              send_to_debug_file("$key => $value");
+          }
+          send_to_debug_file("Sending email to admins");
+          iam_mail("james.levasseur@maine.edu","Reservation ERROR",
+          "A reservation was found with no associated equipment by the rental late check process. Search the log file for the Bug ID $bug_id");
+
+          $equipment_room_email = ezget("SELECT Email,Late_Reservation_Admin_Email_Body,Late_Reservation_Admin_Email_Subject FROM ".IAM_FACILITY_TABLE." WHERE Name=%s","Equipment Room")[0]->Email;
+
+          iam_mail($equipment_room_email,"Reservation ERROR",
+          "A reservation was found with no associated equipment by the rental late check process. Search the log file for the Bug ID $bug_id");
+
+          continue;
+        }
+
         $user = ezget("SELECT * FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%s",$entry->IAM_ID)[0];
 
         $fee = get_setting_iam(LATE_CHARGE_FEE_KEY);
