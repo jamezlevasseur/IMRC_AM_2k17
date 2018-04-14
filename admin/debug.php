@@ -117,7 +117,7 @@ class Debug_Page
       //self::make_late_res_for('appointment');
       //Utils_Public::appointment_late_reservations_check();
       Utils_Public::rental_late_reservations_check();
-      sleep(5);
+      sleep(60);
       ezquery("DELETE FROM ".IAM_EQUIPMENT_TABLE." WHERE 1 ORDER BY Equipment_ID DESC LIMIT 1");
     }
 
