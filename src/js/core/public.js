@@ -233,6 +233,7 @@ import ReservationPublic from '../page/reservationpublic';
 				d.text((currentDiscount*100)+'% '+currentAccountType+' discount');
 				bp.empty();
 				bp.text((checkout_mats[selectedMat]['base_price']-checkout_mats[selectedMat]['base_price']*currentDiscount).toFixed(2));
+				console.log('discount: '+currentDiscount);
 			});
 		}
 		var initCheckoutDropDownListener = function () {

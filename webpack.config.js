@@ -10,15 +10,15 @@ module.exports = {
     path: __dirname + '/build/js'
   },
   module: {
-    loaders: [
-        {
-            test: /\.js$/,
-            loader: 'babel-loader',
-            query: {
-                presets: ['es2015']
-            }
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader"
         }
-    ],
+      }
+    ]
   },
   devtool: 'source-map'
 };
