@@ -228,11 +228,11 @@ import ReservationPublic from '../page/reservationpublic';
 				un.empty();
 				un.text(checkout_mats[selectedMat]['unit_name']);
 				ppu.empty();
-				ppu.text(checkout_mats[selectedMat]['price_per_unit']-checkout_mats[selectedMat]['price_per_unit']*currentDiscount);
+				ppu.text(checkout_mats[selectedMat]['price_per_unit']);
 				d.empty();
 				d.text((currentDiscount*100)+'% '+currentAccountType+' discount');
 				bp.empty();
-				bp.text((checkout_mats[selectedMat]['base_price']-checkout_mats[selectedMat]['base_price']*currentDiscount).toFixed(2));
+				bp.text(parseFloat(checkout_mats[selectedMat]['base_price']).toFixed(2));
 			});
 		}
 		var initCheckoutDropDownListener = function () {

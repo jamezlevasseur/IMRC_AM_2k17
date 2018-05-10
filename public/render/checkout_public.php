@@ -151,13 +151,10 @@ class Checkout_Public
                 <div>
                     <label class="iam-checkout-balance"> <b>Available Balance: </b> <span class="iam-checkout-bal">'.$balanceHTML.' </span></label>
                 </div>
-                <div>
-                    <label class="iam-checkout-discount"></label>
-                </div>
                 <div class="iam-mats-row">
                     <label class="iam-checkout-material"><b>Material: </b> '.$possible_mats_list.'</label>
                     <label><b>Min Price:</b> <span class="iam-checkout-base-price"></span></label>
-                    <input type="number" class="iam-checkout-amount"> <span><span class="iam-checkout-unit-name"></span> x $<span class="iam-checkout-price-per-unit"></span>/<span class="iam-checkout-unit-name"></span> = <b>Total: </b><span class="iam-checkout-total"></span></span>
+                    <input type="number" class="iam-checkout-amount"> <span><span class="iam-checkout-unit-name"></span> x $<span class="iam-checkout-price-per-unit"></span>/<span class="iam-checkout-unit-name"></span> = <b>Total: </b><span class="iam-checkout-total"></span> <b>w/</b> <span class="iam-checkout-discount"></span></span>
                 </div>
                 <div>
                   <button type="button" class="iam-checkout-add-mat iam-green-button">Add</button>
