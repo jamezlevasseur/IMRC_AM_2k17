@@ -40,7 +40,11 @@ import ReservationPublic from '../page/reservationpublic';
 		var comparingSchedules = false;
 
 		var initOldReservationsListener = function () {
-			$('.iam-not-checked-out-container').toggleClass('iam-ninja');
+			$('.iam-old-reservations').off();
+			
+			if ($('.fa-caret-right').length>0)
+				$('.iam-not-checked-out-container').addClass('iam-ninja');
+
 			$('.iam-old-reservations').click(function(event) {
 				$('.iam-not-checked-out-container').toggleClass('iam-ninja');
 				$('.iam-caret').toggleClass('fa-caret-right');
@@ -173,10 +177,39 @@ import ReservationPublic from '../page/reservationpublic';
 			});
 		}
 
+		var refreshCheckout = function () {
+			submissionStart();
+			$.ajax({
+				url: ajaxurl,
+				type: 'GET',
+				data: {'action':'get_latest_checkout_tables'},
+				success: function (data) {
+					let response = handleServerResponse(data);
+
+					$('.iam-checkout-table-container tbody').empty();
+					$('.iam-checkout-table-container tbody').html(response['new_table']);
+
+					$('.iam-not-checked-out-container tbody').empty();
+					$('.iam-not-checked-out-container tbody').html(response['old_table']);
+
+					if ($('.fa-caret-right').length>0)
+						$('.iam-not-checked-out-container').addClass('iam-ninja');
+
+					initCheckinListeners();
+					initCheckoutListeners();
+					initOldReservationsListener();
+					submissionEnd();
+				},
+				error: function (data) {
+					handleServerError(data, new Error());
+				}
+			});
+		}
+
 		var lastActivity = Date.now();
-		var refreshPageAttempt = function (argument) {
+		var refreshPageAttempt = function () {
 			if (Date.now()-lastActivity>120000 && $('.iam-popup').length<1) {
-				window.location.reload();
+				refreshCheckout();
 			}
 		}
 
@@ -187,7 +220,7 @@ import ReservationPublic from '../page/reservationpublic';
 			setupEquipmentSchedule();
 
 			$('.iam-checkout-refresh').click(function(event) {
-				window.location.reload();
+				refreshCheckout();
 			});
 
 			$('body *').click(function(event) {
@@ -401,7 +434,7 @@ import ReservationPublic from '../page/reservationpublic';
 							$('body').removeClass('iam-no-select');
 							$('.iam-popup').remove();
 							$(checkoutRow).remove();
-							window.location.reload();
+							refreshCheckout();
 						},
 						error: function (data) {
 							handleServerError(data, new Error());
@@ -455,7 +488,7 @@ import ReservationPublic from '../page/reservationpublic';
 						$('body').removeClass('iam-no-select');
 						$('.iam-popup').remove();
 						$(checkoutRow).remove();
-						window.location.reload();
+						refreshCheckout();
 					},
 					error: function (data) {
 						handleServerError(data, new Error());
