@@ -89,7 +89,6 @@ class IAM_Checkout_Page
 			return '<tr><td>NO</td><td>RESULTS</td><td>WERE</td><td>FOUND</td><td>:(</td></tr>';
 		} else {
 			return $html;
-			exit;
 		}
 	}
 
@@ -171,20 +170,22 @@ class IAM_Checkout_Page
 				<img class="iam-res-note" src="'.plugins_url( 'assets/resnote.png', dirname(__FILE__) ).'" alt="reservation note">
 				<div class="iam-secondary-button iam-checkout-refresh">Refresh</div>
 				<h1>Todays Reservations</h1>
-				<table>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Equipment</th>
-							<th>Date</th>
-							<th>Time</th>
-							<th>Options</th>
-						</tr>
-					</thead>
-					<tbody>
-							'. IAM_Checkout_Page::update_checkout_table() .'
-					</tbody>
-				</table>
+				<section class="iam-checkout-table-container">
+					<table>
+						<thead>
+							<tr>
+								<th>Name</th>
+								<th>Equipment</th>
+								<th>Date</th>
+								<th>Time</th>
+								<th>Options</th>
+							</tr>
+						</thead>
+						<tbody>
+								'. IAM_Checkout_Page::update_checkout_table() .'
+						</tbody>
+					</table>
+				</section>
 				<p style="color:red;">Note: Reservations not checked in after 15 minutes will be REMOVED to grant access to others.</p>
 				<h1 class="iam-old-reservations">Past Reservations &nbsp; <i class="iam-caret fa fa-caret-right fa-3"></i></h1>
 				<section class="iam-not-checked-out-container">

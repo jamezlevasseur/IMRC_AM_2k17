@@ -178,5 +178,13 @@ class Checkout_Public
         exit;
     }
 
+    public static function get_latest_checkout_tables()
+    {
+      $tables = [];
+      $tables['new_table'] = IAM_Checkout_Page::update_checkout_table();
+      $tables['old_table'] = IAM_Checkout_Page::get_old_reservations();
+      iam_respond(SUCCESS, $tables);
+    }
+
 
 }

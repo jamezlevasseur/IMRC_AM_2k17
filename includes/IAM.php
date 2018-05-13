@@ -311,7 +311,8 @@ class IAM {
 		$this->loader->add_action('wp_ajax_nopriv_checkout_submit', 'Checkout_Public', 'checkout_submit_callback');
 		$this->loader->add_action('wp_ajax_nopriv_checkout_unlock', 'Checkout_Public', 'checkout_unlock_callback');
 		$this->loader->add_action('wp_ajax_nopriv_checkout_content', 'Checkout_Public', 'checkout_content_callback');
-		$this->loader->add_action('wp_ajax_update_checkout_table', 'Checkout_Public', 'update_checkout_table_callback');
+		$this->loader->add_action('wp_ajax_get_latest_checkout_tables', 'Checkout_Public', 'get_latest_checkout_tables');
+		$this->loader->add_action('wp_ajax_nopriv_get_latest_checkout_tables', 'Checkout_Public', 'get_latest_checkout_tables');
 		$this->loader->add_action('wp_ajax_get_checkout_popup', 'Checkout_Public', 'get_checkout_popup_callback');
 		$this->loader->add_action('wp_ajax_update_appointment', 'Checkout_Public', 'update_appointment_callback');
 		$this->loader->add_action('wp_ajax_checkout_submit', 'Checkout_Public', 'checkout_submit_callback');
