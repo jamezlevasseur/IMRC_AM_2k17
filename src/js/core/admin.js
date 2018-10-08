@@ -932,7 +932,7 @@ import DebugAdmin from '../page/debugadmin';
 
 								chosen = {
 													nid: relRes.data('nid'),
-													equipment: equip_name.split('_').join(' ')
+													equipment: equip_id
 												};
 							} else {
 								var events = $('.iam-cal').fullCalendar('clientEvents');
@@ -942,7 +942,7 @@ import DebugAdmin from '../page/debugadmin';
 										releventResEventStart = events[i].start.format('YYYY-MM-DD')
 										chosen = {
 											user: useremail,
-											equipment: equip_name.split('_').join(' '),
+											equipment: equip_id,
 											start: events[i].start.format('YYYY-MM-DD HH:mm:ss'),
 											end: events[i].end.format('YYYY-MM-DD HH:mm:ss')
 										}
@@ -1001,7 +1001,7 @@ import DebugAdmin from '../page/debugadmin';
 						$('.iam-cal').remove();
 						$('.modal-body').append('<div class="iam-cal"></div>');
 
-						var equip_name = $('#iam-update-form input#name').data('original').split(' ').join('_');
+						var equip_id = $('#iam-update-form input#name').data('id');
 						var useremail = $('.iam-er-user-emails').val();
 						thisRentalDays = $('.iam-rental-types-list').data('onload-duration');
 
@@ -1106,7 +1106,7 @@ import DebugAdmin from '../page/debugadmin';
 							eventReceive: function (e) {
 								adminCalEventReceive(e);
 							},
-							events: ajaxurl+"?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&name="+equip_name
+							events: ajaxurl+"?action=get_equipment_calendar&allDay=y&is=y&descriptive=y&eid="+equip_id
 						});
 					});
 

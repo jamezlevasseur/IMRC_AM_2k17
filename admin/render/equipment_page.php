@@ -246,7 +246,7 @@ class Equipment_Page extends Item_Mgmt
       if (isset($e['nid'])) {
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s",$e['nid']))[0]->Reservation_ID;
 
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Equipment_ID=%d", $res_id, $e['equipment']));
         $wpdb->query($wpdb->prepare("UPDATE ".IAM_RESERVATION_TABLE." SET Status=%d,Checked_Out=%s WHERE NI_ID=%s",ACTIVE,$rightnow,$e['nid']));
 
         send_to_log_file("======== Reservation Started, Item Checkout ========");
@@ -256,13 +256,12 @@ class Equipment_Page extends Item_Mgmt
 
       } else {
         $nid = make_nid();
-        $equipment_id = $wpdb->get_results($wpdb->prepare("SELECT Equipment_ID FROM ".IAM_EQUIPMENT_TABLE." WHERE Name=%s",$e['equipment']))[0]->Equipment_ID;
         $iam_id = get_user_for_email($e['user'])->IAM_ID;
 
-        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time,Checked_Out) VALUES (%s,%d,%d,%d,%s,%s,%s)",$nid,$iam_id,$equipment_id,ACTIVE,$e['start'],$e['end'],$rightnow));
+        $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time,Checked_Out) VALUES (%s,%d,%d,%d,%s,%s,%s)",$nid,$iam_id,$e['equipment'],ACTIVE,$e['start'],$e['end'],$rightnow));
 
         $res_id = $wpdb->get_results($wpdb->prepare("SELECT Reservation_ID FROM ".IAM_RESERVATION_TABLE." WHERE NI_ID=%s AND IAM_ID=%d",$nid,$iam_id))[0]->Reservation_ID;
-        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Name=%s", $res_id, $e['equipment']));
+        $wpdb->query($wpdb->prepare("UPDATE ".IAM_EQUIPMENT_TABLE." SET Checked_Out=%d WHERE Equipment_ID=%d", $res_id, $e['equipment']));
 
         send_to_log_file("======== Reservation Started, Item Checkout ========");
   			send_to_log_file("equipment: ".$e['equipment']);

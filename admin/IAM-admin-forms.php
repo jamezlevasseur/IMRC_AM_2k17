@@ -212,7 +212,7 @@ class IAM_Admin_Forms
 		$update_equipment_fields[] = '<input class="iam-ninja" name="x" id="x" value="'.iam_output($init_equipment_results[0]->NI_ID).'">';
 		$update_equipment_fields[] = '<img class="iam-image" width="200" src="'.IAM_Admin_Forms::or_sample_large($init_equipment_results[0]->Photo).'" alt="'.iam_output($init_equipment_results[0]->Name).'" >';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_PHOTO_LABEL.'<input type="file" id="photo" name="photo" accept="image/*">';
-		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_NAME_LABEL.'<input type="text" id="name" name="name" max="100" data-original="'.iam_output($init_equipment_results[0]->Name).'" value="'.iam_output($init_equipment_results[0]->Name).' ">';
+		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_NAME_LABEL.'<input type="text" id="name" name="name" max="100" data-id="'.$init_equipment_results[0]->Equipment_ID.'" data-original="'.iam_output($init_equipment_results[0]->Name).'" value="'.iam_output($init_equipment_results[0]->Name).' ">';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_MANUFACTURER_INFO_LABEL.'<input type="text" id="manufacturer-info" name="manufacturer-info" value="'.iam_output($init_equipment_results[0]->Manufacturer_Info).' ">';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_SERIAL_NUMBER_LABEL.'<input type="text" id="serial-number" name="serial-number" value="'.iam_output($init_equipment_results[0]->Serial_Number).' ">';
 		$update_equipment_fields[] = IAM_Admin_Forms::EQUIPMENT_DESCRIPTION_LABEL.'<textarea id="description" name="description" rows="4" cols="50">'.iam_output($init_equipment_results[0]->Description).'</textarea>';
