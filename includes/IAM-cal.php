@@ -165,8 +165,8 @@ class IAM_Cal
 			$item_name = str_replace('_', ' ', IAM_Sec::textfield_cleaner( $_GET['name'] ));
 			echo json_encode(IAM_Cal::get_cal_for_equipment($item_name, $_GET));
 			exit;
-		} else if (isset($_GET['id'])) {
-			echo json_encode(IAM_Cal::get_cal_for_equipment($_GET['id'], $_GET));
+		} else if (isset($_GET['eid'])) {
+			echo json_encode(IAM_Cal::get_cal_for_equipment($_GET['eid'], $_GET));
 			exit;
 		}
 	}

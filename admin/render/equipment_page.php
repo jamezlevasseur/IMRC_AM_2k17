@@ -239,7 +239,7 @@ class Equipment_Page extends Item_Mgmt
     {
       global $wpdb;
       $e = $_POST['ev'];
-
+      $confirmation = 0;
       date_default_timezone_set(IMRC_TIME_ZONE);
   		$rightnow = date(DATE_FORMAT);
 
@@ -254,9 +254,15 @@ class Equipment_Page extends Item_Mgmt
   			send_to_log_file("res id: ".$res_id);
         send_to_log_file("user: ".$e['user']);
 
+        $confirmation = $res_id;
+
       } else {
         $nid = make_nid();
         $iam_id = get_user_for_email($e['user'])->IAM_ID;
+
+        if ($iam_id == 0 || count( ezget("SELECT IAM_ID FROM ".IAM_USERS_TABLE." WHERE IAM_ID=%d",$iam_id) ) != 1 ) {
+          iam_throw_error("COULD NOT FIND USER");
+        }
 
         $wpdb->query($wpdb->prepare("INSERT INTO ".IAM_RESERVATION_TABLE." (NI_ID,IAM_ID,Equipment_ID,Status,Start_Time,End_Time,Checked_Out) VALUES (%s,%d,%d,%d,%s,%s,%s)",$nid,$iam_id,$e['equipment'],ACTIVE,$e['start'],$e['end'],$rightnow));
 
@@ -268,8 +274,10 @@ class Equipment_Page extends Item_Mgmt
   			send_to_log_file("res id: ".$res_id);
         send_to_log_file("user: ".$e['user']);
 
+        $confirmation = $res_id;
+
       }
-      iam_respond(SUCCESS);
+      iam_respond(SUCCESS, ['res_id'=>$confirmation]);
     }
 
     public static function admin_end_rental()
