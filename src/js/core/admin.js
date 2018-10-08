@@ -959,6 +959,7 @@ import DebugAdmin from '../page/debugadmin';
 								alert("Please choose a rental period that begins today.");
 								return;
 							}
+							console.log(chosen);
 
 							submissionStart();
 							$('#myModal').modal('hide');
