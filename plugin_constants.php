@@ -117,3 +117,9 @@ define('LATE_CHARGE_FEE_KEY', 'late_charge_fee');
 define('SECONDS_IN_DAY', 86400);
 
 define('DEFAULT_LATE_CHARGE_FEE_QUERY', "INSERT INTO ".IAM_META_TABLE." (Meta_Key,Meta_Value) VALUES ('".LATE_CHARGE_FEE_KEY."',10)");
+
+define('CIPHER','aes-128-gcm');
+
+define('ENC_KEY', 'adcdabf14d9507e122f4af0ba461fb4b4403321e4b91106b871881b9375e4c09');
+
+define('ENC_TAG_LEN', 16);

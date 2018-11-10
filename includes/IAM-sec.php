@@ -8,16 +8,44 @@ class IAM_Sec
 
 	public static function iamEncrypt($data)
 	{
+		if ((float)phpversion()>=7.1) {
+			return IAM_Sec::encrypt71($data);
+		}
+		//else use the older encryption
+		return IAM_Sec::encrypt55($data);
+	}
+
+	private static function encrypt71($data)
+	{
+		$data = trim($data);
+		$tag = '';
+		$key = pack('H*', ENC_KEY);
+		if (!in_array(CIPHER, openssl_get_cipher_methods())) {
+			iam_throw_error("ENCRYPTION METHOD DEPRECATED");
+		}
+		$ivlen = openssl_cipher_iv_length(CIPHER);
+		$iv = openssl_random_pseudo_bytes($ivlen);
+		$ciphertext = openssl_encrypt($data, CIPHER, $key, $options=0, $iv, $tag);
+
+    	# prepend the IV for it to be available for decryption
+	    $ciphertext = $iv . $tag . $ciphertext;
+
+	    # encode the resulting cipher text so it can be represented by a string
+	    $ciphertext_base64 = base64_encode($ciphertext);
+	    return $ciphertext_base64;
+	}
+
+	private static function encrypt55($data)
+	{
 		$data = trim($data);
 		$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
 		//TODO update key periodically
-		$key = pack('H*', "adcdabf14d9507e122f4af0ba461fb4b4403321e4b91106b871881b9375e4c09");
+		$key = pack('H*', ENC_KEY);
     	$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
     	$ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,
                                  $data, MCRYPT_MODE_CBC, $iv);
     	# prepend the IV for it to be available for decryption
 	    $ciphertext = $iv . $ciphertext;
-
 	    # encode the resulting cipher text so it can be represented by a string
 	    $ciphertext_base64 = base64_encode($ciphertext);
 	    return $ciphertext_base64;
@@ -25,16 +53,41 @@ class IAM_Sec
 
 	public static function iamDecrypt($data)
 	{
-		$key = pack('H*', "adcdabf14d9507e122f4af0ba461fb4b4403321e4b91106b871881b9375e4c09");
-		$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+		if ((float)phpversion()>=7.1) {
+			return IAM_Sec::decrypt71($data);
+		}
+		//else use the older encryption
+		return IAM_Sec::decrypt55($data);
+	}
+
+	private static function decrypt71($data)
+	{
+		$key = pack('H*', ENC_KEY);
+		$ivlen = openssl_cipher_iv_length(CIPHER);
 		$ciphertext_dec = base64_decode($data);
 
 	    # retrieves the IV, iv_size should be created using mcrypt_get_iv_size()
-	    $iv_dec = substr($ciphertext_dec, 0, $iv_size);
+		$iv_dec = substr($ciphertext_dec, 0, $ivlen);
+		
+		$tag_dec = substr($ciphertext_dec, $ivlen, ENC_TAG_LEN);
 
 	    # retrieves the cipher text (everything except the $iv_size in the front)
-	    $ciphertext_dec = substr($ciphertext_dec, $iv_size);
+	    $ciphertext_dec = substr($ciphertext_dec, $ivlen + ENC_TAG_LEN);
 
+	    # may remove 00h valued characters from end of plain text
+	    $plaintext_dec = openssl_decrypt($ciphertext_dec, CIPHER, $key, $options=0, $iv_dec, $tag_dec);
+	    return trim($plaintext_dec);
+	}
+
+	private static function decrypt55($data)
+	{
+		$key = pack('H*', ENC_KEY);
+		$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+		$ciphertext_dec = base64_decode($data);
+	    # retrieves the IV, iv_size should be created using mcrypt_get_iv_size()
+	    $iv_dec = substr($ciphertext_dec, 0, $iv_size);
+	    # retrieves the cipher text (everything except the $iv_size in the front)
+	    $ciphertext_dec = substr($ciphertext_dec, $iv_size);
 	    # may remove 00h valued characters from end of plain text
 	    $plaintext_dec = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $key,
 	                                    $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
