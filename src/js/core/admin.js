@@ -746,7 +746,8 @@ import DebugAdmin from '../page/debugadmin';
 					var new_tags = [];
 					for (var i = 0; i < equip_tags.length; i++) {
 						equip_tags[i] = equip_tags[i].trim();
-						if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1) {
+						if (comparableTags.indexOf(equip_tags[i].toLowerCase())==-1
+							&& equip_tags[i].indexOf('->')==-1) {
 							alert('The tag "'+equip_tags[i]+'" is invalid.');
 							return false;
 						}
