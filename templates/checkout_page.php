@@ -167,7 +167,7 @@ class IAM_Checkout_Page
 		<div class="iam-checkout">
 
 			<div class="iam-checkout-area">
-				<img class="iam-res-note" src="'.plugins_url( 'assets/resnote.png', dirname(__FILE__) ).'" alt="reservation note">
+				<!--<img class="iam-res-note" src="'.plugins_url( 'assets/resnote.png', dirname(__FILE__) ).'" alt="reservation note">-->
 				<div class="iam-secondary-button iam-checkout-refresh">Refresh</div>
 				<h1>Todays Reservations</h1>
 				<section class="iam-checkout-table-container">

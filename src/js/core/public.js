@@ -232,7 +232,7 @@ import ReservationPublic from '../page/reservationpublic';
 			$('.logo').attr('href', '');
 			$('.entry-title').remove();
 			$('.menu').empty();
-			$('.menu').append('<li class="menu-item menu-item-type-post_type menu-item-object-page iam-checkout-area-tab"><a>Checkout</a></li><li class="menu-item menu-item-type-post_type menu-item-object-page iam-equipment-schedule-tab"><a>Equipment Schedule</a></li>');
+			$('.menu').append('<li class="menu-item menu-item-type-post_type menu-item-object-page iam-checkout-area-tab"><a>Checkout</a></li>');
 			$('.iam-equipment-schedule-tab').click(function(event) {
 				$('.iam-popup').remove();
 				$('.iam-equipment-schedule').removeClass('iam-ninja');
