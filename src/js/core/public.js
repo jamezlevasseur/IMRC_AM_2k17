@@ -348,6 +348,7 @@ import ReservationPublic from '../page/reservationpublic';
 				success: function (data) {
 					data = handleServerResponse(data);
 					checkout_mats = JSON.parse(data['mats']);
+					$('.iam-popup').remove();
 					$('body').append(data['html']);
 					if (cachedMatsRow==null) {
 						cachedMatsRow = $('<div>').append($('.iam-mats-row').clone()).html();
@@ -443,6 +444,10 @@ import ReservationPublic from '../page/reservationpublic';
 					return;
 				}
 				if ($('.iam-checkout-amount').val().length<1) {
+					if ($('.iam-popup').length>1) {
+						alert('A previous checkout window failed to close. Please refresh the page and try again.');
+						return;
+					}
 					alert("Please enter an amount.");
 					return;
 				}
